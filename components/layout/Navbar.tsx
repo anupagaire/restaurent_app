@@ -1,123 +1,95 @@
-"use client";
+// components/layout/Navbar.tsx
+'use client';
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { User, Menu, X, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X, Phone } from 'lucide-react';
 
-const Navbar = () => {
-  const router = useRouter();
+export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userFirstName, setUserFirstName] = useState("User");
-
-  useEffect(() => {
-    const token = localStorage.getItem("user-token");
-    const name = localStorage.getItem("user-name");
-    if (token) setIsLoggedIn(true);
-    if (name) setUserFirstName(name.split(" ")[0]);
-  }, []);
-
-
-
-  const handleLogout = () => {
-    // Remove the same keys that were used on login
-    localStorage.removeItem("user-token");
-    localStorage.removeItem("user-name");
-    setIsLoggedIn(false);
-    router.push("/");
-    setMenuOpen(false);
-  };
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/menu', label: 'Menu' },
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
-    <>
-      <nav className="md:hidden sticky top-0 z-50 h-16 bg-[#513012] flex items-center px-4">
-        <button onClick={() => setMenuOpen(true)} className="text-white">
-          <Menu size={28} />
-        </button>
-
-        <Link href="/" className="ml-3 flex items-center gap-2">
-          <span className="text-white text-lg font-bold">SHARING TOOL</span>
-        </Link>
-
-        <div className="ml-auto flex items-center gap-4">
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1 text-white text-sm"
-            >
-              <User size={18} />
-              <span>{userFirstName}</span>
-            </button>
-          ) : (
-            <Link href="/login" className="text-white">
-              <User size={20} />
-            </Link>
-          )}
-        </div>
-      </nav>
-
-    
-
-      {/* Desktop Navbar */}
-      <nav className="hidden md:flex sticky top-0 z-50 h-16 bg-[#513012] px-20 items-center">
-        <Link href="/" className="ml-3 flex items-center gap-2">
-          <span className="text-white text-lg font-bold">SHARING TOOL</span>
-        </Link>
-
-        <div className="ml-auto flex items-center gap-6">
-
+    <nav className="bg-white border-b border-[#513012]/10 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between h-20">
           
-
-          {isLoggedIn ? (
-            <div className="flex items-center gap-3 text-white">
-              <span>Hi, {userFirstName}</span>
-              <button onClick={handleLogout}>
-                <LogOut size={20} />
-              </button>
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-2xl flex items-center justify-center">
             </div>
-          ) : (
-            <Link className="text-white" href="/login">
-              <User size={22} />
-            </Link>
-          )}
-        </div>
-      </nav>
-
-      {/* Mobile Side Menu */}
-      <div
-        className={`fixed inset-0 z-50 bg-[#513012]/40 ${menuOpen ? "block" : "hidden"}`}
-        onClick={() => setMenuOpen(false)}
-      >
-        <div
-          className="w-72 h-full bg-[#513012] text-white p-4 overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex justify-between mb-4">
-            <span className="font-bold text-lg">Menu</span>
-            <button onClick={() => setMenuOpen(false)}>
-              <X size={22} />
-            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-[#513012] tracking-tight">Food</h1>
+              <p className="text-xs text-gray-500 -mt-1">Taste of Nepal</p>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-4 text-lg">
-          
-
-            {isLoggedIn ? (
-              <button onClick={handleLogout} className="flex items-center gap-2">
-                <LogOut size={20} /> Logout
-              </button>
-            ) : (
-              <Link href="/login" className="flex items-center gap-2">
-                <User size={20} /> Login
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-10">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-gray-700 hover:text-[#513012] font-medium transition-colors"
+              >
+                {link.label}
               </Link>
-            )}
+            ))}
           </div>
+
+          {/* Right Side */}
+          <div className="hidden md:flex items-center gap-4">
+            <a href="tel:+9779841234567" className="flex items-center gap-2 text-[#513012] hover:text-[#47034E]">
+              <Phone className="w-5 h-5" />
+              <span className="font-medium">+977 9841234567</span>
+            </a>
+            <Link href="/login">
+              
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-[#513012]"
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
       </div>
-    </>
-  );
-};
 
-export default Navbar;
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t">
+          <div className="px-6 py-6 flex flex-col gap-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-lg font-medium text-gray-700 hover:text-[#513012]"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            
+            <div className="pt-4 border-t flex flex-col gap-4">
+              <a href="tel:+9779841234567" className="flex items-center gap-2 text-[#513012]">
+                <Phone className="w-5 h-5" />
+                +977 9841234567
+              </a>
+              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}

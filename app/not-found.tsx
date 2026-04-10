@@ -1,4 +1,3 @@
-// app/not-found.tsx  (Restaurant Style)
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ChefHat, Home } from 'lucide-react';

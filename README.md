@@ -1,14 +1,6 @@
-## Getting Started
-First, run the development server:
-
-```bash
-npm run dev
-```
-npm install next@latest
-
-# Next.js + Shadcn Template
-A reusable Next.js starter template with preconfigured layout and UI setup.
-
+[#513012]
+[#47034E]
+[#5D0565]
 This template includes:
 - ✅ Navbar
 - ✅ Footer
@@ -19,7 +11,3 @@ This template includes:
 - ✅ Clean folder structure
 
 
-
-[#513012]
-[#47034E]
-[#5D0565]

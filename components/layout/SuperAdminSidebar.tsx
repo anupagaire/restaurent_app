@@ -6,7 +6,6 @@ import {
   LayoutDashboard, 
   Users, 
   Store, 
-  BarChart3, 
   Settings, 
   LogOut,
   X 
@@ -15,8 +14,7 @@ import {
 const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
   { title: 'Restaurants', href: '/super-admin/restaurants', icon: Store },
-  { title: 'Users (Admins)', href: '/super-admin/users', icon: Users },
-  { title: 'Analytics', href: '/super-admin/analytics', icon: BarChart3 },
+  { title: 'Users ', href: '/super-admin/users', icon: Users },
   { title: 'Settings', href: '/super-admin/settings', icon: Settings },
 ];
 

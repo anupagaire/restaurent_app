@@ -4,7 +4,7 @@ export default function SuperAdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-[#513012]">Welcome back, Super Admin</h2>
+        <h2 className="text-3xl font-bold text-[#513012] cinzel">Welcome back, Super Admin</h2>
         <p className="text-gray-600 mt-2">Here&apos;s what&apos;s happening across all restaurants</p>
       </div>
 

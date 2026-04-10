@@ -49,7 +49,6 @@ export default function DashboardHeader({
             className="flex items-center gap-3 hover:bg-[#513012]/5 p-1.5 pr-3 rounded-xl transition-colors"
           >
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-[#513012]">Super Admin</p>
               <p className="text-xs text-gray-500">admin@foodhub.com</p>
             </div>
             
