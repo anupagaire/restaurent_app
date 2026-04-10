@@ -17,7 +17,7 @@ const Footer = () => {
           
           <div className="space-y-4">
             <h2 className="text-3xl font-bold bg-white bg-clip-text text-transparent">
-DEMO APP            </h2>
+Restaurent-app           </h2>
           </div>
 
           <div className="space-y-4">
@@ -59,7 +59,7 @@ QuickLinks            </h3>
 
         <div className="relative pt-8 mt-8">
   <div className="flex justify-center items-center text-sm text-white">
-    <p>© {new Date().getFullYear()} DEMO APP. All rights reserved.</p>    
+    <p>© {new Date().getFullYear()} Restaurent-app. All rights reserved.</p>    
   </div>
 </div>
 

@@ -32,7 +32,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="md:hidden sticky top-0 z-50 h-16 bg-black flex items-center px-4">
+      <nav className="md:hidden sticky top-0 z-50 h-16 bg-[#513012] flex items-center px-4">
         <button onClick={() => setMenuOpen(true)} className="text-white">
           <Menu size={28} />
         </button>
@@ -61,7 +61,7 @@ const Navbar = () => {
     
 
       {/* Desktop Navbar */}
-      <nav className="hidden md:flex sticky top-0 z-50 h-16 bg-black px-20 items-center">
+      <nav className="hidden md:flex sticky top-0 z-50 h-16 bg-[#513012] px-20 items-center">
         <Link href="/" className="ml-3 flex items-center gap-2">
           <span className="text-white text-lg font-bold">SHARING TOOL</span>
         </Link>
@@ -87,11 +87,11 @@ const Navbar = () => {
 
       {/* Mobile Side Menu */}
       <div
-        className={`fixed inset-0 z-50 bg-black/40 ${menuOpen ? "block" : "hidden"}`}
+        className={`fixed inset-0 z-50 bg-[#513012]/40 ${menuOpen ? "block" : "hidden"}`}
         onClick={() => setMenuOpen(false)}
       >
         <div
-          className="w-72 h-full bg-black text-white p-4 overflow-y-auto"
+          className="w-72 h-full bg-[#513012] text-white p-4 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between mb-4">
