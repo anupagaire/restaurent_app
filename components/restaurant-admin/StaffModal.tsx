@@ -71,7 +71,7 @@ export default function StaffModal({
     },
   });
 
-  // Reset / populate form when modal opens
+  // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
       if (editingStaff) {
@@ -148,7 +148,7 @@ export default function StaffModal({
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. Sujan Karki"
+                placeholder="e.g. Sita Devi"
                 required
               />
             </div>
@@ -213,7 +213,6 @@ export default function StaffModal({
             )}
           </div>
 
-          {/* Status */}
           <div className="flex items-center gap-3">
             <Label>Status</Label>
             <div className="flex items-center gap-2">

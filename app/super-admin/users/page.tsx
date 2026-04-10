@@ -16,7 +16,7 @@ import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import AddUserModal from '@/components/super-admin/AddUserModal';
 import EditUserModal from '@/components/super-admin/EditUserModal';
 
-interface RestaurantAdmin {
+export interface RestaurantAdmin {
   id: number;
   fullName: string;
   email: string;
@@ -46,7 +46,6 @@ export default function UsersPage() {
       role: "Restaurant Admin",
       createdAt: "2025-02-25",
     },
-   
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -83,7 +82,7 @@ export default function UsersPage() {
 
   const handleSaveEdit = (updatedUser: RestaurantAdmin) => {
     setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
-    alert(' Restaurant Admin updated successfully!');
+    alert('Restaurant Admin updated successfully!');
   };
 
   return (
@@ -115,7 +114,7 @@ export default function UsersPage() {
                 className="pl-10 border-[#513012]/20 focus:border-[#47034E]"
               />
             </div>
-            <div className="text-lg ">
+            <div className="text-lg">
               Total Admins: <span className="font-semibold text-[#513012]">{users.length}</span>
             </div>
           </div>
@@ -139,7 +138,6 @@ export default function UsersPage() {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell className="text-sm">{user.restaurantName}</TableCell>
-                 
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button 

@@ -8,12 +8,14 @@ interface UserPermissions {
   addMenuItems: boolean;
   editMenuItems: boolean;
   globalSettings: boolean;
+  menuSettings: boolean;
   manageStaff: boolean;
 }
 
 interface CurrentUser {
   id: number;
   name: string;
+  email?: string;        // ← Add this
   role: string;
   permissions: UserPermissions;
 }
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           manageOrders: true,
           addMenuItems: true,
           editMenuItems: true,
+          menuSettings: true,        
           globalSettings: true,
           manageStaff: true,
         }

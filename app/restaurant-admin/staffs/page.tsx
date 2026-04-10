@@ -48,7 +48,7 @@ const initialStaff: Staff[] = [
       addMenuItems: true,
       editMenuItems: true,
       globalSettings: false,
-      manageStaff: false,
+      manageStaff: true,
     },
   },
   {

@@ -7,35 +7,50 @@ import {
   Users, 
   Store, 
   Settings, 
-  LogOut,
-  X 
+  LogOut, 
+  X,
+  Menu
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-const menuItems = [
+// Define the type for menu items
+interface MenuItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permissionKey: null | 'viewOrders' | 'manageStaff' | 'menuSettings' | 'globalSettings';
+}
+
+const menuItems: MenuItem[] = [
   { 
     title: 'Dashboard', 
-    href: '/restaurant-admin/dashboard', 
+    href: '/restaurant-admin', 
     icon: LayoutDashboard,
-    permissionKey: null as const
+    permissionKey: null                  // Dashboard is always visible
   },
   { 
     title: 'Orders', 
     href: '/restaurant-admin/orders', 
     icon: Store,
-    permissionKey: 'viewOrders' as const
+    permissionKey: 'viewOrders'
   },
   { 
     title: 'Staff', 
     href: '/restaurant-admin/staffs', 
     icon: Users,
-    permissionKey: 'manageStaff' as const
+    permissionKey: 'manageStaff'
+  },
+  { 
+    title: 'Menu', 
+    href: '/restaurant-admin/menu', 
+    icon: Menu,
+    permissionKey: 'menuSettings'
   },
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 
     icon: Settings,
-    permissionKey: 'globalSettings' as const
+    permissionKey: 'globalSettings'
   },
 ];
 
@@ -51,6 +66,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   // Filter logic with fallback for Owner/Admin
   const visibleMenuItems = menuItems.filter((item) => {
     if (item.permissionKey === null) return true;           // Dashboard always visible
+    
     if (!currentUser) return false;
 
     // If user is Owner or Admin → show everything
@@ -80,17 +96,14 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       `}>
         
         <div className="p-6 border-b border-[#513012]/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-xl flex items-center justify-center">
-              <span className="text-white text-xl font-bold">Y</span>
-            </div>
+          <Link href="/restaurant-admin" className="flex items-center gap-3">
             <div>
-              <h1 className="font-bold text-2xl tracking-tight text-[#513012]">YOH</h1>
+              <h1 className="font-bold text-2xl tracking-tight text-[#513012]">ABC</h1>
               <p className="text-xs text-gray-500 -mt-1">
                 {currentUser?.role || 'Restaurant Admin'}
               </p>
             </div>
-          </div>
+          </Link>
 
           <button 
             onClick={onClose}

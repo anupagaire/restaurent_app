@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import AdminSidebar from '@/components/layout/AdminSidebar';
-import DashboardHeader from '@/components/layout/DashboardHeader';
+import AdminSidebar from '@/components/restaurant-admin/AdminSidebar';
+import TopHeader from '@/components/restaurant-admin/TopHeader';
 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,12 +15,11 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader 
+        <TopHeader 
           title="Restaurant Admin Dashboard" 
           onMenuClick={() => setSidebarOpen(true)} 
         />
 
-        {/* Page Content */}
         <main className="flex-1 overflow-auto p-4 md:p-6 bg-gray-50">
           {children}
         </main>

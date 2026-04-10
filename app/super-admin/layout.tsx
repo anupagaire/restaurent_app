@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import SuperAdminSidebar from '@/components/layout/SuperAdminSidebar';
+import SuperAdminSidebar from '@/components/super-admin/SuperAdminSidebar';
 import DashboardHeader from '@/components/layout/DashboardHeader';
 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {

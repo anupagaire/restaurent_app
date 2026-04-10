@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
@@ -25,6 +26,23 @@ interface SuperAdminSidebarProps {
 
 export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Simple Frontend Logout (No API needed)
+  const handleLogout = () => {
+    // Clear any authentication data stored in browser
+    localStorage.removeItem('superadmin-token');     // if you're using localStorage
+    sessionStorage.removeItem('superadmin-token');   // if you're using sessionStorage
+
+    // Optional: Clear all auth-related items
+    // localStorage.clear();   // Use only if you want to clear everything
+
+    // Redirect to login page
+    router.push('/superadmin-login');
+    
+    // Optional: Force a full page reload to clear any cached state
+    // router.refresh();
+  };
 
   return (
     <>
@@ -88,8 +106,11 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
         </nav>
 
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
-          <button className="flex items-center gap-3 px-4 py-3.5 w-full text-[#47034E] hover:bg-[#47034E]/5 rounded-xl text-sm font-medium transition-colors">
-            <LogOut className="w-9 h-9" />
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3.5 w-full text-[#47034E] hover:bg-[#47034E]/5 rounded-xl text-sm font-medium transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
             Logout
           </button>
         </div>

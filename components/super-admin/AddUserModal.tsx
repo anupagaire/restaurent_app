@@ -1,4 +1,3 @@
-// components/super-admin/AddUserModal.tsx
 'use client';
 
 import { useState } from 'react';
@@ -14,25 +13,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface RestaurantAdmin {
-  fullName: string;
-  email: string;
-  phone: string;
-  restaurantName: string;
-}
+import { RestaurantAdmin } from '@/app/super-admin/users/page';   // ← Import shared interface
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (newUser: RestaurantAdmin) => void;
+  onAdd: (newUser: Omit<RestaurantAdmin, 'id' | 'createdAt'>) => void;
 }
 
 export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
-  const [formData, setFormData] = useState<RestaurantAdmin>({
+  const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     restaurantName: '',
+    role: 'Restaurant Admin',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +35,13 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
     if (!formData.fullName || !formData.email || !formData.restaurantName) return;
 
     onAdd(formData);
-    setFormData({ fullName: '', email: '', phone: '', restaurantName: '' });
+    setFormData({ 
+      fullName: '', 
+      email: '', 
+      phone: '', 
+      restaurantName: '', 
+      role: 'Restaurant Admin' 
+    });
     onClose();
   };
 

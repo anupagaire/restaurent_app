@@ -1,4 +1,3 @@
-// components/super-admin/EditUserModal.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -14,14 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface RestaurantAdmin {
-  id: number;
-  fullName: string;
-  email: string;
-  phone: string;
-  restaurantName: string;
-  status: 'active' | 'inactive';
-}
+import { RestaurantAdmin } from '@/app/super-admin/users/page';   // ← Import the shared interface
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -36,7 +28,6 @@ export default function EditUserModal({ isOpen, onClose, user, onSave }: EditUse
     email: '',
     phone: '',
     restaurantName: '',
-    status: 'active' as 'active' | 'inactive',
   });
 
   useEffect(() => {
@@ -46,7 +37,6 @@ export default function EditUserModal({ isOpen, onClose, user, onSave }: EditUse
         email: user.email,
         phone: user.phone,
         restaurantName: user.restaurantName,
-        status: user.status,
       });
     }
   }, [user]);
@@ -56,7 +46,7 @@ export default function EditUserModal({ isOpen, onClose, user, onSave }: EditUse
     if (!user) return;
 
     const updatedUser: RestaurantAdmin = {
-      ...user,
+      ...user,           // preserves id, role, createdAt
       ...formData,
     };
 
@@ -117,19 +107,6 @@ export default function EditUserModal({ isOpen, onClose, user, onSave }: EditUse
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <select
-              id="status"
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-[#47034E]"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
           </div>
 
           <DialogFooter className="pt-4">

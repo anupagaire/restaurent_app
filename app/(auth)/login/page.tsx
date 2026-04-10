@@ -20,6 +20,7 @@ interface User {
     manageOrders: boolean;
     addMenuItems: boolean;
     editMenuItems: boolean;
+    menuSettings: boolean;     
     globalSettings: boolean;
     manageStaff: boolean;
   };
@@ -47,7 +48,7 @@ export default function LoginPage() {
           email: "owner@yoh.com",
           password: "owner123",
           role: "Owner",
-          permissions: { viewOrders: true, manageOrders: true, addMenuItems: true, editMenuItems: true, globalSettings: true, manageStaff: true }
+          permissions: { viewOrders: true, manageOrders: true,menuSettings: true, addMenuItems: true, editMenuItems: true, globalSettings: true, manageStaff: true }
         },
         {
           id: 2,
@@ -55,7 +56,7 @@ export default function LoginPage() {
           email: "rahul@yoh.com",
           password: "manager123",
           role: "Manager",
-          permissions: { viewOrders: true, manageOrders: true, addMenuItems: true, editMenuItems: true, globalSettings: false, manageStaff: false }
+          permissions: { viewOrders: true, manageOrders: true,menuSettings: true,     addMenuItems: true, editMenuItems: true, globalSettings: false, manageStaff: true }
         },
         {
           id: 3,
@@ -63,7 +64,7 @@ export default function LoginPage() {
           email: "priya@yoh.com",
           password: "waiter123",
           role: "Waiter",
-          permissions: { viewOrders: true, manageOrders: false, addMenuItems: false, editMenuItems: false, globalSettings: false, manageStaff: false }
+          permissions: { viewOrders: true, manageOrders: false, addMenuItems: false,menuSettings: true, editMenuItems: false, globalSettings: false, manageStaff: false }
         }
       ];
 
