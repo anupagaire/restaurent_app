@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
-  const isAdminRoute = pathname.startsWith("/status");
+  const isAdminRoute = pathname.startsWith("/super-admin");
 
   return (
   <main className="min-h-screen flex flex-col">

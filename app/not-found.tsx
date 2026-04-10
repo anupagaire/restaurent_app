@@ -5,10 +5,10 @@ import { ChefHat, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center px-6">
+    <div className="min-h-screen  flex items-center justify-center px-6">
       <div className="text-center max-w-lg">
         <div className="flex justify-center mb-6">
-          <ChefHat className="h-24 w-24 text-orange-500" />
+          <ChefHat className="h-24 w-24 text-[#513012]" />
         </div>
 
         <h1 className="text-8xl font-bold text-gray-300 mb-2">404</h1>
@@ -19,7 +19,7 @@ export default function NotFound() {
 
         <p className="text-gray-600 text-lg mb-8">
           Looks like this page got lost in the kitchen. 
-          Don't worry, our chef is working on it!
+          Don&apos;t worry, our chef is working on it!
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
