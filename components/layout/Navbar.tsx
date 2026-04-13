@@ -1,95 +1,90 @@
-// components/layout/Navbar.tsx
-'use client';
+'use client'; 
 
-import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/menu', label: 'Menu' },
-    { href: '/about', label: 'About Us' },
-    { href: '/contact', label: 'Contact' },
-  ];
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b border-[#513012]/10 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
+    <nav className=" border-b border-white/10 sticky top-0 z-50 backdrop-blur-lg">
+      <div className="max-w-screen-2xl mx-auto px-6 py-5">
+        <div className="flex items-center justify-between">
           
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-2xl flex items-center justify-center">
-            </div>
+          <Link href="/" className="flex items-center gap-3">
+           
             <div>
-              <h1 className="text-2xl font-bold text-[#513012] tracking-tight">Food</h1>
-              <p className="text-xs text-gray-500 -mt-1">Taste of Nepal</p>
-            </div>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-gray-700 hover:text-[#513012] font-medium transition-colors"
+              <h1 
+                className="text-3xl font-bold tracking-tighter" 
+                style={{ fontFamily: 'Playfair Display, serif' }}
               >
-                {link.label}
-              </Link>
-            ))}
+                LOGO
+              </h1>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-10 text-lg font-bold">
+            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
+            <Link href="/menu" className="hover:text-amber-400 transition-colors">Menu</Link>
+            <Link href="/order" className="hover:text-amber-400 transition-colors">Order Online</Link>
+            <Link href="/contact" className="hover:text-amber-400 transition-colors">Contact</Link>
           </div>
 
-          {/* Right Side */}
-          <div className="hidden md:flex items-center gap-4">
-            <a href="tel:+9779841234567" className="flex items-center gap-2 text-[#513012] hover:text-[#47034E]">
-              <Phone className="w-5 h-5" />
-              <span className="font-medium">+977 9841234567</span>
-            </a>
-            <Link href="/login">
-              
+          <div className="flex items-center gap-4">
+            {/* Order Now Button */}
+            <Link
+              href="/order"
+              className="bg-[#513012] hover:bg-amber-600 text-white px-6 py-3 rounded-3xl font-semibold flex items-center gap-2 shadow-lg transition-colors"
+            >
+              <i className="fa-solid fa-utensils"></i>
+              Order Now
             </Link>
+
+            <Link href="/restaurant-admin"
+              className="hidden sm:flex items-center gap-2 border border-white/30 hover:border-amber-400 px-5 py-3 rounded-3xl text-sm transition-colors"
+            >
+              <i className="fa-solid fa-lock"></i>
+              Admin Portal
+            </Link>
+
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="md:hidden text-3xl text-white"
+            >
+              {isOpen ? '✕' : '☰'}
+            </button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-[#513012]"
-          >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t">
-          <div className="px-6 py-6 flex flex-col gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-lg font-medium text-gray-700 hover:text-[#513012]"
-                onClick={() => setIsMenuOpen(false)}
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="md:hidden mt-6 pt-6 border-t border-white/10">
+            <div className="flex flex-col gap-6 text-lg">
+              <Link 
+                href="/" 
+                onClick={() => setIsOpen(false)}
+                className="hover:text-amber-400"
               >
-                {link.label}
+                Home
               </Link>
-            ))}
-            
-            <div className="pt-4 border-t flex flex-col gap-4">
-              <a href="tel:+9779841234567" className="flex items-center gap-2 text-[#513012]">
-                <Phone className="w-5 h-5" />
-                +977 9841234567
-              </a>
-              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                
+              <Link 
+                href="/menu" 
+                onClick={() => setIsOpen(false)}
+                className="hover:text-amber-400"
+              >
+                Menu
+              </Link>
+              <Link 
+                href="/order" 
+                onClick={() => setIsOpen(false)}
+                className="hover:text-amber-400"
+              >
+                Order Online
               </Link>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   );
 }
