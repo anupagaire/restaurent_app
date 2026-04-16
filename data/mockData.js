@@ -1,8 +1,8 @@
-// src/data/mockData.js
+// data/mockData.ts
 export const restaurantInfo = {
   name: "SpiceRoute",
   tagline: "Where every plate tells a story",
-  description: "Experience the finest fusion of Himalayan spices and global flavors.",
+  description: "Experience the finest fusion of Himalayan spices and global flavors in the heart of Kathmandu. Fresh ingredients, authentic recipes, and unforgettable dining.",
   address: "Thamel, Kathmandu, Nepal",
   phone: "+977 980-1234567",
   email: "hello@spiceroute.com",
@@ -24,7 +24,7 @@ export const menuItems = [
     id: 1,
     category: "Starters",
     name: "Momo Platter",
-    description: "Steamed dumplings with chicken, veg & buff filling + three sauces",
+    description: "Steamed dumplings with chicken, veg & buff filling served with three signature sauces",
     price: 450,
     image: "https://picsum.photos/id/1080/600/400",
     isPopular: true,
@@ -34,50 +34,13 @@ export const menuItems = [
     id: 2,
     category: "Main Course",
     name: "Butter Chicken",
-    description: "Tender chicken in rich tomato & butter gravy with aromatic spices",
+    description: "Tender chicken simmered in rich tomato, butter and aromatic spice gravy",
     price: 680,
     image: "https://picsum.photos/id/201/600/400",
     isPopular: true,
     isVeg: false,
   },
-  {
-    id: 3,
-    category: "Main Course",
-    name: "Dal Makhani",
-    description: "Black lentils slow-cooked with cream and butter",
-    price: 420,
-    image: "https://picsum.photos/id/292/600/400",
-    isPopular: false,
-    isVeg: true,
-  },
-  {
-    id: 4,
-    category: "Noodles & Rice",
-    name: "Himalayan Thukpa",
-    description: "Spicy noodle soup with vegetables and choice of protein",
-    price: 380,
-    image: "https://picsum.photos/id/431/600/400",
-    isPopular: true,
-    isVeg: false,
-  },
-  {
-    id: 5,
-    category: "Desserts",
-    name: "Gulab Jamun with Ice Cream",
-    description: "Warm gulab jamun served with vanilla ice cream",
-    price: 280,
-    image: "https://picsum.photos/id/1083/600/400",
-    isPopular: false,
-    isVeg: true,
-  },
-];
-
-export const galleryImages = [
-  "https://picsum.photos/id/1015/800/600",
-  "https://picsum.photos/id/133/800/600",
-  "https://picsum.photos/id/201/800/600",
-  "https://picsum.photos/id/292/800/600",
-  "https://picsum.photos/id/431/800/600",
+  // ... you can keep the rest
 ];
 
 export const testimonials = [

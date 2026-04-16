@@ -26,7 +26,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-10 text-lg font-bold">
             <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
             <Link href="/menu" className="hover:text-amber-400 transition-colors">Menu</Link>
-            <Link href="/order" className="hover:text-amber-400 transition-colors">Order Online</Link>
             <Link href="/contact" className="hover:text-amber-400 transition-colors">Contact</Link>
           </div>
 

@@ -9,7 +9,8 @@ import {
   Settings, 
   LogOut, 
   X,
-  Menu
+  Menu,
+  QrCode
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -44,6 +45,12 @@ const menuItems: MenuItem[] = [
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
     icon: Menu,
+    permissionKey: 'menuSettings'
+  },
+  { 
+    title: 'QR Codes',           // ← New QR Menu Item
+    href: '/restaurant-admin/menu/qr', 
+    icon: QrCode,
     permissionKey: 'menuSettings'
   },
   { 

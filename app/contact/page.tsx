@@ -13,7 +13,7 @@ const Contact = () => {
       <section className="relative min-h-[20vh] lg:min-h-[50vh] w-full">
         <div className="absolute inset-0 w-full h-full">
           <Image
-            src="/bg.jpeg"
+            src="/food.jpg"
             fill
             priority
             className="object-cover"
