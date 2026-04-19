@@ -1,4 +1,3 @@
-// app/restaurant-admin/orders/page.tsx
 'use client';
 
 import { useState } from 'react';

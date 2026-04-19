@@ -38,7 +38,8 @@ const Testimonials = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-serif text-[#011659]"
+                      className="text-4xl md:text-5xl font-serif text-[#5D0565]"
+
           >
             What Our Guest Say
           </motion.h2>

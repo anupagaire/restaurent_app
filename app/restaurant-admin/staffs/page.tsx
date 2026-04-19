@@ -58,7 +58,7 @@ const initialStaff: Staff[] = [
     phone: '+977 9809876543',
     role: 'Waiter',
     status: 'Active',
-    password: 'waiter123',                // ← Mock password
+    password: 'waiter123',              
     permissions: {
       viewOrders: true,
       manageOrders: false,

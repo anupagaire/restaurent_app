@@ -1,4 +1,3 @@
-// components/home/HowItWorks.tsx
 import { QrCode, Menu, UtensilsCrossed } from 'lucide-react';
 
 const steps = [
@@ -24,7 +23,7 @@ export default function HowItWorks() {
     <div className="py-20 bg-gray-50">
       <div className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-[#513012]">How It Works</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-[#5D0565]">How It Works</h2>
           <p className="text-gray-600 mt-3">Just 3 simple steps to enjoy your meal</p>
         </div>
 
