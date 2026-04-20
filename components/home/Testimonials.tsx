@@ -3,46 +3,65 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Utensils } from "lucide-react";
 
-const testimonials = [
+const restaurants = [
   {
     id: 1,
-    name: "Harry Ghali",
+    name: "Rajdoot Restaurant",
     text:
-      "Very good indian food all over in Hong Kong which is located in Sai ying pun water street.We had a group party of 6 people. The service was perfect given by friendly waiters as well as the chefs.The chef in this restaurant has experience of more than 15 years that's why food is so delicious, they have draught beer, we enjoyed chicken chilly, chapate, pakora, tandoori and garlic naan, lamb shekh kebab, butter chicken, lamb curry every single dish was full of flavour and perfect. The music on the background was decent. Also they have pizza, burger, spaghetti. So, it is 70% indian and 30% Western. We really enjoyed a lot that day on rajdoot. I would like to recommend every brother and sisters to have a try on this restaurant which you will never forget.",
-    img: "/harry.png",
+      "Authentic Indian, Western & Nepali cuisine served with love. Famous for butter chicken, momo and tandoori dishes. A perfect place for family dining and gatherings.",
+    img: "/place/1.jpg",
+    rating: 4.8,
   },
   {
     id: 2,
-    name: "Andrew Kwok",
+    name: "Himalayan Spice House",
     text:
-      "Been here twice now, and it's safe to say I will be their new regular customer: Their butter chicken and beef curry are so good! Not to mention as someone who doesn't handle spiciness well, their mild spicy is the perfect amount of heat I can take! But their cheese naan just goes so well with their options! They do have naan included on as their main options but I tried them once and now I can't resist adding them from now on. Their mango lassi also washes down the spice so nice. Next time I'll definitely try to dine in 😋. Their servers are very nice too. Definitely recommend to try them out!! Price per person: $100–150, Food: 5, Service: 5, Atmosphere: 5, Noise level: Quiet, easy to talk",
-    img: "/unnamed.png",
+      "A cozy restaurant offering rich Nepali flavors with modern twists. Known for thali sets, momos, and traditional spices that bring Himalayan taste alive.",
+    img: "/place/2.jpg",
+    rating: 4.6,
   },
   {
     id: 3,
-    name: "Colin Squire",
+    name: "Urban Curry Hub",
     text:
-      "In town for the weekend between supplier visits in south Asia and China mainland and wanted to get dinner close to the hotel, we dropped in the restaurant on Saturday for a drink and to check out the atmosphere, after a couple of beers we decided to go back on Sunday evening for dinner. We were not disappointed, the food was very good, and it comes with great service, we  would definitely recommend this restaurant to our colleagues and go back ourselves when in this part of HK and in need of good Indian food. Meal type: Dinner Price per person: $1–50. Food: 5, Service: 5, Atmosphere: 5, Noise level: Quiet, easy to talk,  Seating type: Indoor dining area",
-    img: "/colin.png",
+      "Modern Indian dining experience with fusion dishes. From creamy curries to street-style snacks, everything is crafted for a bold taste experience.",
+    img: "/place/3.jpg",
+    rating: 4.7,
   },
 ];
+
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 25 },
+  show: { opacity: 1, y: 0 },
+};
 
 const Testimonials = () => {
   return (
     <section className="relative py-6 md:py-12 bg-white overflow-hidden">
       <div className="max-w-screen-xl mx-auto px-6">
+
+        {/* Heading */}
         <div className="text-center mb-12 space-y-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-                      className="text-4xl md:text-5xl font-serif text-[#5D0565]"
-
+            className="text-4xl md:text-5xl font-serif text-[#5D0565]"
           >
-            What Our Guest Say
+            Testimonials
           </motion.h2>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -50,66 +69,73 @@ const Testimonials = () => {
             transition={{ delay: 0.1 }}
             className="text-[#011659]/60 max-w-xl mx-auto"
           >
-            Experience authentic flavors through the stories of our wonderful diners.
+            Choose your favorite restaurant and enjoy delicious meals delivered fresh.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-          {testimonials.map((item, index) => {
-            return (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="flex flex-col relative rounded-[2rem] p-8 md:p-10 bg-[#faf7f2] border border-[#d4b78f]/30 shadow-lg hover:shadow-[0_20px_50px_rgba(212,183,143,0.15)] transition-all duration-300 h-full group"
-              >
-                {/* Decorative Quote Icon */}
-                <div className="absolute top-8 right-8 text-[#d4b78f]/20 group-hover:text-[#d4b78f]/30 transition-colors">
-                  <Quote size={48} fill="currentColor" />
-                </div>
+        {/* Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
+        >
+          {restaurants.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              className="flex flex-col relative rounded-[2rem] p-8 md:p-10 bg-[#faf7f2] border border-[#d4b78f]/30 shadow-lg hover:shadow-[0_20px_50px_rgba(212,183,143,0.15)] transition-all duration-300 h-full group"
+            >
+              {/* Icon */}
+              <div className="absolute top-8 right-8 text-[#d4b78f]/20 group-hover:text-[#d4b78f]/30 transition-colors">
+                <Utensils size={40} />
+              </div>
 
-                <div className="flex flex-col h-full space-y-6 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <Image
-                        src={item.img}
-                        alt={item.name}
-                        width={60}
-                        height={60}
-                        className="rounded-full object-cover border-2 border-[#d4b78f] shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-serif text-xl text-[#011659] leading-tight">
-                        {item.name}
-                      </h4>
-                      <p className="text-[10px] text-amber-600 uppercase tracking-[0.2em] font-bold mt-1">
-                        Verified Member
-                      </p>
-                    </div>
+              <div className="flex flex-col h-full space-y-6 relative z-10">
+
+                {/* Image + Name */}
+                <div className="flex items-center gap-4">
+                  <div className="relative w-[60px] h-[60px]">
+                    <Image
+                      src={item.img}
+                      alt={item.name}
+                      fill
+                      className="rounded-full object-cover border-2 border-[#d4b78f] shadow-sm group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
 
-                  <div className="space-y-4">
-                    {/* Star Rating */}
-                    <div className="flex gap-1 text-amber-500">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} fill="currentColor" />
-                      ))}
-                    </div>
+                  <div>
+                    <h4 className="font-serif text-xl text-[#011659] leading-tight">
+                      {item.name}
+                    </h4>
 
-                    <p className="font-sans text-[#011659]/80 text-base leading-relaxed line-clamp-6 italic">
-                      &ldquo;{item.text}&rdquo;
+                    <p className="text-[10px] text-green-600 uppercase tracking-[0.2em] font-bold mt-1">
+                      Available to Order
                     </p>
                   </div>
-
-                 
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
+
+                {/* Rating */}
+                <div className="flex items-center gap-2 text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} fill="currentColor" />
+                  ))}
+                  <span className="text-xs text-gray-500 ml-2">
+                    {item.rating}
+                  </span>
+                </div>
+
+                {/* Description */}
+                <p className="text-[#011659]/80 text-base leading-relaxed line-clamp-5 italic">
+                  {item.text}
+                </p>
+
+               
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

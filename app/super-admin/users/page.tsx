@@ -84,8 +84,8 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-[#513012]">Restaurant Admins</h1>
           <p className="text-gray-600 mt-1">Manage all restaurant administrators</p>

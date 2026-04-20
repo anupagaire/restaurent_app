@@ -73,8 +73,8 @@ export default function GlobalSettingsPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
-      <div>
+<div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
+        <div>
         <h2 className="text-3xl font-bold text-[#513012] cinzel">Global Settings</h2>
         <p className="text-gray-600 mt-1">Manage your restaurant profile and branding</p>
       </div>

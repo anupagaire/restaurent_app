@@ -1,82 +1,99 @@
-'use client'; 
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-
-
+import { useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    
-    <nav className=" border-b border-white/10 sticky top-0 z-50 backdrop-blur-lg">
-      <div className="max-w-screen-2xl mx-auto px-6 py-5">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
+        
         <div className="flex items-center justify-between">
-          
-          <Link href="/" className="flex items-center gap-3">
-           
-            <div>
-              <h1 
-                className="text-3xl font-bold tracking-tighter" 
-                style={{ fontFamily: 'Playfair Display, serif' }}
-              >
-                LOGO
-              </h1>
-            </div>
+
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              LOGO
+            </h1>
           </Link>
 
-          <div className="hidden md:flex items-center gap-10 text-lg font-bold">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
-                        <Link href="/restaurants" className="hover:text-amber-400 transition-colors">Restaurants</Link>
-            <Link href="/contact" className="hover:text-amber-400 transition-colors">Contact</Link>
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-10 text-lg font-medium text-white">
+            <Link href="/" className="hover:text-[#5D0565] transition">
+              Home
+            </Link>
+            <Link href="/restaurants" className="hover:text-[#5D0565] transition">
+              Restaurants
+            </Link>
+            <Link href="/contact" className="hover:text-[#5D0565] transition">
+              Contact
+            </Link>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Right Side */}
+          <div className="flex items-center gap-3">
+
+            {/* CTA */}
             <Link
               href="/restaurants"
-              className="bg-[#513012] hover:bg-amber-600 text-white px-6 py-3 rounded-3xl font-semibold flex items-center gap-2 shadow-lg transition-colors"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white font-medium 
+              bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565]
+              hover:opacity-90 transition"
             >
-              <i className="fa-solid fa-utensils"></i>
-              Explore Restaurants
+              Explore
             </Link>
-            <button 
-              onClick={() => setIsOpen(!isOpen)} 
-              className="md:hidden text-3xl text-white"
+
+            {/* Mobile Toggle */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden text-2xl text-white"
             >
-              {isOpen ? '✕' : '☰'}
+              {isOpen ? "✕" : "☰"}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden mt-6 pt-6 border-t border-white/10">
-            <div className="flex flex-col gap-6 text-lg">
-              <Link 
-                href="/" 
-                onClick={() => setIsOpen(false)}
-                className="hover:text-amber-400"
-              >
-                Home
-              </Link>
-              <Link 
-                href="/menu" 
-                onClick={() => setIsOpen(false)}
-                className="hover:text-amber-400"
-              >
-                Menu
-              </Link>
-              <Link 
-                href="/order" 
-                onClick={() => setIsOpen(false)}
-                className="hover:text-amber-400"
-              >
-                Order Online
-              </Link>
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden mt-6 p-6 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/10"
+            >
+              <div className="flex flex-col gap-6 text-lg text-white">
+
+                <Link href="/" onClick={() => setIsOpen(false)} className="hover:text-[#5D0565]">
+                  Home
+                </Link>
+
+                <Link href="/restaurants" onClick={() => setIsOpen(false)} className="hover:text-[#5D0565]">
+                  Restaurants
+                </Link>
+
+                <Link href="/contact" onClick={() => setIsOpen(false)} className="hover:text-[#5D0565]">
+                  Contact
+                </Link>
+
+                <Link
+                  href="/restaurants"
+                  onClick={() => setIsOpen(false)}
+                  className="text-center mt-4 px-5 py-3 rounded-full text-white font-medium 
+                  bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565]"
+                >
+                  Explore Restaurants
+                </Link>
+
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
     </nav>
   );

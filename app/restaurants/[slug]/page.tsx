@@ -1,108 +1,146 @@
-
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { restaurants } from '@/data/mockData';
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import { Phone } from 'lucide-react';
+import MenuSection from '@/components/menu/MenuSection';
 
 interface PageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function RestaurantPage({ params }: PageProps) {
-  const { slug } = await params; 
-
-  const restaurant = restaurants.find(
-    (r) => r.slug === slug
-  );
-
-  if (!restaurant) {
-    return notFound();
-  }
+  const { slug } = await params;
+  const restaurant = restaurants.find((r) => r.slug === slug);
+  if (!restaurant) return notFound();
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div style={{ background: '#faf8f5', minHeight: '100vh' }}>
       <Navbar />
+<div
+  style={{
+    display: "flex",
+    flexDirection: "row",
+    height: 440,
+    overflow: "hidden",
+    borderRadius: 16,
+  }}
+>
+  {/* LEFT IMAGE */}
+  <div style={{ position: "relative", width: "50%", height: "100%" }}>
+    <Image
+      src={restaurant.image}
+      alt={restaurant.name}
+      fill
+      priority
+      style={{ objectFit: "cover" }}
+    />
+  </div>
 
-      {/* HERO */}
-      <div className="relative h-[300px]">
-        <Image
-          src={restaurant.image}
-          alt={restaurant.name}
-          fill
-          className="object-cover"
-        />
+  {/* RIGHT CONTENT */}
+  <div
+    style={{
+      width: "50%",
+      padding: "40px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      background: "linear-gradient(135deg, #513012, #47034E, #5D0565)",
+      color: "white",
+    }}
+  >
+    <h1
+      style={{
+        fontFamily: 'Georgia,"Times New Roman",serif',
+        fontSize: "clamp(2rem,3vw,3rem)",
+        fontWeight: 700,
+        marginBottom: 10,
+        lineHeight: 1.1,
+      }}
+    >
+      {restaurant.name}
+    </h1>
 
-        <div className="absolute inset-0 bg-black/50 flex items-end">
-          <div className="p-6 text-white">
-            <h1 className="text-4xl font-bold">
-              {restaurant.name}
-            </h1>
-            <p className="text-sm opacity-90">
-              {restaurant.tagline}
-            </p>
-          </div>
-        </div>
+    <p
+      style={{
+        fontSize: 15,
+        color: "rgba(255,255,255,0.8)",
+        marginBottom: 20,
+      }}
+    >
+      {restaurant.tagline}
+    </p>
+
+    {/* INFO BOXES */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      
+      {/* Rating */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          background: "rgba(255,255,255,0.15)",
+          border: "1px solid rgba(255,255,255,0.25)",
+          borderRadius: 24,
+          padding: "8px 14px",
+          fontSize: 13,
+          fontWeight: 600,
+        }}
+      >
+        ⭐ {restaurant.rating} · {restaurant.reviewCount} reviews
+      </span>
+
+      {/* Hours */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          background: "rgba(255,255,255,0.15)",
+          border: "1px solid rgba(255,255,255,0.25)",
+          borderRadius: 24,
+          padding: "8px 14px",
+          fontSize: 13,
+        }}
+      >
+        🕒 {restaurant.openingHours}
+      </span>
+
+      {/* Address (optional extra) */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          fontSize: 13,
+          opacity: 0.9,
+        }}
+      >
+        📍 {restaurant.address}
+      </span>
+ <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          fontSize: 13,
+          opacity: 0.9,
+        }}
+      >            <Phone style={{ width: 14, height: 14, color: '#5D0565' }} /> {restaurant.phone}
+          </span>
+    </div>
+  </div>
+</div>
+
+   
+
+      {/* MENU — client component handles tabs + filter */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px' }}>
+        <MenuSection menuItems={restaurant.menuItems} />
       </div>
 
-      {/* INFO */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex flex-wrap gap-6 text-sm text-gray-600 mb-6">
-          <span>📍 {restaurant.address}</span>
-          <span>📞 {restaurant.phone}</span>
-          <span>⭐ {restaurant.rating} ({restaurant.reviewCount})</span>
-          <span>🕒 {restaurant.openingHours}</span>
-        </div>
-
-        {/* MENU */}
-        <h2 className="text-3xl font-bold text-[#513012] mb-6">
-          Menu
-        </h2>
-
-        {restaurant.menuItems.length === 0 ? (
-          <p className="text-gray-500">No menu available yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {restaurant.menuItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl shadow-sm overflow-hidden flex"
-              >
-                <div className="relative w-32 h-32">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <div className="p-4 flex flex-col justify-between flex-1">
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {item.description}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="font-bold text-[#513012]">
-                      Rs. {item.price}
-                    </span>
-                    <span className="text-xs px-2 py-1 rounded-full bg-gray-100">
-                      {item.isVeg ? 'Veg' : 'Non-Veg'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
       <Footer />
     </div>
   );
