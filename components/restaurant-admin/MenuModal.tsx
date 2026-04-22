@@ -14,14 +14,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Select,
-  SelectContent,
+  Select,SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, Plus, X } from 'lucide-react';
 
 interface MenuItem {
   id?: number;
@@ -39,32 +38,35 @@ interface MenuModalProps {
   onClose: () => void;
   editingItem: MenuItem | null;
   onSubmit: (data: Omit<MenuItem, 'id'>) => void;
+  // Pass categories from parent so they're shared per restaurant
+  categories: string[];
+  onAddCategory: (category: string) => void;
+  onDeleteCategory: (category: string) => void;
 }
-
-const categoryOptions = [
-  'Appetizers',
-  'Main Course',
-  'Rice & Biryani',
-  'Breads',
-  'Beverages',
-  'Desserts',
-];
 
 export default function MenuModal({
   isOpen,
   onClose,
   editingItem,
   onSubmit,
+  categories,
+  onAddCategory,
+  onDeleteCategory,
 }: MenuModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: 0,
-    category: 'Main Course',
+    category: '',
     image: '',
     isAvailable: true,
     isVeg: false,
   });
+
+  // New category input state
+  const [newCategory, setNewCategory] = useState('');
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [categoryError, setCategoryError] = useState('');
 
   // Prefill form when editing
   useEffect(() => {
@@ -79,18 +81,52 @@ export default function MenuModal({
         isVeg: editingItem.isVeg,
       });
     } else {
-      // Reset form for new item
       setFormData({
         name: '',
         description: '',
         price: 0,
-        category: 'Main Course',
+        category: categories[0] || '',
         image: '',
         isAvailable: true,
         isVeg: false,
       });
     }
-  }, [editingItem]);
+    // Reset category input on open/close
+    setNewCategory('');
+    setShowAddCategory(false);
+    setCategoryError('');
+  }, [editingItem, isOpen]);
+
+  const handleAddCategory = () => {
+    const trimmed = newCategory.trim();
+
+    if (!trimmed) {
+      setCategoryError('Category name cannot be empty.');
+      return;
+    }
+
+    if (categories.map((c) => c.toLowerCase()).includes(trimmed.toLowerCase())) {
+      setCategoryError('This category already exists.');
+      return;
+    }
+
+    onAddCategory(trimmed);
+    setFormData((prev) => ({ ...prev, category: trimmed })); // auto-select new category
+    setNewCategory('');
+    setShowAddCategory(false);
+    setCategoryError('');
+  };
+
+  const handleDeleteCategory = (cat: string) => {
+    // If the deleted category is currently selected, reset selection
+    if (formData.category === cat) {
+      setFormData((prev) => ({
+        ...prev,
+        category: categories.filter((c) => c !== cat)[0] || '',
+      }));
+    }
+    onDeleteCategory(cat);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +146,7 @@ export default function MenuModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className=" max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[#513012]">
             {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
@@ -129,9 +165,7 @@ export default function MenuModal({
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g. Butter Chicken"
               required
             />
@@ -143,9 +177,7 @@ export default function MenuModal({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Short description of the dish"
               rows={3}
               required
@@ -160,36 +192,78 @@ export default function MenuModal({
                 id="price"
                 type="number"
                 value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: Number(e.target.value) })
-                }
+                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
                 placeholder="420"
                 required
               />
             </div>
 
-            {/* Category */}
+            {/* Category Dropdown */}
             <div className="space-y-2">
-              <Label>Category</Label>
+              <div className="flex items-center justify-between">
+                <Label>Category</Label>
+                <button
+                  type="button"
+                  onClick={() => setShowAddCategory((prev) => !prev)}
+                  className="text-xs text-[#513012] underline hover:opacity-80 flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" />
+                  {showAddCategory ? 'Cancel' : 'Add Category'}
+                </button>
+              </div>
+
               <Select
                 value={formData.category}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, category: value })
-                }
+                onValueChange={(value) => setFormData({ ...formData, category: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categoryOptions.map((cat) => (
+                  {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {cat}
+                      <div className="flex items-center justify-between w-full gap-6">
+                        <span>{cat}</span>                        
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
+
+          {/* Add New Category Input — shown inline when toggled */}
+          {showAddCategory && (
+            <div className="space-y-2 p-4 bg-gray-50 rounded-xl border border-dashed border-[#513012]/30">
+              <Label>New Category Name</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={newCategory}
+                  onChange={(e) => {
+                    setNewCategory(e.target.value);
+                    setCategoryError('');
+                  }}
+                  placeholder="e.g. Starters, Soups..."
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddCategory();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddCategory}
+                  className="bg-[#513012] hover:bg-[#513012]/90 text-white shrink-0"
+                >
+                  Add
+                </Button>
+              </div>
+              {categoryError && (
+                <p className="text-xs text-red-500">{categoryError}</p>
+              )}
+            </div>
+          )}
 
           {/* Image URL */}
           <div className="space-y-2">
@@ -198,13 +272,11 @@ export default function MenuModal({
               <Input
                 id="image"
                 value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 placeholder="https://images.unsplash.com/..."
                 className="flex-1"
               />
-              <div className="w-12 h-12 border rounded-md flex items-center justify-center bg-gray-50">
+              <div className="w-12 h-12 border rounded-md flex items-center justify-center bg-gray-50 shrink-0">
                 {formData.image ? (
                   <img
                     src={formData.image}

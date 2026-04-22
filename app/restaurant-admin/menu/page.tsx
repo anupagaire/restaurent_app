@@ -26,6 +26,16 @@ interface MenuItem {
   isVeg: boolean;
 }
 
+// ✅ Default categories — each restaurant starts with these
+const DEFAULT_CATEGORIES = [
+  'Appetizers',
+  'Main Course',
+  'Rice & Biryani',
+  'Breads',
+  'Beverages',
+  'Desserts',
+];
+
 const initialMenuItems: MenuItem[] = [
   {
     id: 1,
@@ -79,17 +89,37 @@ const initialMenuItems: MenuItem[] = [
   },
 ];
 
-const categories = ['All', 'Appetizers', 'Main Course', 'Rice & Biryani', 'Breads', 'Beverages', 'Desserts'];
-
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const filteredItems = selectedCategory === 'All'
-    ? menuItems
-    : menuItems.filter((item) => item.category === selectedCategory);
+  // ✅ Categories are owned here — per restaurant, per page instance
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
+
+  // ✅ Add a new category
+  const handleAddCategory = (newCat: string) => {
+    setCategories((prev) => [...prev, newCat]);
+  };
+
+  // ✅ Delete a category
+  const handleDeleteCategory = (catToDelete: string) => {
+    setCategories((prev) => prev.filter((c) => c !== catToDelete));
+
+    // If the filter tab was on the deleted category, reset to All
+    if (selectedCategory === catToDelete) {
+      setSelectedCategory('All');
+    }
+  };
+
+  // Filter tabs = All + current categories
+  const filterTabs = ['All', ...categories];
+
+  const filteredItems =
+    selectedCategory === 'All'
+      ? menuItems
+      : menuItems.filter((item) => item.category === selectedCategory);
 
   const handleAddNew = () => {
     setEditingItem(null);
@@ -109,14 +139,12 @@ export default function MenuPage() {
 
   const handleSubmitMenuItem = (newOrUpdatedItem: any) => {
     if (editingItem) {
-      // Update
       setMenuItems((prev) =>
         prev.map((item) =>
           item.id === editingItem.id ? { ...item, ...newOrUpdatedItem } : item
         )
       );
     } else {
-      // Add new
       const newItem: MenuItem = {
         id: Date.now(),
         ...newOrUpdatedItem,
@@ -131,8 +159,8 @@ export default function MenuPage() {
   };
 
   return (
-<div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
-        {/* Header */}
+    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-[#513012] cinzel">Menu Management</h2>
@@ -147,9 +175,9 @@ export default function MenuPage() {
         </Button>
       </div>
 
-      {/* Category Filter */}
+      {/* ✅ Category Filter Tabs — updates dynamically as categories are added/removed */}
       <div className="flex gap-2 flex-wrap">
-        {categories.map((category) => (
+        {filterTabs.map((category) => (
           <Button
             key={category}
             variant={selectedCategory === category ? 'default' : 'outline'}
@@ -229,16 +257,12 @@ export default function MenuPage() {
                           : 'border-red-600 text-red-700'
                       }
                     >
-                      {item.isVeg ? ' Veg' : ' Non-Veg'}
+                      {item.isVeg ? '🟢 Veg' : '🔴 Non-Veg'}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(item)}
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button
@@ -267,6 +291,9 @@ export default function MenuPage() {
         }}
         editingItem={editingItem}
         onSubmit={handleSubmitMenuItem}
+        categories={categories}
+        onAddCategory={handleAddCategory}
+        onDeleteCategory={handleDeleteCategory}
       />
     </div>
   );

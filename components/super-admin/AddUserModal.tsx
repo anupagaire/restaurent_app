@@ -12,16 +12,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { RestaurantAdmin } from '@/app/super-admin/users/page';  
 
-import { RestaurantAdmin } from '@/app/super-admin/users/page';   // ← Import shared interface
+interface Restaurant {
+  id: number;
+  name: string;
+}
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (newUser: Omit<RestaurantAdmin, 'id' | 'createdAt'>) => void;
+  restaurants: Restaurant[];   
+  users: RestaurantAdmin[];   
 }
 
-export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
+export default function AddUserModal({
+  isOpen,
+  onClose,
+  onAdd,
+  restaurants,
+  users,
+}: AddUserModalProps) {
+
+
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -32,20 +47,29 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.restaurantName) return;
+
+    // ❌ prevent duplicate admin
+    const exists = users.find(
+      (u) => u.restaurantName === formData.restaurantName
+    );
+
+    if (exists) {
+      alert("❌ This restaurant already has an admin!");
+      return;
+    }
 
     onAdd(formData);
-    setFormData({ 
-      fullName: '', 
-      email: '', 
-      phone: '', 
-      restaurantName: '', 
-      role: 'Restaurant Admin' 
+
+    setFormData({
+      fullName: '',
+      email: '',
+      phone: '',
+      restaurantName: '',
+      role: 'Restaurant Admin',
     });
     onClose();
   };
-
-  return (
+ return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -54,8 +78,7 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
             Create a new administrator for a restaurant.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+     <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name *</Label>
             <Input
@@ -91,18 +114,41 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="restaurantName">Restaurant Name *</Label>
-              <Input
-                id="restaurantName"
+              <Label>Restaurant *</Label>
+
+              {/* ✅ DROPDOWN */}
+              <select
                 required
                 value={formData.restaurantName}
-                onChange={(e) => setFormData({ ...formData, restaurantName: e.target.value })}
-                placeholder="e.g. The Royal Spice"
-              />
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    restaurantName: e.target.value,
+                  })
+                }
+                className="w-full border p-3 rounded-xl"
+              >
+                <option value="">Select Restaurant</option>
+
+                {restaurants.map((r) => {
+                  const isAssigned = users.some(
+                    (u) => u.restaurantName === r.name
+                  );
+
+                  return (
+                    <option
+                      key={r.id}
+                      value={r.name}
+                      disabled={isAssigned}
+                    >
+                      {r.name} {isAssigned ? "(Already Assigned)" : ""}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </div>
-
-          <DialogFooter className="pt-4">
+           <DialogFooter className="pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
@@ -115,3 +161,10 @@ export default function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalPro
     </Dialog>
   );
 }
+
+  
+
+
+
+
+        

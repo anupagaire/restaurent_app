@@ -8,7 +8,7 @@ import { restaurants } from '@/data/mockData';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
 
 export default function RestaurantsPage() {
   const [search, setSearch] = useState('');
@@ -34,8 +34,7 @@ export default function RestaurantsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
 
-        {/* Heading */}
-        <h1 className="text-5xl font-bold text-[#513012] text-center mb-4">
+<h1 className="text-3xl sm:text-5xl font-bold text-[#513012] text-center mb-4">
           All Restaurants
         </h1>
 
@@ -63,15 +62,14 @@ export default function RestaurantsPage() {
             No restaurants found.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-8">
             {currentRestaurants.map((restaurant) => (
               <Link
                 key={restaurant.id}
                 href={`/restaurants/${restaurant.slug}`}
                 className="group bg-white rounded-3xl overflow-hidden hover:shadow-2xl transition-all"
               >
-                {/* Image */}
-                <div className="relative h-56">
+<div className="relative h-40 ">
                   <Image
                     src={restaurant.image}
                     alt={restaurant.name}
@@ -81,8 +79,8 @@ export default function RestaurantsPage() {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-[#513012]">
+                <div className="p-3 ">
+  <h3 className="text-base  font-bold text-[#513012]">
                     {restaurant.name}
                   </h3>
 
@@ -105,7 +103,6 @@ export default function RestaurantsPage() {
         {/* 📄 Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center mt-12 gap-2 flex-wrap">
-            {/* Prev */}
             <button
               onClick={() => setCurrentPage((p) => p - 1)}
               disabled={currentPage === 1}

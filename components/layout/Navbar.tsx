@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -9,15 +10,18 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
-        
-        <div className="flex items-center justify-between">
-
-          {/* Logo */}
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center">
+  
+  <div className="flex items-center justify-between w-full">
           <Link href="/" className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              LOGO
-            </h1>
+           <div className="relative h-26 w-45">
+  <Image
+    src="/logo.png"
+    alt="Logo"
+    fill
+    className="object-contain"
+  />
+</div>
           </Link>
 
           {/* Desktop Menu */}

@@ -82,7 +82,11 @@ export default function UsersPage() {
     setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
     alert('Restaurant Admin updated successfully!');
   };
-
+const [restaurants] = useState([
+  { id: 1, name: "The Royal Spice" },
+  { id: 2, name: "Himalayan Flavors" },
+  { id: 3, name: "Momo Kingdom" },
+]);
   return (
 <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -161,18 +165,24 @@ export default function UsersPage() {
         </CardContent>
       </Card>
 
-      <AddUserModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAdd={handleAddUser}
-      />
+     
 
-      <EditUserModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        user={selectedUser}
-        onSave={handleSaveEdit}
-      />
+      <AddUserModal
+  isOpen={isAddModalOpen}
+  onClose={() => setIsAddModalOpen(false)}
+  onAdd={handleAddUser}
+  restaurants={restaurants}  
+  users={users}               
+/>
+
+  <EditUserModal
+  isOpen={isEditModalOpen}
+  onClose={() => setIsEditModalOpen(false)}
+  user={selectedUser}
+  onSave={handleSaveEdit}
+  restaurants={restaurants}  
+  users={users}              
+/>
     </div>
   );
 }
