@@ -14,7 +14,7 @@ import {
 
 const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
-  { title: 'Restaurants', href: '/super-admin/restaurants', icon: Store },
+  // { title: 'Restaurants', href: '/super-admin/restaurants', icon: Store },
   { title: 'Users ', href: '/super-admin/users', icon: Users },
 ];
 

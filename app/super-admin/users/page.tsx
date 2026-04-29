@@ -1,188 +1,242 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
-  Table,TableBody,TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell,
+  TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2, RefreshCw, Pencil } from 'lucide-react';
 import AddUserModal from '@/components/super-admin/AddUserModal';
 import EditUserModal from '@/components/super-admin/EditUserModal';
+import { apiFetch } from '@/lib/api';
 
 export interface RestaurantAdmin {
   id: number;
-  fullName: string;
   email: string;
+  fullName: string;
   phone: string;
-  restaurantName: string;
   role: string;
-  createdAt: string;
+  restaurantName: string;
+  restaurantId?: number;
+  // Extra fields if you want to show more in future
+  address?: string;
+  city?: string;
+}
+
+interface Restaurant {
+  id: number;
+  name: string;
 }
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<RestaurantAdmin[]>([
-    {
-      id: 1,
-      fullName: "Rajesh Sharma",
-      email: "rajesh@royalspice.com",
-      phone: "+977 9841234567",
-      restaurantName: "The Royal Spice",
-      role: "Restaurant Admin",
-      createdAt: "2025-01-20",
-    },
-    {
-      id: 2,
-      fullName: "Sita Gurung",
-      email: "sita@himalayan.com",
-      phone: "+977 9812345678",
-      restaurantName: "Himalayan Flavors",
-      role: "Restaurant Admin",
-      createdAt: "2025-02-25",
-    },
-  ]);
-
+  const [users, setUsers] = useState<RestaurantAdmin[]>([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<RestaurantAdmin | null>(null);
+  const [editingUser, setEditingUser] = useState<RestaurantAdmin | null>(null);
 
-  const filteredUsers = users.filter((user) =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const [restaurantsRes] = await Promise.all([
+        apiFetch('/api/v1/restaurant/'),
+      ]);
 
-  const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this restaurant admin?')) {
-      setUsers(users.filter((u) => u.id !== id));
+      const restaurantsData = await restaurantsRes.json();
+      const rawRestaurants = Array.isArray(restaurantsData)
+        ? restaurantsData
+        : restaurantsData.results ?? [];
+
+      setRestaurants(rawRestaurants.map((r: any) => ({ id: r.id, name: r.name })));
+
+      const allUsers: RestaurantAdmin[] = [];
+      rawRestaurants.forEach((r: any) => {
+        if (r.users && Array.isArray(r.users)) {
+          r.users.forEach((u: any) => {
+            allUsers.push({
+              id: u.id,
+              email: u.email,
+              fullName: `${u.first_name || ''} ${u.last_name || ''}`.trim() || '-',
+              phone: u.contact_no || '-',
+              role: u.role || 'admin',
+              restaurantId: r.id,
+              restaurantName: r.name,
+              // Extra fields for better display (if available in API)
+              address: r.address || '',
+              city: r.city || '',
+            });
+          });
+        }
+      });
+
+      setUsers(allUsers);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleAddUser = (newUser: Omit<RestaurantAdmin, 'id' | 'createdAt'>) => {
-    const user: RestaurantAdmin = {
-      id: Date.now(),
-      ...newUser,
-      createdAt: new Date().toISOString().split('T')[0],
-    };
-    setUsers([user, ...users]);
-    alert('Restaurant Admin added successfully!');
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleSave = () => {
+    fetchUsers();        // Refresh after edit
   };
 
-  const handleEditClick = (user: RestaurantAdmin) => {
-    setSelectedUser(user);
-    setIsEditModalOpen(true);
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this admin?')) return;
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${id}/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== id));
+      } else {
+        alert('Failed to delete');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error while deleting');
+    }
   };
 
-  const handleSaveEdit = (updatedUser: RestaurantAdmin) => {
-    setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
-    alert('Restaurant Admin updated successfully!');
-  };
-const [restaurants] = useState([
-  { id: 1, name: "The Royal Spice" },
-  { id: 2, name: "Himalayan Flavors" },
-  { id: 3, name: "Momo Kingdom" },
-]);
+  const filteredUsers = users.filter((u) =>
+    u.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-<div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 sm:space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-[#513012]">Restaurant Admins</h1>
           <p className="text-gray-600 mt-1">Manage all restaurant administrators</p>
         </div>
-
-        <Button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-[#513012] hover:bg-[#3f260f] text-white"
-        >
-          <Plus className="mr-2 h-6 w-6" />
-          Add New Admin
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={fetchUsers} variant="outline" disabled={loading}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-[#513012] hover:bg-[#3f260f]"
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            Add New Admin
+          </Button>
+        </div>
       </div>
 
-      <Card className="border-[#513012]/10">
+      <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#513012]/60 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
               <Input
                 placeholder="Search by name, email or restaurant..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-[#513012]/20 focus:border-[#47034E]"
+                className="pl-10"
               />
             </div>
             <div className="text-lg">
-              Total Admins: <span className="font-semibold text-[#513012]">{users.length}</span>
+              Total: <span className="font-semibold text-[#513012]">{users.length}</span>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-[#513012]/10">
-                <TableHead className="text-[#513012]">Full Name</TableHead>
-                <TableHead className="text-[#513012]">Email</TableHead>
-                <TableHead className="text-[#513012]">Phone</TableHead>
-                <TableHead className="text-[#513012]">Restaurant</TableHead>
-                <TableHead className="text-right text-[#513012]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id} className="border-[#513012]/10 hover:bg-[#513012]/5">
-                  <TableCell className="font-bold">{user.fullName}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell className="text-sm">{user.restaurantName}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleEditClick(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="destructive" 
-                        size="sm" 
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {loading ? (
+            <p className="text-center py-12 text-gray-500">Loading admins...</p>
+          ) : filteredUsers.length === 0 ? (
+            <p className="text-center text-gray-400 py-12">No admins found.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Admin Details</TableHead>
+                  <TableHead>Restaurant Details</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    {/* Admin Details Column */}
+                    <TableCell>
+                      <div className="font-medium">{user.fullName}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-sm text-gray-500">{user.phone}</div>
+                    </TableCell>
+
+                    {/* Restaurant Details Column - More Informative */}
+                    <TableCell>
+                      <div className="font-medium text-[#513012]">{user.restaurantName}</div>
+                      {user.address && (
+                        <div className="text-sm text-gray-600 mt-1">{user.address}</div>
+                      )}
+                      {user.city && (
+                        <div className="text-xs text-gray-500">{user.city}</div>
+                      )}
+                    </TableCell>
+
+                    <TableCell>
+                      <span className="bg-[#513012]/10 text-[#513012] px-3 py-1 rounded-full text-xs font-medium">
+                        {user.role}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingUser(user)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
-     
-
       <AddUserModal
-  isOpen={isAddModalOpen}
-  onClose={() => setIsAddModalOpen(false)}
-  onAdd={handleAddUser}
-  restaurants={restaurants}  
-  users={users}               
-/>
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={(newUser) => setUsers(prev => [newUser, ...prev])}
+      />
 
-  <EditUserModal
-  isOpen={isEditModalOpen}
-  onClose={() => setIsEditModalOpen(false)}
-  user={selectedUser}
-  onSave={handleSaveEdit}
-  restaurants={restaurants}  
-  users={users}              
-/>
+      <EditUserModal
+        isOpen={!!editingUser}
+        onClose={() => setEditingUser(null)}
+        user={editingUser}
+        onSave={handleSave}
+        restaurants={restaurants}
+        users={users}
+      />
     </div>
   );
 }
