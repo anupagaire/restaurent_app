@@ -37,10 +37,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right Side */}
           <div className="flex items-center gap-3">
-
-            {/* CTA */}
             <Link
               href="/restaurants"
               className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white font-medium 
@@ -59,8 +56,6 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -79,7 +74,6 @@ export default function Navbar() {
                 <Link href="/restaurants" onClick={() => setIsOpen(false)} className="hover:text-[#5D0565]">
                   Restaurants
                 </Link>
-
                 <Link href="/contact" onClick={() => setIsOpen(false)} className="hover:text-[#5D0565]">
                   Contact
                 </Link>

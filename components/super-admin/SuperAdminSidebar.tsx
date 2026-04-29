@@ -6,16 +6,13 @@ import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
-  Store, 
-  Settings, 
   LogOut,
   X 
 } from 'lucide-react';
 
 const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
-  // { title: 'Restaurants', href: '/super-admin/restaurants', icon: Store },
-  { title: 'Users ', href: '/super-admin/users', icon: Users },
+  { title: 'Users', href: '/super-admin/users', icon: Users },
 ];
 
 interface SuperAdminSidebarProps {
@@ -27,22 +24,19 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
   const pathname = usePathname();
   const router = useRouter();
 
-  // Simple Frontend Logout (No API needed)
   const handleLogout = () => {
-    // Clear any authentication data stored in browser
-    localStorage.removeItem('superadmin-token');     // if you're using localStorage
-    sessionStorage.removeItem('superadmin-token');   // if you're using sessionStorage
+  // Clear everything
+  localStorage.clear();
+  sessionStorage.clear();
 
-    // Optional: Clear all auth-related items
-    // localStorage.clear();   // Use only if you want to clear everything
+  // Clear cookies
+  document.cookie = "access_token=; path=/; max-age=0";
+  document.cookie = "refresh_token=; path=/; max-age=0";
+  document.cookie = "role=; path=/; max-age=0";
 
-    // Redirect to login page
-    router.push('/superadmin-login');
-    
-    // Optional: Force a full page reload to clear any cached state
-    // router.refresh();
-  };
-
+  // Redirect to login
+  window.location.href = "/login";   // Use window.location for clean redirect
+};
   return (
     <>
       {/* Mobile Backdrop */}
@@ -63,10 +57,11 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
         <div className="p-6 border-b border-[#513012]/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-xl">F</span>
             </div>
             <div>
               <h1 className="font-bold text-2xl tracking-tight text-[#513012]">Food</h1>
-              <p className="text-xs text-gray-500 -mt-1">Super Admin</p>
+              <p className="text-xs text-gray-500 -mt-1">Super Admin Panel</p>
             </div>
           </div>
 
@@ -104,10 +99,11 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
           </ul>
         </nav>
 
+        {/* Logout Button */}
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3.5 w-full text-[#47034E] hover:bg-[#47034E]/5 rounded-xl text-sm font-medium transition-colors"
+            className="flex items-center gap-3 px-4 py-3.5 w-full text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition-colors"
           >
             <LogOut className="w-5 h-5" />
             Logout

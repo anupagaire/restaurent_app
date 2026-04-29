@@ -9,12 +9,11 @@ import {
   Settings, 
   LogOut, 
   X,
-  Menu,
+  Menu as MenuIcon,
   QrCode
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-// Define the type for menu items
 interface MenuItem {
   title: string;
   href: string;
@@ -27,7 +26,7 @@ const menuItems: MenuItem[] = [
     title: 'Dashboard', 
     href: '/restaurant-admin', 
     icon: LayoutDashboard,
-    permissionKey: null                  // Dashboard is always visible
+    permissionKey: null 
   },
   { 
     title: 'Orders', 
@@ -44,11 +43,11 @@ const menuItems: MenuItem[] = [
   { 
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
-    icon: Menu,
+    icon: MenuIcon,
     permissionKey: 'menuSettings'
   },
   { 
-    title: 'QR Codes',           // ← New QR Menu Item
+    title: 'QR Codes', 
     href: '/restaurant-admin/menu/qr', 
     icon: QrCode,
     permissionKey: 'menuSettings'
@@ -68,22 +67,27 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
 
-  // Filter logic with fallback for Owner/Admin
+  // Filter menu items based on role and permissions
   const visibleMenuItems = menuItems.filter((item) => {
-    if (item.permissionKey === null) return true;           // Dashboard always visible
-    
+    if (item.permissionKey === null) return true; // Dashboard always visible
+
     if (!currentUser) return false;
 
-    // If user is Owner or Admin → show everything
+    // Owner or Admin can see everything
     if (currentUser.role === 'Owner' || currentUser.role === 'Admin') {
       return true;
     }
 
-    // Normal staff → check specific permission
+    // For normal staff - check specific permission
     return currentUser.permissions?.[item.permissionKey] === true;
   });
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';   // Clean redirect
+  };
 
   return (
     <>
@@ -104,6 +108,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         
         <div className="p-6 border-b border-[#513012]/10 flex items-center justify-between">
           <Link href="/restaurant-admin" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">R</span>
+            </div>
             <div>
               <h1 className="font-bold text-2xl tracking-tight text-[#513012]">ABC</h1>
               <p className="text-xs text-gray-500 -mt-1">
@@ -145,19 +152,17 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               })
             ) : (
               <li className="px-4 py-8 text-center text-gray-400 text-sm">
-                No menu items available
+                No accessible menu items
               </li>
             )}
           </ul>
         </nav>
 
+        {/* Logout Section */}
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
           <button 
-            onClick={() => {
-              console.log('Logging out...');
-              window.location.href = '/login';
-            }}
-            className="flex items-center gap-3 px-4 py-3.5 w-full text-[#47034E] hover:bg-[#47034E]/5 rounded-xl text-sm font-medium transition-colors"
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3.5 w-full text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition-colors"
           >
             <LogOut className="w-5 h-5" />
             Logout

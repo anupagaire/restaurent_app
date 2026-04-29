@@ -11,6 +11,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'api.dicebear.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'restaurant.devrajsah.com.np',
+        pathname: '/**',
+      },
     ],
   },
 };

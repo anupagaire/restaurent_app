@@ -1,373 +1,277 @@
 'use client';
 
-/**
- 
- * Dependencies to install:
- *   npm install qrcode jspdf html2canvas
- *   npm install --save-dev @types/qrcode
- */
-
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { Download, QrCode, FileText, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Download, QrCode, Loader2, Copy, RefreshCw, AlertCircle, CheckCircle2,
+} from 'lucide-react';
+import { apiFetch } from '@/lib/api';
 
-/* ─── Types ──────────────────────────────────────────────── */
-interface MenuItem {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  image?: string;
-  isAvailable: boolean;
-  isVeg: boolean;
+interface TokenResponse {
+  menu_url: string;   // backend returns this
+  // other fields if needed
 }
 
 interface Restaurant {
+  id: number;
   name: string;
-  logoUrl?: string;
-  address?: string;
-  phone?: string;
+  photos?: { id: number; photo: string }[];
 }
 
-interface Props {
-  menuItems?: MenuItem[];
-  categories?: string[];
-  restaurant?: Restaurant;
-  menuUrl?: string;
-}
-
-/* ─── Demo data (remove when wiring real props) ─────────── */
-const DEMO_RESTAURANT: Restaurant = {
-  name: 'Spice Garden',
-  logoUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=SG&backgroundColor=513012&textColor=ffffff',
-  address: 'Thamel, Kathmandu',
-  phone: '+977-9800000000',
-};
-
-const DEMO_MENU: MenuItem[] = [
-  { id: 1, name: 'Butter Chicken', description: 'Tender chicken in rich tomato-cream gravy', price: 420, category: 'Main Course', isAvailable: true, isVeg: false, image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae784?w=80&h=80&fit=crop' },
-  { id: 2, name: 'Paneer Butter Masala', description: 'Cottage cheese in silky tomato gravy', price: 380, category: 'Main Course', isAvailable: true, isVeg: true, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=80&h=80&fit=crop' },
-  { id: 3, name: 'Veg Biryani', description: 'Fragrant basmati with seasonal vegetables', price: 320, category: 'Rice & Biryani', isAvailable: true, isVeg: true },
-  { id: 4, name: 'Chicken Biryani', description: 'Slow-cooked dum biryani with whole spices', price: 450, category: 'Rice & Biryani', isAvailable: true, isVeg: false },
-  { id: 5, name: 'Garlic Naan', description: 'Soft leavened bread with garlic & butter', price: 80, category: 'Breads', isAvailable: true, isVeg: true },
-  { id: 6, name: 'Tandoori Roti', description: 'Whole wheat bread from the clay oven', price: 50, category: 'Breads', isAvailable: true, isVeg: true },
-  { id: 7, name: 'Mango Lassi', description: 'Chilled yogurt with Alphonso mango', price: 120, category: 'Beverages', isAvailable: true, isVeg: true },
-  { id: 8, name: 'Masala Chai', description: 'Spiced milk tea, brewed strong', price: 60, category: 'Beverages', isAvailable: true, isVeg: true },
-  { id: 9, name: 'Gulab Jamun', description: 'Soft milk-solid dumplings in rose syrup', price: 140, category: 'Desserts', isAvailable: true, isVeg: true },
-];
-
-const DEMO_CATEGORIES = ['Main Course', 'Rice & Biryani', 'Breads', 'Beverages', 'Desserts'];
-const DEMO_URL = 'http://localhost:3000/menu/spice-garden';
-
-/* ─── Component ─────────────────────────────────────────── */
-export default function QRMenuPage({
-  menuItems = DEMO_MENU,
-  categories = DEMO_CATEGORIES,
-  restaurant = DEMO_RESTAURANT,
-  menuUrl = DEMO_URL,
-}: Props) {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const qrCanvasRef = useRef<HTMLCanvasElement>(null);
+export default function QRGenerator() {
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
-  const [pdfLoading, setPdfLoading] = useState(false);
-  const [qrLoading, setQrLoading] = useState(false);
-  const [pdfDone, setPdfDone] = useState(false);
-  const [qrDone, setQrDone] = useState(false);
+  const [menuUrl, setMenuUrl] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [copied, setCopied] = useState(false);
 
-  // Only available items
-  const availableItems = menuItems.filter((i) => i.isAvailable);
-
-  // Group by category
-  const grouped = categories.reduce<Record<string, MenuItem[]>>((acc, cat) => {
-    const items = availableItems.filter((i) => i.category === cat);
-    if (items.length) acc[cat] = items;
-    return acc;
-  }, {});
-
-  // Generate QR on mount / menuUrl change
-  useEffect(() => {
-    QRCode.toDataURL(menuUrl, {
-      width: 300,
-      margin: 2,
-      color: { dark: '#513012', light: '#ffffff' },
-    }).then(setQrDataUrl);
-  }, [menuUrl]);
-
-  /* ── Download QR as PNG ── */
-  const downloadQR = async () => {
-    if (!qrDataUrl) return;
-    setQrLoading(true);
-    const link = document.createElement('a');
-    link.download = `${restaurant.name.replace(/\s+/g, '-')}-QR.png`;
-    link.href = qrDataUrl;
-    link.click();
-    setQrLoading(false);
-    setQrDone(true);
-    setTimeout(() => setQrDone(false), 2500);
+  const fetchRestaurantId = async (): Promise<number> => {
+    const res = await apiFetch('/api/v1/user/me/');
+    if (!res.ok) throw new Error(`Failed to fetch user (${res.status})`);
+    const user = await res.json();
+    if (!user?.restaurant) throw new Error('No restaurant linked to this account.');
+    return user.restaurant;
   };
 
-  /* ── Download Menu as PDF ── */
-  const downloadPDF = async () => {
-    if (!menuRef.current) return;
-    setPdfLoading(true);
+  const fetchRestaurant = async (id: number): Promise<Restaurant> => {
+    const res = await apiFetch(`/api/v1/restaurant/${id}/`);
+    if (!res.ok) throw new Error(`Failed to fetch restaurant (${res.status})`);
+    return res.json();
+  };
 
+  const generateQRCode = async (url: string, logoUrl?: string) => {
+    const baseQr = await QRCode.toDataURL(url, {
+      width: 520,
+      margin: 2,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#513012', light: '#FFFFFF' },
+    });
+
+    if (!logoUrl) {
+      setQrDataUrl(baseQr);
+      return;
+    }
+
+    // Logo with QR (your existing logic - kept as is)
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      setQrDataUrl(baseQr);
+      return;
+    }
+
+    const size = 520;
+    canvas.width = size;
+    canvas.height = size;
+
+    const qrImg = new window.Image();
+    await new Promise<void>((res, rej) => {
+      qrImg.onload = () => res();
+      qrImg.onerror = rej;
+      qrImg.src = baseQr;
+    });
+    ctx.drawImage(qrImg, 0, 0, size, size);
+
+    const logoLoaded = await new Promise<boolean>((res) => {
+      const testImg = new window.Image();
+      testImg.crossOrigin = 'anonymous';
+      testImg.onload = () => res(true);
+      testImg.onerror = () => res(false);
+      testImg.src = logoUrl;
+    });
+
+    if (!logoLoaded) {
+      setQrDataUrl(canvas.toDataURL('image/png'));
+      return;
+    }
+
+    const cx = size / 2, cy = size / 2, logoSize = 100;
+    ctx.beginPath();
+    ctx.arc(cx, cy, logoSize / 2 + 10, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
+
+    const logoImg = new window.Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.src = logoUrl;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, logoSize / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(logoImg, cx - logoSize / 2, cy - logoSize / 2, logoSize, logoSize);
+    ctx.restore();
+
+    setQrDataUrl(canvas.toDataURL('image/png'));
+  };
+
+  const toFrontendUrl = (backendMenuUrl: string): string => {
     try {
-      const canvas = await html2canvas(menuRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#fffaf5',
-      });
+      const url = new URL(backendMenuUrl);
+      const token = url.searchParams.get('token');
+      const match = url.pathname.match(/\/qr-menu\/(\d+)/);
+      const id = match?.[1];
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-      const pdfW = pdf.internal.pageSize.getWidth();
-      const pdfH = (canvas.height * pdfW) / canvas.width;
-      const pageH = pdf.internal.pageSize.getHeight();
-
-      // Multi-page support
-      let yOffset = 0;
-      while (yOffset < pdfH) {
-        if (yOffset > 0) pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, -yOffset, pdfW, pdfH);
-        yOffset += pageH;
+      if (id && token) {
+        return `${window.location.origin}/menu/${id}?token=${token}`;
       }
-
-      pdf.save(`${restaurant.name.replace(/\s+/g, '-')}-Menu.pdf`);
-      setPdfDone(true);
-      setTimeout(() => setPdfDone(false), 2500);
-    } finally {
-      setPdfLoading(false);
+      return backendMenuUrl;
+    } catch {
+      return backendMenuUrl;
     }
   };
 
+  const generateNewToken = async (r?: Restaurant | null) => {
+    const target = r ?? restaurant;
+    if (!target?.id) {
+      setError('Restaurant not loaded.');
+      return;
+    }
+
+    setError('');
+    setGenerating(true);
+
+    try {
+      const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ restaurant_id: target.id }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || errData.detail || `Server error ${res.status}`);
+      }
+
+      const tokenData: TokenResponse = await res.json();
+      if (!tokenData.menu_url) throw new Error('No menu_url returned from server.');
+
+      const frontendUrl = toFrontendUrl(tokenData.menu_url);
+      console.log('✅ Generated Frontend URL:', frontendUrl);
+
+      setMenuUrl(frontendUrl);
+      const logoUrl = target.photos?.[0]?.photo;
+      await generateQRCode(frontendUrl, logoUrl);
+    } catch (err: any) {
+      console.error('Generate token error:', err);
+      setError(err.message || 'Failed to generate new token.');
+    } finally {
+      setGenerating(false);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      try {
+        const restaurantId = await fetchRestaurantId();
+        const r = await fetchRestaurant(restaurantId);
+        setRestaurant(r);
+        await generateNewToken(r);
+      } catch (err: any) {
+        console.error('Init error:', err);
+        setError(err.message || 'Failed to load restaurant.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
+  }, []);
+
+  const downloadQR = () => {
+    if (!qrDataUrl) return;
+    const link = document.createElement('a');
+    link.download = `${(restaurant?.name || 'restaurant').replace(/\s+/g, '-')}-QR.png`;
+    link.href = qrDataUrl;
+    link.click();
+  };
+
+  const copyUrl = async () => {
+    if (!menuUrl) return;
+    await navigator.clipboard.writeText(menuUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="min-h-screen bg-[#fffaf5] px-4 sm:px-8 py-8 space-y-8">
+    <Card className="max-w-lg mx-auto mt-8">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3 text-[#513012]">
+          <QrCode className="w-6 h-6" />
+          Table QR Code Generator
+        </CardTitle>
+        <p className="text-sm text-gray-600">
+          {restaurant?.name ? `For ${restaurant.name}` : 'Customers scan to view menu'}
+        </p>
+      </CardHeader>
 
-      {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-[#513012]">QR & Menu PDF</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Generate a scannable QR for table cards and download the latest menu as PDF.
-          </p>
-        </div>
+      <CardContent className="flex flex-col items-center gap-6">
+        {loading && (
+          <div className="w-64 h-64 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-12 h-12 animate-spin text-[#513012]" />
+            <p className="text-sm text-gray-400">Generating secure QR code...</p>
+          </div>
+        )}
 
-        <div className="flex gap-3 flex-wrap">
-          {/* Download QR */}
-          <Button
-            onClick={downloadQR}
-            disabled={qrLoading || !qrDataUrl}
-            variant="outline"
-            className="border-[#513012] text-[#513012] hover:bg-[#513012]/10 flex items-center gap-2"
-          >
-            {qrLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : qrDone ? (
-              <CheckCircle className="w-4 h-4 text-green-600" />
-            ) : (
-              <QrCode className="w-4 h-4" />
-            )}
-            {qrDone ? 'Downloaded!' : 'Download QR'}
-          </Button>
+        {error && (
+          <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full">
+            <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Error</p>
+              <p className="text-sm mt-0.5">{error}</p>
+              <button onClick={() => generateNewToken()} className="text-xs underline mt-2">
+                Try again
+              </button>
+            </div>
+          </div>
+        )}
 
-          {/* Download PDF */}
-          <Button
-            onClick={downloadPDF}
-            disabled={pdfLoading}
-            className="bg-[#513012] hover:bg-[#513012]/90 text-white flex items-center gap-2"
-          >
-            {pdfLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : pdfDone ? (
-              <CheckCircle className="w-4 h-4" />
-            ) : (
-              <FileText className="w-4 h-4" />
-            )}
-            {pdfLoading ? 'Generating…' : pdfDone ? 'Downloaded!' : 'Download PDF'}
-          </Button>
-        </div>
-      </div>
+        {!loading && qrDataUrl && (
+          <div className="bg-white p-5 rounded-2xl shadow-inner border">
+            <img src={qrDataUrl} alt="QR Code" className="w-64 h-64 rounded-xl" />
+          </div>
+        )}
 
-      {/* ── Two-column layout: QR card + Menu preview ── */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {menuUrl && (
+          <div className="text-xs text-gray-500 break-all text-center px-4 py-3 bg-gray-50 rounded-lg border w-full font-mono">
+            {menuUrl}
+          </div>
+        )}
 
-        {/* ── QR Card ── */}
-        <div className="w-full lg:w-72 shrink-0">
-          <div className="bg-white rounded-3xl shadow-md border border-[#513012]/10 p-6 flex flex-col items-center gap-4 sticky top-8">
-            <h2 className="text-lg font-semibold text-[#513012]">Table QR Code</h2>
-            <p className="text-xs text-gray-400 text-center">
-              Print and place this on every table. Customers scan to view the menu instantly.
-            </p>
-
-            {qrDataUrl ? (
-              <img
-                src={qrDataUrl}
-                alt="Menu QR Code"
-                className="w-48 h-48 rounded-xl border border-[#513012]/20"
-              />
-            ) : (
-              <div className="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
-              </div>
-            )}
-
-            <div className="text-center">
-              <p className="text-xs font-medium text-[#513012]">{restaurant.name}</p>
-              <p className="text-xs text-gray-400 break-all">{menuUrl}</p>
+        {!loading && (
+          <div className="flex flex-col gap-3 w-full">
+            <div className="grid grid-cols-2 gap-3">
+              <Button onClick={copyUrl} variant="outline" disabled={!menuUrl}>
+                {copied ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Copy className="mr-2 h-4 w-4" />}
+                {copied ? 'Copied!' : 'Copy URL'}
+              </Button>
+              <Button onClick={downloadQR} disabled={!qrDataUrl} className="bg-[#513012] hover:bg-[#513012]/90 text-white">
+                <Download className="mr-2 h-4 w-4" /> Download QR
+              </Button>
             </div>
 
-            <Button
-              onClick={downloadQR}
-              disabled={!qrDataUrl}
-              size="sm"
-              className="w-full bg-[#513012] hover:bg-[#513012]/90 text-white"
+            <Button 
+              onClick={() => generateNewToken()} 
+              disabled={generating} 
+              variant="ghost" 
+              className="text-[#513012]"
             >
-              <Download className="w-3 h-3 mr-2" />
-              Save QR as PNG
+              {generating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+              Generate New Token (Invalidate Old)
             </Button>
           </div>
-        </div>
+        )}
 
-        {/* ── Menu Preview (this is what gets PDF'd) ── */}
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-gray-400 mb-3 uppercase tracking-widest">
-            Menu Preview — this is exactly what will be exported to PDF
-          </p>
-
-          {/* The ref wraps everything that goes into the PDF */}
-          <div
-            ref={menuRef}
-            className="bg-white rounded-3xl shadow-md border border-[#513012]/10 overflow-hidden"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            {/* ── Restaurant Header ── */}
-            <div
-              className="relative flex flex-col items-center py-10 px-6 text-white text-center"
-              style={{ background: 'linear-gradient(135deg, #513012 0%, #8B4513 60%, #c97d3a 100%)' }}
-            >
-              {/* Decorative rings */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full border-[40px] border-white/5" />
-                <div className="absolute -bottom-20 -right-10 w-80 h-80 rounded-full border-[40px] border-white/5" />
-              </div>
-
-              {/* Logo */}
-              {restaurant.logoUrl ? (
-                <img
-                  src={restaurant.logoUrl}
-                  alt="logo"
-                  crossOrigin="anonymous"
-                  className="w-20 h-20 rounded-full border-4 border-white/30 shadow-lg mb-4 object-cover"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-white/20 border-4 border-white/30 flex items-center justify-center text-3xl font-bold mb-4">
-                  {restaurant.name[0]}
-                </div>
-              )}
-
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                {restaurant.name}
-              </h1>
-
-              {(restaurant.address || restaurant.phone) && (
-                <p className="text-white/70 text-sm mt-2">
-                  {[restaurant.address, restaurant.phone].filter(Boolean).join('  •  ')}
-                </p>
-              )}
-
-              <div className="mt-4 px-6 py-1 rounded-full border border-white/30 text-xs tracking-widest uppercase text-white/80">
-                Menu
-              </div>
-            </div>
-
-            {/* ── Menu Sections ── */}
-            <div className="px-6 sm:px-10 py-8 space-y-10">
-              {Object.entries(grouped).map(([category, items]) => (
-                <div key={category}>
-                  {/* Category heading */}
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="h-px flex-1 bg-[#513012]/15" />
-                    <h2
-                      className="text-lg font-semibold tracking-widest uppercase text-[#513012] px-2"
-                      style={{ fontFamily: 'Georgia, serif' }}
-                    >
-                      {category}
-                    </h2>
-                    <div className="h-px flex-1 bg-[#513012]/15" />
-                  </div>
-
-                  {/* Items */}
-                  <div className="space-y-4">
-                    {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-start gap-4 py-3 border-b border-gray-100 last:border-0"
-                      >
-                        {/* Veg / Non-veg dot */}
-                        <div className="mt-1 shrink-0">
-                          <div
-                            className="w-4 h-4 rounded-sm border-2 flex items-center justify-center"
-                            style={{
-                              borderColor: item.isVeg ? '#16a34a' : '#dc2626',
-                            }}
-                          >
-                            <div
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: item.isVeg ? '#16a34a' : '#dc2626' }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Text */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-baseline justify-between gap-2 flex-wrap">
-                            <span className="font-semibold text-gray-800 text-base">
-                              {item.name}
-                            </span>
-                            <span className="font-bold text-[#513012] shrink-0">
-                              Rs. {item.price}
-                            </span>
-                          </div>
-                          {item.description && (
-                            <p className="text-gray-500 text-sm mt-0.5 leading-snug">
-                              {item.description}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Thumbnail */}
-                        {item.image && (
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            crossOrigin="anonymous"
-                            className="w-14 h-14 rounded-xl object-cover shrink-0 border border-gray-100"
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              {/* Footer inside PDF */}
-              <div className="pt-6 border-t border-[#513012]/10 text-center space-y-1">
-                <p className="text-xs text-gray-400 tracking-widest uppercase">
-                  All prices are inclusive of taxes
-                </p>
-                <p className="text-xs text-gray-300">{restaurant.name} · {restaurant.address}</p>
-              </div>
-            </div>
-          </div>
-          {/* end menuRef */}
-        </div>
-      </div>
-    </div>
+        <p className="text-xs text-center text-gray-400">
+          Print this QR and place on tables. One token per table is recommended.
+        </p>
+      </CardContent>
+    </Card>
   );
 }

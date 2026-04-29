@@ -4,7 +4,11 @@ import { ReactNode, useState } from 'react';
 import AdminSidebar from '@/components/restaurant-admin/AdminSidebar';
 import TopHeader from '@/components/restaurant-admin/TopHeader';
 
-export default function SuperAdminLayout({ children }: { children: ReactNode }) {
+export default function RestaurantAdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
