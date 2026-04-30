@@ -103,33 +103,26 @@ function OrderDrawer({
 
 const handleSubmit = async () => {
   if (cart.length === 0) return;
-
   setSubmitting(true);
   setError('');
 
   try {
-    // ✅ Validate token
-    if (!token) {
-      throw new Error("Invalid QR token. Please scan again.");
-    }
+    if (!token) throw new Error("Invalid QR token. Please scan again.");
+    if (!restaurant?.id) throw new Error("Restaurant not found.");
 
-    // ✅ Build correct payload (NO price field)
     const payload = {
       restaurant: restaurant.id,
-      customer_name: name?.trim() || null,
-      customer_phone: phone?.trim() || null,
-      customer_email: email?.trim() || null,
-      notes: notes?.trim() || null,
+      customer_name: name.trim() || "Guest",
+      customer_phone: phone.trim() || null,
+      customer_email: email.trim() || null,
+      notes: notes.trim() || null,
       items: cart.map((c) => ({
-        menu: c.menuItem.id,     // ✅ correct
-        quantity: c.quantity,    // ✅ correct
+        menu_id: c.menuItem.id,
+        quantity: c.quantity,
       })),
     };
 
-    // ✅ Debug logs (VERY IMPORTANT)
-    console.log("API:", API);
-    console.log("TOKEN:", token);
-    console.log("PAYLOAD:", payload);
+    console.log("Submitting order:", JSON.stringify(payload, null, 2));
 
     const res = await fetch(
       `${API}/api/v1/orders/?token=${encodeURIComponent(token)}`,
@@ -144,31 +137,36 @@ const handleSubmit = async () => {
     );
 
     const responseText = await res.text();
-
-    console.log("STATUS:", res.status);
-    console.log("RESPONSE:", responseText);
+    console.log("Response status:", res.status);
+    console.log("Response body:", responseText);
 
     if (!res.ok) {
       let errorMsg = `Error ${res.status}`;
       try {
         const errJson = JSON.parse(responseText);
-        errorMsg =
-          errJson.detail ||
-          errJson.error ||
-          errJson.message ||
-          JSON.stringify(errJson);
+        // Django REST framework returns errors in different shapes
+        if (errJson.detail) errorMsg = errJson.detail;
+        else if (errJson.error) errorMsg = errJson.error;
+        else if (errJson.non_field_errors) errorMsg = errJson.non_field_errors[0];
+        else {
+          // Field-level errors like { items: ["This field is required"] }
+          const firstKey = Object.keys(errJson)[0];
+          const firstVal = errJson[firstKey];
+          errorMsg = `${firstKey}: ${Array.isArray(firstVal) ? firstVal[0] : firstVal}`;
+        }
       } catch {
-        // if not JSON (HTML error page etc)
         errorMsg = responseText.slice(0, 200);
       }
       throw new Error(errorMsg);
     }
 
-    // ✅ Success
+    // Success
     onSuccess();
-  } catch (err: any) {
-    console.error("Order submission failed:", err);
-    setError(err.message || "Failed to place order.");
+
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to place order.";
+    console.error("Order failed:", message);
+    setError(message);
   } finally {
     setSubmitting(false);
   }

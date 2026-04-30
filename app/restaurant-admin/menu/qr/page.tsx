@@ -10,8 +10,12 @@ import {
 import { apiFetch } from '@/lib/api';
 
 interface TokenResponse {
-  menu_url: string;   // backend returns this
-  // other fields if needed
+  id: number;
+  restaurant: number;
+  is_active: boolean;
+  expires_at: string | null;
+  menu_url: string;
+  created_on: string;
 }
 
 interface Restaurant {
@@ -19,6 +23,8 @@ interface Restaurant {
   name: string;
   photos?: { id: number; photo: string }[];
 }
+
+const STORAGE_KEY = 'qr_menu_token_data';
 
 export default function QRGenerator() {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
@@ -43,6 +49,23 @@ export default function QRGenerator() {
     return res.json();
   };
 
+  // Backend menu_url bata frontend URL banau (token extract garera)
+  const toFrontendUrl = (backendMenuUrl: string): string => {
+    try {
+      const url = new URL(backendMenuUrl);
+      const token = url.searchParams.get('token');
+      const match = url.pathname.match(/\/qr-menu\/(\d+)/);
+      const id = match?.[1];
+      if (id && token) {
+        return `${window.location.origin}/menu/${id}?token=${token}`;
+      }
+      // Token chhaina URL ma — raw URL return
+      return backendMenuUrl;
+    } catch {
+      return backendMenuUrl;
+    }
+  };
+
   const generateQRCode = async (url: string, logoUrl?: string) => {
     const baseQr = await QRCode.toDataURL(url, {
       width: 520,
@@ -56,13 +79,9 @@ export default function QRGenerator() {
       return;
     }
 
-    // Logo with QR (your existing logic - kept as is)
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      setQrDataUrl(baseQr);
-      return;
-    }
+    if (!ctx) { setQrDataUrl(baseQr); return; }
 
     const size = 520;
     canvas.width = size;
@@ -84,10 +103,7 @@ export default function QRGenerator() {
       testImg.src = logoUrl;
     });
 
-    if (!logoLoaded) {
-      setQrDataUrl(canvas.toDataURL('image/png'));
-      return;
-    }
+    if (!logoLoaded) { setQrDataUrl(canvas.toDataURL('image/png')); return; }
 
     const cx = size / 2, cy = size / 2, logoSize = 100;
     ctx.beginPath();
@@ -110,79 +126,107 @@ export default function QRGenerator() {
     setQrDataUrl(canvas.toDataURL('image/png'));
   };
 
-  const toFrontendUrl = (backendMenuUrl: string): string => {
-    try {
-      const url = new URL(backendMenuUrl);
-      const token = url.searchParams.get('token');
-      const match = url.pathname.match(/\/qr-menu\/(\d+)/);
-      const id = match?.[1];
+  // POST garo — generate_token le token-wala URL diracha
+  const callGenerateToken = async (restaurantId: number): Promise<string> => {
+    const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ restaurant_id: restaurantId }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || errData.detail || `Server error ${res.status}`);
+    }
+    const data: TokenResponse = await res.json();
+    if (!data.menu_url) throw new Error('No menu_url returned.');
+    
+    // Token URL ma cha ki chhaina check
+    const frontendUrl = toFrontendUrl(data.menu_url);
+    console.log('✅ Backend menu_url:', data.menu_url);
+    console.log('✅ Frontend URL:', frontendUrl);
+    
+    // LocalStorage ma save garo — refresh ma same raahos
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      tokenId: data.id,
+      frontendUrl,
+      restaurantId,
+      savedAt: new Date().toISOString(),
+    }));
+    
+    return frontendUrl;
+  };
 
-      if (id && token) {
-        return `${window.location.origin}/menu/${id}?token=${token}`;
-      }
-      return backendMenuUrl;
+  // LocalStorage bata saved URL check garo
+  const getSavedUrl = (restaurantId: number): string | null => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      // Same restaurant ko token cha ki?
+      if (parsed.restaurantId !== restaurantId) return null;
+      // URL ma token cha ki?
+      if (!parsed.frontendUrl.includes('token=')) return null;
+      return parsed.frontendUrl;
     } catch {
-      return backendMenuUrl;
+      return null;
     }
   };
 
-  const generateNewToken = async (r?: Restaurant | null) => {
-    const target = r ?? restaurant;
-    if (!target?.id) {
-      setError('Restaurant not loaded.');
-      return;
-    }
-
-    setError('');
-    setGenerating(true);
-
-    try {
-      const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ restaurant_id: target.id }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || errData.detail || `Server error ${res.status}`);
+  const initQR = async (r: Restaurant, forceNew = false) => {
+    // 1. LocalStorage ma token-wala URL cha?
+    if (!forceNew) {
+      const savedUrl = getSavedUrl(r.id);
+      if (savedUrl) {
+        console.log('📦 Using saved URL:', savedUrl);
+        setMenuUrl(savedUrl);
+        await generateQRCode(savedUrl, r.photos?.[0]?.photo);
+        setLoading(false);
+        setGenerating(false);
+        return;
       }
-
-      const tokenData: TokenResponse = await res.json();
-      if (!tokenData.menu_url) throw new Error('No menu_url returned from server.');
-
-      const frontendUrl = toFrontendUrl(tokenData.menu_url);
-      console.log('✅ Generated Frontend URL:', frontendUrl);
-
-      setMenuUrl(frontendUrl);
-      const logoUrl = target.photos?.[0]?.photo;
-      await generateQRCode(frontendUrl, logoUrl);
-    } catch (err: any) {
-      console.error('Generate token error:', err);
-      setError(err.message || 'Failed to generate new token.');
-    } finally {
-      setGenerating(false);
-      setLoading(false);
     }
+
+    // 2. Chhaina bhane naya generate garo
+    console.log('🔄 Generating new token...');
+    const frontendUrl = await callGenerateToken(r.id);
+    setMenuUrl(frontendUrl);
+    await generateQRCode(frontendUrl, r.photos?.[0]?.photo);
+    setLoading(false);
+    setGenerating(false);
   };
 
   useEffect(() => {
     const init = async () => {
       setLoading(true);
+      setError('');
       try {
         const restaurantId = await fetchRestaurantId();
         const r = await fetchRestaurant(restaurantId);
         setRestaurant(r);
-        await generateNewToken(r);
+        await initQR(r, false);
       } catch (err: any) {
         console.error('Init error:', err);
-        setError(err.message || 'Failed to load restaurant.');
-      } finally {
+        setError(err.message || 'Failed to load.');
         setLoading(false);
       }
     };
     init();
   }, []);
+
+  // "Generate New Token" button — localStorage clear garera naya banaucha
+  const handleGenerateNew = async () => {
+    if (!restaurant) return;
+    setError('');
+    setGenerating(true);
+    try {
+      localStorage.removeItem(STORAGE_KEY); // Purano clear
+      await initQR(restaurant, true);
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate new token.');
+      setGenerating(false);
+      setLoading(false);
+    }
+  };
 
   const downloadQR = () => {
     if (!qrDataUrl) return;
@@ -215,7 +259,7 @@ export default function QRGenerator() {
         {loading && (
           <div className="w-64 h-64 flex flex-col items-center justify-center gap-3">
             <Loader2 className="w-12 h-12 animate-spin text-[#513012]" />
-            <p className="text-sm text-gray-400">Generating secure QR code...</p>
+            <p className="text-sm text-gray-400">Loading QR code...</p>
           </div>
         )}
 
@@ -225,9 +269,7 @@ export default function QRGenerator() {
             <div>
               <p className="font-medium text-sm">Error</p>
               <p className="text-sm mt-0.5">{error}</p>
-              <button onClick={() => generateNewToken()} className="text-xs underline mt-2">
-                Try again
-              </button>
+              <button onClick={handleGenerateNew} className="text-xs underline mt-2">Try again</button>
             </div>
           </div>
         )}
@@ -256,20 +298,22 @@ export default function QRGenerator() {
               </Button>
             </div>
 
-            <Button 
-              onClick={() => generateNewToken()} 
-              disabled={generating} 
-              variant="ghost" 
+            <Button
+              onClick={handleGenerateNew}
+              disabled={generating}
+              variant="ghost"
               className="text-[#513012]"
             >
-              {generating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+              {generating
+                ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                : <RefreshCw className="mr-2 h-4 w-4" />}
               Generate New Token (Invalidate Old)
             </Button>
           </div>
         )}
 
         <p className="text-xs text-center text-gray-400">
-          Print this QR and place on tables. One token per table is recommended.
+          Print this QR and place on tables. Scan to view menu.
         </p>
       </CardContent>
     </Card>
