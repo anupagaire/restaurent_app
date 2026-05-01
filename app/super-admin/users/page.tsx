@@ -67,7 +67,6 @@ export default function UsersPage() {
               role: u.role || 'admin',
               restaurantId: r.id,
               restaurantName: r.name,
-              // Extra fields for better display (if available in API)
               address: r.address || '',
               city: r.city || '',
             });

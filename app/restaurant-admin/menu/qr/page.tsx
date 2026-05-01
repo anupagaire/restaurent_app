@@ -35,7 +35,7 @@ export default function QRGenerator() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState(false);
-  useRequirePermission('menuSettings'); // ← YO ADD GARO
+  useRequirePermission('menuSettings'); 
 
   const fetchRestaurantId = async (): Promise<number> => {
     const res = await apiFetch('/api/v1/user/me/');
@@ -51,13 +51,11 @@ export default function QRGenerator() {
     return res.json();
   };
 
-  // Backend menu_url bata frontend URL banau (token extract garera)
  const toFrontendUrl = (backendMenuUrl: string): string => {
   try {
     const url = new URL(backendMenuUrl);
     const token = url.searchParams.get('token');
     
-    // /api/v1/qr-menu/65/ ya /api/v1/qr-menu/menu/ duitai handle
     const match = url.pathname.match(/\/qr-menu\/([^/?]+)/);
     const slug = match?.[1];
     
@@ -65,7 +63,6 @@ export default function QRGenerator() {
       return `${window.location.origin}/menu/${slug}?token=${token}`;
     }
     
-    // Token URL ma chhaina bhane — token chhaina, raw return
     if (slug) {
       return `${window.location.origin}/menu/${slug}`;
     }
@@ -136,7 +133,7 @@ export default function QRGenerator() {
     setQrDataUrl(canvas.toDataURL('image/png'));
   };
 
-  // POST garo — generate_token le token-wala URL diracha
+  // POST  — generate_token le token-wala URL diracha
   const callGenerateToken = async (restaurantId: number): Promise<string> => {
     const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
       method: 'POST',
@@ -152,8 +149,6 @@ export default function QRGenerator() {
     
     // Token URL ma cha ki chhaina check
     const frontendUrl = toFrontendUrl(data.menu_url);
-    console.log('✅ Backend menu_url:', data.menu_url);
-    console.log('✅ Frontend URL:', frontendUrl);
     
     // LocalStorage ma save garo — refresh ma same raahos
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -172,38 +167,60 @@ export default function QRGenerator() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) return null;
       const parsed = JSON.parse(saved);
-      // Same restaurant ko token cha ki?
       if (parsed.restaurantId !== restaurantId) return null;
-      // URL ma token cha ki?
       if (!parsed.frontendUrl.includes('token=')) return null;
       return parsed.frontendUrl;
     } catch {
       return null;
     }
   };
+const getExistingToken = async (): Promise<string | null> => {
+  const res = await apiFetch('/api/v1/menu-tokens/my_tokens/');
+  if (!res.ok) return null;
 
-  const initQR = async (r: Restaurant, forceNew = false) => {
-    // 1. LocalStorage ma token-wala URL cha?
+  const data = await res.json();
+  const tokens = data.results || [];
+
+  if (tokens.length === 0) return null;
+
+  // pick latest active token
+  const active = tokens
+    .filter((t: any) => t.is_active)
+    .sort((a: any, b: any) =>
+      new Date(b.created_on).getTime() - new Date(a.created_on).getTime()
+    );
+
+  if (active.length === 0) return null;
+
+  return toFrontendUrl(active[0].menu_url);
+};
+ const initQR = async (r: Restaurant, forceNew = false) => {
+  setGenerating(true);
+
+  try {
     if (!forceNew) {
-      const savedUrl = getSavedUrl(r.id);
-      if (savedUrl) {
-        console.log('📦 Using saved URL:', savedUrl);
-        setMenuUrl(savedUrl);
-        await generateQRCode(savedUrl, r.photos?.[0]?.photo);
-        setLoading(false);
-        setGenerating(false);
+      const existing = await getExistingToken();
+
+      if (existing) {
+        setMenuUrl(existing);
+        await generateQRCode(existing, r.photos?.[0]?.photo);
         return;
       }
     }
 
-    // 2. Chhaina bhane naya generate garo
-    console.log('🔄 Generating new token...');
-    const frontendUrl = await callGenerateToken(r.id);
-    setMenuUrl(frontendUrl);
-    await generateQRCode(frontendUrl, r.photos?.[0]?.photo);
+    const newUrl = await callGenerateToken(r.id);
+    setMenuUrl(newUrl);
+    await generateQRCode(newUrl, r.photos?.[0]?.photo);
+
+  } catch (err: any) {
+    setError(err.message || 'Failed to generate QR');
+  } finally {
     setLoading(false);
     setGenerating(false);
-  };
+  }
+};
+
+   
 
   useEffect(() => {
     const init = async () => {

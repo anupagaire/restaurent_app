@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UtensilsCrossed } from 'lucide-react';
-
+import Image from "next/image";
 interface MenuItem {
   id: string | number;
   name: string;
@@ -57,9 +57,11 @@ function MenuCard({ item }: { item: MenuItem }) {
           <span style={{ fontSize: 56 }}>{getCategoryEmoji(item.category)}</span>
         ) : (
           // ✅ plain <img> — no next/image remotePatterns needed
-          <img
+          <Image
             src={item.image!}
             alt={item.name}
+            width={200}
+            height={200}
             onError={() => setImgError(true)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />

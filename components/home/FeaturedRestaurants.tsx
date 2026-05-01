@@ -33,11 +33,10 @@ export default function FeaturedRestaurants() {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        const today = new Date().toISOString().split('T')[0];
 
-        // ✅ plain fetch — no auth, public endpoint
+        // ✅ Removed today filter — now fetching ALL active restaurants
         const res = await fetch(
-          `${BASE_URL}/api/v1/restaurant/?status=true&available_from=${today}&page_size=8`,
+          `${BASE_URL}/api/v1/restaurant/?status=true&page_size=8`,
           { cache: 'no-store' }
         );
 
@@ -49,7 +48,7 @@ export default function FeaturedRestaurants() {
         const data = await res.json();
         setRestaurants(data.results ?? []);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch restaurants:', err);
         setRestaurants([]);
       } finally {
         setLoading(false);
@@ -67,37 +66,47 @@ export default function FeaturedRestaurants() {
         </h2>
 
         {loading ? (
-          <p className="text-center text-gray-400">Loading...</p>
+          <p className="text-center text-gray-400">Loading restaurants...</p>
         ) : restaurants.length === 0 ? (
-          <p className="text-center text-gray-500">No featured restaurants available today</p>
+          <p className="text-center text-gray-500">No restaurants available at the moment</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {restaurants.map((restaurant) => {
               const photo = resolvePhoto(restaurant.photos?.[0]?.photo);
+
               return (
                 <Link
                   key={restaurant.id}
                   href={`/restaurants/${toSlug(restaurant.name)}`}
-                  className="bg-white rounded-2xl shadow hover:shadow-lg overflow-hidden transition-shadow"
+                  className="bg-white rounded-2xl shadow hover:shadow-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="relative h-40 bg-gray-100">
                     {photo ? (
-                      // ✅ plain <img> — no next/image remotePatterns needed
                       <img
                         src={photo}
                         alt={restaurant.name}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="flex items-center justify-center h-full text-3xl">
+                      <div className="flex items-center justify-center h-full text-4xl bg-gray-50">
                         🍽️
                       </div>
                     )}
                   </div>
-                  <div className="p-3">
-                    <h3 className="font-semibold text-[#513012]">{restaurant.name}</h3>
-                    <p className="text-xs text-gray-500">📍 {restaurant.city}</p>
-                    <p className="text-[10px] text-green-600 mt-1">Available Today</p>
+
+                  <div className="p-4">
+                    <h3 className="font-semibold text-[#513012] text-lg leading-tight">
+                      {restaurant.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                      📍 {restaurant.city}
+                    </p>
+                    
+                    {restaurant.availability && (
+                      <p className="text-[10px] text-green-600 mt-2 font-medium">
+                        ● {restaurant.availability}
+                      </p>
+                    )}
                   </div>
                 </Link>
               );

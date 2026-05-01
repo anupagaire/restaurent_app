@@ -77,9 +77,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
         return;
       }
 
-      // ================================
       // STEP 1: CREATE RESTAURANT FIRST
-      // ================================
 const restaurantRes = await apiFetch('/api/v1/restaurant/', {
   method: 'POST',
   body: JSON.stringify({
@@ -102,11 +100,9 @@ const restaurantRes = await apiFetch('/api/v1/restaurant/', {
         return;
       }
 
-      const restaurantId = restaurantData.id; // ✅ get ID to link with user
+      const restaurantId = restaurantData.id; 
 
-      // ================================
       // STEP 2: CREATE USER WITH RESTAURANT ID
-      // ================================
       const registerRes = await fetch(`${API}/api/v1/user/register/`, {
         method: 'POST',
         headers: {
@@ -120,7 +116,7 @@ const restaurantRes = await apiFetch('/api/v1/restaurant/', {
           last_name: userForm.last_name,
           contact_no: userForm.contact_no || null,
           role: 'admin',
-          restaurant: restaurantId, // ✅ link restaurant to user
+          restaurant: restaurantId, 
         }),
       });
 
@@ -133,9 +129,7 @@ const restaurantRes = await apiFetch('/api/v1/restaurant/', {
         return;
       }
 
-      // ================================
       // SUCCESS
-      // ================================
       onSuccess({
         id: registerData.id,
         email: registerData.email,

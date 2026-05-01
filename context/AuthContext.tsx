@@ -92,15 +92,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
       }
     } catch {
-      // Error bhaye pani logout garcha
     } finally {
-      // Sabai clear garo
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
       localStorage.removeItem('currentUser');
-      localStorage.removeItem('restaurant_id');
-      localStorage.removeItem('qr_menu_token_data');
 
       // Cookie pani clear
       document.cookie = 'access_token=; path=/; max-age=0';

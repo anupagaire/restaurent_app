@@ -138,7 +138,6 @@ export default function MenuPage() {
       const menuData = await res.json();
       const menuId = isEditing ? editingItem!.id : menuData.id;
 
-      // Upload photo if selected
       if (selectedFile && menuId) {
         const formData = new FormData();
         formData.append('type', 'menu');

@@ -112,7 +112,6 @@ export default function RestaurantAdminDashboard() {
   };
 
   const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
-    // MenuPage ma jasto handleMenuSubmit cha, tyo logic yaha pani copy garna sakinchha
     // Simple version: refresh after submit
     if (user?.restaurant) {
       await fetchDashboardData(user.restaurant);

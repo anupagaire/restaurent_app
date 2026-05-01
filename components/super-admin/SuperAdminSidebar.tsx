@@ -35,8 +35,7 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
   document.cookie = "refresh_token=; path=/; max-age=0";
   document.cookie = "role=; path=/; max-age=0";
 
-  // Redirect to login
-  window.location.href = "/login";   // Use window.location for clean redirect
+  window.location.href = "/login";   
 };
   return (
     <>
@@ -48,7 +47,6 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
         />
       )}
 
-      {/* Sidebar */}
       <div className={`
         fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#513012]/10 
         flex flex-col transition-transform duration-300 ease-in-out
@@ -65,7 +63,6 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
             </div>
           </div>
 
-          {/* Close Button - Mobile Only */}
           <button 
             onClick={onClose}
             className="md:hidden p-2 text-[#513012] hover:bg-[#513012]/10 rounded-lg"
@@ -99,7 +96,6 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
           </ul>
         </nav>
 
-        {/* Logout Button */}
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
           <button 
             onClick={handleLogout}

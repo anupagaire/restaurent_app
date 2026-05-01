@@ -21,10 +21,8 @@ export function middleware(request: NextRequest) {
     token = request.headers.get("authorization")?.replace("Bearer ", "");
   }
 
-  console.log(`[Middleware] ${pathname} → Token: ${token ? "Present" : "Missing"}`);
 
   if (!token) {
-    console.log(`[Middleware] No token → Redirecting to /login`);
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname); // optional: remember where user was
     return NextResponse.redirect(loginUrl);

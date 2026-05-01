@@ -85,7 +85,9 @@ async function getMenuPhotoMap(menuIds: number[]): Promise<Record<number, string
 
     const data = await res.json();
     const photos: ApiPhoto[] = Array.isArray(data) ? data : data.results ?? [];
-
+console.log("Total photos fetched:", photos.length);
+    console.log("Sample photo object:", photos[0]);
+    console.log("Menu IDs we have:", menuIds);
     const map: Record<number, string> = {};
 
     for (const photo of photos) {
@@ -98,6 +100,8 @@ async function getMenuPhotoMap(menuIds: number[]): Promise<Record<number, string
         }
       }
     }
+        console.log("Final photo map:", map);
+
     return map;
   } catch (err) {
     console.error("Failed to fetch menu photos:", err);

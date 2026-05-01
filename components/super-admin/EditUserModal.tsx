@@ -146,7 +146,6 @@ export default function EditUserModal({
         return;
       }
 
-      console.log('✅ RESTAURANT UPDATED SUCCESSFULLY');
     }
 
     // Update UI only

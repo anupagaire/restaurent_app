@@ -41,7 +41,7 @@ export default function Hero() {
             className="text-base sm:text-lg md:text-xl text-gray-200 mb-10"
           >
             Explore thousands of products from multiple stores in one place.
-            Find the best deals, trending items, and everything you need —
+            Find the best deals, trending items, and everything you need ,
             all in a single platform.
           </motion.p>
 

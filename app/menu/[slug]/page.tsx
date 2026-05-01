@@ -49,9 +49,6 @@ function OrnamentDivider() {
   );
 }
 
-// ============================================================
-// CART BUTTON (floating bottom bar)
-// ============================================================
 function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   const totalItems = cart.reduce((s, c) => s + c.quantity, 0);
   const totalPrice = cart.reduce((s, c) => s + parseFloat(c.menuItem.price) * c.quantity, 0);
@@ -73,9 +70,6 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-// ============================================================
-// ORDER DRAWER
-// ============================================================
 function OrderDrawer({
   cart,
   restaurant,
@@ -144,7 +138,6 @@ const handleSubmit = async () => {
       let errorMsg = `Error ${res.status}`;
       try {
         const errJson = JSON.parse(responseText);
-        // Django REST framework returns errors in different shapes
         if (errJson.detail) errorMsg = errJson.detail;
         else if (errJson.error) errorMsg = errJson.error;
         else if (errJson.non_field_errors) errorMsg = errJson.non_field_errors[0];
@@ -184,7 +177,6 @@ const handleSubmit = async () => {
         className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl overflow-y-auto"
         style={{ background: '#fffdf8', maxHeight: '90vh' }}
       >
-        {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full" style={{ background: '#d4b896' }} />
         </div>
@@ -199,7 +191,6 @@ const handleSubmit = async () => {
 
           <OrnamentDivider />
 
-          {/* Cart Items */}
           <div className="mt-4 space-y-3">
             {cart.map(c => (
               <div key={c.menuItem.id} className="flex items-center justify-between gap-3 py-3"
@@ -228,7 +219,6 @@ const handleSubmit = async () => {
             ))}
           </div>
 
-          {/* Total */}
           <div className="flex justify-between items-center py-4 mt-2">
             <span className="font-bold" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>Total</span>
             <span className="font-bold text-xl" style={{ color: '#513012' }}>Rs. {totalPrice.toFixed(0)}</span>
@@ -283,7 +273,6 @@ const handleSubmit = async () => {
             <p className="mt-3 text-sm text-center" style={{ color: '#c0392b' }}>{error}</p>
           )}
 
-          {/* Place Order */}
           <button
             onClick={handleSubmit}
             disabled={submitting || cart.length === 0}
@@ -302,10 +291,6 @@ const handleSubmit = async () => {
     </>
   );
 }
-
-// ============================================================
-// SUCCESS SCREEN
-// ============================================================
 function OrderSuccess({ restaurantName, onBack }: { restaurantName: string; onBack: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-8"
@@ -329,9 +314,6 @@ function OrderSuccess({ restaurantName, onBack }: { restaurantName: string; onBa
   );
 }
 
-// ============================================================
-// MAIN PAGE
-// ============================================================
 export default function PublicMenuPage() {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
@@ -342,7 +324,6 @@ export default function PublicMenuPage() {
   const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
 
-  // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -404,7 +385,6 @@ export default function PublicMenuPage() {
     return [];
   };
 
-  // ── Loading ──
   if (loading) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
@@ -415,7 +395,6 @@ export default function PublicMenuPage() {
     </>
   );
 
-  // ── Error ──
   if (error || !restaurant) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
@@ -428,7 +407,6 @@ export default function PublicMenuPage() {
     </>
   );
 
-  // ── Order Success ──
   if (orderSuccess) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
