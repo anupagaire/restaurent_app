@@ -35,12 +35,6 @@ export default function DashboardHeader({
 
       {/* Right Side - Notifications + Profile */}
       <div className="flex items-center gap-4 md:gap-6">
-        
-        {/* Notification Bell */}
-        <button className="relative p-2 hover:bg-[#513012]/5 rounded-full transition-colors">
-          <Bell className="w-5 h-5 text-[#513012]" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-[#5D0565] rounded-full ring-2 ring-white"></span>
-        </button>
 
         {/* Profile Section */}
         <div className="relative">
@@ -48,9 +42,7 @@ export default function DashboardHeader({
             onClick={() => setShowProfileMenu(!showProfileMenu)}
             className="flex items-center gap-3 hover:bg-[#513012]/5 p-1.5 pr-3 rounded-xl transition-colors"
           >
-            <div className="text-right hidden sm:block">
-              <p className="text-xs text-gray-500">admin@foodhub.com</p>
-            </div>
+            
             
             {/* Profile Avatar */}
             <div className="w-9 h-9 bg-gradient-to-br from-[#513012] to-[#47034E] rounded-full flex items-center justify-center text-white font-medium border-2 border-white shadow-sm">
@@ -63,7 +55,6 @@ export default function DashboardHeader({
             <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-[#513012]/10 py-2 z-50">
               <div className="px-4 py-3 border-b border-gray-100">
                 <p className="font-medium text-[#513012]">Super Admin</p>
-                <p className="text-sm text-gray-500">admin@foodhub.com</p>
               </div>
               
               <div className="py-1">

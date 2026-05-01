@@ -10,6 +10,7 @@ import { Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-reac
 import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
+import { useRequirePermission } from '@/hooks/usePermission';
 
 interface MenuItem {
   id: number;
@@ -37,6 +38,7 @@ export default function MenuPage() {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | 'All'>('All');
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
+  useRequirePermission('menuSettings'); // ← YO ADD GARO
 
   // Fetch Restaurant ID
   const fetchRestaurantId = async () => {
@@ -169,7 +171,7 @@ export default function MenuPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
-      await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
+await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
       await fetchAll();
     } catch (err) {
       alert('Failed to delete');

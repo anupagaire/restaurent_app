@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import { useAuth } from '@/context/AuthContext';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,25 +35,23 @@ export default function LoginPage() {
         setError(data?.detail || "Login failed");
         return;
       }
-const access = data?.access;
-const refresh = data?.refresh;
 
-if (!access) {
-  setError("Token missing from response");
-  return;
-}
+      const access = data?.access;
+      const refresh = data?.refresh;
 
-// 💾 SAVE TOKENS - localStorage + cookie both!
-localStorage.setItem("access_token", access);
-localStorage.setItem("refresh_token", refresh);
-document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
+      if (!access) {
+        setError("Token missing from response");
+        return;
+      }
 
-console.log("TOKEN SAVED:", access);
+      // 💾 SAVE TOKENS
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+      document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
 
-// 👤 GET USER PROFILE
+  // 👤 GET USER PROFILE
 const meRes = await apiFetch("/api/v1/user/me/");
 const me = await meRes.json();
-
 console.log("USER PROFILE:", me);
 
 if (!meRes.ok) {
@@ -61,21 +61,44 @@ if (!meRes.ok) {
 
 // 💾 SAVE USER
 localStorage.setItem("user", JSON.stringify(me));
-
 if (me?.restaurant) {
   localStorage.setItem("restaurant_id", String(me.restaurant));
 }
 
+// Login success pachhi — permissions load garo
 const role = (me?.role || "").toLowerCase();
-document.cookie = `role=${role}; path=/; max-age=86400; SameSite=Lax`;
+const isAdmin = role === 'admin';
 
-if (role === "staff") {
+// Staff permissions localStorage bata
+const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
+const savedPerms = allPerms[me.email];
+
+login({
+  id: me.id,
+  name: `${me.first_name || ''} ${me.last_name || ''}`.trim() || me.email,
+  email: me.email,
+  role: me.role || 'staff',
+  permissions: savedPerms || {
+    // Admin bhaye sabai true, staff bhaye sabai false by default
+    viewOrders: isAdmin,
+    manageOrders: isAdmin,
+    addMenuItems: isAdmin,
+    editMenuItems: isAdmin,
+    menuSettings: isAdmin,
+    globalSettings: isAdmin,
+    manageStaff: isAdmin,
+  }
+});
+
+// Redirect
+if (!me.restaurant) {
   router.replace("/super-admin");
-} else if (role === "admin") {
-  router.replace("/restaurant-admin/menu");
+} else if (isAdmin) {
+  router.replace("/restaurant-admin");
 } else {
-  router.replace("/");
-}    } catch (err) {
+  router.replace("/restaurant-admin"); // Staff pani same page, tara limited sidebar
+}
+    } catch (err) {
       console.error(err);
       setError("Network error");
     } finally {

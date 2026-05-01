@@ -8,6 +8,7 @@ import {
   Download, QrCode, Loader2, Copy, RefreshCw, AlertCircle, CheckCircle2,
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
+import { useRequirePermission } from '@/hooks/usePermission';
 
 interface TokenResponse {
   id: number;
@@ -34,6 +35,7 @@ export default function QRGenerator() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState(false);
+  useRequirePermission('menuSettings'); // ← YO ADD GARO
 
   const fetchRestaurantId = async (): Promise<number> => {
     const res = await apiFetch('/api/v1/user/me/');
@@ -50,21 +52,29 @@ export default function QRGenerator() {
   };
 
   // Backend menu_url bata frontend URL banau (token extract garera)
-  const toFrontendUrl = (backendMenuUrl: string): string => {
-    try {
-      const url = new URL(backendMenuUrl);
-      const token = url.searchParams.get('token');
-      const match = url.pathname.match(/\/qr-menu\/(\d+)/);
-      const id = match?.[1];
-      if (id && token) {
-        return `${window.location.origin}/menu/${id}?token=${token}`;
-      }
-      // Token chhaina URL ma — raw URL return
-      return backendMenuUrl;
-    } catch {
-      return backendMenuUrl;
+ const toFrontendUrl = (backendMenuUrl: string): string => {
+  try {
+    const url = new URL(backendMenuUrl);
+    const token = url.searchParams.get('token');
+    
+    // /api/v1/qr-menu/65/ ya /api/v1/qr-menu/menu/ duitai handle
+    const match = url.pathname.match(/\/qr-menu\/([^/?]+)/);
+    const slug = match?.[1];
+    
+    if (slug && token) {
+      return `${window.location.origin}/menu/${slug}?token=${token}`;
     }
-  };
+    
+    // Token URL ma chhaina bhane — token chhaina, raw return
+    if (slug) {
+      return `${window.location.origin}/menu/${slug}`;
+    }
+    
+    return backendMenuUrl;
+  } catch {
+    return backendMenuUrl;
+  }
+};
 
   const generateQRCode = async (url: string, logoUrl?: string) => {
     const baseQr = await QRCode.toDataURL(url, {

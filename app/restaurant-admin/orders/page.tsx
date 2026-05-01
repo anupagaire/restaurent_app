@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Clock, User, RefreshCw, AlertCircle } from "lucide-react";
 import { apiFetch } from "@/lib/api";
+import { useRequirePermission } from '@/hooks/usePermission';
 
 interface OrderItem {
   id: number;
@@ -80,6 +81,7 @@ export default function OrdersPage() {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  useRequirePermission('viewOrders'); // ← YO ADD GARO
 
   const fetchOrders = useCallback(async (currentToken: string, isManual = false) => {
     if (!currentToken) return;

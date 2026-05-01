@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface UserPermissions {
   viewOrders: boolean;
@@ -15,7 +16,7 @@ interface UserPermissions {
 interface CurrentUser {
   id: number;
   name: string;
-  email?: string;        // ← Add this
+  email?: string;
   role: string;
   permissions: UserPermissions;
 }
@@ -23,55 +24,96 @@ interface CurrentUser {
 interface AuthContextType {
   currentUser: CurrentUser | null;
   login: (user: CurrentUser) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function buildUserFromProfile(me: any): CurrentUser {
+  const role = (me?.role || 'staff');
+  const isOwnerOrAdmin = role === 'Owner' || role === 'Admin' || role === 'admin' || role === 'owner';
+
+  return {
+    id: me.id,
+    name: me.name || me.email || 'User',
+    email: me.email,
+    role: role,
+    permissions: {
+      viewOrders: isOwnerOrAdmin || me.permissions?.viewOrders || false,
+      manageOrders: isOwnerOrAdmin || me.permissions?.manageOrders || false,
+      addMenuItems: isOwnerOrAdmin || me.permissions?.addMenuItems || false,
+      editMenuItems: isOwnerOrAdmin || me.permissions?.editMenuItems || false,
+      menuSettings: isOwnerOrAdmin || me.permissions?.menuSettings || false,
+      globalSettings: isOwnerOrAdmin || me.permissions?.globalSettings || false,
+      manageStaff: isOwnerOrAdmin || me.permissions?.manageStaff || false,
+    }
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Set default Owner when app starts
   useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    } else {
-      // Default: You are the Restaurant Owner (Full Access)
-      const owner: CurrentUser = {
-        id: 1,
-        name: "Restaurant Owner",
-        role: "Owner",
-        permissions: {
-          viewOrders: true,
-          manageOrders: true,
-          addMenuItems: true,
-          editMenuItems: true,
-          menuSettings: true,        
-          globalSettings: true,
-          manageStaff: true,
-        }
-      };
-      
-      setCurrentUser(owner);
-      localStorage.setItem('currentUser', JSON.stringify(owner));
+    // Token cha bhane user load garo
+    const token = localStorage.getItem('access_token');
+    const savedUser = localStorage.getItem('user');
+
+    if (token && savedUser) {
+      try {
+        const me = JSON.parse(savedUser);
+        const user = buildUserFromProfile(me);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } catch {
+        // Corrupted data — clear garo
+        localStorage.removeItem('user');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      }
     }
   }, []);
 
   const login = (user: CurrentUser) => {
     setCurrentUser(user);
+    setIsAuthenticated(true);
     localStorage.setItem('currentUser', JSON.stringify(user));
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    window.location.href = '/login';
+  const logout = async () => {
+    try {
+      const refresh = localStorage.getItem('refresh_token');
+      if (refresh) {
+        await apiFetch('/api/v1/logout/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh }),
+        });
+      }
+    } catch {
+      // Error bhaye pani logout garcha
+    } finally {
+      // Sabai clear garo
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('restaurant_id');
+      localStorage.removeItem('qr_menu_token_data');
+
+      // Cookie pani clear
+      document.cookie = 'access_token=; path=/; max-age=0';
+      document.cookie = 'role=; path=/; max-age=0';
+
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      window.location.href = '/login';
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

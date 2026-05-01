@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Upload, Save, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
+import { useRequirePermission } from '@/hooks/usePermission';
 
 interface RestaurantData {
   id: number;
@@ -36,6 +37,7 @@ export default function GlobalSettingsPage() {
   const [isDeletingPhoto, setIsDeletingPhoto] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  useRequirePermission('globalSettings'); // ← YO ADD GARO
 
   const restaurantId =
     typeof window !== 'undefined' ? localStorage.getItem('restaurant_id') : null;

@@ -357,7 +357,8 @@ export default function PublicMenuPage() {
         return;
       }
       try {
-        const url = `${API}/api/v1/qr-menu/${slug}/?token=${encodeURIComponent(token)}`;
+        const url = `${API}/api/v1/qr-menu/menu/?token=${encodeURIComponent(token)}`;
+
         const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' }, cache: 'no-store' });
         if (!res.ok) {
           let msg = `Failed to load menu (${res.status})`;

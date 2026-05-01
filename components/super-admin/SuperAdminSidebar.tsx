@@ -6,13 +6,14 @@ import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
-  LogOut,
+  LogOut,Settings,
   X 
 } from 'lucide-react';
 
 const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
   { title: 'Users', href: '/super-admin/users', icon: Users },
+  { title: 'Settings', href: '/super-admin/settings', icon: Settings }
 ];
 
 interface SuperAdminSidebarProps {
@@ -60,7 +61,6 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
               <span className="text-white font-bold text-xl">F</span>
             </div>
             <div>
-              <h1 className="font-bold text-2xl tracking-tight text-[#513012]">Food</h1>
               <p className="text-xs text-gray-500 -mt-1">Super Admin Panel</p>
             </div>
           </div>

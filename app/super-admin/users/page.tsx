@@ -57,6 +57,8 @@ export default function UsersPage() {
       rawRestaurants.forEach((r: any) => {
         if (r.users && Array.isArray(r.users)) {
           r.users.forEach((u: any) => {
+            if ((u.role || '').toLowerCase() !== 'admin') return;
+
             allUsers.push({
               id: u.id,
               email: u.email,
@@ -90,25 +92,26 @@ export default function UsersPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this admin?')) return;
-    try {
-      const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${id}/`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  if (!confirm('Are you sure you want to delete this admin?')) return;
+  try {
+    const res = await apiFetch(`/api/v1/user/${id}/`, {
+      method: 'DELETE',
+    });
 
-      if (res.ok) {
-        setUsers(prev => prev.filter(u => u.id !== id));
-      } else {
-        alert('Failed to delete');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Network error while deleting');
+    console.log('Delete response status:', res.status);
+
+    if (res.status === 204 || res.status === 200) {
+      setUsers(prev => prev.filter(u => u.id !== id));
+    } else {
+      const err = await res.json().catch(() => ({}));
+      console.log('Delete error:', err);
+      alert(`Failed to delete: ${JSON.stringify(err)}`);
     }
-  };
-
+  } catch (err) {
+    console.error(err);
+    alert('Network error while deleting');
+  }
+};
   const filteredUsers = users.filter((u) =>
     u.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

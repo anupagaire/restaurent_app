@@ -3,40 +3,25 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { UserCheck } from 'lucide-react';
+import { Loader2, UserCheck } from 'lucide-react';
 
 interface Staff {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  phone: string;
+  contact_no: string;
   role: string;
-  status: 'Active' | 'Inactive';
-  permissions: {
-    viewOrders: boolean;
-    manageOrders: boolean;
-    addMenuItems: boolean;
-    editMenuItems: boolean;
-    globalSettings: boolean;
-    manageStaff: boolean;
-  };
+  restaurant: number;
 }
 
 interface StaffModalProps {
@@ -44,62 +29,56 @@ interface StaffModalProps {
   onClose: () => void;
   editingStaff: Staff | null;
   onSubmit: (data: any) => void;
+  submitting: boolean;
   availableRoles: string[];
 }
 
+const DEFAULT_PERMISSIONS = {
+  viewOrders: false,
+  manageOrders: false,
+  addMenuItems: false,
+  editMenuItems: false,
+  menuSettings: false,
+  globalSettings: false,
+  manageStaff: false,
+};
+
 export default function StaffModal({
-  isOpen,
-  onClose,
-  editingStaff,
-  onSubmit,
-  availableRoles,
+  isOpen, onClose, editingStaff, onSubmit, submitting, availableRoles,
 }: StaffModalProps) {
   const [formData, setFormData] = useState({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    phone: '',
-    role: 'Waiter',
-    status: 'Active' as 'Active' | 'Inactive',
-    password: '',
-    permissions: {
-      viewOrders: true,
-      manageOrders: false,
-      addMenuItems: false,
-      editMenuItems: false,
-      globalSettings: false,
-      manageStaff: false,
-    },
+    contact_no: '',
+    address: '',
+    role: 'staff',
+    password1: '',
+    permissions: { ...DEFAULT_PERMISSIONS },
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
       if (editingStaff) {
+        // Existing staff ko saved permissions load garo
+        const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
+        const savedPerms = allPerms[editingStaff.email] || DEFAULT_PERMISSIONS;
+
         setFormData({
-          name: editingStaff.name,
-          email: editingStaff.email,
-          phone: editingStaff.phone,
-          role: editingStaff.role,
-          status: editingStaff.status,
-          password: '', 
-          permissions: { ...editingStaff.permissions },
+          first_name: editingStaff.first_name || '',
+          last_name: editingStaff.last_name || '',
+          email: editingStaff.email || '',
+          contact_no: editingStaff.contact_no || '',
+          address: '',
+          role: editingStaff.role || 'staff',
+          password1: '',
+          permissions: { ...savedPerms },
         });
       } else {
         setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          role: 'Waiter',
-          status: 'Active',
-          password: '',
-          permissions: {
-            viewOrders: true,
-            manageOrders: false,
-            addMenuItems: false,
-            editMenuItems: false,
-            globalSettings: false,
-            manageStaff: false,
-          },
+          first_name: '', last_name: '', email: '',
+          contact_no: '', address: '', role: 'staff', password1: '',
+          permissions: { ...DEFAULT_PERMISSIONS },
         });
       }
     }
@@ -107,71 +86,77 @@ export default function StaffModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!formData.name || !formData.email) return;
-    if (!editingStaff && !formData.password) {
-      alert('Initial password is required when creating new staff');
+    if (!formData.first_name || !formData.email) return;
+    if (!editingStaff && !formData.password1) {
+      alert('Password is required for new staff');
       return;
     }
-
-    onSubmit({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      role: formData.role,
-      status: formData.status,
-      permissions: formData.permissions,
-      ...( !editingStaff && { password: formData.password } ), // only send password on create
-    });
+    onSubmit(formData);
   };
+
+  const permissionItems = [
+    { key: 'viewOrders', label: 'View Orders', desc: 'Can see all orders' },
+    { key: 'manageOrders', label: 'Manage Orders', desc: 'Update order status' },
+    { key: 'addMenuItems', label: 'Add Menu Items', desc: 'Create new dishes' },
+    { key: 'editMenuItems', label: 'Edit Menu Items', desc: 'Update prices & details' },
+    { key: 'menuSettings', label: 'Menu Settings', desc: 'Manage menu categories' },
+    { key: 'globalSettings', label: 'Settings', desc: 'Restaurant settings' },
+    { key: 'manageStaff', label: 'Manage Staff', desc: 'Add/edit other staff' },
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[#513012]">
-            {editingStaff ? 'Edit Staff Member' : 'Create New Staff Member'}
+            {editingStaff ? 'Edit Staff Member' : 'Add New Staff Member'}
           </DialogTitle>
           <DialogDescription>
-            {editingStaff 
-              ? 'Update details, role and permissions' 
-              : 'Fill details + set initial password. Staff will use this to login.'}
+            {editingStaff
+              ? 'Update staff details and permissions'
+              : 'Create a new staff account with specific permissions.'}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label>First Name *</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. Sita Devi"
+                value={formData.first_name}
+                onChange={e => setFormData({ ...formData, first_name: e.target.value })}
+                placeholder="First name"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label>Last Name</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="staff@yourrestaurant.com"
-                required
+                value={formData.last_name}
+                onChange={e => setFormData({ ...formData, last_name: e.target.value })}
+                placeholder="Last name"
               />
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label>Email *</Label>
+            <Input
+              type="email"
+              value={formData.email}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
+              placeholder="staff@restaurant.com"
+              required
+              disabled={!!editingStaff}
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label>Phone</Label>
               <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={formData.contact_no}
+                onChange={e => setFormData({ ...formData, contact_no: e.target.value })}
                 placeholder="+977 98XXXXXXXX"
               />
             </div>
@@ -179,73 +164,42 @@ export default function StaffModal({
               <Label>Role</Label>
               <Select
                 value={formData.role}
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                onValueChange={value => setFormData({ ...formData, role: value })}
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {availableRoles.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
+                  {availableRoles.map(role => (
+                    <SelectItem key={role} value={role}>{role}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {/* Password - only required on create */}
           <div className="space-y-2">
-            <Label htmlFor="password">
-              {editingStaff ? 'New Password (leave blank to keep current)' : 'Initial Password'}
-            </Label>
+            <Label>{editingStaff ? 'New Password (blank = no change)' : 'Password *'}</Label>
             <Input
-              id="password"
               type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder={editingStaff ? '••••••••' : 'Set strong password'}
+              value={formData.password1}
+              onChange={e => setFormData({ ...formData, password1: e.target.value })}
+              placeholder={editingStaff ? '••••••••' : 'Min 8 characters'}
               required={!editingStaff}
             />
-            {!editingStaff && (
-              <p className="text-xs text-gray-500">Staff will use this password to login</p>
-            )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <Label>Status</Label>
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={formData.status === 'Active'}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, status: checked ? 'Active' : 'Inactive' })
-                }
-              />
-              <span className="text-sm font-medium">{formData.status}</span>
+          {/* ✅ PERMISSIONS */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-1 border-b">
+              <UserCheck className="w-5 h-5 text-[#513012]" />
+              <Label className="text-base font-semibold text-[#513012]">Permissions</Label>
             </div>
-          </div>
+            <p className="text-xs text-gray-500">Choose what this staff member can access in the dashboard</p>
 
-          {/* Permissions */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-[#5D0565]" />
-              <Label className="text-base font-semibold text-[#47034E]">Permissions</Label>
-            </div>
-            <p className="text-xs text-gray-500">Choose what this staff member can access</p>
-
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { key: 'viewOrders', label: 'View Orders', desc: 'Can see all orders' },
-                { key: 'manageOrders', label: 'Manage Orders', desc: 'Update order status' },
-                { key: 'addMenuItems', label: 'Add Menu Items', desc: 'Create new dishes' },
-                { key: 'editMenuItems', label: 'Edit Menu Items', desc: 'Update prices & details' },
-                { key: 'globalSettings', label: 'Global Settings', desc: 'Restaurant profile, taxes, etc.' },
-                { key: 'manageStaff', label: 'Manage Staff', desc: 'Add/edit other staff' },
-              ].map((perm) => (
-                <div key={perm.key} className="flex items-center justify-between border rounded-xl p-4">
+            <div className="grid grid-cols-1 gap-2">
+              {permissionItems.map((perm) => (
+                <div key={perm.key} className="flex items-center justify-between border rounded-xl px-4 py-3">
                   <div>
-                    <p className="font-medium">{perm.label}</p>
+                    <p className="font-medium text-sm">{perm.label}</p>
                     <p className="text-xs text-gray-500">{perm.desc}</p>
                   </div>
                   <Switch
@@ -253,10 +207,7 @@ export default function StaffModal({
                     onCheckedChange={(checked) =>
                       setFormData({
                         ...formData,
-                        permissions: {
-                          ...formData.permissions,
-                          [perm.key]: checked,
-                        },
+                        permissions: { ...formData.permissions, [perm.key]: checked },
                       })
                     }
                   />
@@ -266,10 +217,11 @@ export default function StaffModal({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-[#513012] hover:bg-[#513012]/90">
+            <Button type="submit" disabled={submitting} className="bg-[#513012] hover:bg-[#513012]/90">
+              {submitting && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
               {editingStaff ? 'Save Changes' : 'Create Staff'}
             </Button>
           </DialogFooter>

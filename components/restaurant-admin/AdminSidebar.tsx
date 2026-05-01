@@ -84,10 +84,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     return currentUser.permissions?.[item.permissionKey] === true;
   });
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';   // Clean redirect
-  };
+const handleLogout = async () => {
+  await logout();
+};
 
   return (
     <>
