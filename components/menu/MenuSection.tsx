@@ -9,7 +9,7 @@ interface MenuItem {
   name: string;
   description: string;
   price: number;
-  image: string | null; // ✅ allow null
+  image: string | null; 
   category?: string;
 }
 
@@ -51,24 +51,21 @@ function MenuCard({ item }: { item: MenuItem }) {
       layout
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#513012]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
     >
-      {/* Image / Placeholder */}
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-[#fdf6ec] to-[#e8ddd0] flex items-center justify-center">
         {showPlaceholder ? (
           <span style={{ fontSize: 56 }}>{getCategoryEmoji(item.category)}</span>
         ) : (
-          // ✅ plain <img> — no next/image remotePatterns needed
-          <Image
-            src={item.image!}
-            alt={item.name}
-            width={200}
-            height={200}
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+<Image
+  src={item.image!}
+  alt={item.name}
+  fill
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  onError={() => setImgError(true)}
+  className="object-cover group-hover:scale-105 transition-transform duration-500"
+/>
         )}
       </div>
 
-      {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-semibold text-[15px] leading-tight text-gray-900 line-clamp-2">
           {item.name}
@@ -140,7 +137,6 @@ export default function MenuSection({ menuItems }: Props) {
           </div>
         </aside>
 
-        {/* Grid */}
         <main className="flex-1 min-w-0">
           <p className="text-sm text-gray-500 mb-6">{filtered.length} items found</p>
           <motion.div

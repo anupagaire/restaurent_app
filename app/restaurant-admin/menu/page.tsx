@@ -11,6 +11,7 @@ import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { useRequirePermission } from '@/hooks/usePermission';
+import Image from 'next/image';
 
 interface MenuItem {
   id: number;
@@ -29,49 +30,49 @@ interface Category {
   status: boolean;
 }
 
+// Shape returned by GET /api/v1/photo/
+interface MenuPhoto {
+  id: number;        // photo record ID – needed for PUT (update)
+  object_id: number; // menu item ID
+  photo_url: string; // displayable URL
+}
+
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [menuPhotos, setMenuPhotos] = useState<Record<number, string>>({}); // menuId → photoUrl
+
+  // Store the full photo record so we have the photo `id` for updates
+  const [menuPhotos, setMenuPhotos] = useState<Record<number, MenuPhoto>>({});
+
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | 'All'>('All');
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
-  useRequirePermission('menuSettings'); // ← YO ADD GARO
+  useRequirePermission('menuSettings');
 
-  // Fetch Restaurant ID
+  // ── Fetch restaurant ID ────────────────────────────────────────────────────
   const fetchRestaurantId = async () => {
     try {
       const res = await apiFetch('/api/v1/user/me/');
       const user = await res.json();
-      if (user?.restaurant) {
-        setRestaurantId(user.restaurant);
-      }
+      if (user?.restaurant) setRestaurantId(user.restaurant);
     } catch (err) {
       console.error('Failed to fetch restaurant ID', err);
     }
   };
 
-  useEffect(() => {
-    fetchRestaurantId();
-  }, []);
+  useEffect(() => { fetchRestaurantId(); }, []);
+  useEffect(() => { if (restaurantId) fetchAll(); }, [restaurantId]);
 
-  useEffect(() => {
-    if (restaurantId) {
-      fetchAll();
-    }
-  }, [restaurantId]);
-
+  // ── Individual fetchers ────────────────────────────────────────────────────
   const fetchCategories = async () => {
     if (!restaurantId) return;
     try {
       const res = await apiFetch(`/api/v1/category/?restaurant=${restaurantId}`);
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : data.results || []);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   };
 
   const fetchMenuItems = async () => {
@@ -80,88 +81,103 @@ export default function MenuPage() {
       const res = await apiFetch(`/api/v1/menu/?restaurant=${restaurantId}`);
       const data = await res.json();
       setMenuItems(Array.isArray(data) ? data : data.results || []);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   };
 
-  // Fetch all menu photos
+  /**
+   * Fetch all photos of type=menu and build a map of:
+   *   menuItemId → { id (photo record id), object_id, photo_url }
+   *
+   * We keep the full photo record so we can call PUT /api/v1/photo/{id}/
+   * when the user replaces an image on an existing menu item.
+   */
   const fetchMenuPhotos = async () => {
     if (!restaurantId) return;
     try {
-      const res = await apiFetch(`/api/v1/photo/?type=menu`);
+      // Fetch all pages if needed; for most restaurants one page is enough.
+      const res = await apiFetch(`/api/v1/photo/?type=menu&page_size=500`);
       const data = await res.json();
-      const photos: any[] = data.results || [];
+      const photos: MenuPhoto[] = data.results || [];
 
-      const photoMap: Record<number, string> = {};
+      const photoMap: Record<number, MenuPhoto> = {};
       photos.forEach((photo) => {
-        if (photo.object_id && photo.photo) {
-          photoMap[photo.object_id] = photo.photo;
+        if (photo.object_id && photo.photo_url) {
+          photoMap[photo.object_id] = photo;
         }
       });
       setMenuPhotos(photoMap);
     } catch (err) {
-      console.error("Failed to fetch menu photos", err);
+      console.error('Failed to fetch menu photos', err);
     }
   };
 
   const fetchAll = async () => {
     setLoading(true);
-    await Promise.all([
-      fetchCategories(),
-      fetchMenuItems(),
-      fetchMenuPhotos()
-    ]);
+    await Promise.all([fetchCategories(), fetchMenuItems(), fetchMenuPhotos()]);
     setLoading(false);
   };
 
+  // ── Filtered list ──────────────────────────────────────────────────────────
   const filteredItems = selectedCategoryId === 'All'
     ? menuItems
     : menuItems.filter((item) => item.category === selectedCategoryId);
 
+  // ── Create / Update menu item + photo ─────────────────────────────────────
   const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
     if (!restaurantId) return;
 
-    try {
-      const isEditing = !!editingItem;
-      const url = isEditing 
-        ? `/api/v1/menu/${editingItem!.id}/`
-        : `/api/v1/menu/`;
+    const isEditing = !!editingItem;
+    const url = isEditing
+      ? `/api/v1/menu/${editingItem!.id}/`
+      : `/api/v1/menu/`;
 
-      const res = await apiFetch(url, {
-        method: isEditing ? 'PATCH' : 'POST',
-        body: JSON.stringify(payload),
-      });
+    // 1️⃣  Save the menu item (text fields)
+    const res = await apiFetch(url, {
+      method: isEditing ? 'PATCH' : 'POST',
+      body: JSON.stringify(payload),
+    });
 
-      if (!res.ok) throw new Error('Failed to save menu item');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.detail || 'Failed to save menu item');
+    }
 
-      const menuData = await res.json();
-      const menuId = isEditing ? editingItem!.id : menuData.id;
+    const menuData = await res.json();
+    const menuId: number = isEditing ? editingItem!.id : menuData.id;
 
-      if (selectedFile && menuId) {
-        const formData = new FormData();
-        formData.append('type', 'menu');
-        formData.append('object_id', menuId.toString());
-        formData.append('photo', selectedFile);
+    // 2️⃣  Handle photo upload / update
+    if (selectedFile && menuId) {
+      const existingPhoto = menuPhotos[menuId]; // defined only if this item already has a photo
 
+      const formData = new FormData();
+      formData.append('type', 'menu');
+      formData.append('object_id', menuId.toString());
+      // ✅ Correct field name is `photo`, NOT `photo_url`
+      formData.append('photo', selectedFile);
+
+      if (existingPhoto) {
+        // ✅ Photo already exists → UPDATE with PUT /api/v1/photo/{id}/
+        await apiFetch(`/api/v1/photo/${existingPhoto.id}/`, {
+          method: 'PUT',
+          body: formData,
+        }).catch(console.error);
+      } else {
+        // ✅ No photo yet → CREATE with POST /api/v1/photo/
         await apiFetch('/api/v1/photo/', {
           method: 'POST',
           body: formData,
         }).catch(console.error);
       }
-
-      // Refresh everything
-      await fetchAll();
-
-      setIsModalOpen(false);
-      setEditingItem(null);
-
-    } catch (error: any) {
-      console.error(error);
-      alert('Failed to save menu item');
     }
+
+    // 3️⃣  Refresh everything so the table shows the updated image
+    await fetchAll();
+
+    setIsModalOpen(false);
+    setEditingItem(null);
   };
 
+  // ── Edit / Delete ──────────────────────────────────────────────────────────
   const handleEdit = (item: MenuItem) => {
     setEditingItem(item);
     setIsModalOpen(true);
@@ -170,13 +186,14 @@ export default function MenuPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
-await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
+      await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
       await fetchAll();
     } catch (err) {
       alert('Failed to delete');
     }
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -190,7 +207,10 @@ await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button onClick={() => { setEditingItem(null); setIsModalOpen(true); }} className="bg-[#513012]">
+          <Button
+            onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
+            className="bg-[#513012]"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add New Item
           </Button>
@@ -237,14 +257,18 @@ await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
               </TableHeader>
               <TableBody>
                 {filteredItems.map((item) => {
-                  const imageUrl = menuPhotos[item.id] || item.image;
+                  // ✅ Use photo_url from the photo record; fallback to item.image
+                  const imageUrl = menuPhotos[item.id]?.photo_url || item.image;
+
                   return (
                     <TableRow key={item.id}>
                       <TableCell>
                         {imageUrl ? (
-                          <img
+                          <Image
                             src={imageUrl}
                             alt={item.name}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 object-cover rounded border"
                           />
                         ) : (
@@ -253,7 +277,9 @@ await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
                       </TableCell>
                       <TableCell className="font-medium">{item.name}</TableCell>
                       <TableCell>
-                        {item.category_name || categories.find((c) => c.id === item.category)?.name || '-'}
+                        {item.category_name
+                          || categories.find((c) => c.id === item.category)?.name
+                          || '-'}
                       </TableCell>
                       <TableCell>Rs. {item.price}</TableCell>
                       <TableCell>
@@ -280,7 +306,7 @@ await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
 
       <MenuModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); setEditingItem(null); }}
         editingItem={editingItem}
         onSubmit={handleMenuSubmit}
         categories={categories}

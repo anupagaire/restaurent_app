@@ -24,7 +24,7 @@ interface Category {
 interface MenuItem {
   id?: number;
   name: string;
-  description?: string;
+  description?: string | null; 
   price: string | number;
   category: number;
   image?: string;

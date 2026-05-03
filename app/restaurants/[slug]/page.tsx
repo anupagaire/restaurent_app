@@ -22,7 +22,7 @@ interface ApiMenu {
 interface ApiPhoto {
   id: number;
   object_id: number;
-  photo: string;
+  photo_url: string;
   // type field may or may not be present
 }
 
@@ -72,43 +72,47 @@ async function getRestaurantDetail(id: number): Promise<ApiRestaurant | null> {
   }
 }
 
-// Fixed: Fetch menu photos using object_id only (since type filter is unreliable)
 async function getMenuPhotoMap(menuIds: number[]): Promise<Record<number, string>> {
   if (menuIds.length === 0) return {};
 
   try {
-    const res = await fetch(`${BASE_URL}/api/v1/photo/?type=menu&page_size=1000`, {
+    // Try fetching for each menu ID explicitly using object_id filter
+    const params = new URLSearchParams({
+      type: 'menu',
+      page_size: '1000',
+    });
+
+    const res = await fetch(`${BASE_URL}/api/v1/photo/?${params}`, {
       cache: 'no-store',
     });
 
     if (!res.ok) return {};
 
     const data = await res.json();
+    // Handle paginated response
     const photos: ApiPhoto[] = Array.isArray(data) ? data : data.results ?? [];
-console.log("Total photos fetched:", photos.length);
-    console.log("Sample photo object:", photos[0]);
-    console.log("Menu IDs we have:", menuIds);
-    const map: Record<number, string> = {};
 
+    console.log("Total photos fetched:", photos.length);
+    console.log("All object_ids in photos:", photos.map(p => p.object_id));
+    console.log("Menu IDs we need:", menuIds);
+
+    const map: Record<number, string> = {};
     for (const photo of photos) {
       const objId = Number(photo.object_id);
-      // If this photo belongs to one of our menu items
-      if (menuIds.includes(objId) && photo.photo) {
-        // Keep only the first photo for each menu item
+      if (menuIds.includes(objId) && photo.photo_url) {
         if (!map[objId]) {
-          map[objId] = photo.photo;
+          map[objId] = photo.photo_url;
         }
       }
     }
-        console.log("Final photo map:", map);
 
+    console.log("Final photo map:", map);
     return map;
   } catch (err) {
     console.error("Failed to fetch menu photos:", err);
     return {};
   }
 }
-
 export default async function RestaurantPage({ params }: PageProps) {
   const { slug } = await params;
 
@@ -137,7 +141,7 @@ export default async function RestaurantPage({ params }: PageProps) {
     category: item.category_name || categoryMap[item.category] || 'Other',
   }));
 
-  const restaurantImage = restaurant.photos?.[0]?.photo || '/placeholder-restaurant.jpg';
+const restaurantImage = (restaurant.photos?.[0] as any)?.photo_url || '/placeholder-restaurant.jpg';
 
   return (
     <div style={{ background: '#faf8f5', minHeight: '100vh' }}>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Image from 'next/image';
 
 const ITEMS_PER_PAGE = 12;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -14,7 +15,7 @@ interface Restaurant {
   address: string;
   city: string;
   status: boolean;
-  photos: { id: number; photo: string }[];
+photos: { id: number; photo_url: string }[];
 }
 
 function toSlug(name: string) {
@@ -107,7 +108,7 @@ export default function RestaurantsPage() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
             {restaurants.map((restaurant) => {
-              const photo = resolvePhoto(restaurant.photos?.[0]?.photo);
+                const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
               return (
                 <Link
                   key={restaurant.id}
@@ -116,12 +117,13 @@ export default function RestaurantsPage() {
                 >
                   <div className="relative h-40 bg-gray-100">
                     {photo ? (
-                      // ✅ plain <img> — avoids next/image remotePatterns requirement
-                      <img
-                        src={photo}
-                        alt={restaurant.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition"
-                      />
+                     <Image
+  src={photo}
+  alt={restaurant.name}
+  fill
+  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+  className="object-cover"
+/>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">
                         🍽️

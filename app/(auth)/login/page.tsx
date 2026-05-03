@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from '@/context/AuthContext';
 
@@ -12,8 +11,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
   const { login } = useAuth();
+  // ✅ useRouter हटायो — window.location.href use गर्छौं
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,55 +47,59 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", refresh);
       document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
 
-  // 👤 GET USER PROFILE
-const meRes = await apiFetch("/api/v1/user/me/");
-const me = await meRes.json();
-console.log("USER PROFILE:", me);
+      // 👤 GET USER PROFILE
+      const meRes = await apiFetch("/api/v1/user/me/");
+      const me = await meRes.json();
+      console.log("USER PROFILE:", me);
 
-if (!meRes.ok) {
-  setError("Failed to fetch user profile");
-  return;
-}
+      if (!meRes.ok) {
+        setError("Failed to fetch user profile");
+        return;
+      }
 
-// 💾 SAVE USER
-localStorage.setItem("user", JSON.stringify(me));
-if (me?.restaurant) {
-  localStorage.setItem("restaurant_id", String(me.restaurant));
-}
+      // 💾 SAVE USER
+      localStorage.setItem("user", JSON.stringify(me));
+      if (me?.restaurant) {
+        localStorage.setItem("restaurant_id", String(me.restaurant));
+      }
 
-// Login success pachhi — permissions load garo
-const role = (me?.role || "").toLowerCase();
-const isAdmin = role === 'admin';
+      const role = (me?.role || "").toLowerCase();
+      const isSuperAdmin = !me?.restaurant; // ✅ restaurant null = super admin
+      const isAdmin = !isSuperAdmin && role === 'admin';
 
-// Staff permissions localStorage bata
-const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
-const savedPerms = allPerms[me.email];
+      // ✅ ROLE COOKIE SET GARO — middleware le yo padcha
+      document.cookie = `role=${isSuperAdmin ? 'super_admin' : role}; path=/; max-age=86400; SameSite=Lax`;
 
-login({
-  id: me.id,
-  name: `${me.first_name || ''} ${me.last_name || ''}`.trim() || me.email,
-  email: me.email,
-  role: me.role || 'staff',
-  permissions: savedPerms || {
-    // Admin bhaye sabai true, staff bhaye sabai false by default
-    viewOrders: isAdmin,
-    manageOrders: isAdmin,
-    addMenuItems: isAdmin,
-    editMenuItems: isAdmin,
-    menuSettings: isAdmin,
-    globalSettings: isAdmin,
-    manageStaff: isAdmin,
-  }
-});
+      // Staff permissions
+      const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
+      const savedPerms = allPerms[me.email];
 
-// Redirect
-if (!me.restaurant) {
-  router.replace("/super-admin");
-} else if (isAdmin) {
-  router.replace("/restaurant-admin");
-} else {
-  router.replace("/restaurant-admin"); // Staff pani same page, tara limited sidebar
-}
+      login({
+        id: me.id,
+        name: `${me.first_name || ''} ${me.last_name || ''}`.trim() || me.email,
+        email: me.email,
+        role: isSuperAdmin ? 'super_admin' : (me.role || 'staff'),
+        permissions: savedPerms || {
+          viewOrders: isAdmin,
+          manageOrders: isAdmin,
+          addMenuItems: isAdmin,
+          editMenuItems: isAdmin,
+          menuSettings: isAdmin,
+          globalSettings: isAdmin,
+          manageStaff: isAdmin,
+        }
+      });
+
+      // ✅ Cookie set हुन time दियो, अनि full reload गर्यो
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // ✅ window.location.href — router.replace होइन
+      if (isSuperAdmin) {
+        window.location.href = "/super-admin";
+      } else {
+        window.location.href = "/restaurant-admin";
+      }
+
     } catch (err) {
       console.error(err);
       setError("Network error");

@@ -8,10 +8,10 @@ import { Star, Utensils } from "lucide-react";
 const restaurants = [
   {
     id: 1,
-    name: "Rajdoot Restaurant",
+    name: "Restaurant Restaurant",
     text:
       "Authentic Indian, Western & Nepali cuisine served with love. Famous for butter chicken, momo and tandoori dishes. A perfect place for family dining and gatherings.",
-    img: "/place/1.jpg",
+    img: "/profile.png",
     rating: 4.8,
   },
   {
@@ -19,7 +19,7 @@ const restaurants = [
     name: "Himalayan Spice House",
     text:
       "A cozy restaurant offering rich Nepali flavors with modern twists. Known for thali sets, momos, and traditional spices that bring Himalayan taste alive.",
-    img: "/place/2.jpg",
+    img: "/profile.png",
     rating: 4.6,
   },
   {
@@ -27,7 +27,7 @@ const restaurants = [
     name: "Urban Curry Hub",
     text:
       "Modern Indian dining experience with fusion dishes. From creamy curries to street-style snacks, everything is crafted for a bold taste experience.",
-    img: "/place/3.jpg",
+    img: "/profile.png",
     rating: 4.7,
   },
 ];

@@ -12,20 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
-
-interface MenuItem {
-  id: number;
-  name: string;
-  price: string;
-  category_name?: string;
-  status: boolean;
-  image?: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-}
+import type { MenuItem, Category } from '@/types/menu';
 
 export default function RestaurantAdminDashboard() {
   const { currentUser } = useAuth();
@@ -316,9 +303,11 @@ return (
           onSubmit={handleMenuSubmit}
           categories={categories}
           restaurantId={user?.restaurant || 0}
-          onCategoryCreated={() => {
-            if (user?.restaurant) fetchDashboardData(user.restaurant);
-          }}
+          onCategoryCreated={async () => {
+            if (user?.restaurant) {
+              await fetchDashboardData(user.restaurant);
+            }
+           }}
         />
       )}
     </div>

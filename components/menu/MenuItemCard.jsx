@@ -1,14 +1,16 @@
 'use client';
-
+import Image from "/next/image";
 export default function MenuItemCard({ item }) {
   return (
     <div className="group rounded-3xl overflow-hidden bg-white border border-[#513012]/20 hover:border-[#47034E] transition-all duration-500 shadow-lg hover:shadow-2xl">
       
       {/* Image Section */}
       <div className="relative h-64 overflow-hidden">
-        <img 
+        <Image 
           src={item.image || '/images/placeholder-food.jpg'} 
           alt={item.name}
+          width={400}
+          height={400}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
         
@@ -38,7 +40,6 @@ export default function MenuItemCard({ item }) {
           {item.description || "Freshly prepared with authentic spices and premium ingredients."}
         </p>
 
-        {/* Add to Cart Button */}
         <button 
           className="mt-8 w-full bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565] 
                      hover:from-[#47034E] hover:via-[#5D0565] hover:to-[#513012]

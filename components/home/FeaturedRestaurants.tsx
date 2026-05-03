@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 
 interface Restaurant {
   id: number;
@@ -12,7 +14,7 @@ interface Restaurant {
   city: string;
   status: boolean;
   availability: string;
-  photos: { id: number; photo: string }[];
+  photos: { id: number; photo_url: string }[];
 }
 
 function toSlug(name: string) {
@@ -72,7 +74,7 @@ export default function FeaturedRestaurants() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {restaurants.map((restaurant) => {
-              const photo = resolvePhoto(restaurant.photos?.[0]?.photo);
+              const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
 
               return (
                 <Link
@@ -82,11 +84,13 @@ export default function FeaturedRestaurants() {
                 >
                   <div className="relative h-40 bg-gray-100">
                     {photo ? (
-                      <img
-                        src={photo}
-                        alt={restaurant.name}
-                        className="w-full h-full object-cover"
-                      />
+                      <Image
+  src={photo}
+  alt={restaurant.name}
+  fill
+  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+  className="object-cover"
+/>
                     ) : (
                       <div className="flex items-center justify-center h-full text-4xl bg-gray-50">
                         🍽️

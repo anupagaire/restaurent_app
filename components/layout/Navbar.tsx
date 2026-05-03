@@ -29,12 +29,21 @@ export default function Navbar() {
             <Link href="/" className="hover:text-[#5D0565] transition">
               Home
             </Link>
+            <Link href="/about" className="hover:text-[#5D0565] transition">
+              About Us
+            </Link>
             <Link href="/restaurants" className="hover:text-[#5D0565] transition">
               Restaurants
             </Link>
             <Link href="/contact" className="hover:text-[#5D0565] transition">
               Contact
             </Link>
+            <Link
+  href="/contact"
+  className="hidden sm:inline-flex items-center px-5 py-2.5 rounded-full font-medium border border-white/20 hover:bg-white/10 transition text-white"
+>
+  List Your Restaurant
+</Link>
           </div>
 
           <div className="flex items-center gap-3">

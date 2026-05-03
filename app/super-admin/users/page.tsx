@@ -112,10 +112,10 @@ export default function UsersPage() {
   }
 };
   const filteredUsers = users.filter((u) =>
-    u.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  (u.fullName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (u.email ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (u.restaurantName ?? '').toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">

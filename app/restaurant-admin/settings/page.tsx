@@ -19,7 +19,7 @@ interface RestaurantData {
   zip: string;
   availability: string | null;
   status: boolean;
-  photos: { id: number; photo: string }[];
+  photos: { id: number; photo_url: string }[];
 }
 
 export default function GlobalSettingsPage() {
@@ -120,8 +120,7 @@ export default function GlobalSettingsPage() {
       const formData = new FormData();
       formData.append('type', 'restaurant');      
       formData.append('object_id', restaurantId);  // ← change 'restaurant' to 'object_id'
-      formData.append('photo', file);
-
+formData.append('photo', file);
       const res = await apiFetch(`/api/v1/photo/`, {
         method: 'POST',
         body: formData,
@@ -135,7 +134,7 @@ export default function GlobalSettingsPage() {
       }
 
       await fetchRestaurant();
-      setSuccessMsg('✅ Photo uploaded successfully!');
+      setSuccessMsg(' Photo uploaded successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (err) {
       console.error(err);
@@ -213,7 +212,7 @@ export default function GlobalSettingsPage() {
                 {restaurant.photos.map((photo) => (
                   <div key={photo.id} className="relative group">
                     <Image
-                      src={photo.photo}
+                      src={photo.photo_url}
                       alt="Restaurant photo"
                       width={120}
                       height={120}

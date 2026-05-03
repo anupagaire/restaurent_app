@@ -8,7 +8,8 @@ import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { User } from '@/app/super-admin/users/page';
+// import { User } from '@/app/super-admin/users/page';
+import type { RestaurantAdmin } from '@/types/user';
 import { apiFetch } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
@@ -16,7 +17,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (newUser: User) => void;
+  onSuccess: (newUser: RestaurantAdmin) => void;  // ← was User
 }
 
 export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModalProps) {
@@ -129,19 +130,23 @@ const restaurantRes = await apiFetch('/api/v1/restaurant/', {
         return;
       }
 
-      // SUCCESS
-      onSuccess({
-        id: registerData.id,
-        email: registerData.email,
-        first_name: registerData.first_name,
-        last_name: registerData.last_name,
-        contact_no: registerData.contact_no || '',
-        role: registerData.role,
-        restaurantId: restaurantId,
-      });
+     onSuccess({
+  id: registerData.id,
+  email: registerData.email ?? '',
+  first_name: registerData.first_name ?? '',
+  last_name: registerData.last_name ?? '',
+  contact_no: registerData.contact_no || '',
+  role: registerData.role,
+  restaurantId: restaurantId,
+  fullName: `${registerData.first_name || ''} ${registerData.last_name || ''}`.trim() || '-',
+  phone: registerData.contact_no || '-',
+  restaurantName: restaurantForm.name,
+  address: restaurantForm.address,
+  city: restaurantForm.city,
+});
 
       handleClose();
-      alert('✅ Admin + Restaurant created successfully!');
+      alert('Admin + Restaurant created successfully!');
 
     } catch (err) {
       console.error(err);
@@ -169,7 +174,6 @@ const restaurantRes = await apiFetch('/api/v1/restaurant/', {
             </div>
           )}
 
-          {/* RESTAURANT SECTION FIRST (matches API order) */}
           <div className="border border-[#513012]/10 rounded-lg p-4 space-y-3">
             <p className="text-sm font-semibold text-[#513012]">🍽️ Restaurant Details</p>
 
