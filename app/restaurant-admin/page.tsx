@@ -307,7 +307,7 @@ return (
             if (user?.restaurant) {
               await fetchDashboardData(user.restaurant);
             }
-           }}
+        }}
         />
       )}
     </div>
