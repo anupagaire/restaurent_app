@@ -147,9 +147,17 @@ const restaurantImage = (restaurant.photos?.[0] as any)?.photo_url || '/placehol
     <div style={{ background: '#faf8f5', minHeight: '100vh' }}>
       <Navbar />
 
-      <div style={{ display: 'flex', flexDirection: 'row', height: 440, overflow: 'hidden', borderRadius: 16 }}>
+    
+        <div
+  className="
+    flex flex-col md:flex-row
+    h-auto md:h-[500px]
+    overflow-hidden
+    rounded-2xl
+  "
+>
         {/* Restaurant Hero Image */}
-        <div style={{ position: 'relative', width: '50%', height: '100%' }}>
+<div className="relative w-full h-64 md:w-1/2 md:h-full">
           <Image
             src={restaurantImage}
             alt={restaurant.name}
@@ -159,18 +167,17 @@ const restaurantImage = (restaurant.photos?.[0] as any)?.photo_url || '/placehol
           />
         </div>
 
-        {/* Restaurant Info */}
-        <div
-          style={{
-            width: '50%',
-            padding: '40px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            background: 'linear-gradient(135deg, #513012, #47034E, #5D0565)',
-            color: 'white',
-          }}
-        >
+   <div
+  className="
+    w-full md:w-1/2
+    p-6 md:p-12
+    flex flex-col justify-center
+    text-white
+  "
+  style={{
+    background: 'linear-gradient(135deg, #513012, #47034E, #5D0565)',
+  }}
+>
           <h1 style={{ fontFamily: 'Georgia,"Times New Roman",serif', fontSize: 'clamp(2rem,3vw,3rem)', fontWeight: 700, marginBottom: 16, lineHeight: 1.1 }}>
             {restaurant.name}
           </h1>
