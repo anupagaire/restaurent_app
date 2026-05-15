@@ -299,35 +299,50 @@ export default function PublicMenuPage() {
   const [orderSuccess, setOrderSuccess] = useState(false);
 
   const API = process.env.NEXT_PUBLIC_API_URL;
-
+useEffect(() => {
+  console.log("Slug from URL:", slug);
+  console.log("Token from URL:", token);
+}, [slug, token]);
   useEffect(() => {
-    const fetchMenu = async () => {
-      if (!slug || !token) {
-        setError('Invalid QR code link. Please scan the QR code again.');
-        setLoading(false); return;
-      }
-      try {
-        const res = await fetch(`${API}/api/v1/qr-menu/menu/?token=${encodeURIComponent(token)}`,
-          { method: 'GET', headers: { Accept: 'application/json' }, cache: 'no-store' });
-        if (!res.ok) {
-          let msg = `Failed to load menu (${res.status})`;
-          if (res.status === 403) msg = 'This QR code has expired or is invalid.';
-          else if (res.status === 404) msg = 'Restaurant not found.';
-          throw new Error(msg);
-        }
-        const data = await res.json();
-        // ✅ Debug: check what fields menu items have
-        const sample = data?.restaurant?.categories?.[0]?.menus?.[0] ?? data?.categories?.[0]?.menus?.[0];
-        console.log('Sample menu item from API:', sample);
+   const fetchMenu = async () => {
+  console.log("QR Scan Debug:", { slug, token, tokenLength: token.length });
+
+  if (!token) {
+    setError('Token not found in URL.');
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${API}/api/v1/qr-menu/menu/?token=${encodeURIComponent(token)}`,
+      { cache: 'no-store' }
+    );
+
+    console.log("Menu API Status:", res.status);
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.error("Error from backend:", errData);
+      
+      throw new Error(errData.detail || `Invalid QR Code (${res.status})`);
+    }
+
+    const data = await res.json();
+    console.log("✅ Menu Loaded Successfully");
+           
         const restaurantData: Restaurant = data.restaurant ?? data;
         setRestaurant(restaurantData);
         const firstActive = restaurantData.categories?.find(c => c.status !== false);
         if (firstActive) setActiveCategory(firstActive.name);
       } catch (err: any) {
-        setError(err.message || 'Something went wrong.');
-      } finally { setLoading(false); }
-    };
-    fetchMenu();
+    console.error(err);
+    setError(err.message || 'Failed to load menu');
+  } finally {
+    setLoading(false);
+  }
+};
+fetchMenu();   
   }, [slug, token, API]);
 
   const addToCart = (item: MenuItem, categoryName: string) => {

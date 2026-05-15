@@ -15,7 +15,7 @@ interface Restaurant {
   address: string;
   city: string;
   status: boolean;
-photos: { id: number; photo_url: string }[];
+  photos: { id: number; photo_url: string }[];
 }
 
 function toSlug(name: string) {
@@ -28,12 +28,291 @@ function resolvePhoto(url: string | null | undefined): string | null {
   return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
+// ── Fetch average rating ─────────────────────────────────────
+async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; count: number }> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/v1/restaurant-reviews/?restaurant=${restaurantId}&page_size=200`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return { avg: 0, count: 0 };
+    const data = await res.json();
+    const reviews: { rating: number; parent: number | null }[] = data.results ?? [];
+    const topLevel = reviews.filter((r) => r.parent === null);
+    if (topLevel.length === 0) return { avg: 0, count: 0 };
+    const avg = topLevel.reduce((s, r) => s + r.rating, 0) / topLevel.length;
+    return { avg, count: topLevel.length };
+  } catch {
+    return { avg: 0, count: 0 };
+  }
+}
+
+async function postRating(restaurantId: number, rating: number): Promise<boolean> {
+  // ── Already rated check — backend hit nai nagari block ──
+  const alreadyRated = localStorage.getItem(`rated_${restaurantId}`);
+  if (alreadyRated) return false;
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/restaurant-reviews/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        restaurant: restaurantId,
+        rating,
+        review: '[Quick rating]',
+        is_published: true,
+      }),
+    });
+    if (res.ok) {
+      localStorage.setItem(`rated_${restaurantId}`, String(rating));
+      return true;
+    }
+    // 429 handle
+    if (res.status === 429) {
+      localStorage.setItem(`rated_${restaurantId}`, String(rating));
+      return false;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+// ── Inline Star Rating on card ───────────────────────────────
+function InlineStarRating({ restaurantId }: { restaurantId: number }) {
+  const [myRating, setMyRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [avg, setAvg] = useState(0);
+  const [count, setCount] = useState(0);
+
+  const loadAvg = useCallback(() => {
+    fetchAvgRating(restaurantId).then(({ avg, count }) => {
+      setAvg(avg);
+      setCount(count);
+    });
+  }, [restaurantId]);
+
+useEffect(() => {
+  const saved = localStorage.getItem(`rated_${restaurantId}`);
+  if (saved) {
+    setMyRating(Number(saved));
+    setSubmitted(true);
+  }
+  loadAvg();
+}, [loadAvg, restaurantId]);
+
+  const handleRate = async (val: number) => {
+    if (submitting || submitted) return;
+    setMyRating(val);
+    setSubmitting(true);
+    const ok = await postRating(restaurantId, val);
+    if (ok) {
+      setSubmitted(true);
+      setTimeout(() => loadAvg(), 500);
+    } else {
+      setMyRating(0);
+    }
+    setSubmitting(false);
+  };
+
+  const displayRating = hover || myRating;
+
+  return (
+    <div onClick={(e) => e.preventDefault()}>
+      {/* Average rating */}
+      {count > 0 && (
+        <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
+          <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}>★</span>
+            ))}
+          </div>
+          <span className="text-[10px] text-gray-400">({count})</span>
+        </div>
+      )}
+
+      {/* My stars */}
+      <div className="mt-2 pt-2 border-t border-gray-100">
+        <p className="text-[10px] text-gray-400 mb-1">
+          {submitted ? 'Your rating:' : 'Rate this place:'}
+        </p>
+        <div className="flex gap-0.5">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              disabled={submitted || submitting}
+              onMouseEnter={() => !submitted && setHover(star)}
+              onMouseLeave={() => !submitted && setHover(0)}
+              onClick={() => handleRate(star)}
+              className="text-base leading-none focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
+              aria-label={`Rate ${star} stars`}
+            >
+              <span style={{ color: star <= displayRating ? '#f59e0b' : '#d1d5db' }}>★</span>
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] mt-0.5 text-gray-400">
+          {submitting ? 'Saving...' : submitted ? `Saved ${myRating} ★` : 'Tap to rate'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Floating Rate Widget ─────────────────────────────────────
+function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [hover, setHover] = useState(0);
+  const [rating, setRating] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const selectedRestaurant = restaurants.find((r) => r.id === selectedId);
+
+useEffect(() => {
+  setRating(0);
+  setSubmitted(false);
+  setHover(0);
+  if (selectedId) {
+    const saved = localStorage.getItem(`rated_${selectedId}`);
+    if (saved) {
+      setRating(Number(saved));
+      setSubmitted(true);
+    }
+  }
+}, [selectedId]);
+  const handleSubmit = async () => {
+    if (!selectedId || !rating || submitting) return;
+    setSubmitting(true);
+    const ok = await postRating(selectedId, rating);
+    if (ok) {
+      setSubmitted(true);
+    }
+    setSubmitting(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedId(null);
+    setRating(0);
+    setHover(0);
+    setSubmitted(false);
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 right-6 z-50 bg-[#513012] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#3d2209] transition-all flex items-center gap-2 text-sm font-medium"
+        aria-label="Rate a restaurant"
+      >
+        ⭐ Rate a Restaurant
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
+          onClick={handleClose}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-sm p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-lg font-semibold text-[#513012] mb-4">
+              Rate a Restaurant
+            </h3>
+
+            <select
+              value={selectedId ?? ''}
+              onChange={(e) => setSelectedId(Number(e.target.value))}
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[#513012]"
+            >
+              <option value="" disabled>Select a restaurant...</option>
+              {restaurants.map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+
+            {selectedRestaurant && (
+              <>
+                <p className="text-sm text-gray-500 mb-3">
+                  📍 {selectedRestaurant.city}
+                </p>
+
+                {submitted ? (
+                  <div className="text-center py-4">
+                    <div className="text-4xl mb-2">🎉</div>
+                    <p className="text-[#513012] font-medium">
+                      You rated {selectedRestaurant.name}
+                    </p>
+                    <div className="flex justify-center gap-1 mt-2 text-2xl">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <span key={s} style={{ color: s <= rating ? '#f59e0b' : '#d1d5db' }}>★</span>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => { setSubmitted(false); setRating(0); }}
+                      className="mt-3 text-xs text-gray-400 underline"
+                    >
+                      Rate again
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600 mb-2">Your rating:</p>
+                    <div className="flex gap-1 mb-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setHover(star)}
+                          onMouseLeave={() => setHover(0)}
+                          onClick={() => setRating(star)}
+                          className="text-3xl leading-none focus:outline-none transition-transform hover:scale-110"
+                          aria-label={`${star} stars`}
+                        >
+                          <span style={{ color: star <= (hover || rating) ? '#f59e0b' : '#d1d5db' }}>★</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!rating || submitting}
+                      className="w-full bg-[#513012] text-white py-2.5 rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-[#3d2209] transition-colors"
+                    >
+                      {submitting ? 'Saving...' : 'Submit Rating'}
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Main Page ────────────────────────────────────────────────
 export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -46,19 +325,8 @@ export default function RestaurantsPage() {
         page_size: String(ITEMS_PER_PAGE),
         ...(search && { search }),
       });
-
-      // ✅ plain fetch — no auth header, fully public
-      const res = await fetch(`${BASE_URL}/api/v1/restaurant/?${params}`, {
-        cache: 'no-store',
-      });
-
-      if (!res.ok) {
-        console.error('Failed to fetch restaurants:', res.status);
-        setRestaurants([]);
-        setTotalCount(0);
-        return;
-      }
-
+      const res = await fetch(`${BASE_URL}/api/v1/restaurant/?${params}`, { cache: 'no-store' });
+      if (!res.ok) { setRestaurants([]); setTotalCount(0); return; }
       const data = await res.json();
       setRestaurants(data.results ?? []);
       setTotalCount(data.count ?? 0);
@@ -72,12 +340,19 @@ export default function RestaurantsPage() {
   }, [currentPage, search]);
 
   useEffect(() => {
-    fetchRestaurants();
-  }, [fetchRestaurants]);
+    const fetchAll = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=100`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        setAllRestaurants(data.results ?? []);
+      } catch {}
+    };
+    fetchAll();
+  }, []);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search]);
+  useEffect(() => { fetchRestaurants(); }, [fetchRestaurants]);
+  useEffect(() => { setCurrentPage(1); }, [search]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,28 +377,39 @@ export default function RestaurantsPage() {
         </div>
 
         {loading ? (
-          <p className="text-center text-gray-400 py-20">Loading...</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="bg-white rounded-3xl overflow-hidden animate-pulse">
+                <div className="h-40 bg-gray-200" />
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  <div className="h-3 bg-gray-200 rounded w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : restaurants.length === 0 ? (
           <p className="text-center text-gray-500 py-20">No restaurants found.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {restaurants.map((restaurant) => {
-                const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
+              const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
               return (
                 <Link
                   key={restaurant.id}
                   href={`/restaurants/${toSlug(restaurant.name)}`}
-                  className="group bg-white rounded-3xl overflow-hidden hover:shadow-2xl transition-all"
+                  className="group bg-white rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
                 >
                   <div className="relative h-40 bg-gray-100">
                     {photo ? (
-                     <Image
-  src={photo}
-  alt={restaurant.name}
-  fill
-  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-  className="object-cover"
-/>
+                      <Image
+                        src={photo}
+                        alt={restaurant.name}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                        className="object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">
                         🍽️
@@ -131,8 +417,9 @@ export default function RestaurantsPage() {
                     )}
                   </div>
                   <div className="p-3">
-                    <h3 className="text-base font-bold text-[#513012]">{restaurant.name}</h3>
-                    <p className="text-gray-600 text-sm mt-1">📍 {restaurant.city}</p>
+                    <h3 className="text-sm font-bold text-[#513012] line-clamp-1">{restaurant.name}</h3>
+                    <p className="text-gray-500 text-xs mt-1">📍 {restaurant.city}</p>
+                    <InlineStarRating restaurantId={restaurant.id} />
                   </div>
                 </Link>
               );
@@ -142,9 +429,7 @@ export default function RestaurantsPage() {
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-12 gap-2 flex-wrap">
-            <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1} className="px-4 py-2 rounded-lg border disabled:opacity-50">
-              Prev
-            </button>
+            <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1} className="px-4 py-2 rounded-lg border disabled:opacity-50">Prev</button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
@@ -154,13 +439,12 @@ export default function RestaurantsPage() {
                 {i + 1}
               </button>
             ))}
-            <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages} className="px-4 py-2 rounded-lg border disabled:opacity-50">
-              Next
-            </button>
+            <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages} className="px-4 py-2 rounded-lg border disabled:opacity-50">Next</button>
           </div>
         )}
       </div>
 
+      <FloatingRateWidget restaurants={allRestaurants} />
       <Footer />
     </div>
   );

@@ -23,6 +23,8 @@ export default function Navbar() {
                 src="/logo.png"
                 alt="Logo"
                 fill
+                  sizes="(max-width: 768px) 100vw, 200px"
+
                 className="object-contain"
               />
             </div>
@@ -36,7 +38,7 @@ export default function Navbar() {
             <Link href="/contact" className="hover:text-[#5D0565] transition">Contact</Link>
 
             <Link
-              href="/contact"
+              href="/register-restaurant"
               className="px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white"
             >
               List Your Restaurant

@@ -8,8 +8,8 @@ interface UserPermissions {
   manageOrders: boolean;
   addMenuItems: boolean;
   editMenuItems: boolean;
-  globalSettings: boolean;
   menuSettings: boolean;
+  globalSettings: boolean;
   manageStaff: boolean;
 }
 
@@ -26,13 +26,15 @@ interface AuthContextType {
   login: (user: CurrentUser) => void;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function buildUserFromProfile(me: any): CurrentUser {
   const role = (me?.role || 'staff');
-  const isOwnerOrAdmin = role === 'Owner' || role === 'Admin' || role === 'admin' || role === 'owner';
+  const isOwnerOrAdmin = role === 'Owner' || role === 'Admin' || 
+                        role === 'admin' || role === 'owner';
 
   return {
     id: me.id,
@@ -54,31 +56,42 @@ function buildUserFromProfile(me: any): CurrentUser {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Token cha bhane user load garo
-    const token = localStorage.getItem('access_token');
-    const savedUser = localStorage.getItem('user');
+    const initAuth = () => {
+      const token = localStorage.getItem('access_token');
+      // दुवै पुरानो र नयाँ key check गरौं
+      const savedUser = localStorage.getItem('user') || localStorage.getItem('currentUser');
 
-    if (token && savedUser) {
-      try {
-        const me = JSON.parse(savedUser);
-        const user = buildUserFromProfile(me);
-        setCurrentUser(user);
-        setIsAuthenticated(true);
-      } catch {
-        // Corrupted data — clear garo
-        localStorage.removeItem('user');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+      if (token && savedUser) {
+        try {
+          const me = JSON.parse(savedUser);
+          const user = buildUserFromProfile(me);
+          setCurrentUser(user);
+          setIsAuthenticated(true);
+        } catch (e) {
+          console.error("Auth parse error:", e);
+          clearAuthStorage();
+        }
       }
-    }
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
+
+  const clearAuthStorage = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  };
 
   const login = (user: CurrentUser) => {
     setCurrentUser(user);
     setIsAuthenticated(true);
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('currentUser', JSON.stringify(user)); // consistent key
   };
 
   const logout = async () => {
@@ -91,14 +104,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({ refresh }),
         });
       }
-    } catch {
+    } catch (error) {
+      console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('currentUser');
+      clearAuthStorage();
 
-      // Cookie pani clear
+      // Clear cookies
       document.cookie = 'access_token=; path=/; max-age=0';
       document.cookie = 'role=; path=/; max-age=0';
 
@@ -109,7 +120,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        login,
+        logout,
+        isAuthenticated,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

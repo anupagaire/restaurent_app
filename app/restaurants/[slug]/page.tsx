@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MenuSection from '@/components/menu/MenuSection';
+import RestaurantTabs from '@/components/home/RestaurantTabs';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,9 @@ interface ApiMenu {
   category_name?: string;
   image?: string;
   status: boolean;
+  
 }
+
 
 interface ApiPhoto {
   id: number;
@@ -127,20 +130,21 @@ export default async function RestaurantPage({ params }: PageProps) {
   );
 
   const activeMenus = (restaurant.menus ?? []).filter((item: ApiMenu) => item.status);
-  const menuIds = activeMenus.map((item) => item.id);
 
-  // Get menu images from Photo API
-  const menuPhotoMap = await getMenuPhotoMap(menuIds);
-
-  const menuItems = activeMenus.map((item: ApiMenu) => ({
+  const menuItems = activeMenus.map((item: ApiMenu) => {
+  const validPhoto = item.photos?.find(p => p.photo_url !== null)?.photo_url ?? null;
+  const resolvedPhoto = validPhoto
+    ? (validPhoto.startsWith('http') ? validPhoto : `${BASE_URL}${validPhoto}`)
+    : null;
+  return {
     id: item.id,
     name: item.name,
     description: item.description || '',
     price: parseFloat(item.price),
-    image: menuPhotoMap[item.id] || item.image || '/placeholder-food.jpg',
+    image: resolvedPhoto, 
     category: item.category_name || categoryMap[item.category] || 'Other',
-  }));
-
+  };
+});
 const restaurantImage = (restaurant.photos?.[0] as any)?.photo_url || '/placeholder-restaurant.jpg';
 
   return (
@@ -198,16 +202,12 @@ const restaurantImage = (restaurant.photos?.[0] as any)?.photo_url || '/placehol
         </div>
       </div>
 
-      {/* MENU SECTION */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px' }}>
-        {menuItems.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#888', marginTop: 60, fontSize: 16 }}>
-            No menu items available yet.
-          </p>
-        ) : (
-          <MenuSection menuItems={menuItems} />
-        )}
-      </div>
+<div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 80px' }}>
+  <RestaurantTabs
+    menuItems={menuItems}
+    restaurantId={restaurantId}
+  />
+</div>
 
       <Footer />
     </div>

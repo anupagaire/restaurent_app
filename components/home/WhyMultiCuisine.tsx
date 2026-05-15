@@ -103,6 +103,8 @@ How We Deliver a Better Experience                </h3>
                         src="/2.jpg"
                         fill
                         className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 200px"
+
                         alt="Restaurant Kitchen Area"
                       />
                     </div>
@@ -110,6 +112,7 @@ How We Deliver a Better Experience                </h3>
                       <Image 
                         src="/4.jpg"
                         fill
+                        sizes="(max-width: 768px) 100vw, 200px"
                         className="object-cover"
                         alt="Restaurant sitting area"
                       />
@@ -121,6 +124,8 @@ How We Deliver a Better Experience                </h3>
                         src="/3.jpg"
                         fill
                         className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 200px"
+
                         alt="Restaurant Dining area"
                       />
                     </div>
@@ -130,6 +135,9 @@ How We Deliver a Better Experience                </h3>
                         fill
                         className="object-cover"
                         alt="Restaurant Ambiance"
+                          sizes="(max-width: 768px) 100vw, 200px"
+
+   
                       />
                     </div>
                   </div>

@@ -1,348 +1,538 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import QRCode from 'qrcode';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Download, QrCode, Loader2, Copy, RefreshCw, AlertCircle, CheckCircle2,
-} from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { useRequirePermission } from '@/hooks/usePermission';
+import { Download, QrCode, RefreshCw, AlertTriangle, X } from 'lucide-react';
+import QRCode from 'react-qr-code';
 
-interface TokenResponse {
+interface MenuToken {
   id: number;
   restaurant: number;
+  raw_token?: string;
+  menu_url?: string;
+  photos: { id: number; photo_url: string }[];
   is_active: boolean;
   expires_at: string | null;
-  menu_url: string;
   created_on: string;
 }
 
-interface Restaurant {
-  id: number;
-  name: string;
-  photos?: { id: number; photo: string }[];
+function GenerateConfirmDialog({
+  tokenCount,
+  onConfirm,
+  onCancel,
+}: {
+  tokenCount: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-50"
+        style={{ background: 'rgba(30,15,2,0.6)', backdropFilter: 'blur(3px)' }}
+        onClick={onCancel}
+      />
+
+      <div
+        className="fixed z-50 rounded-2xl shadow-2xl p-6 w-full max-w-sm"
+        style={{
+          background: '#fffdf8',
+          border: '1px solid rgba(184,147,106,0.3)',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <button
+          onClick={onCancel}
+          className="absolute top-4 right-4"
+          style={{ color: '#9a7458', background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <X size={18} />
+        </button>
+
+        <div className="flex justify-center mb-4">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center"
+            style={{ background: '#fff3cd' }}
+          >
+            <AlertTriangle size={28} style={{ color: '#b8860b' }} />
+          </div>
+        </div>
+
+        <h2
+          className="text-center font-bold text-xl mb-2"
+          style={{ color: '#513012', fontFamily: 'Georgia, serif' }}
+        >
+          Generate New QR Code?
+        </h2>
+
+        <div className="flex items-center gap-2 my-3">
+          <div className="h-px flex-1" style={{ background: 'rgba(184,147,106,0.3)' }} />
+          <span style={{ color: '#b8936a', fontSize: 12 }}>⚠️</span>
+          <div className="h-px flex-1" style={{ background: 'rgba(184,147,106,0.3)' }} />
+        </div>
+
+        <div
+          className="rounded-xl p-4 mb-5 text-sm text-center space-y-2"
+          style={{ background: '#fef9ec', border: '1px solid rgba(184,147,106,0.25)', color: '#7a5c3a' }}
+        >
+          {tokenCount > 0 ? (
+            <>
+              <p>
+                You already have{' '}
+                <strong style={{ color: '#513012' }}>{tokenCount} QR code{tokenCount > 1 ? 's' : ''}</strong>{' '}
+                .
+              </p>
+              <p>
+                So if you generate QR {' '}
+                <strong style={{ color: '#c0392b' }}>you must print QR again at </strong>{' '}
+                all table.
+              </p>
+            </>
+          ) : (
+            <p>
+              This will generate new QR.
+            </p>
+          )}
+        </div>
+
+        {/* Reminder box */}
+        <div
+          className="rounded-xl p-3 mb-5 text-xs"
+          style={{ background: '#fdf0f0', border: '1px solid rgba(192,57,43,0.2)', color: '#922b21' }}
+        >
+          <p className="font-bold mb-1">📋 Remember:</p>
+          <ul className="space-y-1 list-disc list-inside">
+            <li>Replace QR at all table if you click generate</li>
+          </ul>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-3 rounded-xl font-semibold text-sm"
+            style={{
+              background: 'transparent',
+              border: '1.5px solid rgba(184,147,106,0.5)',
+              color: '#9a7458',
+              cursor: 'pointer',
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 py-3 rounded-xl font-bold text-sm"
+            style={{
+              background: '#513012',
+              color: '#fdf6ec',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+           Ok, Generate!
+          </button>
+        </div>
+      </div>
+    </>
+  );
 }
 
-const STORAGE_KEY = 'qr_menu_token_data';
-
-export default function QRGenerator() {
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
-  const [menuUrl, setMenuUrl] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+export default function QRMenuPage() {
+  const [restaurantId, setRestaurantId] = useState<number | null>(null);
+  const [restaurantName, setRestaurantName] = useState<string>('');
+  const [tokens, setTokens] = useState<MenuToken[]>([]);
   const [generating, setGenerating] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [copied, setCopied] = useState(false);
-  useRequirePermission('menuSettings'); 
+  const [loading, setLoading] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const fetchRestaurantId = async (): Promise<number> => {
-    const res = await apiFetch('/api/v1/user/me/');
-    if (!res.ok) throw new Error(`Failed to fetch user (${res.status})`);
-    const user = await res.json();
-    if (!user?.restaurant) throw new Error('No restaurant linked to this account.');
-    return user.restaurant;
-  };
+  useRequirePermission('menuSettings');
 
-  const fetchRestaurant = async (id: number): Promise<Restaurant> => {
-    const res = await apiFetch(`/api/v1/restaurant/${id}/`);
-    if (!res.ok) throw new Error(`Failed to fetch restaurant (${res.status})`);
-    return res.json();
-  };
-
- const toFrontendUrl = (backendMenuUrl: string): string => {
-  try {
-    const url = new URL(backendMenuUrl);
-    const token = url.searchParams.get('token');
-    
-    const match = url.pathname.match(/\/qr-menu\/([^/?]+)/);
-    const slug = match?.[1];
-    
-    if (slug && token) {
-      return `${window.location.origin}/menu/${slug}?token=${token}`;
-    }
-    
-    if (slug) {
-      return `${window.location.origin}/menu/${slug}`;
-    }
-    
-    return backendMenuUrl;
-  } catch {
-    return backendMenuUrl;
-  }
-};
-
-  const generateQRCode = async (url: string, logoUrl?: string) => {
-    const baseQr = await QRCode.toDataURL(url, {
-      width: 520,
-      margin: 2,
-      errorCorrectionLevel: 'H',
-      color: { dark: '#513012', light: '#FFFFFF' },
-    });
-
-    if (!logoUrl) {
-      setQrDataUrl(baseQr);
-      return;
-    }
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) { setQrDataUrl(baseQr); return; }
-
-    const size = 520;
-    canvas.width = size;
-    canvas.height = size;
-
-    const qrImg = new window.Image();
-    await new Promise<void>((res, rej) => {
-      qrImg.onload = () => res();
-      qrImg.onerror = rej;
-      qrImg.src = baseQr;
-    });
-    ctx.drawImage(qrImg, 0, 0, size, size);
-
-    const logoLoaded = await new Promise<boolean>((res) => {
-      const testImg = new window.Image();
-      testImg.crossOrigin = 'anonymous';
-      testImg.onload = () => res(true);
-      testImg.onerror = () => res(false);
-      testImg.src = logoUrl;
-    });
-
-    if (!logoLoaded) { setQrDataUrl(canvas.toDataURL('image/png')); return; }
-
-    const cx = size / 2, cy = size / 2, logoSize = 100;
-    ctx.beginPath();
-    ctx.arc(cx, cy, logoSize / 2 + 10, 0, Math.PI * 2);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fill();
-
-    const logoImg = new window.Image();
-    logoImg.crossOrigin = 'anonymous';
-    logoImg.src = logoUrl;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, logoSize / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(logoImg, cx - logoSize / 2, cy - logoSize / 2, logoSize, logoSize);
-    ctx.restore();
-
-    setQrDataUrl(canvas.toDataURL('image/png'));
-  };
-
-  // POST  — generate_token le token-wala URL diracha
-  const callGenerateToken = async (restaurantId: number): Promise<string> => {
-    const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ restaurant_id: restaurantId }),
-    });
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || errData.detail || `Server error ${res.status}`);
-    }
-    const data: TokenResponse = await res.json();
-    if (!data.menu_url) throw new Error('No menu_url returned.');
-    
-    // Token URL ma cha ki chhaina check
-    const frontendUrl = toFrontendUrl(data.menu_url);
-    
-    // LocalStorage ma save garo — refresh ma same raahos
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      tokenId: data.id,
-      frontendUrl,
-      restaurantId,
-      savedAt: new Date().toISOString(),
-    }));
-    
-    return frontendUrl;
-  };
-
-  // LocalStorage bata saved URL check garo
-  const getSavedUrl = (restaurantId: number): string | null => {
+  const fetchRestaurantId = async () => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return null;
-      const parsed = JSON.parse(saved);
-      if (parsed.restaurantId !== restaurantId) return null;
-      if (!parsed.frontendUrl.includes('token=')) return null;
-      return parsed.frontendUrl;
-    } catch {
-      return null;
+      const res = await apiFetch('/api/v1/user/me/');
+      const user = await res.json();
+      if (user?.restaurant) setRestaurantId(user.restaurant);
+      if (user?.restaurant_name) setRestaurantName(user.restaurant_name);
+      else if (user?.name) setRestaurantName(user.name);
+    } catch (err) {
+      console.error('Failed to fetch user:', err);
     }
   };
-const getExistingToken = async (): Promise<string | null> => {
-  const res = await apiFetch('/api/v1/menu-tokens/my_tokens/');
-  if (!res.ok) return null;
 
-  const data = await res.json();
-  const tokens = data.results || [];
-
-  if (tokens.length === 0) return null;
-
-  // pick latest active token
-  const active = tokens
-    .filter((t: any) => t.is_active)
-    .sort((a: any, b: any) =>
-      new Date(b.created_on).getTime() - new Date(a.created_on).getTime()
-    );
-
-  if (active.length === 0) return null;
-
-  return toFrontendUrl(active[0].menu_url);
-};
- const initQR = async (r: Restaurant, forceNew = false) => {
-  setGenerating(true);
-
-  try {
-    if (!forceNew) {
-      const existing = await getExistingToken();
-
-      if (existing) {
-        setMenuUrl(existing);
-        await generateQRCode(existing, r.photos?.[0]?.photo);
-        return;
-      }
-    }
-
-    const newUrl = await callGenerateToken(r.id);
-    setMenuUrl(newUrl);
-    await generateQRCode(newUrl, r.photos?.[0]?.photo);
-
-  } catch (err: any) {
-    setError(err.message || 'Failed to generate QR');
-  } finally {
-    setLoading(false);
-    setGenerating(false);
-  }
-};
-
-   
-
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const restaurantId = await fetchRestaurantId();
-        const r = await fetchRestaurant(restaurantId);
-        setRestaurant(r);
-        await initQR(r, false);
-      } catch (err: any) {
-        console.error('Init error:', err);
-        setError(err.message || 'Failed to load.');
-        setLoading(false);
-      }
-    };
-    init();
-  }, []);
-
-  // "Generate New Token" button — localStorage clear garera naya banaucha
-  const handleGenerateNew = async () => {
-    if (!restaurant) return;
-    setError('');
-    setGenerating(true);
+  const fetchTokens = async () => {
     try {
-      localStorage.removeItem(STORAGE_KEY); // Purano clear
-      await initQR(restaurant, true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to generate new token.');
-      setGenerating(false);
+      const res = await apiFetch('/api/v1/menu-tokens/my_tokens/');
+      if (!res.ok) {
+        if (res.status === 401) { alert('Session expired. Please login again.'); return; }
+        throw new Error('Failed to fetch');
+      }
+      const data = await res.json();
+      const list: MenuToken[] = Array.isArray(data) ? data : data.results || [];
+      setTokens(list);
+    } catch (err) {
+      console.error('Failed to fetch tokens:', err);
+    } finally {
       setLoading(false);
     }
   };
 
-  const downloadQR = () => {
-    if (!qrDataUrl) return;
-    const link = document.createElement('a');
-    link.download = `${(restaurant?.name || 'restaurant').replace(/\s+/g, '-')}-QR.png`;
-    link.href = qrDataUrl;
-    link.click();
+  useEffect(() => { fetchRestaurantId(); }, []);
+  useEffect(() => { if (restaurantId !== null) fetchTokens(); }, [restaurantId]);
+
+  const getMenuUrl = (tokenItem: MenuToken): string => {
+    if (tokenItem.menu_url?.includes('/menu/')) return tokenItem.menu_url;
+    if (tokenItem.raw_token) return `${window.location.origin}/menu/${restaurantId}?token=${tokenItem.raw_token}`;
+    const saved = localStorage.getItem(`qr_token_url_${tokenItem.id}`);
+    if (saved) return saved;
+    console.warn(`Token #${tokenItem.id}: no raw_token found, falling back to ID`);
+    return `${window.location.origin}/menu/${restaurantId}?token=${tokenItem.id}`;
   };
 
-  const copyUrl = async () => {
-    if (!menuUrl) return;
-    await navigator.clipboard.writeText(menuUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Called when user clicks "Generate QR Code" button
+  const handleGenerateClick = () => {
+    setShowConfirm(true);
   };
+
+  // Called when user confirms in dialog
+  const handleConfirmedGenerate = async () => {
+    setShowConfirm(false);
+    if (!restaurantId) return;
+    setGenerating(true);
+    try {
+      const res = await apiFetch('/api/v1/menu-tokens/generate_token/', {
+        method: 'POST',
+        body: JSON.stringify({ restaurant_id: restaurantId }),
+      });
+      if (!res.ok) throw new Error('Generation failed');
+
+      const newToken: MenuToken = await res.json();
+      console.log('✅ Generated token:', newToken);
+
+      const frontendMenuUrl = `${window.location.origin}/menu/${restaurantId}?token=${newToken.raw_token}`;
+      console.log('✅ Frontend QR URL:', frontendMenuUrl);
+
+      localStorage.setItem(`qr_token_url_${newToken.id}`, frontendMenuUrl);
+
+      const tokenWithFrontendUrl = { ...newToken, menu_url: frontendMenuUrl };
+      await saveQRImageForToken(tokenWithFrontendUrl);
+      await fetchTokens();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate QR token. Please try again.');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const saveQRImageForToken = async (token: MenuToken): Promise<void> => {
+    return new Promise((resolve) => {
+      const menuUrl = token.menu_url!;
+      const CANVAS_SIZE = 400;
+
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'fixed';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      document.body.appendChild(tempDiv);
+
+      const { createRoot } = require('react-dom/client');
+      const root = createRoot(tempDiv);
+      root.render(
+        <QRCode
+          id={`qr-temp-${token.id}`}
+          value={menuUrl}
+          size={CANVAS_SIZE}
+          bgColor="#ffffff"
+          fgColor="#1e0f02"
+        />
+      );
+
+      setTimeout(() => {
+        const svgNode = tempDiv.querySelector('svg');
+        if (!svgNode) {
+          root.unmount();
+          document.body.removeChild(tempDiv);
+          resolve();
+          return;
+        }
+
+        const svgData = new XMLSerializer().serializeToString(svgNode);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = CANVAS_SIZE;
+        canvas.height = CANVAS_SIZE;
+        const ctx = canvas.getContext('2d')!;
+
+        const img = new Image();
+        img.onload = async () => {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+          ctx.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+          URL.revokeObjectURL(svgUrl);
+          root.unmount();
+          document.body.removeChild(tempDiv);
+
+          canvas.toBlob(async (blob) => {
+            if (!blob) { resolve(); return; }
+            try {
+              const formData = new FormData();
+              formData.append('object_id', String(token.id));
+              formData.append('type', 'qr');
+              formData.append('photo', blob, `qr-${token.id}.png`);
+              formData.append('id', String(token.id));
+
+              const photoRes = await apiFetch('/api/v1/photo/', {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (!photoRes.ok) {
+                console.warn('QR photo save failed:', await photoRes.text());
+              } else {
+                console.log('✅ QR image saved:', await photoRes.json());
+              }
+            } catch (e) {
+              console.warn('QR photo upload error:', e);
+            }
+            resolve();
+          }, 'image/png');
+        };
+        img.onerror = () => {
+          root.unmount();
+          document.body.removeChild(tempDiv);
+          resolve();
+        };
+        img.src = svgUrl;
+      }, 100);
+    });
+  };
+
+  const downloadQR = (token: MenuToken) => {
+    const menuUrl = getMenuUrl(token);
+    const svgEl = document.getElementById(`qr-svg-${token.id}`) as SVGSVGElement | null;
+    if (!svgEl) return;
+
+    const CANVAS_W = 600;
+    const CANVAS_H = 720;
+    const QR_SIZE = 400;
+    const QR_X = (CANVAS_W - QR_SIZE) / 2;
+    const QR_Y = 130;
+
+    const svgData = new XMLSerializer().serializeToString(svgEl);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
+    const ctx = canvas.getContext('2d')!;
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.fillStyle = '#fffdf8';
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+      ctx.fillStyle = '#513012';
+      ctx.fillRect(0, 0, CANVAS_W, 8);
+      ctx.fillRect(0, CANVAS_H - 8, CANVAS_W, 8);
+      ctx.fillStyle = '#513012';
+      ctx.font = 'bold 34px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(restaurantName || 'Restaurant Menu', CANVAS_W / 2, 65);
+      ctx.fillStyle = '#b8936a';
+      ctx.font = '16px Georgia, serif';
+      ctx.fillText('Scan QR Code to View Our Menu', CANVAS_W / 2, 95);
+      ctx.strokeStyle = '#d4b896';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(60, 112);
+      ctx.lineTo(CANVAS_W - 60, 112);
+      ctx.stroke();
+      const padding = 16;
+      roundRect(ctx, QR_X - padding, QR_Y - padding, QR_SIZE + padding * 2, QR_SIZE + padding * 2, 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(81,48,18,0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 4;
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.drawImage(img, QR_X, QR_Y, QR_SIZE, QR_SIZE);
+      ctx.fillStyle = '#9a7458';
+      ctx.font = '13px Lato, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`QR Token #${token.id}`, CANVAS_W / 2, QR_Y + QR_SIZE + 36);
+      ctx.strokeStyle = '#d4b896';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(60, CANVAS_H - 60);
+      ctx.lineTo(CANVAS_W - 60, CANVAS_H - 60);
+      ctx.stroke();
+      ctx.fillStyle = '#c9a87a';
+      ctx.font = 'bold 11px Georgia, serif';
+      ctx.fillText('Scan to view our menu', CANVAS_W / 2, CANVAS_H - 38);
+      const link = document.createElement('a');
+      link.download = `QR-Token-${token.id}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      URL.revokeObjectURL(svgUrl);
+    };
+    img.src = svgUrl;
+  };
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('en-NP', { year: 'numeric', month: 'short', day: 'numeric' });
 
   return (
-    <Card className="max-w-lg mx-auto mt-8">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-[#513012]">
-          <QrCode className="w-6 h-6" />
-          Table QR Code Generator
-        </CardTitle>
-        <p className="text-sm text-gray-600">
-          {restaurant?.name ? `For ${restaurant.name}` : 'Customers scan to view menu'}
-        </p>
-      </CardHeader>
+    <>
+      {/* ── Confirmation Dialog ── */}
+      {showConfirm && (
+        <GenerateConfirmDialog
+          tokenCount={tokens.length}
+          onConfirm={handleConfirmedGenerate}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
 
-      <CardContent className="flex flex-col items-center gap-6">
-        {loading && (
-          <div className="w-64 h-64 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-12 h-12 animate-spin text-[#513012]" />
-            <p className="text-sm text-gray-400">Loading QR code...</p>
-          </div>
-        )}
+      <div className="px-4 sm:px-6 py-8 space-y-8 max-w-3xl mx-auto">
+        <div>
+          <h1 className="text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
+            QR Menu Codes
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Generate QR codes for your tables. Customers scan to view your menu instantly.
+          </p>
+        </div>
 
-        {error && (
-          <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full">
-            <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
-            <div>
-              <p className="font-medium text-sm">Error</p>
-              <p className="text-sm mt-0.5">{error}</p>
-              <button onClick={handleGenerateNew} className="text-xs underline mt-2">Try again</button>
-            </div>
-          </div>
-        )}
-
-        {!loading && qrDataUrl && (
-          <div className="bg-white p-5 rounded-2xl shadow-inner border">
-            <img src={qrDataUrl} alt="QR Code" className="w-64 h-64 rounded-xl" />
-          </div>
-        )}
-
-        {menuUrl && (
-          <div className="text-xs text-gray-500 break-all text-center px-4 py-3 bg-gray-50 rounded-lg border w-full font-mono">
-            {menuUrl}
-          </div>
-        )}
-
-        {!loading && (
-          <div className="flex flex-col gap-3 w-full">
-            <div className="grid grid-cols-2 gap-3">
-              <Button onClick={copyUrl} variant="outline" disabled={!menuUrl}>
-                {copied ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> : <Copy className="mr-2 h-4 w-4" />}
-                {copied ? 'Copied!' : 'Copy URL'}
-              </Button>
-              <Button onClick={downloadQR} disabled={!qrDataUrl} className="bg-[#513012] hover:bg-[#513012]/90 text-white">
-                <Download className="mr-2 h-4 w-4" /> Download QR
-              </Button>
-            </div>
-
+        <Card className="border-amber-200 bg-amber-50">
+          <CardHeader>
+            <CardTitle className="text-lg" style={{ color: '#513012' }}>Generate New QR Code</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <p className="text-sm text-gray-600 flex-1">
+              Each QR code links directly to your restaurant menu via a secure token. Print and place on tables.
+            </p>
             <Button
-              onClick={handleGenerateNew}
-              disabled={generating}
-              variant="ghost"
-              className="text-[#513012]"
+              onClick={handleGenerateClick}
+              disabled={generating || !restaurantId}
+              size="lg"
+              className="whitespace-nowrap"
+              style={{ background: '#513012', color: 'white' }}
             >
-              {generating
-                ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                : <RefreshCw className="mr-2 h-4 w-4" />}
-              Generate New Token (Invalidate Old)
+              {generating ? (
+                <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…</>
+              ) : (
+                <><QrCode className="mr-2 h-5 w-5" /> Generate QR Code</>
+              )}
             </Button>
-          </div>
-        )}
+          </CardContent>
+        </Card>
 
-        <p className="text-xs text-center text-gray-400">
-          Print this QR and place on tables. Scan to view menu.
-        </p>
-      </CardContent>
-    </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle style={{ color: '#513012' }}>
+              Your QR Codes {!loading && `(${tokens.length})`}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading && (
+              <div className="flex justify-center py-12">
+                <div className="w-8 h-8 rounded-full border-4 animate-spin"
+                  style={{ borderColor: '#b8936a', borderTopColor: 'transparent' }} />
+              </div>
+            )}
+
+            {!loading && tokens.length === 0 && (
+              <div className="text-center py-12 text-gray-400">
+                <QrCode className="mx-auto mb-3 h-12 w-12 opacity-30" />
+                <p>No QR codes yet. Generate your first one above.</p>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {tokens.map((token) => {
+                const menuUrl = getMenuUrl(token);
+                return (
+                  <div
+                    key={token.id}
+                    className="rounded-2xl overflow-hidden border flex flex-col"
+                    style={{ borderColor: 'rgba(184,147,106,0.3)', background: '#fffdf8' }}
+                  >
+                    <div className="px-4 py-3 flex items-center justify-between" style={{ background: '#513012' }}>
+                      <span className="text-white font-semibold text-sm" style={{ fontFamily: 'Georgia, serif' }}>
+                        Token #{token.id}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        token.is_active ? 'bg-green-400 text-green-900' : 'bg-red-300 text-red-900'
+                      }`}>
+                        {token.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-center items-center p-6 bg-white">
+                      <div className="p-3 rounded-xl" style={{ border: '2px solid rgba(184,147,106,0.25)', background: 'white' }}>
+                        <QRCode
+                          id={`qr-svg-${token.id}`}
+                          value={menuUrl}
+                          size={180}
+                          bgColor="#ffffff"
+                          fgColor="#1e0f02"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="px-4 pb-2">
+                      <p className="text-xs text-center text-gray-400 italic">
+                        Secure QR — scan to open menu
+                      </p>
+                      <p className="text-xs text-center mt-1" style={{ color: '#c0a080' }}>
+                        Created {formatDate(token.created_on)}
+                      </p>
+                    </div>
+
+                    <div className="px-4 pb-4 pt-2">
+                      <Button
+                        onClick={() => downloadQR(token)}
+                        className="w-full"
+                        variant="outline"
+                        style={{ borderColor: '#513012', color: '#513012' }}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download for Printing
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
+}
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number, w: number, h: number, r: number
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
