@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-react';
+import { Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw, UtensilsCrossed } from 'lucide-react';
 import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { useRequirePermission } from '@/hooks/usePermission';
 import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface MenuItem {
   id: number;
@@ -30,42 +32,64 @@ interface Category {
   status: boolean;
 }
 
-// Shape returned by GET /api/v1/photo/
 interface MenuPhoto {
-  id: number;        // photo record ID – needed for PUT (update)
-  object_id: number; // menu item ID
-  photo_url: string; // displayable URL
+  id: number;
+  object_id: number;
+  photo_url: string;
+}
+
+interface Restaurant {
+  id: number;
+  name: string;
+  table_count: number;
 }
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-
-  // Store the full photo record so we have the photo `id` for updates
   const [menuPhotos, setMenuPhotos] = useState<Record<number, MenuPhoto>>({});
-
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | 'All'>('All');
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
+
+  // Table count gate
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [tableCountInput, setTableCountInput] = useState('');
+  const [savingTableCount, setSavingTableCount] = useState(false);
+  const [tableCountError, setTableCountError] = useState<string | null>(null);
+
   useRequirePermission('menuSettings');
 
-  // ── Fetch restaurant ID ────────────────────────────────────────────────────
+  // ── Fetch restaurant ID + details ─────────────────────────────────────────
   const fetchRestaurantId = async () => {
     try {
       const res = await apiFetch('/api/v1/user/me/');
       const user = await res.json();
-      if (user?.restaurant) setRestaurantId(user.restaurant);
+      if (user?.restaurant) {
+        setRestaurantId(user.restaurant);
+        await fetchRestaurant(user.restaurant);
+      }
     } catch (err) {
       console.error('Failed to fetch restaurant ID', err);
+    }
+  };
+
+  const fetchRestaurant = async (id: number) => {
+    try {
+      const res = await apiFetch(`/api/v1/restaurant/${id}/`);
+      const data = await res.json();
+      setRestaurant(data);
+    } catch (err) {
+      console.error('Failed to fetch restaurant details', err);
     }
   };
 
   useEffect(() => { fetchRestaurantId(); }, []);
   useEffect(() => { if (restaurantId) fetchAll(); }, [restaurantId]);
 
-  // ── Individual fetchers ────────────────────────────────────────────────────
+  // ── Fetchers ──────────────────────────────────────────────────────────────
   const fetchCategories = async () => {
     if (!restaurantId) return;
     try {
@@ -84,21 +108,12 @@ export default function MenuPage() {
     } catch (err) { console.error(err); }
   };
 
-  /**
-   * Fetch all photos of type=menu and build a map of:
-   *   menuItemId → { id (photo record id), object_id, photo_url }
-   *
-   * We keep the full photo record so we can call PUT /api/v1/photo/{id}/
-   * when the user replaces an image on an existing menu item.
-   */
   const fetchMenuPhotos = async () => {
     if (!restaurantId) return;
     try {
-      // Fetch all pages if needed; for most restaurants one page is enough.
       const res = await apiFetch(`/api/v1/photo/?type=menu&page_size=500`);
       const data = await res.json();
       const photos: MenuPhoto[] = data.results || [];
-
       const photoMap: Record<number, MenuPhoto> = {};
       photos.forEach((photo) => {
         if (photo.object_id && photo.photo_url) {
@@ -114,24 +129,44 @@ export default function MenuPage() {
   const fetchAll = async () => {
     setLoading(true);
     await Promise.all([fetchCategories(), fetchMenuItems(), fetchMenuPhotos()]);
+    if (restaurantId) await fetchRestaurant(restaurantId);
     setLoading(false);
   };
 
-  // ── Filtered list ──────────────────────────────────────────────────────────
-  const filteredItems = selectedCategoryId === 'All'
-    ? menuItems
-    : menuItems.filter((item) => item.category === selectedCategoryId);
+  // ── Save table count ──────────────────────────────────────────────────────
+  const handleSaveTableCount = async () => {
+    if (!restaurantId) return;
+    const count = parseInt(tableCountInput, 10);
+    if (!count || count < 1) {
+      setTableCountError('Please enter a valid number of tables (minimum 1).');
+      return;
+    }
+    setSavingTableCount(true);
+    setTableCountError(null);
+    try {
+      const res = await apiFetch(`/api/v1/restaurant/${restaurantId}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ table_count: count }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.detail || 'Failed to update table count');
+      }
+      await fetchRestaurant(restaurantId);
+      setTableCountInput('');
+    } catch (err: any) {
+      setTableCountError(err.message || 'Something went wrong');
+    } finally {
+      setSavingTableCount(false);
+    }
+  };
 
-  // ── Create / Update menu item + photo ─────────────────────────────────────
+  // ── Menu CRUD ─────────────────────────────────────────────────────────────
   const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
     if (!restaurantId) return;
-
     const isEditing = !!editingItem;
-    const url = isEditing
-      ? `/api/v1/menu/${editingItem!.id}/`
-      : `/api/v1/menu/`;
+    const url = isEditing ? `/api/v1/menu/${editingItem!.id}/` : `/api/v1/menu/`;
 
-    // 1️⃣  Save the menu item (text fields)
     const res = await apiFetch(url, {
       method: isEditing ? 'PATCH' : 'POST',
       body: JSON.stringify(payload),
@@ -145,24 +180,19 @@ export default function MenuPage() {
     const menuData = await res.json();
     const menuId: number = isEditing ? editingItem!.id : menuData.id;
 
-    // 2️⃣  Handle photo upload / update
     if (selectedFile && menuId) {
-      const existingPhoto = menuPhotos[menuId]; // defined only if this item already has a photo
-
+      const existingPhoto = menuPhotos[menuId];
       const formData = new FormData();
       formData.append('type', 'menu');
       formData.append('object_id', menuId.toString());
-      // ✅ Correct field name is `photo`, NOT `photo_url`
       formData.append('photo', selectedFile);
 
       if (existingPhoto) {
-        // ✅ Photo already exists → UPDATE with PUT /api/v1/photo/{id}/
         await apiFetch(`/api/v1/photo/${existingPhoto.id}/`, {
           method: 'PUT',
           body: formData,
         }).catch(console.error);
       } else {
-        // ✅ No photo yet → CREATE with POST /api/v1/photo/
         await apiFetch('/api/v1/photo/', {
           method: 'POST',
           body: formData,
@@ -170,14 +200,11 @@ export default function MenuPage() {
       }
     }
 
-    // 3️⃣  Refresh everything so the table shows the updated image
     await fetchAll();
-
     setIsModalOpen(false);
     setEditingItem(null);
   };
 
-  // ── Edit / Delete ──────────────────────────────────────────────────────────
   const handleEdit = (item: MenuItem) => {
     setEditingItem(item);
     setIsModalOpen(true);
@@ -188,18 +215,96 @@ export default function MenuPage() {
     try {
       await apiFetch(`/api/v1/menu/${id}/`, { method: 'DELETE' });
       await fetchAll();
-    } catch (err) {
+    } catch {
       alert('Failed to delete');
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  const filteredItems = selectedCategoryId === 'All'
+    ? menuItems
+    : menuItems.filter((item) => item.category === selectedCategoryId);
+
+  // ── Table count not set → show blocker ───────────────────────────────────
+  const hasNoTables = restaurant && (!restaurant.table_count || restaurant.table_count < 1);
+
+  if (!loading && hasNoTables) {
+    return (
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mb-6">
+          <h2 className="text-3xl font-bold text-[#513012]">Menu Management</h2>
+          <p className="text-gray-600 mt-1">Manage your restaurant menu items and categories</p>
+        </div>
+
+        <Card className="max-w-lg mx-auto mt-16 border-2 border-dashed border-[#513012]/30">
+          <CardContent className="flex flex-col items-center text-center py-12 gap-6">
+            <div className="bg-[#513012]/10 rounded-full p-5">
+              <UtensilsCrossed className="w-10 h-10 text-[#513012]" />
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-[#513012] mb-2">
+                Set Up Tables First
+              </h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                You need to add tables to your restaurant before managing menu items.
+                Tables let customers choose their seat while ordering.
+              </p>
+            </div>
+
+            <div className="w-full space-y-3">
+              <Label htmlFor="table_count" className="text-left block text-sm font-medium">
+                How many tables does your restaurant have?
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="table_count"
+                  type="number"
+                  min={1}
+                  placeholder="e.g. 10"
+                  value={tableCountInput}
+                  onChange={(e) => {
+                    setTableCountInput(e.target.value);
+                    setTableCountError(null);
+                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSaveTableCount(); }}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleSaveTableCount}
+                  disabled={savingTableCount || !tableCountInput}
+                  className="bg-[#513012] hover:bg-[#3d2209] whitespace-nowrap"
+                >
+                  {savingTableCount ? 'Saving…' : 'Save & Continue'}
+                </Button>
+              </div>
+
+              {tableCountError && (
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 text-left">
+                  {tableCountError}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // ── Normal menu management UI ─────────────────────────────────────────────
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-[#513012]">Menu Management</h2>
-          <p className="text-gray-600 mt-1">Manage your restaurant menu items and categories</p>
+          <p className="text-gray-600 mt-1">
+            Manage your restaurant menu items and categories
+            {restaurant?.table_count ? (
+              <span className="ml-2 inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                <UtensilsCrossed className="w-3 h-3" />
+                {restaurant.table_count} tables
+              </span>
+            ) : null}
+          </p>
         </div>
 
         <div className="flex gap-3">
@@ -209,7 +314,7 @@ export default function MenuPage() {
           </Button>
           <Button
             onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
-            className="bg-[#513012]"
+            className="bg-[#513012] hover:bg-[#3d2209]"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add New Item
@@ -257,9 +362,7 @@ export default function MenuPage() {
               </TableHeader>
               <TableBody>
                 {filteredItems.map((item) => {
-                  // ✅ Use photo_url from the photo record; fallback to item.image
                   const imageUrl = menuPhotos[item.id]?.photo_url || item.image;
-
                   return (
                     <TableRow key={item.id}>
                       <TableCell>

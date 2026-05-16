@@ -11,8 +11,8 @@ interface MenuItem {
   price: string;
   status: boolean;
   category: number;
-  image?: string | null;       // ✅ some APIs return this
-  photo_url?: string | null;   // ✅ some APIs return this
+  image?: string | null;
+  photo_url?: string | null;
 }
 
 interface Category {
@@ -27,6 +27,7 @@ interface Restaurant {
   name: string;
   address: string;
   city: string;
+  table_count: number;        // ✅ needed for table picker
   photos?: { id: number; photo_url: string }[];
   categories?: Category[];
   menus?: MenuItem[];
@@ -81,10 +82,14 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   if (totalItems === 0) return null;
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-5 pointer-events-none">
-      <button onClick={onOpen}
+      <button
+        onClick={onOpen}
         className="pointer-events-auto w-full max-w-2xl mx-auto flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl"
-        style={{ background: '#513012', color: '#fdf6ec', display: 'flex' }}>
-        <span className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm" style={{ background: '#b8936a' }}>{totalItems}</span>
+        style={{ background: '#513012', color: '#fdf6ec', display: 'flex' }}
+      >
+        <span className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm" style={{ background: '#b8936a' }}>
+          {totalItems}
+        </span>
         <span className="font-bold tracking-wide" style={{ fontFamily: 'Lato, sans-serif' }}>View Order</span>
         <span className="font-bold">Rs. {totalPrice.toFixed(0)}</span>
       </button>
@@ -92,38 +97,90 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess }: {
-  cart: CartItem[]; restaurant: Restaurant; token: string;
-  onClose: () => void; onUpdateQty: (itemId: number, delta: number) => void; onSuccess: () => void;
+/* ─── Table Picker ────────────────────────────────────────────────────────── */
+function TablePicker({ tableCount, selected, onSelect }: {
+  tableCount: number;
+  selected: number | null;
+  onSelect: (n: number) => void;
 }) {
+  const tables = Array.from({ length: tableCount }, (_, i) => i + 1);
+  return (
+    <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(52px, 1fr))' }}>
+      {tables.map((n) => (
+        <button
+          key={n}
+          onClick={() => onSelect(n)}
+          style={{
+            padding: '10px 0',
+            borderRadius: 12,
+            fontWeight: 700,
+            fontSize: 14,
+            border: selected === n ? '2px solid #513012' : '1.5px solid rgba(184,147,106,0.4)',
+            background: selected === n ? '#513012' : '#fdf6ec',
+            color: selected === n ? '#fdf6ec' : '#513012',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+          }}
+        >
+          {n}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Order Drawer ────────────────────────────────────────────────────────── */
+function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess }: {
+  cart: CartItem[];
+  restaurant: Restaurant;
+  token: string;
+  onClose: () => void;
+  onUpdateQty: (itemId: number, delta: number) => void;
+  onSuccess: (tableNumber: number) => void;
+}) {
+  const [tableNumber, setTableNumber] = useState<number | null>(null);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
   const totalPrice = cart.reduce((s, c) => s + parseFloat(c.menuItem.price) * c.quantity, 0);
   const API = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSubmit = async () => {
     if (cart.length === 0) return;
-    setSubmitting(true); setError('');
+
+    // Validate table selection
+    if (!tableNumber) {
+      setError('Please select your table number before placing the order.');
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
     try {
       if (!token) throw new Error('Invalid QR token. Please scan again.');
       if (!restaurant?.id) throw new Error('Restaurant not found.');
+
       const payload = {
         restaurant: restaurant.id,
+        table_number: tableNumber,
         customer_name: name.trim() || 'Guest',
         customer_phone: phone.trim() || null,
         customer_email: email.trim() || null,
         notes: notes.trim() || null,
-        items: cart.map(c => ({ menu_id: c.menuItem.id, quantity: c.quantity })),
+        items: cart.map((c) => ({ menu_id: c.menuItem.id, quantity: c.quantity })),
       };
+
       const res = await fetch(`${API}/api/v1/orders/?token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),
       });
+
       const responseText = await res.text();
       if (!res.ok) {
         let errorMsg = `Error ${res.status}`;
@@ -140,48 +197,116 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
         } catch { errorMsg = responseText.slice(0, 200); }
         throw new Error(errorMsg);
       }
-      onSuccess();
+
+      onSuccess(tableNumber);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to place order.');
-    } finally { setSubmitting(false); }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <>
-      <div className="fixed inset-0 z-50" style={{ background: 'rgba(30,15,2,0.55)', backdropFilter: 'blur(2px)' }} onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl overflow-y-auto" style={{ background: '#fffdf8', maxHeight: '90vh' }}>
+      <div
+        className="fixed inset-0 z-50"
+        style={{ background: 'rgba(30,15,2,0.55)', backdropFilter: 'blur(2px)' }}
+        onClick={onClose}
+      />
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl overflow-y-auto"
+        style={{ background: '#fffdf8', maxHeight: '90vh' }}
+      >
+        {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full" style={{ background: '#d4b896' }} />
         </div>
+
         <div className="px-5 pb-10 max-w-2xl mx-auto">
+          {/* Header */}
           <div className="flex items-center justify-between py-4">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>Your Order</h2>
+            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>
+              Your Order
+            </h2>
             <button onClick={onClose} style={{ color: '#9a7458', fontSize: 22 }}>✕</button>
           </div>
           <OrnamentDivider />
+
+          {/* ── Cart items ───────────────────────────────────────────────── */}
           <div className="mt-4">
-            {cart.map(c => (
-              <div key={c.menuItem.id} className="flex items-center justify-between gap-3 py-3" style={{ borderBottom: '1px dashed rgba(184,147,106,0.28)' }}>
+            {cart.map((c) => (
+              <div
+                key={c.menuItem.id}
+                className="flex items-center justify-between gap-3 py-3"
+                style={{ borderBottom: '1px dashed rgba(184,147,106,0.28)' }}
+              >
                 <div className="flex-1">
                   <p className="font-semibold text-sm" style={{ color: '#1e0f02' }}>{c.menuItem.name}</p>
                   <p className="text-xs" style={{ color: '#9a7458' }}>{c.categoryName}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => onUpdateQty(c.menuItem.id, -1)} className="w-7 h-7 rounded-full flex items-center justify-center font-bold" style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}>−</button>
+                  <button
+                    onClick={() => onUpdateQty(c.menuItem.id, -1)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center font-bold"
+                    style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}
+                  >−</button>
                   <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>{c.quantity}</span>
-                  <button onClick={() => onUpdateQty(c.menuItem.id, 1)} className="w-7 h-7 rounded-full flex items-center justify-center font-bold" style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}>+</button>
+                  <button
+                    onClick={() => onUpdateQty(c.menuItem.id, 1)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center font-bold"
+                    style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}
+                  >+</button>
                 </div>
-                <span className="font-bold text-sm w-16 text-right" style={{ color: '#513012' }}>Rs. {(parseFloat(c.menuItem.price) * c.quantity).toFixed(0)}</span>
+                <span className="font-bold text-sm w-16 text-right" style={{ color: '#513012' }}>
+                  Rs. {(parseFloat(c.menuItem.price) * c.quantity).toFixed(0)}
+                </span>
               </div>
             ))}
           </div>
+
+          {/* Total */}
           <div className="flex justify-between items-center py-4 mt-2">
             <span className="font-bold" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>Total</span>
             <span className="font-bold text-xl" style={{ color: '#513012' }}>Rs. {totalPrice.toFixed(0)}</span>
           </div>
           <OrnamentDivider />
+
+          {/* ── Table Selection ──────────────────────────────────────────── */}
+          <div className="mt-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>
+                Select Your Table *
+              </p>
+              {tableNumber && (
+                <span
+                  className="text-xs font-bold px-3 py-1 rounded-full"
+                  style={{ background: '#513012', color: '#fdf6ec' }}
+                >
+                  Table {tableNumber} selected ✓
+                </span>
+              )}
+            </div>
+
+            {restaurant.table_count > 0 ? (
+              <TablePicker
+                tableCount={restaurant.table_count}
+                selected={tableNumber}
+                onSelect={setTableNumber}
+              />
+            ) : (
+              <p className="text-sm text-center py-3" style={{ color: '#9a7458' }}>
+                No tables configured. Please ask staff for help.
+              </p>
+            )}
+          </div>
+
+          <OrnamentDivider />
+
+          {/* ── Customer details ─────────────────────────────────────────── */}
           <div className="mt-5 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>Your Details (optional)</p>
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>
+              Your Details (optional)
+            </p>
             {[
               { label: 'Name', value: name, set: setName, type: 'text', placeholder: 'Your name' },
               { label: 'Phone', value: phone, set: setPhone, type: 'tel', placeholder: '98XXXXXXXX' },
@@ -189,23 +314,63 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
             ].map(({ label, value, set, type, placeholder }) => (
               <div key={label}>
                 <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>{label}</label>
-                <input type={type} value={value} onChange={e => set(e.target.value)} placeholder={placeholder}
+                <input
+                  type={type}
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  placeholder={placeholder}
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                  style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02', fontFamily: 'Lato, sans-serif' }} />
+                  style={{
+                    background: '#fdf6ec',
+                    border: '1px solid rgba(184,147,106,0.35)',
+                    color: '#1e0f02',
+                    fontFamily: 'Lato, sans-serif',
+                  }}
+                />
               </div>
             ))}
             <div>
               <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>Special Notes</label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any special requests..." rows={2}
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Any special requests..."
+                rows={2}
                 className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none"
-                style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02', fontFamily: 'Lato, sans-serif' }} />
+                style={{
+                  background: '#fdf6ec',
+                  border: '1px solid rgba(184,147,106,0.35)',
+                  color: '#1e0f02',
+                  fontFamily: 'Lato, sans-serif',
+                }}
+              />
             </div>
           </div>
-          {error && <p className="mt-3 text-sm text-center" style={{ color: '#c0392b' }}>{error}</p>}
-          <button onClick={handleSubmit} disabled={submitting || cart.length === 0}
+
+          {/* Error */}
+          {error && (
+            <p className="mt-3 text-sm text-center" style={{ color: '#c0392b' }}>{error}</p>
+          )}
+
+          {/* Place order button */}
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || cart.length === 0 || !tableNumber}
             className="mt-6 w-full py-4 rounded-2xl font-bold text-base tracking-wide"
-            style={{ background: submitting ? '#b8936a' : '#513012', color: '#fdf6ec', fontFamily: 'Lato, sans-serif', border: 'none', cursor: 'pointer' }}>
-            {submitting ? 'Placing Order...' : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
+            style={{
+              background: submitting || !tableNumber ? '#b8936a' : '#513012',
+              color: '#fdf6ec',
+              fontFamily: 'Lato, sans-serif',
+              border: 'none',
+              cursor: submitting || !tableNumber ? 'not-allowed' : 'pointer',
+              opacity: !tableNumber ? 0.75 : 1,
+            }}
+          >
+            {submitting
+              ? 'Placing Order...'
+              : !tableNumber
+              ? 'Select a table to continue'
+              : `Place Order · Table ${tableNumber} · Rs. ${totalPrice.toFixed(0)}`}
           </button>
         </div>
       </div>
@@ -213,22 +378,48 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
   );
 }
 
-function OrderSuccess({ restaurantName, onBack }: { restaurantName: string; onBack: () => void }) {
+/* ─── Order Success ───────────────────────────────────────────────────────── */
+function OrderSuccess({
+  restaurantName,
+  tableNumber,
+  onBack,
+}: {
+  restaurantName: string;
+  tableNumber: number;
+  onBack: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-8" style={{ background: '#fdf6ec', fontFamily: 'Lato, sans-serif' }}>
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-8"
+      style={{ background: '#fdf6ec', fontFamily: 'Lato, sans-serif' }}
+    >
       <div className="text-7xl mb-6">🎉</div>
-      <h2 className="font-bold text-3xl mb-3" style={{ color: '#513012', fontFamily: 'Playfair Display, serif' }}>Order Placed!</h2>
+      <h2 className="font-bold text-3xl mb-1" style={{ color: '#513012', fontFamily: 'Playfair Display, serif' }}>
+        Order Placed!
+      </h2>
+      <p className="text-base font-bold mb-3" style={{ color: '#b8936a' }}>Table {tableNumber}</p>
       <OrnamentDivider />
-      <p className="text-sm mt-4 mb-8" style={{ color: '#9a7458' }}>Your order has been sent to {restaurantName}. Staff will serve you shortly.</p>
-      <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold" style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}>Back to Menu</button>
+      <p className="text-sm mt-4 mb-8" style={{ color: '#9a7458' }}>
+        Your order has been sent to {restaurantName}. Staff will serve you at Table {tableNumber} shortly.
+      </p>
+      <button
+        onClick={onBack}
+        className="px-8 py-3 rounded-2xl font-bold"
+        style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}
+      >
+        Back to Menu
+      </button>
     </div>
   );
 }
 
-/* ─── Menu Item Card — 2-column card layout ─────────────────────────────── */
+/* ─── Menu Item Card ──────────────────────────────────────────────────────── */
 function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
-  item: MenuItem; categoryName: string; qty: number;
-  onAdd: () => void; onUpdate: (delta: number) => void;
+  item: MenuItem;
+  categoryName: string;
+  qty: number;
+  onAdd: () => void;
+  onUpdate: (delta: number) => void;
 }) {
   const [imgError, setImgError] = useState(false);
   const rawImage = item.image || item.photo_url || null;
@@ -238,8 +429,10 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
   return (
     <div className="menu-card rounded-2xl overflow-hidden flex flex-col" style={{ background: '#fffdf8' }}>
       {/* Image */}
-      <div className="relative w-full flex items-center justify-center"
-        style={{ height: 130, background: 'linear-gradient(135deg, #fdf6ec 0%, #f0e6d3 100%)', flexShrink: 0 }}>
+      <div
+        className="relative w-full flex items-center justify-center"
+        style={{ height: 130, background: 'linear-gradient(135deg, #fdf6ec 0%, #f0e6d3 100%)', flexShrink: 0 }}
+      >
         {showImage ? (
           <Image
             src={imageUrl}
@@ -260,8 +453,13 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
           {item.name}
         </h4>
         {item.description && (
-          <p className="menu-serif italic leading-relaxed flex-1"
-            style={{ fontSize: 11, color: '#9a7458', marginBottom: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <p
+            className="menu-serif italic leading-relaxed flex-1"
+            style={{
+              fontSize: 11, color: '#9a7458', marginBottom: 8,
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+            }}
+          >
             {item.description}
           </p>
         )}
@@ -284,7 +482,7 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
   );
 }
 
-/* ─── Main Page ─────────────────────────────────────────────────────────── */
+/* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function PublicMenuPage() {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
@@ -297,71 +495,80 @@ export default function PublicMenuPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderedTable, setOrderedTable] = useState<number>(1);
 
   const API = process.env.NEXT_PUBLIC_API_URL;
-useEffect(() => {
-  console.log("Slug from URL:", slug);
-  console.log("Token from URL:", token);
-}, [slug, token]);
+
   useEffect(() => {
-   const fetchMenu = async () => {
-  console.log("QR Scan Debug:", { slug, token, tokenLength: token.length });
+    console.log('Slug from URL:', slug);
+    console.log('Token from URL:', token);
+  }, [slug, token]);
 
-  if (!token) {
-    setError('Token not found in URL.');
-    setLoading(false);
-    return;
-  }
+  useEffect(() => {
+    const fetchMenu = async () => {
+      console.log('QR Scan Debug:', { slug, token, tokenLength: token.length });
 
-  try {
-    const res = await fetch(
-      `${API}/api/v1/qr-menu/menu/?token=${encodeURIComponent(token)}`,
-      { cache: 'no-store' }
-    );
+      if (!token) {
+        setError('Token not found in URL.');
+        setLoading(false);
+        return;
+      }
 
-    console.log("Menu API Status:", res.status);
+      try {
+        const res = await fetch(
+          `${API}/api/v1/qr-menu/menu/?token=${encodeURIComponent(token)}`,
+          { cache: 'no-store' },
+        );
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      console.error("Error from backend:", errData);
-      
-      throw new Error(errData.detail || `Invalid QR Code (${res.status})`);
-    }
+        console.log('Menu API Status:', res.status);
 
-    const data = await res.json();
-    console.log("✅ Menu Loaded Successfully");
-           
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          console.error('Error from backend:', errData);
+          throw new Error(errData.detail || `Invalid QR Code (${res.status})`);
+        }
+
+        const data = await res.json();
+        console.log('✅ Menu Loaded Successfully');
+
         const restaurantData: Restaurant = data.restaurant ?? data;
         setRestaurant(restaurantData);
-        const firstActive = restaurantData.categories?.find(c => c.status !== false);
+        const firstActive = restaurantData.categories?.find((c) => c.status !== false);
         if (firstActive) setActiveCategory(firstActive.name);
       } catch (err: any) {
-    console.error(err);
-    setError(err.message || 'Failed to load menu');
-  } finally {
-    setLoading(false);
-  }
-};
-fetchMenu();   
+        console.error(err);
+        setError(err.message || 'Failed to load menu');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenu();
   }, [slug, token, API]);
 
   const addToCart = (item: MenuItem, categoryName: string) => {
-    setCart(prev => {
-      const existing = prev.find(c => c.menuItem.id === item.id);
-      if (existing) return prev.map(c => c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
+    setCart((prev) => {
+      const existing = prev.find((c) => c.menuItem.id === item.id);
+      if (existing) return prev.map((c) => c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
       return [...prev, { menuItem: item, quantity: 1, categoryName }];
     });
   };
+
   const updateQty = (itemId: number, delta: number) => {
-    setCart(prev => prev.map(c => c.menuItem.id === itemId ? { ...c, quantity: c.quantity + delta } : c).filter(c => c.quantity > 0));
+    setCart((prev) =>
+      prev.map((c) => c.menuItem.id === itemId ? { ...c, quantity: c.quantity + delta } : c)
+        .filter((c) => c.quantity > 0),
+    );
   };
-  const getQty = (itemId: number) => cart.find(c => c.menuItem.id === itemId)?.quantity || 0;
+
+  const getQty = (itemId: number) => cart.find((c) => c.menuItem.id === itemId)?.quantity || 0;
+
   const getItemsForCategory = (category: Category): MenuItem[] => {
-    if (category.menus && category.menus.length > 0) return category.menus.filter(i => i.status !== false);
-    if (restaurant?.menus && restaurant.menus.length > 0) return restaurant.menus.filter(i => i.category === category.id && i.status !== false);
+    if (category.menus && category.menus.length > 0) return category.menus.filter((i) => i.status !== false);
+    if (restaurant?.menus && restaurant.menus.length > 0) return restaurant.menus.filter((i) => i.category === category.id && i.status !== false);
     return [];
   };
 
+  // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
@@ -372,6 +579,7 @@ fetchMenu();
     </>
   );
 
+  // ── Error ──────────────────────────────────────────────────────────────────
   if (error || !restaurant) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
@@ -384,16 +592,22 @@ fetchMenu();
     </>
   );
 
+  // ── Order success ──────────────────────────────────────────────────────────
   if (orderSuccess) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
-      <OrderSuccess restaurantName={restaurant.name} onBack={() => { setOrderSuccess(false); setCart([]); }} />
+      <OrderSuccess
+        restaurantName={restaurant.name}
+        tableNumber={orderedTable}
+        onBack={() => { setOrderSuccess(false); setCart([]); }}
+      />
     </>
   );
 
-  const categories = restaurant.categories?.filter(c => c.status !== false) || [];
+  const categories = restaurant.categories?.filter((c) => c.status !== false) || [];
   const coverPhoto = restaurant.photos?.[0]?.photo_url;
 
+  // ── Main render ────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`
@@ -429,8 +643,6 @@ fetchMenu();
         .add-btn:hover { background: #7a4820; }
         .sub-btn { background: #f0e6d3; color: #513012; }
         .sub-btn:hover { background: #e8d5be; }
-
-        /* ✅ Responsive grid: 1 col mobile, 2 col tablet+ */
         .menu-grid {
           display: grid;
           grid-template-columns: 1fr;
@@ -452,8 +664,10 @@ fetchMenu();
             </div>
           )}
           <div className={`text-center px-5 ${coverPhoto ? '-mt-14 relative z-10' : 'pt-12'} pb-6`}>
-            <div className="mx-auto mb-4 w-20 h-20 rounded-full flex items-center justify-center ring-4 ring-white shadow-lg"
-              style={{ background: 'linear-gradient(135deg, #2d1600, #7a3f1a)' }}>
+            <div
+              className="mx-auto mb-4 w-20 h-20 rounded-full flex items-center justify-center ring-4 ring-white shadow-lg"
+              style={{ background: 'linear-gradient(135deg, #2d1600, #7a3f1a)' }}
+            >
               <span className="text-4xl font-bold text-white menu-serif">{restaurant.name?.[0] || '?'}</span>
             </div>
             <h1 className="menu-serif font-bold leading-tight" style={{ fontSize: 'clamp(26px, 7vw, 38px)', color: '#1e0f02' }}>
@@ -461,18 +675,29 @@ fetchMenu();
             </h1>
             <div className="mt-3 mb-2 max-w-xs mx-auto"><OrnamentDivider /></div>
             {(restaurant.address || restaurant.city) && (
-              <p className="text-sm" style={{ color: '#9a7458' }}>📍 {[restaurant.address, restaurant.city].filter(Boolean).join(', ')}</p>
+              <p className="text-sm" style={{ color: '#9a7458' }}>
+                📍 {[restaurant.address, restaurant.city].filter(Boolean).join(', ')}
+              </p>
             )}
           </div>
         </div>
 
         {/* CATEGORY NAV */}
         {categories.length > 0 && (
-          <div className="sticky top-0 z-20 border-b" style={{ background: 'rgba(253,246,236,0.95)', backdropFilter: 'blur(8px)', borderColor: 'rgba(184,147,106,0.25)' }}>
+          <div
+            className="sticky top-0 z-20 border-b"
+            style={{ background: 'rgba(253,246,236,0.95)', backdropFilter: 'blur(8px)', borderColor: 'rgba(184,147,106,0.25)' }}
+          >
             <div className="flex gap-2 px-4 py-3 overflow-x-auto max-w-2xl mx-auto" style={{ scrollbarWidth: 'none' }}>
-              {categories.map(cat => (
-                <button key={cat.id} className={`cat-pill ${activeCategory === cat.name ? 'active' : ''}`}
-                  onClick={() => { setActiveCategory(cat.name); document.getElementById(`cat-${cat.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  className={`cat-pill ${activeCategory === cat.name ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveCategory(cat.name);
+                    document.getElementById(`cat-${cat.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                >
                   {cat.name}
                 </button>
               ))}
@@ -489,20 +714,20 @@ fetchMenu();
             </div>
           )}
 
-          {categories.map(category => {
+          {categories.map((category) => {
             const items = getItemsForCategory(category);
             if (items.length === 0) return null;
             return (
               <div key={category.id} id={`cat-${category.id}`} style={{ scrollMarginTop: 60 }}>
                 <div className="text-center mb-4">
                   <OrnamentDivider />
-                  <h2 className="menu-serif font-bold mt-3 mb-1" style={{ fontSize: 22, color: '#1e0f02' }}>{category.name}</h2>
+                  <h2 className="menu-serif font-bold mt-3 mb-1" style={{ fontSize: 22, color: '#1e0f02' }}>
+                    {category.name}
+                  </h2>
                   <OrnamentDivider />
                 </div>
-
-                {/* ✅ 2-column grid */}
                 <div className="menu-grid">
-                  {items.map(item => (
+                  {items.map((item) => (
                     <MenuItemCard
                       key={item.id}
                       item={item}
@@ -533,10 +758,16 @@ fetchMenu();
 
       {drawerOpen && (
         <OrderDrawer
-          cart={cart} restaurant={restaurant} token={token}
+          cart={cart}
+          restaurant={restaurant}
+          token={token}
           onClose={() => setDrawerOpen(false)}
           onUpdateQty={updateQty}
-          onSuccess={() => { setDrawerOpen(false); setOrderSuccess(true); }}
+          onSuccess={(tableNum) => {
+            setOrderedTable(tableNum);
+            setDrawerOpen(false);
+            setOrderSuccess(true);
+          }}
         />
       )}
     </>

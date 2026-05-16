@@ -3,16 +3,21 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, User, RefreshCw, AlertCircle, Calendar } from "lucide-react";
+import {
+  Clock, User, RefreshCw, AlertCircle, Calendar,
+  Truck, UtensilsCrossed, ChevronDown, ChevronUp, Phone, Mail, FileText,
+} from "lucide-react";
 import { apiFetch } from "@/lib/api";
-import { useRequirePermission } from '@/hooks/usePermission';
+import { useRequirePermission } from "@/hooks/usePermission";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface OrderItem {
   id: number;
   menu_name: string;
   quantity: number;
   subtotal: string;
-  notes: string;
+  notes?: string;
 }
 
 interface Order {
@@ -22,6 +27,7 @@ interface Order {
   status_display: string;
   total_price: string;
   items: OrderItem[];
+  table_number: number | null;   // ✅ null / 0 = online order; number = table order
   customer_name: string;
   customer_phone: string;
   customer_email: string;
@@ -29,64 +35,313 @@ interface Order {
   created_on: string;
 }
 
-const REFRESH_INTERVAL = 30000;
-const STORAGE_KEY = 'qr_menu_token_data';
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const REFRESH_INTERVAL = 30_000;
+const STORAGE_KEY = "qr_menu_token_data";
+
+type TabType = "all" | "online" | "table";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(dateStr: string) {
   return new Date(dateStr).toLocaleString("en-US", {
-    month: "short", 
+    month: "short",
     day: "numeric",
-    hour: "2-digit", 
+    hour: "2-digit",
     minute: "2-digit",
   });
 }
 
-
-
 function getStoredToken(): string {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return '';
+    if (!saved) return "";
     const parsed = JSON.parse(saved);
-    const url = parsed.frontendUrl || '';
-    if (url.includes('token=')) {
-      return new URL(url).searchParams.get('token') || '';
+    const url = parsed.frontendUrl || "";
+    if (url.includes("token=")) {
+      return new URL(url).searchParams.get("token") || "";
     }
   } catch {}
-  return '';
+  return "";
 }
+
+function isOnlineOrder(order: Order): boolean {
+  return !order.table_number || order.table_number === 0;
+}
+
+// ─── Order Type Badge ─────────────────────────────────────────────────────────
+
+function OrderTypeBadge({ order }: { order: Order }) {
+  if (isOnlineOrder(order)) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
+        style={{ background: "#f0faf4", color: "#16a34a", border: "1px solid rgba(34,197,94,0.3)" }}
+      >
+        <Truck size={10} /> Online
+      </span>
+    );
+  }
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
+      style={{ background: "#fef3e2", color: "#b45309", border: "1px solid rgba(180,83,9,0.25)" }}
+    >
+      <UtensilsCrossed size={10} /> Table {order.table_number}
+    </span>
+  );
+}
+
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+
+function StatCard({
+  label, value, sub, accent,
+}: {
+  label: string; value: string | number; sub?: string; accent: string;
+}) {
+  return (
+    <div
+      className="rounded-2xl p-5 flex flex-col gap-1"
+      style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#9ca3af" }}>{label}</p>
+      <p className="text-3xl font-bold" style={{ color: accent }}>{value}</p>
+      {sub && <p className="text-xs" style={{ color: "#b8936a" }}>{sub}</p>}
+    </div>
+  );
+}
+
+// ─── Expandable Order Row ─────────────────────────────────────────────────────
+
+function OrderRow({ order }: { order: Order }) {
+  const [expanded, setExpanded] = useState(false);
+  const online = isOnlineOrder(order);
+
+  // Pull delivery address out of notes if present
+  const lines = (order.notes || "").split("\n");
+  const addressLine = lines.find((l) => l.toLowerCase().startsWith("delivery address:"));
+  const deliveryAddress = addressLine?.replace(/delivery address:\s*/i, "").trim();
+  const otherNotes = lines.filter((l) => l !== addressLine).join("\n").trim();
+
+  return (
+    <>
+      {/* Main row */}
+      <tr
+        className="hover:bg-gray-50 cursor-pointer transition-colors"
+        onClick={() => setExpanded((p) => !p)}
+      >
+        {/* Order ID + type */}
+        <td className="py-4 px-4">
+          <div className="flex flex-col gap-1.5">
+            <span className="font-mono text-sm text-gray-500">#{order.id}</span>
+            <OrderTypeBadge order={order} />
+          </div>
+        </td>
+
+        {/* Customer */}
+        <td className="py-4 px-4">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+              style={{ background: online ? "#f0faf4" : "#fef3e2", color: online ? "#16a34a" : "#b45309" }}
+            >
+              {online ? <Truck size={13} /> : <UtensilsCrossed size={13} />}
+            </div>
+            <div>
+              <p className="font-semibold text-sm text-gray-800">{order.customer_name || "Guest"}</p>
+              {order.customer_phone && (
+                <p className="text-xs text-gray-400 flex items-center gap-1">
+                  <Phone size={9} /> {order.customer_phone}
+                </p>
+              )}
+            </div>
+          </div>
+        </td>
+
+        {/* Location: table or delivery */}
+        <td className="py-4 px-4">
+          {online ? (
+            <div className="text-sm" style={{ color: "#16a34a" }}>
+              <p className="font-medium">🚚 Delivery</p>
+              {deliveryAddress && (
+                <p className="text-xs text-gray-400 truncate max-w-[160px]">{deliveryAddress}</p>
+              )}
+            </div>
+          ) : (
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold"
+              style={{ background: "#fef3e2", color: "#b45309" }}
+            >
+              <UtensilsCrossed size={12} />
+              Table {order.table_number}
+            </div>
+          )}
+        </td>
+
+        {/* Time */}
+        <td className="py-4 px-4">
+          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+            <Clock size={12} />
+            {formatTime(order.created_on)}
+          </div>
+        </td>
+
+        {/* Items summary */}
+        <td className="py-4 px-4">
+          <p className="text-sm text-gray-700 font-medium">
+            {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+          </p>
+          {order.items.length > 0 && (
+            <p className="text-xs text-gray-400 truncate max-w-[180px]">
+              {order.items[0].menu_name}
+              {order.items.length > 1 && ` +${order.items.length - 1} more`}
+            </p>
+          )}
+        </td>
+
+        {/* Total + expand icon */}
+        <td className="py-4 px-4">
+          <div className="flex items-center justify-end gap-3">
+            <span className="font-bold text-base" style={{ color: "#513012" }}>
+              Rs. {parseFloat(order.total_price || "0").toFixed(0)}
+            </span>
+            <span className="text-gray-400">
+              {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+            </span>
+          </div>
+        </td>
+      </tr>
+
+      {/* Expanded detail row */}
+      {expanded && (
+        <tr style={{ background: online ? "#f8fff9" : "#fffbf5" }}>
+          <td colSpan={6} className="px-6 py-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+              {/* Items breakdown */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#b8936a" }}>
+                  Order Items
+                </p>
+                <div className="space-y-2">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                          style={{ background: "#513012", color: "#fff" }}
+                        >
+                          {item.quantity}
+                        </span>
+                        <span className="text-sm text-gray-700">{item.menu_name}</span>
+                      </div>
+                      <span className="text-sm font-semibold" style={{ color: "#513012" }}>
+                        Rs. {parseFloat(item.subtotal || "0").toFixed(0)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div
+                  className="flex justify-between items-center mt-4 pt-3"
+                  style={{ borderTop: "1px dashed rgba(184,147,106,0.35)" }}
+                >
+                  <span className="text-sm font-bold text-gray-800">Total</span>
+                  <span className="font-bold text-base" style={{ color: "#513012" }}>
+                    Rs. {parseFloat(order.total_price || "0").toFixed(0)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Customer + delivery info */}
+              <div className="space-y-3">
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#b8936a" }}>
+                  {online ? "Delivery Info" : "Table Info"}
+                </p>
+
+                {order.customer_name && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <User size={13} className="shrink-0 text-gray-400" />
+                    {order.customer_name}
+                  </div>
+                )}
+                {order.customer_phone && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Phone size={13} className="shrink-0 text-gray-400" />
+                    {order.customer_phone}
+                  </div>
+                )}
+                {order.customer_email && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Mail size={13} className="shrink-0 text-gray-400" />
+                    {order.customer_email}
+                  </div>
+                )}
+
+                {/* Delivery address (online only) */}
+                {online && deliveryAddress && (
+                  <div
+                    className="flex items-start gap-2 text-sm px-3 py-2 rounded-xl"
+                    style={{ background: "#f0faf4", color: "#16a34a" }}
+                  >
+                    <Truck size={13} className="shrink-0 mt-0.5" />
+                    <span>{deliveryAddress}</span>
+                  </div>
+                )}
+
+                {/* Table (dine-in only) */}
+                {!online && (
+                  <div
+                    className="flex items-center gap-2 text-sm px-3 py-2 rounded-xl font-bold"
+                    style={{ background: "#fef3e2", color: "#b45309" }}
+                  >
+                    <UtensilsCrossed size={13} />
+                    Dine-in · Table {order.table_number}
+                  </div>
+                )}
+
+                {/* Notes */}
+                {otherNotes && (
+                  <div className="flex items-start gap-2 text-sm text-gray-500">
+                    <FileText size={13} className="shrink-0 mt-0.5 text-gray-400" />
+                    <span className="italic">{otherNotes}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [token, setToken] = useState<string>('');
+  const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [showTodayOnly, setShowTodayOnly] = useState(true); // Default: Today's orders
+  const [showTodayOnly, setShowTodayOnly] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabType>("all");
 
-  useRequirePermission('viewOrders');
+  useRequirePermission("viewOrders");
 
   const fetchOrders = useCallback(async (currentToken: string, isManual = false) => {
     if (!currentToken) return;
     if (isManual) setRefreshing(true);
-
     try {
       const res = await apiFetch(
-        `/api/v1/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`
+        `/api/v1/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`,
       );
-
-      if (res.status === 401) {
-        setError("Session expired. Please log in again.");
-        return;
-      }
+      if (res.status === 401) { setError("Session expired. Please log in again."); return; }
       if (!res.ok) throw new Error(`Failed to fetch orders (${res.status})`);
-
       const data = await res.json();
       const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
-
       list.sort((a, b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime());
-      
       setOrders(list);
       setError("");
       setLastRefreshed(new Date());
@@ -98,100 +353,99 @@ export default function OrdersPage() {
     }
   }, []);
 
-  // Initialize token and fetch orders
   useEffect(() => {
     const t = getStoredToken();
-    if (t) {
-      setToken(t);
-      fetchOrders(t);
-    } else {
-      setError('NO_TOKEN');
-      setLoading(false);
-    }
+    if (t) { setToken(t); fetchOrders(t); }
+    else { setError("NO_TOKEN"); setLoading(false); }
   }, [fetchOrders]);
 
-  // Auto-refresh
   useEffect(() => {
     if (!token) return;
     const interval = setInterval(() => fetchOrders(token), REFRESH_INTERVAL);
     return () => clearInterval(interval);
   }, [token, fetchOrders]);
 
-  // Filter orders for today
-  const filteredOrders = useMemo(() => {
+  // Today filter
+  const todayOrders = useMemo(() => {
     if (!showTodayOnly) return orders;
-
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
-    return orders.filter(order => {
-      const orderDate = new Date(order.created_on).toISOString().split('T')[0];
-      return orderDate === today;
-    });
+    const today = new Date().toISOString().split("T")[0];
+    return orders.filter((o) => new Date(o.created_on).toISOString().split("T")[0] === today);
   }, [orders, showTodayOnly]);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <div className="w-10 h-10 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm">Loading orders...</p>
-      </div>
-    );
-  }
+  // Tab filter
+  const filteredOrders = useMemo(() => {
+    if (activeTab === "online") return todayOrders.filter(isOnlineOrder);
+    if (activeTab === "table") return todayOrders.filter((o) => !isOnlineOrder(o));
+    return todayOrders;
+  }, [todayOrders, activeTab]);
 
-  if (error === 'NO_TOKEN') {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center px-6">
-        <div className="text-6xl">📵</div>
-        <h2 className="text-xl font-bold text-[#513012]">QR Token not found</h2>
-        <p className="text-gray-500 text-sm max-w-sm">
-          Please go to the QR Generator page first and generate a QR code.
-        </p>
-        <a
-          href="/dashboard/qr"
-          className="mt-2 px-6 py-3 rounded-xl font-semibold text-white"
-          style={{ background: '#513012' }}
-        >
-          Go to QR Generator →
-        </a>
-      </div>
-    );
-  }
+  // Stats
+  const onlineCount = todayOrders.filter(isOnlineOrder).length;
+  const tableCount = todayOrders.filter((o) => !isOnlineOrder(o)).length;
+  const totalRevenue = todayOrders.reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
+  const onlineRevenue = todayOrders.filter(isOnlineOrder).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
+  const tableRevenue = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
+
+  // ── Render guards ──────────────────────────────────────────────────────────
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+      <div className="w-10 h-10 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+      <p className="text-gray-500 text-sm">Loading orders...</p>
+    </div>
+  );
+
+  if (error === "NO_TOKEN") return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center px-6">
+      <div className="text-6xl">📵</div>
+      <h2 className="text-xl font-bold text-[#513012]">QR Token not found</h2>
+      <p className="text-gray-500 text-sm max-w-sm">
+        Please go to the QR Generator page first and generate a QR code.
+      </p>
+      <a href="/dashboard/qr" className="mt-2 px-6 py-3 rounded-xl font-semibold text-white"
+        style={{ background: "#513012" }}>
+        Go to QR Generator →
+      </a>
+    </div>
+  );
+
+  // ── Main UI ────────────────────────────────────────────────────────────────
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
+
+      {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
-          <p className="text-gray-600 text-sm mt-1">
+          <p className="text-gray-500 text-sm mt-1">
             {lastRefreshed
               ? `Last updated: ${lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 30s`
               : "Loading..."}
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant={showTodayOnly ? "default" : "outline"}
             onClick={() => setShowTodayOnly(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-sm"
+            style={showTodayOnly ? { background: "#513012" } : {}}
           >
-            <Calendar className="w-4 h-4" />
-            Today's Orders
+            <Calendar className="w-4 h-4" /> Today
           </Button>
-
           <Button
             variant={!showTodayOnly ? "default" : "outline"}
             onClick={() => setShowTodayOnly(false)}
+            className="text-sm"
+            style={!showTodayOnly ? { background: "#513012" } : {}}
           >
             All Orders
           </Button>
-
           <Button
             onClick={() => fetchOrders(token, true)}
             disabled={refreshing || !token}
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-sm"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -199,33 +453,95 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && error !== 'NO_TOKEN' && (
+      {/* ── Error ── */}
+      {error && error !== "NO_TOKEN" && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
-          <button onClick={() => fetchOrders(token, true)} className="ml-auto underline">
-            Retry
-          </button>
+          <button onClick={() => fetchOrders(token, true)} className="ml-auto underline">Retry</button>
         </div>
       )}
 
-      {/* Orders Table */}
-      <Card>
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Orders"
+          value={todayOrders.length}
+          sub={`Rs. ${totalRevenue.toFixed(0)}`}
+          accent="#513012"
+        />
+        <StatCard
+          label="Online Orders"
+          value={onlineCount}
+          sub={`Rs. ${onlineRevenue.toFixed(0)}`}
+          accent="#16a34a"
+        />
+        <StatCard
+          label="Table Orders"
+          value={tableCount}
+          sub={`Rs. ${tableRevenue.toFixed(0)}`}
+          accent="#b45309"
+        />
+       
+      </div>
+
+      {/* ── Tab Filter ── */}
+      <div
+        className="flex gap-1 p-1 rounded-2xl w-fit"
+        style={{ background: "#f3f4f6" }}
+      >
+        {(
+          [
+            { key: "all", label: "All", icon: null },
+            { key: "online", label: "Online", icon: <Truck size={13} /> },
+            { key: "table", label: "Table / Dine-in", icon: <UtensilsCrossed size={13} /> },
+          ] as { key: TabType; label: string; icon: React.ReactNode }[]
+        ).map(({ key, label, icon }) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+            style={
+              activeTab === key
+                ? {
+                    background: key === "online" ? "#16a34a" : key === "table" ? "#b45309" : "#513012",
+                    color: "#fff",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                  }
+                : { color: "#6b7280" }
+            }
+          >
+            {icon} {label}
+            <span
+              className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
+              style={{
+                background: activeTab === key ? "rgba(255,255,255,0.2)" : "#e5e7eb",
+                color: activeTab === key ? "#fff" : "#374151",
+              }}
+            >
+              {key === "all" ? todayOrders.length : key === "online" ? onlineCount : tableCount}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Orders Table ── */}
+      <Card style={{ border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">
-              {showTodayOnly ? "Today's Orders" : "All Orders"} 
-              <span className="text-sm font-normal text-gray-500 ml-2">
-                ({filteredOrders.length})
-              </span>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">
+              {activeTab === "all" ? "All Orders" : activeTab === "online" ? "🚚 Online Orders" : "🍽️ Table Orders"}
+              <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length})</span>
             </h2>
+            <p className="text-xs text-gray-400">Click a row to expand</p>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {filteredOrders.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <div className="text-5xl mb-4">📋</div>
+            <div className="text-center py-20 text-gray-400">
+              <div className="text-5xl mb-4">
+                {activeTab === "online" ? "🚚" : activeTab === "table" ? "🍽️" : "📋"}
+              </div>
               <p className="font-medium">No orders found</p>
               <p className="text-sm mt-1">
                 {showTodayOnly ? "No orders placed today yet." : "No orders available."}
@@ -235,44 +551,18 @@ export default function OrdersPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-gray-600">
-                    <th className="py-3 px-4 font-medium">Order ID</th>
-                    <th className="py-3 px-4 font-medium">Customer</th>
-                    <th className="py-3 px-4 font-medium">Phone</th>
-                    <th className="py-3 px-4 font-medium">Time</th>
-                    <th className="py-3 px-4 font-medium">Items</th>
-                    <th className="py-3 px-4 font-medium text-right">Total</th>
+                  <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Order</th>
+                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Customer</th>
+                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Location</th>
+                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Time</th>
+                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Items</th>
+                    <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider text-gray-400">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-gray-50">
                   {filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="py-4 px-4 font-mono text-gray-500">#{order.id}</td>
-                      <td className="py-4 px-4 font-medium">
-                        {order.customer_name || "Guest"}
-                      </td>
-                      <td className="py-4 px-4 text-gray-600">
-                        {order.customer_phone || "-"}
-                      </td>
-                      <td className="py-4 px-4 text-gray-600">
-                        {formatTime(order.created_on)}
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="text-gray-700">
-                          {order.items.length} item{order.items.length > 1 ? 's' : ''}
-                        </div>
-                        {order.items.length > 0 && (
-                          <div className="text-xs text-gray-500 truncate max-w-[200px]">
-                            {order.items[0].menu_name}
-                            {order.items.length > 1 && ` +${order.items.length - 1} more`}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-4 px-4 text-right font-semibold text-[#513012]">
-                        Rs. {parseFloat(order.total_price || "0").toFixed(0)}
-                      </td>
-                    
-                    </tr>
+                    <OrderRow key={order.id} order={order} />
                   ))}
                 </tbody>
               </table>

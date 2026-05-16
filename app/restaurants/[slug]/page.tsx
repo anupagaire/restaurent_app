@@ -19,6 +19,7 @@ interface ApiMenu {
   image?: string;
   status: boolean;
   
+  
 }
 
 
@@ -130,9 +131,11 @@ export default async function RestaurantPage({ params }: PageProps) {
   );
 
   const activeMenus = (restaurant.menus ?? []).filter((item: ApiMenu) => item.status);
+  const photoMap = await getMenuPhotoMap(activeMenus.map(m => m.id));
+
 
   const menuItems = activeMenus.map((item: ApiMenu) => {
-  const validPhoto = item.photos?.find(p => p.photo_url !== null)?.photo_url ?? null;
+  const validPhoto = photoMap[item.id] ?? null;
   const resolvedPhoto = validPhoto
     ? (validPhoto.startsWith('http') ? validPhoto : `${BASE_URL}${validPhoto}`)
     : null;

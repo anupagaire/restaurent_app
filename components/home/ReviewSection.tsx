@@ -260,6 +260,7 @@ console.log('REPLY SUCCESS:', await res.json()); // ← add gara
 // ── Main Section ─────────────────────────────────────────────
 export default function ReviewSection({ restaurantId }: Props) {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
   const [guestName, setGuestName] = useState('');
   const [rating, setRating] = useState(0);
@@ -319,7 +320,7 @@ const topLevel = reviews.filter(r => r.parent === null || r.parent === undefined
   const avgRating = topLevel.length
     ? (topLevel.reduce((s, r) => s + r.rating, 0) / topLevel.length).toFixed(1)
     : null;
-const visibleTopLevel = topLevel.slice(0, 5);
+const visibleTopLevel = showAll ? topLevel : topLevel.slice(0, 5);
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     setPhotos(files);

@@ -63,7 +63,10 @@ export default function RestaurantTabs({ menuItems, restaurantId, reviewCount = 
             No menu items available yet.
           </p>
         ) : (
-          <MenuSection menuItems={menuItems} />
+          <MenuSection 
+          menuItems={menuItems}
+           restaurantId={restaurantId}
+          acceptsOnlineOrders={true} />
         )
       ) : (
         <ReviewSection restaurantId={restaurantId} />
