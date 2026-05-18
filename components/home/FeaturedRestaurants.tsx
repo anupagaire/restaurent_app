@@ -12,6 +12,7 @@ interface Restaurant {
   city: string;
   status: boolean;
   availability: string;
+  view_count: number;
   photos: { id: number; photo_url: string }[];
 }
 
@@ -220,6 +221,14 @@ export default function FeaturedRestaurants() {
                         {restaurant.availability}
                       </span>
                     )}
+
+                    {restaurant.view_count > 0 && (
+  <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+    👀  {restaurant.view_count >= 1000
+      ? `${(restaurant.view_count / 1000).toFixed(1)}k`
+      : restaurant.view_count}
+  </span>
+)}
                   </div>
 
                   <div className="p-3">

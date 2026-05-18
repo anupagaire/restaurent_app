@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Clock, User, RefreshCw, AlertCircle, Calendar,
@@ -9,8 +8,6 @@ import {
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useRequirePermission } from "@/hooks/usePermission";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface OrderItem {
   id: number;

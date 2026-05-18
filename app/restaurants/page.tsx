@@ -15,6 +15,7 @@ interface Restaurant {
   address: string;
   city: string;
   status: boolean;
+  view_count: number;
   photos: { id: number; photo_url: string }[];
 }
 
@@ -28,7 +29,6 @@ function resolvePhoto(url: string | null | undefined): string | null {
   return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-// ── Fetch average rating ─────────────────────────────────────
 async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; count: number }> {
   try {
     const res = await fetch(
@@ -48,7 +48,6 @@ async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; coun
 }
 
 async function postRating(restaurantId: number, rating: number): Promise<boolean> {
-  // ── Already rated check — backend hit nai nagari block ──
   const alreadyRated = localStorage.getItem(`rated_${restaurantId}`);
   if (alreadyRated) return false;
 
@@ -120,7 +119,6 @@ useEffect(() => {
 
   return (
     <div onClick={(e) => e.preventDefault()}>
-      {/* Average rating */}
       {count > 0 && (
         <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
           <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
@@ -133,7 +131,6 @@ useEffect(() => {
         </div>
       )}
 
-      {/* My stars */}
       <div className="mt-2 pt-2 border-t border-gray-100">
         <p className="text-[10px] text-gray-400 mb-1">
           {submitted ? 'Your rating:' : 'Rate this place:'}
@@ -162,7 +159,6 @@ useEffect(() => {
   );
 }
 
-// ── Floating Rate Widget ─────────────────────────────────────
 function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -415,6 +411,13 @@ export default function RestaurantsPage() {
                         🍽️
                       </div>
                     )}
+                                       {restaurant.view_count > 0 && (
+  <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+    👀  {restaurant.view_count >= 1000
+      ? `${(restaurant.view_count / 1000).toFixed(1)}k`
+      : restaurant.view_count}
+  </span>
+)}
                   </div>
                   <div className="p-3">
                     <h3 className="text-sm font-bold text-[#513012] line-clamp-1">{restaurant.name}</h3>

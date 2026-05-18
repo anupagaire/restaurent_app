@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UtensilsCrossed, ShoppingCart, X, Plus, Minus, Truck, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const STORAGE_KEY = 'qr_menu_token_data';
 
 interface MenuItem {
   id: string | number;
@@ -24,19 +25,15 @@ interface CartItem {
 interface Props {
   menuItems: MenuItem[];
   restaurantId: number;
-  acceptsOnlineOrders?: boolean; // pass false to hide the badge
+  acceptsOnlineOrders?: boolean;
 }
 
-// ── Animations ──────────────────────────────────────────────────────────────
 const cardVariant = {
   hidden: { opacity: 0, y: 20, scale: 0.98 },
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35 } },
 };
-const stagger = {
-  show: { transition: { staggerChildren: 0.06 } },
-};
+const stagger = { show: { transition: { staggerChildren: 0.06 } } };
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function getCategoryEmoji(category?: string): string {
   const map: Record<string, string> = {
     pizza: '🍕', burger: '🍔', drink: '🥤', drinks: '🥤', coffee: '☕',
@@ -52,7 +49,28 @@ function getCategoryEmoji(category?: string): string {
   return '🍽️';
 }
 
-// ── Online Order Badge ───────────────────────────────────────────────────────
+/**
+ * Reads the QR token stored by the QR generator page.
+ * Anonymous users need this token to POST /api/v1/orders/
+ */
+function getStoredToken(): string {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return '';
+    const parsed = JSON.parse(saved);
+    // Try extracting from frontendUrl first
+    const url = parsed.frontendUrl || '';
+    if (url.includes('token=')) {
+      return new URL(url).searchParams.get('token') || '';
+    }
+    // Fallback: token stored directly
+    return parsed.token || '';
+  } catch {
+    return '';
+  }
+}
+
+// ── Online Order Badge ────────────────────────────────────────────────────────
 function OnlineOrderBadge() {
   return (
     <div className="flex items-center justify-center mb-8">
@@ -64,17 +82,14 @@ function OnlineOrderBadge() {
           boxShadow: '0 2px 12px rgba(34,197,94,0.12)',
         }}
       >
-        <span className="flex items-center justify-center w-7 h-7 rounded-full"
-          style={{ background: '#22c55e' }}>
+        <span className="flex items-center justify-center w-7 h-7 rounded-full" style={{ background: '#22c55e' }}>
           <Truck size={14} color="#fff" />
         </span>
         <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#16a34a' }}>
             We Accept Online Orders
           </p>
-          <p className="text-xs" style={{ color: '#4ade80' }}>
-            Order now · Pay on delivery
-          </p>
+          <p className="text-xs" style={{ color: '#4ade80' }}>Order now · Pay on delivery</p>
         </div>
         <CheckCircle2 size={18} color="#22c55e" />
       </div>
@@ -82,7 +97,7 @@ function OnlineOrderBadge() {
   );
 }
 
-// ── Cart Bar ─────────────────────────────────────────────────────────────────
+// ── Cart Bar ──────────────────────────────────────────────────────────────────
 function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   const totalItems = cart.reduce((s, c) => s + c.quantity, 0);
   const totalPrice = cart.reduce((s, c) => s + c.item.price * c.quantity, 0);
@@ -94,10 +109,7 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
         className="pointer-events-auto w-full max-w-2xl mx-auto flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl"
         style={{ background: '#513012', color: '#fdf6ec', display: 'flex' }}
       >
-        <span
-          className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm"
-          style={{ background: '#b8936a' }}
-        >
+        <span className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm" style={{ background: '#b8936a' }}>
           {totalItems}
         </span>
         <span className="font-bold tracking-wide flex items-center gap-2">
@@ -109,12 +121,11 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-// ── Order Drawer ─────────────────────────────────────────────────────────────
-function OrderDrawer({
-  cart, restaurantId, onClose, onUpdateQty, onSuccess,
-}: {
+// ── Order Drawer ──────────────────────────────────────────────────────────────
+function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSuccess }: {
   cart: CartItem[];
   restaurantId: number;
+  token: string;
   onClose: () => void;
   onUpdateQty: (itemId: string | number, delta: number) => void;
   onSuccess: () => void;
@@ -132,9 +143,12 @@ function OrderDrawer({
   const handleSubmit = async () => {
     if (cart.length === 0) return;
 
-    // For online orders, phone or email is helpful
     if (!phone.trim() && !email.trim()) {
       setError('Please provide a phone number or email so we can contact you.');
+      return;
+    }
+    if (!token) {
+      setError('Order token not found. Please contact the restaurant.');
       return;
     }
 
@@ -147,7 +161,6 @@ function OrderDrawer({
         customer_name: name.trim() || 'Guest',
         customer_phone: phone.trim() || null,
         customer_email: email.trim() || null,
-        // Put delivery address in notes since API doesn't have a separate field
         notes: [
           address.trim() ? `Delivery address: ${address.trim()}` : '',
           notes.trim(),
@@ -155,14 +168,14 @@ function OrderDrawer({
         items: cart.map((c) => ({ menu_id: c.item.id, quantity: c.quantity })),
       };
 
-      const res = await fetch(`${BASE_URL}/api/v1/orders/`, {
+      // ✅ Pass token as query param — required for anonymous users
+      const res = await fetch(`${BASE_URL}/api/v1/orders/?token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),
       });
 
       const responseText = await res.text();
-
       if (!res.ok) {
         let errorMsg = `Error ${res.status}`;
         try {
@@ -191,39 +204,30 @@ function OrderDrawer({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 z-50"
         style={{ background: 'rgba(30,15,2,0.55)', backdropFilter: 'blur(2px)' }}
         onClick={onClose}
       />
-
-      {/* Sheet */}
       <div
         className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl overflow-y-auto"
         style={{ background: '#fffdf8', maxHeight: '90vh' }}
       >
-        {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full" style={{ background: '#d4b896' }} />
         </div>
 
         <div className="px-5 pb-10 max-w-2xl mx-auto">
-
-          {/* Header */}
           <div className="flex items-center justify-between py-4">
             <div>
               <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
                 Your Order
               </h2>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold mt-0.5"
-                style={{ color: '#22c55e' }}>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold mt-0.5" style={{ color: '#22c55e' }}>
                 <Truck size={11} /> Online Delivery
               </span>
             </div>
-            <button onClick={onClose} style={{ color: '#9a7458', fontSize: 22 }}>
-              <X size={22} />
-            </button>
+            <button onClick={onClose} style={{ color: '#9a7458' }}><X size={22} /></button>
           </div>
 
           <hr style={{ borderColor: 'rgba(184,147,106,0.25)', marginBottom: 12 }} />
@@ -231,31 +235,22 @@ function OrderDrawer({
           {/* Cart items */}
           <div className="mt-2">
             {cart.map((c) => (
-              <div
-                key={c.item.id}
-                className="flex items-center justify-between gap-3 py-3"
-                style={{ borderBottom: '1px dashed rgba(184,147,106,0.28)' }}
-              >
+              <div key={c.item.id} className="flex items-center justify-between gap-3 py-3"
+                style={{ borderBottom: '1px dashed rgba(184,147,106,0.28)' }}>
                 <div className="flex-1">
                   <p className="font-semibold text-sm" style={{ color: '#1e0f02' }}>{c.item.name}</p>
                   <p className="text-xs" style={{ color: '#9a7458' }}>{c.item.category}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => onUpdateQty(c.item.id, -1)}
+                  <button onClick={() => onUpdateQty(c.item.id, -1)}
                     className="w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}
-                  >
+                    style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}>
                     <Minus size={12} />
                   </button>
-                  <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>
-                    {c.quantity}
-                  </span>
-                  <button
-                    onClick={() => onUpdateQty(c.item.id, 1)}
+                  <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>{c.quantity}</span>
+                  <button onClick={() => onUpdateQty(c.item.id, 1)}
                     className="w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}
-                  >
+                    style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}>
                     <Plus size={12} />
                   </button>
                 </div>
@@ -274,66 +269,48 @@ function OrderDrawer({
 
           <hr style={{ borderColor: 'rgba(184,147,106,0.3)', marginBottom: 20 }} />
 
-          {/* ── Delivery Details ───────────────────────────────────────── */}
+          {/* No token warning */}
+          {!token && (
+            <div className="mb-4 px-4 py-3 rounded-xl text-sm"
+              style={{ background: '#fff7ed', border: '1px solid rgba(234,179,8,0.3)', color: '#92400e' }}>
+              ⚠️ Order token not configured. Please contact the restaurant staff.
+            </div>
+          )}
+
+          {/* Delivery details */}
           <div className="space-y-3">
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>
               Delivery Details
             </p>
 
-            {/* Name */}
-            <div>
-              <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02' }}
-              />
-            </div>
+            {[
+              { label: 'Name', value: name, set: setName, type: 'text', placeholder: 'Your name', required: false },
+              { label: 'Phone', value: phone, set: setPhone, type: 'tel', placeholder: '98XXXXXXXX', required: true },
+              { label: 'Email', value: email, set: setEmail, type: 'email', placeholder: 'you@email.com', required: false },
+            ].map(({ label, value, set, type, placeholder, required }) => (
+              <div key={label}>
+                <label className="text-xs mb-1 flex items-center gap-1" style={{ color: '#9a7458' }}>
+                  {label}
+                  {required && <span style={{ color: '#c0392b' }}>*</span>}
+                  {label === 'Email' && <span className="text-xs" style={{ color: '#b8936a' }}>(or phone)</span>}
+                </label>
+                <input
+                  type={type}
+                  value={value}
+                  onChange={(e) => { set(e.target.value); setError(''); }}
+                  placeholder={placeholder}
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                  style={{
+                    background: '#fdf6ec',
+                    border: `1px solid ${value.trim() && required ? 'rgba(34,197,94,0.5)' : 'rgba(184,147,106,0.35)'}`,
+                    color: '#1e0f02',
+                  }}
+                />
+              </div>
+            ))}
 
-            {/* Phone — required */}
             <div>
               <label className="text-xs mb-1 flex items-center gap-1" style={{ color: '#9a7458' }}>
-                Phone <span style={{ color: '#c0392b' }}>*</span>
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => { setPhone(e.target.value); setError(''); }}
-                placeholder="98XXXXXXXX"
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                style={{
-                  background: '#fdf6ec',
-                  border: `1px solid ${phone.trim() ? 'rgba(34,197,94,0.5)' : 'rgba(184,147,106,0.35)'}`,
-                  color: '#1e0f02',
-                }}
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>
-                Email <span className="text-xs" style={{ color: '#b8936a' }}>(or phone)</span>
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                placeholder="you@email.com"
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                style={{
-                  background: '#fdf6ec',
-                  border: `1px solid ${email.trim() ? 'rgba(34,197,94,0.5)' : 'rgba(184,147,106,0.35)'}`,
-                  color: '#1e0f02',
-                }}
-              />
-            </div>
-
-            {/* Delivery Address */}
-            <div>
-              <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>
                 Delivery Address <span style={{ color: '#c0392b' }}>*</span>
               </label>
               <textarea
@@ -350,7 +327,6 @@ function OrderDrawer({
               />
             </div>
 
-            {/* Special Notes */}
             <div>
               <label className="text-xs mb-1 block" style={{ color: '#9a7458' }}>Special Notes</label>
               <textarea
@@ -364,39 +340,30 @@ function OrderDrawer({
             </div>
           </div>
 
-          {/* Pay on delivery note */}
-          <div
-            className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl"
-            style={{ background: '#f0faf4', border: '1px solid rgba(34,197,94,0.2)' }}
-          >
+          <div className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl"
+            style={{ background: '#f0faf4', border: '1px solid rgba(34,197,94,0.2)' }}>
             <CheckCircle2 size={16} color="#22c55e" />
             <p className="text-xs" style={{ color: '#16a34a' }}>
               Payment on delivery · No advance required
             </p>
           </div>
 
-          {/* Error */}
-          {error && (
-            <p className="mt-3 text-sm text-center" style={{ color: '#c0392b' }}>{error}</p>
-          )}
+          {error && <p className="mt-3 text-sm text-center" style={{ color: '#c0392b' }}>{error}</p>}
 
-          {/* Place Order */}
           <button
             onClick={handleSubmit}
-            disabled={submitting || !isReady}
+            disabled={submitting || !isReady || !token}
             className="mt-6 w-full py-4 rounded-2xl font-bold text-base tracking-wide"
             style={{
-              background: submitting || !isReady ? '#b8936a' : '#513012',
-              color: '#fdf6ec',
-              border: 'none',
-              cursor: submitting || !isReady ? 'not-allowed' : 'pointer',
-              opacity: !isReady ? 0.75 : 1,
+              background: submitting || !isReady || !token ? '#b8936a' : '#513012',
+              color: '#fdf6ec', border: 'none',
+              cursor: submitting || !isReady || !token ? 'not-allowed' : 'pointer',
+              opacity: !isReady || !token ? 0.75 : 1,
             }}
           >
-            {submitting
-              ? 'Placing Order...'
-              : !isReady
-              ? 'Add phone or email to continue'
+            {submitting ? 'Placing Order...'
+              : !token ? 'Token not configured'
+              : !isReady ? 'Add phone or email to continue'
               : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
           </button>
         </div>
@@ -408,27 +375,18 @@ function OrderDrawer({
 // ── Order Success ─────────────────────────────────────────────────────────────
 function OrderSuccess({ onBack }: { onBack: () => void }) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-8"
-      style={{ background: '#fdf6ec' }}
-    >
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-8" style={{ background: '#fdf6ec' }}>
       <div className="text-7xl mb-6">🎉</div>
-      <h2 className="font-bold text-3xl mb-2" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
-        Order Placed!
-      </h2>
-      <span className="inline-flex items-center gap-1 text-sm font-semibold mb-4"
-        style={{ color: '#22c55e' }}>
+      <h2 className="font-bold text-3xl mb-2" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>Order Placed!</h2>
+      <span className="inline-flex items-center gap-1 text-sm font-semibold mb-4" style={{ color: '#22c55e' }}>
         <Truck size={14} /> On its way to you
       </span>
       <hr style={{ borderColor: 'rgba(184,147,106,0.3)', width: '80%', marginBottom: 20 }} />
       <p className="text-sm mb-8" style={{ color: '#9a7458' }}>
         Your order has been received. We will contact you shortly to confirm delivery.
       </p>
-      <button
-        onClick={onBack}
-        className="px-8 py-3 rounded-2xl font-bold"
-        style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}
-      >
+      <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold"
+        style={{ background: '#513012', color: '#fdf6ec', border: 'none', cursor: 'pointer' }}>
         Back to Menu
       </button>
     </div>
@@ -436,75 +394,47 @@ function OrderSuccess({ onBack }: { onBack: () => void }) {
 }
 
 // ── Menu Card ─────────────────────────────────────────────────────────────────
-function MenuCard({
-  item, qty, onAdd, onUpdate,
-}: {
-  item: MenuItem;
-  qty: number;
-  onAdd: () => void;
-  onUpdate: (delta: number) => void;
+function MenuCard({ item, qty, onAdd, onUpdate }: {
+  item: MenuItem; qty: number; onAdd: () => void; onUpdate: (delta: number) => void;
 }) {
   const [imgError, setImgError] = useState(false);
   const showPlaceholder = !item.image || imgError;
 
   return (
-    <motion.div
-      variants={cardVariant}
-      layout
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#513012]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
-    >
+    <motion.div variants={cardVariant} layout
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#513012]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-[#fdf6ec] to-[#e8ddd0] flex items-center justify-center">
         {showPlaceholder ? (
           <span style={{ fontSize: 56 }}>{getCategoryEmoji(item.category)}</span>
         ) : (
-          <Image
-            src={item.image!}
-            alt={item.name}
-            fill
+          <Image src={item.image!} alt={item.name} fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             onError={() => setImgError(true)}
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+            className="object-cover group-hover:scale-105 transition-transform duration-500" />
         )}
       </div>
-
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-semibold text-[15px] leading-tight text-gray-900 line-clamp-2">
-          {item.name}
-        </h3>
+        <h3 className="font-semibold text-[15px] leading-tight text-gray-900 line-clamp-2">{item.name}</h3>
         {item.description && (
           <p className="text-xs text-gray-500 mt-3 line-clamp-3 flex-1">{item.description}</p>
         )}
-
         <div className="mt-auto pt-4 flex items-center justify-between">
           <span className="font-bold text-xl text-[#513012]">Rs. {item.price}</span>
-
           {qty === 0 ? (
-            <button
-              onClick={onAdd}
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg transition-all hover:scale-110"
-              style={{ background: '#513012', color: '#fff', border: 'none', cursor: 'pointer' }}
-              aria-label="Add to cart"
-            >
+            <button onClick={onAdd}
+              className="w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition-all"
+              style={{ background: '#513012', color: '#fff', border: 'none', cursor: 'pointer' }}>
               <Plus size={16} />
             </button>
           ) : (
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => onUpdate(-1)}
-                className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}
-              >
+              <button onClick={() => onUpdate(-1)} className="w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}>
                 <Minus size={12} />
               </button>
-              <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>
-                {qty}
-              </span>
-              <button
-                onClick={() => onUpdate(1)}
-                className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ background: '#513012', color: '#fff', border: 'none', cursor: 'pointer' }}
-              >
+              <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>{qty}</span>
+              <button onClick={() => onUpdate(1)} className="w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ background: '#513012', color: '#fff', border: 'none', cursor: 'pointer' }}>
                 <Plus size={12} />
               </button>
             </div>
@@ -515,16 +445,15 @@ function MenuCard({
   );
 }
 
-// ── Main MenuSection ──────────────────────────────────────────────────────────
-export default function MenuSection({
-  menuItems,
-  restaurantId,
-  acceptsOnlineOrders = true,
-}: Props) {
+export default function MenuSection({ menuItems, restaurantId, acceptsOnlineOrders = true }: Props) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+
+  // ✅ Read QR token from localStorage (needed for anonymous order API calls)
+  const [token, setToken] = useState('');
+  useEffect(() => { setToken(getStoredToken()); }, []);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(menuItems.map((i) => i.category ?? 'Other')));
@@ -552,8 +481,7 @@ export default function MenuSection({
     );
   };
 
-  const getQty = (itemId: string | number) =>
-    cart.find((c) => c.item.id === itemId)?.quantity || 0;
+  const getQty = (itemId: string | number) => cart.find((c) => c.item.id === itemId)?.quantity || 0;
 
   if (orderSuccess) {
     return <OrderSuccess onBack={() => { setOrderSuccess(false); setCart([]); }} />;
@@ -561,51 +489,35 @@ export default function MenuSection({
 
   return (
     <>
-      <div
-        className="mx-auto px-4 sm:px-6 lg:px-8 py-10"
-        style={{ paddingBottom: cart.length > 0 ? 120 : 40 }}
-      >
-        {/* ── Online Order Badge ── */}
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-10" style={{ paddingBottom: cart.length > 0 ? 120 : 40 }}>
         {acceptsOnlineOrders && <OnlineOrderBadge />}
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
-
-          {/* Sidebar */}
           <aside className="hidden lg:block w-72 shrink-0">
             <div className="bg-white rounded-3xl border p-6 sticky top-24">
               <h3 className="font-bold text-[#513012] mb-4 text-lg">Filters</h3>
               <div className="space-y-2 mb-8">
-                <button
-                  onClick={() => setActiveCategory('All')}
+                <button onClick={() => setActiveCategory('All')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
                     activeCategory === 'All' ? 'bg-[#513012] text-white' : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
+                  }`}>
                   <UtensilsCrossed size={18} /> All
                 </button>
               </div>
-
               <h3 className="font-bold text-[#513012] mb-4 text-lg">Category</h3>
               <div className="space-y-2">
                 {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
+                  <button key={cat} onClick={() => setActiveCategory(cat)}
                     className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
                       activeCategory === cat ? 'bg-[#513012] text-white' : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
-                  >
+                    }`}>
                     {cat}
                   </button>
                 ))}
               </div>
-
-              {/* Sidebar online order note */}
               {acceptsOnlineOrders && (
-                <div
-                  className="mt-6 flex items-start gap-2 p-3 rounded-xl"
-                  style={{ background: '#f0faf4', border: '1px solid rgba(34,197,94,0.2)' }}
-                >
+                <div className="mt-6 flex items-start gap-2 p-3 rounded-xl"
+                  style={{ background: '#f0faf4', border: '1px solid rgba(34,197,94,0.2)' }}>
                   <Truck size={14} color="#22c55e" className="mt-0.5 shrink-0" />
                   <p className="text-xs" style={{ color: '#16a34a', lineHeight: 1.5 }}>
                     We deliver to your door. Add items and place your order!
@@ -615,24 +527,16 @@ export default function MenuSection({
             </div>
           </aside>
 
-          {/* Main content */}
           <main className="flex-1 min-w-0">
-            {/* Mobile category pills */}
-            <div
-              className="flex gap-2 overflow-x-auto pb-3 mb-4 lg:hidden"
-              style={{ scrollbarWidth: 'none' }}
-            >
+            <div className="flex gap-2 overflow-x-auto pb-3 mb-4 lg:hidden" style={{ scrollbarWidth: 'none' }}>
               {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                <button key={cat} onClick={() => setActiveCategory(cat)}
                   className="shrink-0 px-4 py-2 rounded-full text-xs font-semibold border transition-all"
                   style={{
                     background: activeCategory === cat ? '#513012' : '#fff',
                     color: activeCategory === cat ? '#fff' : '#513012',
                     borderColor: '#513012',
-                  }}
-                >
+                  }}>
                   {cat}
                 </button>
               ))}
@@ -640,21 +544,13 @@ export default function MenuSection({
 
             <p className="text-sm text-gray-500 mb-6">{filtered.length} items found</p>
 
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
-            >
+            <motion.div variants={stagger} initial="hidden" animate="show"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <AnimatePresence mode="popLayout">
                 {filtered.map((item) => (
-                  <MenuCard
-                    key={item.id}
-                    item={item}
-                    qty={getQty(item.id)}
+                  <MenuCard key={item.id} item={item} qty={getQty(item.id)}
                     onAdd={() => addToCart(item)}
-                    onUpdate={(delta) => updateQty(item.id, delta)}
-                  />
+                    onUpdate={(delta) => updateQty(item.id, delta)} />
                 ))}
               </AnimatePresence>
             </motion.div>
@@ -662,14 +558,13 @@ export default function MenuSection({
         </div>
       </div>
 
-      {/* Cart bar */}
       <CartBar cart={cart} onOpen={() => setDrawerOpen(true)} />
 
-      {/* Order drawer */}
       {drawerOpen && (
         <OrderDrawer
           cart={cart}
           restaurantId={restaurantId}
+          token={token}
           onClose={() => setDrawerOpen(false)}
           onUpdateQty={updateQty}
           onSuccess={() => { setDrawerOpen(false); setOrderSuccess(true); }}
