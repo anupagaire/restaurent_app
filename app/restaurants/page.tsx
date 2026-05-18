@@ -5,8 +5,9 @@ import Link from 'next/link';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Image from 'next/image';
+import { MapPin, LocateFixed, X, Search } from 'lucide-react';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 1;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface Restaurant {
@@ -50,7 +51,6 @@ async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; coun
 async function postRating(restaurantId: number, rating: number): Promise<boolean> {
   const alreadyRated = localStorage.getItem(`rated_${restaurantId}`);
   if (alreadyRated) return false;
-
   try {
     const res = await fetch(`${BASE_URL}/api/v1/restaurant-reviews/`, {
       method: 'POST',
@@ -62,21 +62,11 @@ async function postRating(restaurantId: number, rating: number): Promise<boolean
         is_published: true,
       }),
     });
-    if (res.ok) {
-      localStorage.setItem(`rated_${restaurantId}`, String(rating));
-      return true;
-    }
-    // 429 handle
-    if (res.status === 429) {
-      localStorage.setItem(`rated_${restaurantId}`, String(rating));
-      return false;
-    }
+    if (res.ok) { localStorage.setItem(`rated_${restaurantId}`, String(rating)); return true; }
+    if (res.status === 429) { localStorage.setItem(`rated_${restaurantId}`, String(rating)); return false; }
     return false;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
-// ── Inline Star Rating on card ───────────────────────────────
 function InlineStarRating({ restaurantId }: { restaurantId: number }) {
   const [myRating, setMyRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -86,32 +76,22 @@ function InlineStarRating({ restaurantId }: { restaurantId: number }) {
   const [count, setCount] = useState(0);
 
   const loadAvg = useCallback(() => {
-    fetchAvgRating(restaurantId).then(({ avg, count }) => {
-      setAvg(avg);
-      setCount(count);
-    });
+    fetchAvgRating(restaurantId).then(({ avg, count }) => { setAvg(avg); setCount(count); });
   }, [restaurantId]);
 
-useEffect(() => {
-  const saved = localStorage.getItem(`rated_${restaurantId}`);
-  if (saved) {
-    setMyRating(Number(saved));
-    setSubmitted(true);
-  }
-  loadAvg();
-}, [loadAvg, restaurantId]);
+  useEffect(() => {
+    const saved = localStorage.getItem(`rated_${restaurantId}`);
+    if (saved) { setMyRating(Number(saved)); setSubmitted(true); }
+    loadAvg();
+  }, [loadAvg, restaurantId]);
 
   const handleRate = async (val: number) => {
     if (submitting || submitted) return;
     setMyRating(val);
     setSubmitting(true);
     const ok = await postRating(restaurantId, val);
-    if (ok) {
-      setSubmitted(true);
-      setTimeout(() => loadAvg(), 500);
-    } else {
-      setMyRating(0);
-    }
+    if (ok) { setSubmitted(true); setTimeout(() => loadAvg(), 500); }
+    else setMyRating(0);
     setSubmitting(false);
   };
 
@@ -123,29 +103,23 @@ useEffect(() => {
         <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
           <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
           <div className="flex gap-0.5">
-            {[1, 2, 3, 4, 5].map((s) => (
+            {[1,2,3,4,5].map((s) => (
               <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}>★</span>
             ))}
           </div>
           <span className="text-[10px] text-gray-400">({count})</span>
         </div>
       )}
-
       <div className="mt-2 pt-2 border-t border-gray-100">
-        <p className="text-[10px] text-gray-400 mb-1">
-          {submitted ? 'Your rating:' : 'Rate this place:'}
-        </p>
+        <p className="text-[10px] text-gray-400 mb-1">{submitted ? 'Your rating:' : 'Rate this place:'}</p>
         <div className="flex gap-0.5">
-          {[1, 2, 3, 4, 5].map((star) => (
+          {[1,2,3,4,5].map((star) => (
             <button
-              key={star}
-              type="button"
-              disabled={submitted || submitting}
+              key={star} type="button" disabled={submitted || submitting}
               onMouseEnter={() => !submitted && setHover(star)}
               onMouseLeave={() => !submitted && setHover(0)}
               onClick={() => handleRate(star)}
               className="text-base leading-none focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
-              aria-label={`Rate ${star} stars`}
             >
               <span style={{ color: star <= displayRating ? '#f59e0b' : '#d1d5db' }}>★</span>
             </button>
@@ -169,34 +143,24 @@ function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
 
   const selectedRestaurant = restaurants.find((r) => r.id === selectedId);
 
-useEffect(() => {
-  setRating(0);
-  setSubmitted(false);
-  setHover(0);
-  if (selectedId) {
-    const saved = localStorage.getItem(`rated_${selectedId}`);
-    if (saved) {
-      setRating(Number(saved));
-      setSubmitted(true);
+  useEffect(() => {
+    setRating(0); setSubmitted(false); setHover(0);
+    if (selectedId) {
+      const saved = localStorage.getItem(`rated_${selectedId}`);
+      if (saved) { setRating(Number(saved)); setSubmitted(true); }
     }
-  }
-}, [selectedId]);
+  }, [selectedId]);
+
   const handleSubmit = async () => {
     if (!selectedId || !rating || submitting) return;
     setSubmitting(true);
     const ok = await postRating(selectedId, rating);
-    if (ok) {
-      setSubmitted(true);
-    }
+    if (ok) setSubmitted(true);
     setSubmitting(false);
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setSelectedId(null);
-    setRating(0);
-    setHover(0);
-    setSubmitted(false);
+    setOpen(false); setSelectedId(null); setRating(0); setHover(0); setSubmitted(false);
   };
 
   return (
@@ -204,90 +168,50 @@ useEffect(() => {
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-50 bg-[#513012] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#3d2209] transition-all flex items-center gap-2 text-sm font-medium"
-        aria-label="Rate a restaurant"
       >
         ⭐ Rate a Restaurant
       </button>
-
       {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
-          onClick={handleClose}
-        >
-          <div
-            className="bg-white rounded-2xl w-full max-w-sm p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none"
-              aria-label="Close"
-            >
-              ✕
-            </button>
-
-            <h3 className="text-lg font-semibold text-[#513012] mb-4">
-              Rate a Restaurant
-            </h3>
-
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4" onClick={handleClose}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative" onClick={(e) => e.stopPropagation()}>
+            <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+            <h3 className="text-lg font-semibold text-[#513012] mb-4">Rate a Restaurant</h3>
             <select
               value={selectedId ?? ''}
               onChange={(e) => setSelectedId(Number(e.target.value))}
               className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[#513012]"
             >
               <option value="" disabled>Select a restaurant...</option>
-              {restaurants.map((r) => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
+              {restaurants.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
             </select>
-
             {selectedRestaurant && (
               <>
-                <p className="text-sm text-gray-500 mb-3">
-                  📍 {selectedRestaurant.city}
-                </p>
-
+                <p className="text-sm text-gray-500 mb-3">📍 {selectedRestaurant.city}</p>
                 {submitted ? (
                   <div className="text-center py-4">
                     <div className="text-4xl mb-2">🎉</div>
-                    <p className="text-[#513012] font-medium">
-                      You rated {selectedRestaurant.name}
-                    </p>
+                    <p className="text-[#513012] font-medium">You rated {selectedRestaurant.name}</p>
                     <div className="flex justify-center gap-1 mt-2 text-2xl">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <span key={s} style={{ color: s <= rating ? '#f59e0b' : '#d1d5db' }}>★</span>
-                      ))}
+                      {[1,2,3,4,5].map((s) => <span key={s} style={{ color: s <= rating ? '#f59e0b' : '#d1d5db' }}>★</span>)}
                     </div>
-                    <button
-                      onClick={() => { setSubmitted(false); setRating(0); }}
-                      className="mt-3 text-xs text-gray-400 underline"
-                    >
-                      Rate again
-                    </button>
+                    <button onClick={() => { setSubmitted(false); setRating(0); }} className="mt-3 text-xs text-gray-400 underline">Rate again</button>
                   </div>
                 ) : (
                   <>
                     <p className="text-sm text-gray-600 mb-2">Your rating:</p>
                     <div className="flex gap-1 mb-4">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onMouseEnter={() => setHover(star)}
-                          onMouseLeave={() => setHover(0)}
+                      {[1,2,3,4,5].map((star) => (
+                        <button key={star} type="button"
+                          onMouseEnter={() => setHover(star)} onMouseLeave={() => setHover(0)}
                           onClick={() => setRating(star)}
                           className="text-3xl leading-none focus:outline-none transition-transform hover:scale-110"
-                          aria-label={`${star} stars`}
                         >
                           <span style={{ color: star <= (hover || rating) ? '#f59e0b' : '#d1d5db' }}>★</span>
                         </button>
                       ))}
                     </div>
-                    <button
-                      onClick={handleSubmit}
-                      disabled={!rating || submitting}
-                      className="w-full bg-[#513012] text-white py-2.5 rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-[#3d2209] transition-colors"
-                    >
+                    <button onClick={handleSubmit} disabled={!rating || submitting}
+                      className="w-full bg-[#513012] text-white py-2.5 rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-[#3d2209] transition-colors">
                       {submitting ? 'Saving...' : 'Submit Rating'}
                     </button>
                   </>
@@ -301,7 +225,154 @@ useEffect(() => {
   );
 }
 
-// ── Main Page ────────────────────────────────────────────────
+// Reverse geocode lat/lng → city name using free OpenStreetMap Nominatim API
+async function getCityFromCoords(lat: number, lng: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    const data = await res.json();
+    // Nominatim returns city / town / village / county depending on area
+    return (
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
+      data.address?.county ||
+      null
+    );
+  } catch { return null; }
+}
+
+function CityPickerModal({
+  cities,
+  selectedCity,
+  onSelect,
+  onClear,
+  detecting,
+  onDetect,
+  open,
+  onClose,
+   onOpen, 
+}: {
+  cities: string[];
+  selectedCity: string;
+  onSelect: (city: string) => void;
+  onClear: () => void;
+  detecting: boolean;
+  onDetect: () => void;
+  open: boolean;
+  onClose: () => void;
+  onOpen: () => void;
+}) {
+  const [query, setQuery] = useState('');
+
+  const filtered = cities.filter((c) =>
+    c.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <>
+      {/* Trigger button — shown on the page */}
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <button
+          onClick={onDetect}
+          disabled={detecting}
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#513012] text-black text-sm font-medium hover:bg-[#513012] hover:text-white transition-all disabled:opacity-60"
+        >
+          <LocateFixed size={14} className={detecting ? 'animate-spin' : ''} />
+          {detecting ? 'Detecting...' : 'Near Me'}
+        </button>
+
+        <button
+          onClick={onOpen}  
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-black text-sm font-medium hover:border-[#513012] hover:text-[#513012] transition-all"
+        >
+          <MapPin size={14} />
+          {selectedCity ? selectedCity : 'Select City'}
+          {selectedCity && (
+            <span
+              onClick={(e) => { e.stopPropagation(); onClear(); }}
+              className="ml-1 text-gray-400 hover:text-red-500"
+            >
+              <X size={12} />
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Modal */}
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
+          onClick={onClose}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-md p-6 relative max-h-[80vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[#513012]">
+                Select a City
+              </h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search input */}
+            <div className="relative mb-4">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search city..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                autoFocus
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]"
+              />
+            </div>
+
+            {/* City grid — scrollable */}
+            <div className="overflow-y-auto flex-1">
+              <button
+                onClick={() => { onClear(); onClose(); }}
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm mb-2 transition-all
+                  ${!selectedCity
+                    ? 'bg-[#513012] text-white font-medium'
+                    : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                🌐 All Cities
+              </button>
+
+              {filtered.length === 0 ? (
+                <p className="text-center text-gray-400 text-sm py-6">No city found</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {filtered.map((city) => (
+                    <button
+                      key={city}
+                      onClick={() => { onSelect(city); onClose(); setQuery(''); }}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm border transition-all
+                        ${selectedCity === city
+                          ? 'bg-[#513012] text-white border-[#513012] font-medium'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-[#513012] hover:text-[#513012]'}`}
+                    >
+                      <MapPin size={12} />
+                      {city}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [search, setSearch] = useState('');
@@ -309,8 +380,20 @@ export default function RestaurantsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [detecting, setDetecting] = useState(false);
+  const [locationBanner, setLocationBanner] = useState('');
+  const [cityModalOpen, setCityModalOpen] = useState(false);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Build unique city list from all restaurants
+  useEffect(() => {
+    if (allRestaurants.length === 0) return;
+    const cities = [...new Set(allRestaurants.map((r) => r.city).filter(Boolean))].sort();
+    setAvailableCities(cities);
+  }, [allRestaurants]);
 
   const fetchRestaurants = useCallback(async () => {
     try {
@@ -324,8 +407,16 @@ export default function RestaurantsPage() {
       const res = await fetch(`${BASE_URL}/api/v1/restaurant/?${params}`, { cache: 'no-store' });
       if (!res.ok) { setRestaurants([]); setTotalCount(0); return; }
       const data = await res.json();
-      setRestaurants(data.results ?? []);
-      setTotalCount(data.count ?? 0);
+
+      let results: Restaurant[] = data.results ?? [];
+      if (selectedCity) {
+        results = results.filter((r) =>
+          r.city?.toLowerCase().includes(selectedCity.toLowerCase())
+        );
+      }
+
+      setRestaurants(results);
+      setTotalCount(selectedCity ? results.length : (data.count ?? 0));
     } catch (err) {
       console.error(err);
       setRestaurants([]);
@@ -333,12 +424,12 @@ export default function RestaurantsPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search]);
+  }, [currentPage, search, selectedCity]);
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=100`, { cache: 'no-store' });
+        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, { cache: 'no-store' });
         if (!res.ok) return;
         const data = await res.json();
         setAllRestaurants(data.results ?? []);
@@ -348,7 +439,46 @@ export default function RestaurantsPage() {
   }, []);
 
   useEffect(() => { fetchRestaurants(); }, [fetchRestaurants]);
-  useEffect(() => { setCurrentPage(1); }, [search]);
+  useEffect(() => { setCurrentPage(1); }, [search, selectedCity]);
+
+  // ── Detect user location ──
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const city = await getCityFromCoords(pos.coords.latitude, pos.coords.longitude);
+        setDetecting(false);
+        if (!city) {
+          alert('Could not detect your city. Please select manually.');
+          return;
+        }
+        // Try to match detected city with available cities (fuzzy)
+        const match = availableCities.find((c) =>
+          c.toLowerCase().includes(city.toLowerCase()) ||
+          city.toLowerCase().includes(c.toLowerCase())
+        );
+        if (match) {
+          setSelectedCity(match);
+          setLocationBanner(`📍 Showing restaurants near ${match}`);
+        } else {
+          setLocationBanner(`📍 No restaurants found near ${city}. Showing all.`);
+          setSelectedCity('');
+        }
+      },
+      (err) => {
+        setDetecting(false);
+        if (err.code === err.PERMISSION_DENIED) {
+          alert('Location permission denied. Please allow location access and try again.');
+        } else {
+          alert('Could not get your location. Please select a city manually.');
+        }
+      }
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -359,10 +489,10 @@ export default function RestaurantsPage() {
           All Restaurants
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Discover the best restaurants in Kathmandu
+          Discover the best restaurants in Nepal
         </p>
 
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-6">
           <input
             type="text"
             placeholder="Search restaurants..."
@@ -372,6 +502,46 @@ export default function RestaurantsPage() {
           />
         </div>
 
+       {availableCities.length > 0 && (
+  <CityPickerModal
+    cities={availableCities}
+    selectedCity={selectedCity}
+    onSelect={(city) => { setSelectedCity(city); setLocationBanner(''); }}
+    onClear={() => { setSelectedCity(''); setLocationBanner(''); }}
+    detecting={detecting}
+    onDetect={handleDetectLocation}
+    open={cityModalOpen}
+    onClose={() => setCityModalOpen(false)}
+    onOpen={() => setCityModalOpen(true)}   // ADD this prop
+  />
+)}
+
+        {/* Location banner */}
+        {locationBanner && (
+          <div className="flex items-center justify-center mb-6">
+            <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-2 rounded-full flex items-center gap-2">
+              {locationBanner}
+              <button onClick={() => setLocationBanner('')} className="ml-1 text-amber-500 hover:text-amber-700">
+                <X size={12} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Active filter tag */}
+        {selectedCity && !locationBanner && (
+          <div className="flex justify-center mb-6">
+            <span className="bg-[#513012]/10 text-[#513012] text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
+              <MapPin size={13} />
+              Showing restaurants in <strong>{selectedCity}</strong>
+              <button onClick={() => setSelectedCity('')} className="ml-1 hover:text-red-500">
+                <X size={13} />
+              </button>
+            </span>
+          </div>
+        )}
+
+        {/* Grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {[...Array(10)].map((_, i) => (
@@ -386,7 +556,19 @@ export default function RestaurantsPage() {
             ))}
           </div>
         ) : restaurants.length === 0 ? (
-          <p className="text-center text-gray-500 py-20">No restaurants found.</p>
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-5xl mb-4">🍽️</p>
+            <p className="text-gray-500">
+              {selectedCity
+                ? `No restaurants found in ${selectedCity}.`
+                : 'No restaurants found.'}
+            </p>
+            {selectedCity && (
+              <button onClick={() => setSelectedCity('')} className="mt-3 text-sm text-[#513012] underline">
+                Clear filter
+              </button>
+            )}
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {restaurants.map((restaurant) => {
@@ -400,24 +582,20 @@ export default function RestaurantsPage() {
                   <div className="relative h-40 bg-gray-100">
                     {photo ? (
                       <Image
-                        src={photo}
-                        alt={restaurant.name}
-                        fill
+                        src={photo} alt={restaurant.name} fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">
-                        🍽️
-                      </div>
+                      <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">🍽️</div>
                     )}
-                                       {restaurant.view_count > 0 && (
-  <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
-    👀  {restaurant.view_count >= 1000
-      ? `${(restaurant.view_count / 1000).toFixed(1)}k`
-      : restaurant.view_count}
-  </span>
-)}
+                    {restaurant.view_count > 0 && (
+                      <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+                        👀 {restaurant.view_count >= 1000
+                          ? `${(restaurant.view_count / 1000).toFixed(1)}k`
+                          : restaurant.view_count}
+                      </span>
+                    )}
                   </div>
                   <div className="p-3">
                     <h3 className="text-sm font-bold text-[#513012] line-clamp-1">{restaurant.name}</h3>
@@ -430,15 +608,13 @@ export default function RestaurantsPage() {
           </div>
         )}
 
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center mt-12 gap-2 flex-wrap">
             <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1} className="px-4 py-2 rounded-lg border disabled:opacity-50">Prev</button>
             {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-4 py-2 rounded-lg border ${currentPage === i + 1 ? 'bg-[#513012] text-white' : 'bg-white'}`}
-              >
+              <button key={i} onClick={() => setCurrentPage(i + 1)}
+                className={`px-4 py-2 rounded-lg border ${currentPage === i + 1 ? 'bg-[#513012] text-white' : 'bg-white'}`}>
                 {i + 1}
               </button>
             ))}

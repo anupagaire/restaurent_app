@@ -41,12 +41,10 @@ export default function LoginPage() {
         return;
       }
 
-      // 💾 SAVE TOKENS
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
       document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
 
-      // 👤 GET USER PROFILE
       const meRes = await apiFetch("/api/v1/user/me/");
       const me = await meRes.json();
       console.log("USER PROFILE:", me);
@@ -56,7 +54,6 @@ export default function LoginPage() {
         return;
       }
 
-      // 💾 SAVE USER
       localStorage.setItem("user", JSON.stringify(me));
       if (me?.restaurant) {
         localStorage.setItem("restaurant_id", String(me.restaurant));
@@ -66,7 +63,6 @@ export default function LoginPage() {
       const isSuperAdmin = !me?.restaurant; // ✅ restaurant null = super admin
       const isAdmin = !isSuperAdmin && role === 'admin';
 
-      // ✅ ROLE COOKIE SET GARO — middleware le yo padcha
       document.cookie = `role=${isSuperAdmin ? 'super_admin' : role}; path=/; max-age=86400; SameSite=Lax`;
 
       // Staff permissions

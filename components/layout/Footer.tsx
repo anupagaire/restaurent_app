@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Phone, Mail, MapPin } from 'lucide-react';
-
+import Image from "next/image";
 export default function Footer() {
   return (
     <footer className="bg-[#513012] text-white">
@@ -8,22 +8,28 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
-              </div>
-              <h2 className="text-3xl font-bold">FoodHub</h2>
-            </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Bringing the best flavors of Nepal to your table.<br />
-              Fresh • Delicious • Authentic
-            </p>
-          </div>
+  <div className="flex items-center gap-3 mb-4">
+    <div className="relative w-20 h-20">
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        fill
+    sizes="(max-width: 768px) 112px, 160px"
+        className="object-contain"
+      />
+    </div>
+    <h2 className="text-3xl font-bold">FoodHub</h2>
+  </div>
+  <p className="text-gray-300 text-sm leading-relaxed">
+    Bringing the best flavors of Nepal to your table.<br />
+    Fresh • Delicious • Authentic
+  </p>
+</div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="font-semibold mb-4 text-lg">Quick Links</h3>
             <div className="space-y-3 text-gray-300">
-              <Link href="/menu" className="block hover:text-white transition">Our Menu</Link>
+              <Link href="/register-restaurant" className="block hover:text-white transition">Register Restauarant</Link>
               <Link href="/about" className="block hover:text-white transition">About Us</Link>
               <Link href="/contact" className="block hover:text-white transition">Contact</Link>
             </div>
@@ -34,7 +40,7 @@ export default function Footer() {
             <div className="space-y-3 text-gray-300">
               <Link href="/login" className="block hover:text-white transition">Restaurant Login</Link>
               <Link href="/super-admin" className="block hover:text-white transition">Super Admin</Link>
-              <Link href="#" className="block hover:text-white transition">Partner With Us</Link>
+              <Link href="/terms-and-privacy" className="block hover:text-white transition">Terms And Condition</Link>
             </div>
           </div>
 

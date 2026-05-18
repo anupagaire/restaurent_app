@@ -1,4 +1,4 @@
-'use client';  
+'use client';
 
 import { useState, useEffect } from 'react';
 import CustomerSidebar from '@/components/customer/CustomerSidebar';
@@ -14,9 +14,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       <CustomerSidebar user={user} />
-      <main className="flex-1 p-8 max-w-2xl">{children}</main>
+      <main className="flex-1 p-6 md:p-8 max-w-2xl mx-auto w-full">
+        {children}
+      </main>
     </div>
   );
 }
