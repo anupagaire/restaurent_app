@@ -5,38 +5,36 @@ import Footer from "@/components/layout/Footer";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface FormData {
-  // Restaurant details
-  restaurantName: string;
-  cuisineType: string;
+  restaurant_name: string;
+  cuisine_type: string;
   city: string;
   area: string;
-  fullAddress: string;
+  full_address: string;
   description: string;
-  // Owner / contact
-  ownerName: string;
+  owner_name: string;
   phone: string;
   email: string;
   whatsapp: string;
-  
 }
 
+const CUISINE_OPTIONS = ["Nepali", "Chinese", "Continental", "Indian", "Fusion", "Other"];
+
 const INITIAL_FORM: FormData = {
-  restaurantName: "",
-  cuisineType: "Nepali",
+  restaurant_name: "",
+  cuisine_type: "Nepali",
   city: "",
   area: "",
-  fullAddress: "",
+  full_address: "",
   description: "",
-  ownerName: "",
+  owner_name: "",
   phone: "",
   email: "",
   whatsapp: "",
- 
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
 const RegisterRestaurant = () => {
   const router = useRouter();
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
@@ -56,8 +54,7 @@ const RegisterRestaurant = () => {
     setError(null);
 
     try {
-      // ── Replace this URL with the actual API endpoint from your senior ──
-      const res = await fetch("/api/restaurant-applications", {
+      const res = await fetch(`${BASE_URL}/api/v1/register-restaurant/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -77,7 +74,6 @@ const RegisterRestaurant = () => {
     }
   };
 
-  // ── Success screen ────────────────────────────────────────────────────────
   if (success) {
     return (
       <div className="min-h-screen w-full">
@@ -103,13 +99,11 @@ const RegisterRestaurant = () => {
     );
   }
 
-  // ── Main form ─────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen w-full bg-[#faf8f5]">
       <Navbar />
 
       <div className="max-w-screen-md mx-auto px-4 py-12">
-        {/* Page heading */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#513012] mb-2">Register Your Restaurant</h1>
           <p className="text-[#776552]">
@@ -118,13 +112,12 @@ const RegisterRestaurant = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* ── Section 1: Restaurant details ─────────────────────────────── */}
           <Section title="Restaurant details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field label="Restaurant name" required>
                 <input
-                  name="restaurantName"
-                  value={form.restaurantName}
+                  name="restaurant_name"
+                  value={form.restaurant_name}
                   onChange={handleChange}
                   placeholder="e.g. Momo Palace"
                   required
@@ -133,9 +126,16 @@ const RegisterRestaurant = () => {
               </Field>
 
               <Field label="Cuisine type" required>
-                <select name="cuisineType" value={form.cuisineType} onChange={handleChange} className={inputClass}>
-                  {["Nepali", "Chinese", "Continental", "Indian", "Fusion", "Other"].map((c) => (
-                    <option key={c}>{c}</option>
+                <select
+                  name="cuisine_type"
+                  value={form.cuisine_type}
+                  onChange={handleChange}
+                  className={inputClass}
+                >
+                  {CUISINE_OPTIONS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </Field>
@@ -165,8 +165,8 @@ const RegisterRestaurant = () => {
 
             <Field label="Full address">
               <input
-                name="fullAddress"
-                value={form.fullAddress}
+                name="full_address"
+                value={form.full_address}
                 onChange={handleChange}
                 placeholder="Street address, landmark"
                 className={inputClass}
@@ -185,13 +185,12 @@ const RegisterRestaurant = () => {
             </Field>
           </Section>
 
-          {/* ── Section 2: Owner / contact ────────────────────────────────── */}
           <Section title="Owner / contact person">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field label="Full name" required>
                 <input
-                  name="ownerName"
-                  value={form.ownerName}
+                  name="owner_name"
+                  value={form.owner_name}
                   onChange={handleChange}
                   placeholder="Owner name"
                   required
@@ -234,16 +233,12 @@ const RegisterRestaurant = () => {
             </div>
           </Section>
 
-         
-
-          {/* ── Error ─────────────────────────────────────────────────────── */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
               {error}
             </div>
           )}
 
-          {/* ── Submit ────────────────────────────────────────────────────── */}
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
@@ -268,7 +263,6 @@ const RegisterRestaurant = () => {
   );
 };
 
-// ─── Small helper components ──────────────────────────────────────────────────
 const inputClass =
   "w-full px-3 py-2.5 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-[#8c6d46] transition";
 

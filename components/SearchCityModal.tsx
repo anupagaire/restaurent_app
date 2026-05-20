@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Search, X, MapPin, TrendingUp } from 'lucide-react';
+import { MapPin, LocateFixed, X, Search } from 'lucide-react';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -18,16 +18,135 @@ function toSlug(name: string) {
   return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
-function resolvePhoto(url: string | null | undefined): string | null {
-  if (!url) return null;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
-}
-
-interface SearchModalProps {
+function CityPickerModal({
+  cities,
+  selectedCity,
+  onSelect,
+  onClear,
+  detecting,
+  onDetect,
+  open,
+  onClose,
+   onOpen, 
+}: {
+  cities: string[];
+  selectedCity: string;
+  onSelect: (city: string) => void;
+  onClear: () => void;
+  detecting: boolean;
+  onDetect: () => void;
   open: boolean;
   onClose: () => void;
+  onOpen: () => void;
+}) {
+  const [query, setQuery] = useState('');
+
+  const filtered = cities.filter((c) =>
+    c.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <>
+      {/* Trigger button — shown on the page */}
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <button
+          onClick={onDetect}
+          disabled={detecting}
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#513012] text-black text-sm font-medium hover:bg-[#513012] hover:text-white transition-all disabled:opacity-60"
+        >
+          <LocateFixed size={14} className={detecting ? 'animate-spin' : ''} />
+          {detecting ? 'Detecting...' : 'Near Me'}
+        </button>
+
+        <button
+          onClick={onOpen}  
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-black text-sm font-medium hover:border-[#513012] hover:text-[#513012] transition-all"
+        >
+          <MapPin size={14} />
+          {selectedCity ? selectedCity : 'Select City'}
+          {selectedCity && (
+            <span
+              onClick={(e) => { e.stopPropagation(); onClear(); }}
+              className="ml-1 text-gray-400 hover:text-red-500"
+            >
+              <X size={12} />
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Modal */}
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
+          onClick={onClose}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-md p-6 relative max-h-[80vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[#513012]">
+                Select a City
+              </h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search input */}
+            <div className="relative mb-4">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search city..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                autoFocus
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]"
+              />
+            </div>
+
+            {/* City grid — scrollable */}
+            <div className="overflow-y-auto flex-1">
+              <button
+                onClick={() => { onClear(); onClose(); }}
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm mb-2 transition-all
+                  ${!selectedCity
+                    ? 'bg-[#513012] text-white font-medium'
+                    : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                🌐 All Cities
+              </button>
+
+              {filtered.length === 0 ? (
+                <p className="text-center text-gray-400 text-sm py-6">No city found</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {filtered.map((city) => (
+                    <button
+                      key={city}
+                      onClick={() => { onSelect(city); onClose(); setQuery(''); }}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm border transition-all
+                        ${selectedCity === city
+                          ? 'bg-[#513012] text-white border-[#513012] font-medium'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-[#513012] hover:text-[#513012]'}`}
+                    >
+                      <MapPin size={12} />
+                      {city}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
+
 
 export default function SearchModal({ open, onClose }: SearchModalProps) {
   const [query, setQuery] = useState('');
@@ -180,7 +299,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             </div>
           )}
 
-          {/* No results */}
+       
           {!loading && query && results.length === 0 && (
             <div className="text-center py-12">
               <p className="text-3xl mb-2">🍽️</p>
@@ -214,17 +333,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                 <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-1">
                   <TrendingUp size={11} /> Popular Searches
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {['Momo', 'Pizza', 'Burger', 'Thakali', 'Newari', 'Chinese', 'Kathmandu', 'Pokhara'].map((term) => (
-                    <button
-                      key={term}
-                      onClick={() => setQuery(term)}
-                      className="px-3 py-1.5 rounded-full border border-gray-200 text-gray-500 text-sm hover:border-[#513012] hover:text-[#513012] transition"
-                    >
-                      {term}
-                    </button>
-                  ))}
-                </div>
+              
               </div>
 
               <p className="text-center text-xs text-gray-300 pb-2">

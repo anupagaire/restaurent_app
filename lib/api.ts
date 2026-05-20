@@ -5,8 +5,6 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 export async function apiFetch(url: string, options: any = {}) {
   let token = localStorage.getItem("access_token");
 
-  // ✅ Don't set Content-Type for FormData — browser sets it automatically
-  // with the correct multipart boundary
   const isFormData = options.body instanceof FormData;
 
   const headers = {

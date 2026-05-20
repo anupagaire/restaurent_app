@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import Image from 'next/image';
 import { MapPin, LocateFixed, X, Search } from 'lucide-react';
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 10;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface Restaurant {
