@@ -75,7 +75,6 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
     if (!currentUser) return false;
 
-    // Owner or Admin can see everything
     if (currentUser.role === 'Owner' || currentUser.role === 'Admin') {
       return true;
     }
@@ -90,15 +89,14 @@ const handleLogout = async () => {
 
   return (
     <>
-      {/* Mobile Backdrop */}
+    
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/60 z-40 md:hidden"
           onClick={onClose}
         />
       )}
-
-      {/* Sidebar */}
+    
       <div className={`
         fixed md:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#513012]/10 
         flex flex-col transition-transform duration-300 ease-in-out
@@ -157,7 +155,7 @@ const handleLogout = async () => {
           </ul>
         </nav>
 
-        {/* Logout Section */}
+ 
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
           <button 
             onClick={handleLogout}

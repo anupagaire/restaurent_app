@@ -244,7 +244,6 @@ formData.append('photo', file);
               </div>
             )}
 
-            {/* ✅ Plain label wrapping hidden input — most reliable cross-browser */}
             <div className="flex justify-center">
               <label
                 htmlFor="photo-upload"
@@ -275,7 +274,6 @@ formData.append('photo', file);
           </CardContent>
         </Card>
 
-        {/* Restaurant Info */}
         <Card>
           <CardHeader>
             <CardTitle className="text-[#513012] font-bold">Restaurant Information</CardTitle>

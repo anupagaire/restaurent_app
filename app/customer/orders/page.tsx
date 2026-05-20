@@ -66,7 +66,6 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// ─── Order Card ───────────────────────────────────────────────────────────────
 
 function OrderCard({ order }: { order: Order }) {
   const [expanded, setExpanded] = useState(false);
@@ -78,19 +77,17 @@ function OrderCard({ order }: { order: Order }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-      {/* Header row */}
+   
       <div
         className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setExpanded(p => !p)}
       >
         <div className="flex items-center gap-4">
-          {/* Icon */}
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: '#f0faf4' }}>
             <Truck size={18} color="#16a34a" />
           </div>
 
-          {/* Info */}
           <div>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sm text-gray-800">
@@ -116,12 +113,10 @@ function OrderCard({ order }: { order: Order }) {
         </div>
       </div>
 
-      {/* Expanded detail */}
       {expanded && (
         <div className="border-t border-gray-100 px-5 py-5 bg-gray-50">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-            {/* Items */}
             <div>
               <p className="text-xs font-bold uppercase tracking-widest mb-3"
                 style={{ color: '#b8936a' }}>Order Items</p>
@@ -150,7 +145,6 @@ function OrderCard({ order }: { order: Order }) {
               </div>
             </div>
 
-            {/* Delivery info */}
             <div>
               <p className="text-xs font-bold uppercase tracking-widest mb-3"
                 style={{ color: '#b8936a' }}>Delivery Info</p>
@@ -195,8 +189,6 @@ function OrderCard({ order }: { order: Order }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
 export default function CustomerOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -237,14 +229,10 @@ export default function CustomerOrdersPage() {
 
   useEffect(() => { fetchMyOrders(); }, [fetchMyOrders]);
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
-
   const totalSpent = orders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
   const activeOrders = orders.filter(o =>
     !['delivered', 'cancelled'].includes(o.status.toLowerCase())
   ).length;
-
-  // ── Loading ────────────────────────────────────────────────────────────────
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
@@ -253,12 +241,9 @@ export default function CustomerOrdersPage() {
     </div>
   );
 
-  // ── Main UI ────────────────────────────────────────────────────────────────
-
   return (
     <div className="space-y-6">
 
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#513012]">My Orders</h1>
@@ -274,7 +259,6 @@ export default function CustomerOrdersPage() {
         </button>
       </div>
 
-      {/* Error */}
       {error && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
           {error}
@@ -282,7 +266,6 @@ export default function CustomerOrdersPage() {
         </div>
       )}
 
-      {/* Stat pills */}
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Total Orders', value: orders.length, color: '#513012' },
@@ -296,7 +279,6 @@ export default function CustomerOrdersPage() {
         ))}
       </div>
 
-      {/* Orders list */}
       {orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
           <Package size={48} className="mb-4 opacity-30" />

@@ -39,7 +39,6 @@ function getCategoryEmoji(category?: string): string {
     pizza: '🍕', burger: '🍔', drink: '🥤', drinks: '🥤', coffee: '☕',
     dessert: '🍰', desserts: '🍰', soup: '🍜', salad: '🥗',
     starter: '🥗', starters: '🥗', food: '🍛', noodle: '🍜',
-    noodles: '🍜', rice: '🍚', chicken: '🍗', fish: '🐟',
     sushi: '🍣', sandwich: '🥪', pasta: '🍝', bread: '🥖',
   };
   const key = (category ?? '').toLowerCase();
@@ -121,8 +120,8 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-// ── Order Drawer ──────────────────────────────────────────────────────────────
-function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSuccess }: {
+// ── Order Drawer (with Auto-Registration) ──────────────────────────────────────
+function OrderDrawer({ cart, restaurantId, token: initialToken, onClose, onUpdateQty, onSuccess }: {
   cart: CartItem[];
   restaurantId: number;
   token: string;
@@ -135,10 +134,74 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [currentToken, setCurrentToken] = useState(initialToken);
 
   const totalPrice = cart.reduce((s, c) => s + c.item.price * c.quantity, 0);
+  const isRegistering = !currentToken; // Show registration fields if no token
+
+  // ✅ Register as new customer
+  const registerCustomer = async () => {
+    if (!email.trim()) {
+      setError('Email is required for registration.');
+      return;
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const registerRes = await fetch(`${BASE_URL}/api/v1/users/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          password1: password,
+          password2: confirmPassword,
+          first_name: name.trim() || 'Guest',
+          contact_no: phone.trim() || null,
+          address: address.trim() || null,
+          role: 'customer',
+        }),
+      });
+
+      const registerText = await registerRes.text();
+      if (!registerRes.ok) {
+        let errorMsg = `Registration failed (${registerRes.status})`;
+        try {
+          const errJson = JSON.parse(registerText);
+          // Handle various error formats
+          if (errJson.email) errorMsg = `Email: ${Array.isArray(errJson.email) ? errJson.email[0] : errJson.email}`;
+          else if (errJson.password1) errorMsg = `Password: ${Array.isArray(errJson.password1) ? errJson.password1[0] : errJson.password1}`;
+          else if (errJson.detail) errorMsg = errJson.detail;
+          else errorMsg = JSON.stringify(errJson).slice(0, 150);
+        } catch { }
+        throw new Error(errorMsg);
+      }
+
+      // ✅ After registration, generate a token for anonymous orders
+      // Option 1: If your API returns a token in registration response, use it
+      const regData = JSON.parse(registerText);
+      if (regData.token) {
+        setCurrentToken(regData.token);
+        // Save to localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: regData.token }));
+      }
+      // Option 2: If you need to login after registration
+      // await loginCustomer(email.trim(), password);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Registration failed.');
+      throw err;
+    }
+  };
 
   const handleSubmit = async () => {
     if (cart.length === 0) return;
@@ -147,15 +210,25 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
       setError('Please provide a phone number or email so we can contact you.');
       return;
     }
-    if (!token) {
-      setError('Order token not found. Please contact the restaurant.');
-      return;
-    }
 
     setSubmitting(true);
     setError('');
 
     try {
+      // ✅ If no token, register first
+      let orderToken = currentToken;
+      if (!orderToken) {
+        await registerCustomer();
+        // After registration, use the newly set token
+        orderToken = currentToken;
+      }
+
+      if (!orderToken) {
+        setError('Registration failed. Please try again.');
+        setSubmitting(false);
+        return;
+      }
+
       const payload = {
         restaurant: restaurantId,
         customer_name: name.trim() || 'Guest',
@@ -168,8 +241,8 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
         items: cart.map((c) => ({ menu_id: c.item.id, quantity: c.quantity })),
       };
 
-      // ✅ Pass token as query param — required for anonymous users
-      const res = await fetch(`${BASE_URL}/api/v1/orders/?token=${encodeURIComponent(token)}`, {
+      // ✅ Pass token as query param
+      const res = await fetch(`${BASE_URL}/api/v1/orders/?token=${encodeURIComponent(orderToken)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),
@@ -201,6 +274,7 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
   };
 
   const isReady = cart.length > 0 && (phone.trim() || email.trim());
+  const isRegistrationReady = name.trim() && email.trim() && password && confirmPassword && password === confirmPassword && password.length >= 8;
 
   return (
     <>
@@ -221,7 +295,7 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
           <div className="flex items-center justify-between py-4">
             <div>
               <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
-                Your Order
+                {isRegistering ? 'Create Account & Order' : 'Your Order'}
               </h2>
               <span className="inline-flex items-center gap-1 text-xs font-semibold mt-0.5" style={{ color: '#22c55e' }}>
                 <Truck size={11} /> Online Delivery
@@ -269,11 +343,41 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
 
           <hr style={{ borderColor: 'rgba(184,147,106,0.3)', marginBottom: 20 }} />
 
-          {/* No token warning */}
-          {!token && (
-            <div className="mb-4 px-4 py-3 rounded-xl text-sm"
-              style={{ background: '#fff7ed', border: '1px solid rgba(234,179,8,0.3)', color: '#92400e' }}>
-              ⚠️ Order token not configured. Please contact the restaurant staff.
+          {/* Registration Section (shown when no token) */}
+          {isRegistering && (
+            <div className="mb-6 p-4 rounded-xl"
+              style={{ background: '#f0faf4', border: '1px solid rgba(34,197,94,0.3)' }}>
+              <p className="text-sm font-semibold mb-4" style={{ color: '#16a34a' }}>
+                ✨ Create your account to complete the order
+              </p>
+              <div className="space-y-3">
+                {[
+                  { label: 'Name', value: name, set: setName, type: 'text', required: true },
+                  { label: 'Email', value: email, set: setEmail, type: 'email', required: true },
+                  { label: 'Password', value: password, set: setPassword, type: 'password', required: true, hint: '(min 8 characters)' },
+                  { label: 'Confirm Password', value: confirmPassword, set: setConfirmPassword, type: 'password', required: true },
+                ].map(({ label, value, set, type, required, hint }) => (
+                  <div key={label}>
+                    <label className="text-xs mb-1 flex items-center gap-1" style={{ color: '#9a7458' }}>
+                      {label}
+                      {required && <span style={{ color: '#c0392b' }}>*</span>}
+                      {hint && <span className="text-xs" style={{ color: '#b8936a' }}>{hint}</span>}
+                    </label>
+                    <input
+                      type={type}
+                      value={value}
+                      onChange={(e) => { set(e.target.value); setError(''); }}
+                      placeholder={label === 'Email' ? 'you@email.com' : ''}
+                      className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                      style={{
+                        background: '#fdf6ec',
+                        border: `1px solid ${value.trim() && required ? 'rgba(34,197,94,0.5)' : 'rgba(184,147,106,0.35)'}`,
+                        color: '#1e0f02',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -284,15 +388,12 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
             </p>
 
             {[
-              { label: 'Name', value: name, set: setName, type: 'text', placeholder: 'Your name', required: false },
               { label: 'Phone', value: phone, set: setPhone, type: 'tel', placeholder: '98XXXXXXXX', required: true },
-              { label: 'Email', value: email, set: setEmail, type: 'email', placeholder: 'you@email.com', required: false },
             ].map(({ label, value, set, type, placeholder, required }) => (
               <div key={label}>
                 <label className="text-xs mb-1 flex items-center gap-1" style={{ color: '#9a7458' }}>
                   {label}
                   {required && <span style={{ color: '#c0392b' }}>*</span>}
-                  {label === 'Email' && <span className="text-xs" style={{ color: '#b8936a' }}>(or phone)</span>}
                 </label>
                 <input
                   type={type}
@@ -352,18 +453,18 @@ function OrderDrawer({ cart, restaurantId, token, onClose, onUpdateQty, onSucces
 
           <button
             onClick={handleSubmit}
-            disabled={submitting || !isReady || !token}
+            disabled={submitting || !isReady || (isRegistering && !isRegistrationReady)}
             className="mt-6 w-full py-4 rounded-2xl font-bold text-base tracking-wide"
             style={{
-              background: submitting || !isReady || !token ? '#b8936a' : '#513012',
+              background: submitting || !isReady || (isRegistering && !isRegistrationReady) ? '#b8936a' : '#513012',
               color: '#fdf6ec', border: 'none',
-              cursor: submitting || !isReady || !token ? 'not-allowed' : 'pointer',
-              opacity: !isReady || !token ? 0.75 : 1,
+              cursor: submitting || !isReady || (isRegistering && !isRegistrationReady) ? 'not-allowed' : 'pointer',
+              opacity: !isReady || (isRegistering && !isRegistrationReady) ? 0.75 : 1,
             }}
           >
-            {submitting ? 'Placing Order...'
-              : !token ? 'Token not configured'
-              : !isReady ? 'Add phone or email to continue'
+            {submitting ? (isRegistering ? 'Creating Account & Placing Order...' : 'Placing Order...')
+              : isRegistering && !isRegistrationReady ? 'Complete registration to continue'
+              : !isReady ? 'Add phone and address to continue'
               : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
           </button>
         </div>

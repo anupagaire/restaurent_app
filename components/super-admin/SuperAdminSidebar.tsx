@@ -6,14 +6,16 @@ import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
-  LogOut,Settings,
+  LogOut,Settings,Contact,User2,
   X 
 } from 'lucide-react';
 
 const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
   { title: 'Users', href: '/super-admin/users', icon: Users },
-  { title: 'Settings', href: '/super-admin/settings', icon: Settings }
+  { title: 'Settings', href: '/super-admin/settings', icon: Settings },
+  { title: 'Applications', href: '/super-admin/restaurant-applications', icon: User2 },
+  { title: 'Contact', href: '/super-admin/contact', icon: Contact }
 ];
 
 interface SuperAdminSidebarProps {

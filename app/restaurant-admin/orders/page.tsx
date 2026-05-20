@@ -156,7 +156,6 @@ function OrderRow({ order }: { order: Order }) {
           </div>
         </td>
 
-        {/* Location: table or delivery */}
         <td className="py-4 px-4">
           {online ? (
             <div className="text-sm" style={{ color: "#16a34a" }}>
@@ -176,7 +175,6 @@ function OrderRow({ order }: { order: Order }) {
           )}
         </td>
 
-        {/* Time */}
         <td className="py-4 px-4">
           <div className="flex items-center gap-1.5 text-sm text-gray-500">
             <Clock size={12} />
@@ -184,7 +182,6 @@ function OrderRow({ order }: { order: Order }) {
           </div>
         </td>
 
-        {/* Items summary */}
         <td className="py-4 px-4">
           <p className="text-sm text-gray-700 font-medium">
             {order.items.length} item{order.items.length !== 1 ? "s" : ""}
@@ -197,7 +194,6 @@ function OrderRow({ order }: { order: Order }) {
           )}
         </td>
 
-        {/* Total + expand icon */}
         <td className="py-4 px-4">
           <div className="flex items-center justify-end gap-3">
             <span className="font-bold text-base" style={{ color: "#513012" }}>
@@ -210,13 +206,11 @@ function OrderRow({ order }: { order: Order }) {
         </td>
       </tr>
 
-      {/* Expanded detail row */}
       {expanded && (
         <tr style={{ background: online ? "#f8fff9" : "#fffbf5" }}>
           <td colSpan={6} className="px-6 py-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-              {/* Items breakdown */}
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#b8936a" }}>
                   Order Items
@@ -250,7 +244,6 @@ function OrderRow({ order }: { order: Order }) {
                 </div>
               </div>
 
-              {/* Customer + delivery info */}
               <div className="space-y-3">
                 <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#b8936a" }}>
                   {online ? "Delivery Info" : "Table Info"}
@@ -275,7 +268,6 @@ function OrderRow({ order }: { order: Order }) {
                   </div>
                 )}
 
-                {/* Delivery address (online only) */}
                 {online && deliveryAddress && (
                   <div
                     className="flex items-start gap-2 text-sm px-3 py-2 rounded-xl"
@@ -286,7 +278,6 @@ function OrderRow({ order }: { order: Order }) {
                   </div>
                 )}
 
-                {/* Table (dine-in only) */}
                 {!online && (
                   <div
                     className="flex items-center gap-2 text-sm px-3 py-2 rounded-xl font-bold"
@@ -297,7 +288,6 @@ function OrderRow({ order }: { order: Order }) {
                   </div>
                 )}
 
-                {/* Notes */}
                 {otherNotes && (
                   <div className="flex items-start gap-2 text-sm text-gray-500">
                     <FileText size={13} className="shrink-0 mt-0.5 text-gray-400" />
@@ -313,7 +303,6 @@ function OrderRow({ order }: { order: Order }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -369,21 +358,18 @@ export default function OrdersPage() {
     return orders.filter((o) => new Date(o.created_on).toISOString().split("T")[0] === today);
   }, [orders, showTodayOnly]);
 
-  // Tab filter
   const filteredOrders = useMemo(() => {
     if (activeTab === "online") return todayOrders.filter(isOnlineOrder);
     if (activeTab === "table") return todayOrders.filter((o) => !isOnlineOrder(o));
     return todayOrders;
   }, [todayOrders, activeTab]);
 
-  // Stats
   const onlineCount = todayOrders.filter(isOnlineOrder).length;
   const tableCount = todayOrders.filter((o) => !isOnlineOrder(o)).length;
   const totalRevenue = todayOrders.reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
   const onlineRevenue = todayOrders.filter(isOnlineOrder).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
   const tableRevenue = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
 
-  // ── Render guards ──────────────────────────────────────────────────────────
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
@@ -406,12 +392,9 @@ export default function OrdersPage() {
     </div>
   );
 
-  // ── Main UI ────────────────────────────────────────────────────────────────
-
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
 
-      {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
@@ -450,7 +433,6 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* ── Error ── */}
       {error && error !== "NO_TOKEN" && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
@@ -459,7 +441,6 @@ export default function OrdersPage() {
         </div>
       )}
 
-      {/* ── Stat Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard
           label="Total Orders"
@@ -482,7 +463,7 @@ export default function OrdersPage() {
        
       </div>
 
-      {/* ── Tab Filter ── */}
+
       <div
         className="flex gap-1 p-1 rounded-2xl w-fit"
         style={{ background: "#f3f4f6" }}
@@ -522,7 +503,6 @@ export default function OrdersPage() {
         ))}
       </div>
 
-      {/* ── Orders Table ── */}
       <Card style={{ border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
         <CardHeader>
           <div className="flex items-center justify-between">

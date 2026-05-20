@@ -1,13 +1,11 @@
 "use client";
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type Status = "pending" | "approved" | "rejected";
 
 interface Application {
@@ -203,7 +201,7 @@ const RestaurantApplications = () => {
       if (ordering) params.set("ordering", ordering);
       if (statusFilter) params.set("status", statusFilter);
 
-      const res = await apiFetch(`/api/v1/register-restaurant/?${params.toString()}`);
+      const res = await apiFetch(`/api/v1/admin/register-restaurant/?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch applications.");
       const data: PaginatedResponse = await res.json();
       setApplications(data.results);
@@ -220,7 +218,7 @@ const RestaurantApplications = () => {
   }, [fetchApplications]);
 
   const handleStatusChange = async (id: number, status: Status, admin_note: string) => {
-    const res = await apiFetch(`/api/v1/register-restaurant/${id}/`, {
+    const res = await apiFetch(`/api/v1/admin/register-restaurant/${id}/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, admin_note, is_checked: true }),
@@ -233,7 +231,7 @@ const RestaurantApplications = () => {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this application? This cannot be undone.")) return;
-    await apiFetch(`/api/v1/register-restaurant/${id}/`, { method: "DELETE" });
+    await apiFetch(`/api/v1/admin/register-restaurant/${id}/`, { method: "DELETE" });
     setApplications((prev) => prev.filter((a) => a.id !== id));
     setCount((c) => c - 1);
     if (selectedApp?.id === id) setSelectedApp(null);
@@ -247,10 +245,10 @@ const RestaurantApplications = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#faf8f5]">
-      <Navbar />
+    
 
       <div className="max-w-screen-xl mx-auto px-4 py-10">
-        {/* Heading */}
+       
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-[#513012]">Restaurant Applications</h1>
           <p className="text-[#776552] mt-1">
@@ -442,8 +440,6 @@ const RestaurantApplications = () => {
         )}
       </div>
 
-      <Footer />
-
       {/* Detail modal */}
       {selectedApp && (
         <DetailModal
@@ -456,7 +452,6 @@ const RestaurantApplications = () => {
   );
 };
 
-// ─── Small helpers ────────────────────────────────────────────────────────────
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white border border-[#d4b78f] rounded-xl p-5">
     <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8c6d46] mb-3 pb-3 border-b border-[#ead9c5]">

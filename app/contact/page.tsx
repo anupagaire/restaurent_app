@@ -45,7 +45,7 @@ const Contact = () => {
     setError(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/v1/contact/`, {
+      const res = await fetch(`${BASE_URL}/api/v1/admin/contact/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -69,7 +69,6 @@ const Contact = () => {
     <div className="min-h-screen w-full bg-[#faf8f5]">
       <Navbar />
 
-      {/* HERO */}
       <section className="relative min-h-[38vh] w-full overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -94,7 +93,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* INFO CARDS */}
       <section className="w-full max-w-screen-xl mx-auto px-4 -mt-6 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -140,11 +138,9 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* MAIN SECTION: Form + Image */}
       <section className="w-full max-w-screen-xl mx-auto px-4 py-14">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 
-          {/* LEFT — FORM */}
           <div className="bg-white border border-[#d4b78f] rounded-2xl p-8 flex flex-col">
             <div className="mb-7">
               <h2 className="text-2xl font-bold text-[#513012] mb-1">Send us a message</h2>
@@ -268,9 +264,8 @@ const Contact = () => {
             )}
           </div>
 
-          {/* RIGHT — IMAGE + CTA */}
+      
           <div className="flex flex-col gap-6">
-            {/* Image */}
             <div className="relative rounded-2xl overflow-hidden flex-1 min-h-[320px]">
               <Image
                 src="/food.jpg"
@@ -292,7 +287,6 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Register CTA card */}
             <div className="bg-[#513012] rounded-2xl p-7 text-white flex items-center justify-between gap-4">
               <div>
                 <h4 className="font-semibold text-base mb-1">Register your restaurant</h4>

@@ -1,82 +1,150 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search } from 'lucide-react';
-import SearchModal from '@/components/SearchCityModal';
+import { Search, Menu, X } from 'lucide-react';
+import SearchAndFilterBar from '@/components/SearchCityModal';
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [locationBanner, setLocationBanner] = useState('');
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [isSearchMobile, setIsSearchMobile] = useState(false);
 
   const closeMenu = () => setIsOpen(false);
+
+  // Fetch available cities
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, {
+          cache: 'no-store',
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const cities = [...new Set(data.results?.map((r: any) => r.city).filter(Boolean))] as string[];
+        setAvailableCities(cities.sort());
+      } catch (err) {
+        console.error('Failed to fetch cities:', err);
+      }
+    };
+    fetchCities();
+  }, []);
 
   return (
     <>
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 h-16 md:h-20 flex items-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10">
+          
+          {/* Desktop Navbar */}
+          <div className="hidden md:block">
+            <div className="h-16 flex items-center justify-between">
+              <Link href="/" className="flex items-center flex-shrink-0">
+                <div className="relative h-12 w-32">
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    fill
+                    sizes="128px"
+                    className="object-contain"
+                  />
+                </div>
+              </Link>
 
-          <div className="flex items-center justify-between w-full">
-
-            {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <div className="relative h-12 w-28 md:h-16 md:w-40">
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  fill
-                  sizes="(max-width: 768px) 112px, 160px"
-                  className="object-contain"
-                />
+              {/* Desktop Menu Links */}
+              <div className="flex items-center gap-8 text-base font-medium text-white">
+                <Link href="/" className="hover:text-[#5D0565] transition">Home</Link>
+                <Link href="/about" className="hover:text-[#5D0565] transition">About Us</Link>
+                <Link href="/restaurants" className="hover:text-[#5D0565] transition">Restaurants</Link>
+                <Link href="/contact" className="hover:text-[#5D0565] transition">Contact</Link>
               </div>
-            </Link>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-8 text-base lg:text-lg font-medium text-white">
-              <Link href="/" className="hover:text-[#5D0565] transition">Home</Link>
-              <Link href="/about" className="hover:text-[#5D0565] transition">About Us</Link>
-              <Link href="/restaurants" className="hover:text-[#5D0565] transition">Restaurants</Link>
-              <Link href="/contact" className="hover:text-[#5D0565] transition">Contact</Link>
               <Link
                 href="/register-restaurant"
-                className="px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white"
+                className="px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white text-sm font-medium flex-shrink-0"
               >
                 List Your Restaurant
               </Link>
             </div>
 
-            {/* Right side */}
-            <div className="flex items-center gap-3">
+            <div className="py-4 border-t border-white/10">
+              <div className="max-w-4xl mx-auto">
+                <SearchAndFilterBar
+                  search={search}
+                  onSearchChange={setSearch}
+                  selectedCity={selectedCity}
+                  onCityChange={setSelectedCity}
+                  onClear={() => setSelectedCity('')}
+                  availableCities={availableCities}
+                  locationBanner={locationBanner}
+                  onLocationBannerChange={setLocationBanner}
+                />
+              </div>
+            </div>
+          </div>
 
-              {/* Search icon button */}
+          {/* Mobile Navbar */}
+          <div className="md:hidden h-16 flex items-center justify-between">
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <div className="relative h-10 w-24">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  fill
+                  sizes="96px"
+                  className="object-contain"
+                />
+              </div>
+            </Link>
+
+            {/* Right Icons */}
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => setSearchOpen(true)}
+                onClick={() => setIsSearchMobile(!isSearchMobile)}
                 className="flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition"
                 aria-label="Search"
               >
                 <Search size={18} />
               </button>
 
-              <Link
-                href="/restaurants"
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium 
-                bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565]
-                hover:opacity-90 transition"
-              >
-                Explore
-              </Link>
-
-              {/* Mobile button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden text-white text-3xl leading-none"
+                className="text-white text-2xl leading-none"
               >
-                {isOpen ? '✕' : '☰'}
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           </div>
+
+          {/* Mobile Search Bar - Below Nav */}
+          <AnimatePresence>
+            {isSearchMobile && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.25 }}
+                className="md:hidden border-t border-white/10 px-4 py-4 bg-black/60"
+              >
+                <SearchAndFilterBar
+                  search={search}
+                  onSearchChange={setSearch}
+                  selectedCity={selectedCity}
+                  onCityChange={setSelectedCity}
+                  onClear={() => setSelectedCity('')}
+                  availableCities={availableCities}
+                  locationBanner={locationBanner}
+                  onLocationBannerChange={setLocationBanner}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Mobile Menu */}
           <AnimatePresence>
@@ -86,31 +154,59 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
-                className="absolute top-16 left-0 w-full md:hidden bg-black/90 backdrop-blur-xl border-t border-white/10 px-6 py-6"
+                className="md:hidden bg-black/90 backdrop-blur-xl border-t border-white/10 px-4 py-6"
               >
-                <div className="flex flex-col gap-5 text-white text-lg">
-                  {/* Mobile search bar */}
-                  <button
-                    onClick={() => { closeMenu(); setSearchOpen(true); }}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/10 text-white/60 text-sm text-left"
+                <div className="flex flex-col gap-5 text-white text-base">
+                  <Link
+                    href="/"
+                    onClick={closeMenu}
+                    className="hover:text-[#5D0565] transition font-medium"
                   >
-                    <Search size={15} />
-                    Search restaurants...
-                  </button>
-
-                  <Link href="/" onClick={closeMenu} className="hover:text-[#5D0565]">Home</Link>
-                  <Link href="/about" onClick={closeMenu} className="hover:text-[#5D0565]">About Us</Link>
-                  <Link href="/restaurants" onClick={closeMenu} className="hover:text-[#5D0565]">Restaurants</Link>
-                  <Link href="/contact" onClick={closeMenu} className="hover:text-[#5D0565]">Contact</Link>
-
+                    Home
+                  </Link>
+                  <Link
+                    href="/about"
+                    onClick={closeMenu}
+                    className="hover:text-[#5D0565] transition font-medium"
+                  >
+                    About Us
+                  </Link>
                   <Link
                     href="/restaurants"
                     onClick={closeMenu}
-                    className="mt-4 text-center px-5 py-3 rounded-full text-white font-medium 
-                    bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565]"
+                    className="hover:text-[#5D0565] transition font-medium"
                   >
-                    Explore Restaurants
+                    Restaurants
                   </Link>
+                  <Link
+                    href="/contact"
+                    onClick={closeMenu}
+                    className="hover:text-[#5D0565] transition font-medium"
+                  >
+                    Contact
+                  </Link>
+
+                  <div className="pt-4 border-t border-white/10">
+                    <Link
+                      href="/register-restaurant"
+                      onClick={closeMenu}
+                      className="block w-full text-center px-5 py-3 rounded-full text-white font-medium 
+                      bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565] hover:opacity-90 transition"
+                    >
+                      List Your Restaurant
+                    </Link>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10">
+                    <Link
+                      href="/restaurants"
+                      onClick={closeMenu}
+                      className="block w-full text-center px-5 py-3 rounded-full text-white font-medium 
+                      border border-white/20 hover:bg-white/10 transition"
+                    >
+                      Explore Restaurants
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -118,9 +214,6 @@ export default function Navbar() {
 
         </div>
       </nav>
-
-      {/* Search Modal — rendered outside nav so it overlays everything */}
-      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

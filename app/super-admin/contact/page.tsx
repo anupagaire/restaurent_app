@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type Status = "pending" | "resolved" | "rejected";
 
 interface ContactMessage {
@@ -59,7 +58,7 @@ const DetailModal = ({
     setSaving(true);
     setError(null);
     try {
-      const res = await apiFetch(`/api/v1/contact/${msg.id}/`, {
+      const res = await apiFetch(`/api/v1/admin/contact/${msg.id}/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status, admin_note: adminNote, is_checked: true }),
@@ -212,7 +211,7 @@ export default function ContactMessagesPage() {
       if (ordering) params.set("ordering", ordering);
       if (statusFilter) params.set("status", statusFilter);
 
-      const res = await apiFetch(`/api/v1/contact/?${params.toString()}`);
+      const res = await apiFetch(`/api/v1/admin/contact/?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch messages.");
       const data: PaginatedResponse = await res.json();
       setMessages(data.results);
@@ -235,7 +234,7 @@ export default function ContactMessagesPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this message? This cannot be undone.")) return;
-    await apiFetch(`/api/v1/contact/${id}/`, { method: "DELETE" });
+    await apiFetch(`/api/v1/admin/contact/${id}/`, { method: "DELETE" });
     setMessages((prev) => prev.filter((m) => m.id !== id));
     setCount((c) => c - 1);
     if (selected?.id === id) setSelected(null);

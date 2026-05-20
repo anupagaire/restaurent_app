@@ -97,7 +97,6 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-/* ─── Table Picker ────────────────────────────────────────────────────────── */
 function TablePicker({ tableCount, selected, onSelect }: {
   tableCount: number;
   selected: number | null;
@@ -129,7 +128,6 @@ function TablePicker({ tableCount, selected, onSelect }: {
   );
 }
 
-/* ─── Order Drawer ────────────────────────────────────────────────────────── */
 function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess }: {
   cart: CartItem[];
   restaurant: Restaurant;
@@ -232,7 +230,6 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
           </div>
           <OrnamentDivider />
 
-          {/* ── Cart items ───────────────────────────────────────────────── */}
           <div className="mt-4">
             {cart.map((c) => (
               <div
@@ -264,14 +261,12 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
             ))}
           </div>
 
-          {/* Total */}
           <div className="flex justify-between items-center py-4 mt-2">
             <span className="font-bold" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>Total</span>
             <span className="font-bold text-xl" style={{ color: '#513012' }}>Rs. {totalPrice.toFixed(0)}</span>
           </div>
           <OrnamentDivider />
 
-          {/* ── Table Selection ──────────────────────────────────────────── */}
           <div className="mt-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>
@@ -302,7 +297,6 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
 
           <OrnamentDivider />
 
-          {/* ── Customer details ─────────────────────────────────────────── */}
           <div className="mt-5 space-y-3">
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#b8936a' }}>
               Your Details (optional)
@@ -378,7 +372,6 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
   );
 }
 
-/* ─── Order Success ───────────────────────────────────────────────────────── */
 function OrderSuccess({
   restaurantName,
   tableNumber,
@@ -413,7 +406,6 @@ function OrderSuccess({
   );
 }
 
-/* ─── Menu Item Card ──────────────────────────────────────────────────────── */
 function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
   item: MenuItem;
   categoryName: string;
@@ -482,12 +474,10 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
   );
 }
 
-/* ─── Main Page ───────────────────────────────────────────────────────────── */
 export default function PublicMenuPage() {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
-
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -705,7 +695,6 @@ export default function PublicMenuPage() {
           </div>
         )}
 
-        {/* MENU CONTENT */}
         <div className="px-4 sm:px-5 py-6 max-w-2xl mx-auto" style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
           {categories.length === 0 && (
             <div className="text-center py-20">

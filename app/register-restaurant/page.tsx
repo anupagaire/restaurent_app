@@ -54,7 +54,7 @@ const RegisterRestaurant = () => {
     setError(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/v1/register-restaurant/`, {
+      const res = await fetch(`${BASE_URL}/api/v1/admin/register-restaurant/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

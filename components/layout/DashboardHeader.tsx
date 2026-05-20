@@ -1,8 +1,7 @@
 'use client';
 
-import { Bell, User, Menu } from 'lucide-react';
+import {  LogOut, User, Menu, Link } from 'lucide-react';
 import { useState } from 'react';
-
 interface DashboardHeaderProps {
   title: string;
   onMenuClick?: () => void;   // For mobile sidebar toggle
@@ -13,12 +12,22 @@ export default function DashboardHeader({
   onMenuClick 
 }: DashboardHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+const handleLogout = () => {
+  // Clear everything
+  localStorage.clear();
+  sessionStorage.clear();
 
+  // Clear cookies
+  document.cookie = "access_token=; path=/; max-age=0";
+  document.cookie = "refresh_token=; path=/; max-age=0";
+  document.cookie = "role=; path=/; max-age=0";
+
+  window.location.href = "/login";   
+};
   return (
     <header className="bg-white border-b border-[#513012]/10 h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-50">
       
       <div className="flex items-center gap-4">
-        {/* Mobile Menu Button */}
         {onMenuClick && (
           <button
             onClick={onMenuClick}
@@ -58,13 +67,20 @@ export default function DashboardHeader({
               </div>
               
               <div className="py-1">
+                <Link href="/settings" className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3">
                 <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3">
-                  <User className="w-4 h-4" />
+                  <User className="w-4 h-4 text-black" />
                   Profile Settings
                 </button>
-                <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600">
-                  Logout
-                </button>
+                </Link>
+                 <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3.5 w-full text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+                
               </div>
             </div>
           )}

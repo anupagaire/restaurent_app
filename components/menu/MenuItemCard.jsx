@@ -4,7 +4,6 @@ export default function MenuItemCard({ item }) {
   return (
     <div className="group rounded-3xl overflow-hidden bg-white border border-[#513012]/20 hover:border-[#47034E] transition-all duration-500 shadow-lg hover:shadow-2xl">
       
-      {/* Image Section */}
       <div className="relative h-64 overflow-hidden">
         <Image 
           src={item.image || '/images/placeholder-food.jpg'} 
@@ -14,23 +13,19 @@ export default function MenuItemCard({ item }) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
         
-        {/* Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-        {/* Popular Badge */}
         {item.isPopular && (
           <div className="absolute top-4 right-4 bg-gradient-to-r from-[#5D0565] to-[#47034E] text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-md">
             ★ POPULAR
           </div>
         )}
 
-        {/* Floating Price Tag */}
         <div className="absolute bottom-4 left-4 bg-white text-[#47034E] font-bold text-2xl px-5 py-2 rounded-2xl shadow-lg">
           Rs. {item.price}
         </div>
       </div>
 
-      {/* Content */}
       <div className="p-7 bg-white">
         <h3 className="text-2xl font-semibold text-[#513012] tracking-tight mb-3">
           {item.name}
