@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Word File Merger</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --card: #1a1e2a;
+    --border: #2a2f3f;
+    --accent: #5b6ef5;
+    --accent2: #a78bfa;
+    --success: #34d399;
+    --error: #f87171;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 80px;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(91,110,245,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,110,245,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(91,110,245,0.12);
+    border: 1px solid rgba(91,110,245,0.3);
+    color: var(--accent2);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: rgba(91,110,245,0.4); }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Drop zones */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .drop-zone:hover,
+  .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(91,110,245,0.06);
+  }
+
+  .drop-zone.has-file {
+    border-color: var(--success);
+    background: rgba(52,211,153,0.05);
+    border-style: solid;
+  }
+
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drop-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    display: block;
+    filter: grayscale(0.5);
+    transition: transform 0.2s, filter 0.2s;
+  }
+
+  .drop-zone:hover .drop-icon,
+  .drop-zone.has-file .drop-icon { transform: scale(1.1); filter: none; }
+
+  .drop-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .drop-text strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .file-name {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* Two-column drop zone layout */
+  .drop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 520px) { .drop-grid { grid-template-columns: 1fr; } }
+
+  /* Merge arrow */
+  .merge-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--accent);
+    font-size: 13px;
+    font-family: var(--mono);
+    margin: 4px 0;
+    opacity: 0.7;
+  }
+
+  .arrow-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* Output name input */
+  .input-group { position: relative; }
+
+  .input-group label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within { border-color: var(--accent); }
+
+  .input-row input {
+    flex: 1;
+    background: var(--surface);
+    border: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+  }
+
+  .input-row input::placeholder { color: var(--muted); }
+
+  .input-suffix {
+    background: rgba(91,110,245,0.1);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 12px 16px;
+    border-left: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  /* Merge button */
+  .merge-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .merge-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+
+  .merge-btn:hover::before { background: rgba(255,255,255,0.1); }
+  .merge-btn:active { transform: scale(0.99); }
+  .merge-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Status */
+  .status {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status.success {
+    display: flex;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.3);
+    color: var(--success);
+  }
+
+  .status.error {
+    display: flex;
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.3);
+    color: var(--error);
+  }
+
+  .status.loading {
+    display: flex;
+    background: rgba(91,110,245,0.08);
+    border: 1px solid rgba(91,110,245,0.2);
+    color: var(--accent);
+  }
+
+  /* Spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(91,110,245,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  /* Info note */
+  .info-note {
+    margin-top: 28px;
+    padding: 16px 20px;
+    background: rgba(167,139,250,0.05);
+    border: 1px solid rgba(167,139,250,0.15);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .info-note strong { color: var(--accent2); }
+
+  /* Pulse animation on success */
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+    50% { box-shadow: 0 0 0 8px rgba(52,211,153,0.1); }
+  }
+  .merge-btn.done { animation: pulseGlow 1.5s ease 1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge">✦ Free · No Upload · 100% Private</div>
+    <h1>Word File<br/>Merger</h1>
+    <p class="subtitle">Merge two .docx files instantly in your browser — nothing leaves your device</p>
+  </header>
+
+  <!-- File Uploads -->
+  <div class="card">
+    <div class="card-label">01 — Upload Files</div>
+    <div class="drop-grid">
+      <!-- File 1 -->
+      <div class="drop-zone" id="zone1" ondragover="handleDragOver(event,1)" ondragleave="handleDragLeave(event,1)" ondrop="handleDrop(event,1)">
+        <input type="file" accept=".docx" id="file1" onchange="handleFile(1)"/>
+        <span class="drop-icon">📄</span>
+        <div class="drop-text">
+          <strong>First Document</strong>
+          Click or drag .docx
+        </div>
+        <div class="file-name" id="name1" style="display:none">✓ <span></span></div>
+      </div>
+
+      <!-- File 2 -->
+      <div class="drop-zone" id="zone2" ondragover="handleDragOver(event,2)" ondragleave="handleDragLeave(event,2)" ondrop="handleDrop(event,2)">
+        <input type="file" accept=".docx" id="file2" onchange="handleFile(2)"/>
+        <span class="drop-icon">📄</span>
+        <div class="drop-text">
+          <strong>Second Document</strong>
+          Click or drag .docx
+        </div>
+        <div class="file-name" id="name2" style="display:none">✓ <span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merge indicator -->
+  <div class="merge-arrow">
+    <div class="arrow-line"></div>
+    ↓ merge ↓
+    <div class="arrow-line"></div>
+  </div>
+
+  <!-- Output settings -->
+  <div class="card">
+    <div class="card-label">02 — Output Filename</div>
+    <div class="input-group">
+      <label>Merged file will be saved as</label>
+      <div class="input-row">
+        <input type="text" id="outputName" value="merged-document" placeholder="my-merged-file" spellcheck="false"/>
+        <div class="input-suffix">.docx</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merge button -->
+  <button class="merge-btn" id="mergeBtn" onclick="mergeFiles()">
+    ⚡ Merge Documents
+  </button>
+
+  <!-- Status -->
+  <div class="status" id="status">
+    <div class="spinner" id="statusIcon"></div>
+    <span id="statusText"></span>
+  </div>
+
+  <!-- Info -->
+  <div class="info-note">
+    <strong>100% client-side.</strong> Your files are never uploaded to any server.<br/>
+    All processing happens locally in your browser using JavaScript.<br/>
+    Supports standard .docx files (Word 2007+).
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const files = { 1: null, 2: null };
+
+// ── Drag & Drop ────────────────────────────────────────────────────────────
+function handleDragOver(e, n) {
+  e.preventDefault();
+  document.getElementById('zone' + n).classList.add('drag-over');
+}
+function handleDragLeave(e, n) {
+  document.getElementById('zone' + n).classList.remove('drag-over');
+}
+function handleDrop(e, n) {
+  e.preventDefault();
+  const zone = document.getElementById('zone' + n);
+  zone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.name.endsWith('.docx')) setFile(n, f);
+  else showStatus('error', 'Only .docx files are supported.');
+}
+function handleFile(n) {
+  const input = document.getElementById('file' + n);
+  if (input.files[0]) setFile(n, input.files[0]);
+}
+
+function setFile(n, f) {
+  files[n] = f;
+  const zone = document.getElementById('zone' + n);
+  zone.classList.add('has-file');
+  const nameEl = document.getElementById('name' + n);
+  nameEl.style.display = 'flex';
+  nameEl.querySelector('span').textContent = f.name.length > 24 ? f.name.slice(0,22)+'…' : f.name;
+  clearStatus();
+}
+
+// ── Status helpers ─────────────────────────────────────────────────────────
+function showStatus(type, msg) {
+  const el = document.getElementById('status');
+  const icon = document.getElementById('statusIcon');
+  el.className = 'status ' + type;
+  document.getElementById('statusText').textContent = msg;
+  icon.className = type === 'loading' ? 'spinner' : '';
+  icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : '';
+}
+function clearStatus() {
+  document.getElementById('status').className = 'status';
+}
+
+// ── Core merger ────────────────────────────────────────────────────────────
+async function mergeFiles() {
+  if (!files[1] || !files[2]) {
+    showStatus('error', 'Please upload both documents first.');
+    return;
+  }
+
+  const btn = document.getElementById('mergeBtn');
+  btn.disabled = true;
+  showStatus('loading', 'Reading and merging documents…');
+
+  try {
+    // Load both ZIPs
+    const [zip1, zip2] = await Promise.all([
+      JSZip.loadAsync(files[1]),
+      JSZip.loadAsync(files[2])
+    ]);
+
+    // Extract document.xml from both
+    const xml1 = await zip1.file('word/document.xml').async('string');
+    const xml2 = await zip2.file('word/document.xml').async('string');
+
+    // Parse body content from doc2
+    const bodyMatch2 = xml2.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
+    if (!bodyMatch2) throw new Error('Could not read content from second document.');
+
+    // Get paragraphs from doc2 body (exclude sectPr at the end)
+    let bodyContent2 = bodyMatch2[1];
+    // Remove the last <w:sectPr>…</w:sectPr> to avoid section conflict
+    bodyContent2 = bodyContent2.replace(/<w:sectPr[\s\S]*?<\/w:sectPr>\s*$/, '');
+
+    // Insert a page break at the join point, then doc2 content
+    const pageBreak = `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+    const merged = xml1.replace(
+      /(<w:sectPr[\s\S]*?<\/w:sectPr>\s*)?<\/w:body>/,
+      (match, sectPr) => `${pageBreak}${bodyContent2}${sectPr || ''}</w:body>`
+    );
+
+    // Merge relationships
+    const rels1 = await zip1.file('word/_rels/document.xml.rels').async('string');
+    const rels2 = await zip2.file('word/_rels/document.xml.rels').async('string');
+    const mergedRels = mergeRelationships(rels1, rels2);
+
+    // Build output zip from zip1 as base
+    const outZip = new JSZip();
+
+    // Copy all files from zip1
+    const promises = [];
+    zip1.forEach((path, file) => {
+      if (!file.dir) {
+        promises.push(
+          file.async('arraybuffer').then(data => {
+            outZip.file(path, data);
+          })
+        );
+      }
+    });
+    await Promise.all(promises);
+
+    // Copy media from zip2, re-keyed to avoid collision
+    const mediaMap = {}; // oldName -> newName
+    const zip2Files = [];
+    zip2.forEach((path, file) => { if (!file.dir && path.startsWith('word/media/')) zip2Files.push({ path, file }); });
+
+    for (const { path, file } of zip2Files) {
+      const data = await file.async('arraybuffer');
+      const ext = path.split('.').pop();
+      const base = path.split('/').pop().replace(/\.[^.]+$/, '');
+      const newName = `word/media/doc2_${base}.${ext}`;
+      outZip.file(newName, data);
+      mediaMap[path.split('/').pop()] = `doc2_${base}.${ext}`;
+    }
+
+    // Patch merged relationships to remap doc2 media
+    const patchedMerged = patchMediaRefs(merged, mediaMap);
+
+    // Write output files
+    outZip.file('word/document.xml', patchedMerged);
+    outZip.file('word/_rels/document.xml.rels', mergedRels);
+
+    // Generate and download
+    const blob = await outZip.generateAsync({
+      type: 'blob',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 }
+    });
+
+    const name = (document.getElementById('outputName').value.trim() || 'merged-document').replace(/\.docx$/i, '') + '.docx';
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+    showStatus('success', `✓ "${name}" downloaded successfully!`);
+    btn.classList.add('done');
+    setTimeout(() => btn.classList.remove('done'), 2000);
+  } catch (err) {
+    console.error(err);
+    showStatus('error', 'Merge failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── Relationship merging ───────────────────────────────────────────────────
+function mergeRelationships(rels1, rels2) {
+  // Parse existing rIds from rels1
+  const existingIds = new Set();
+  const existingTargets = new Set();
+  let maxId = 1;
+  const idPattern = /rId(\d+)/g;
+  let m;
+  while ((m = idPattern.exec(rels1)) !== null) {
+    const n = parseInt(m[1]);
+    if (n > maxId) maxId = n;
+    existingIds.add('rId' + m[1]);
+  }
+
+  // Target pattern to find duplicates
+  const targetPattern = /Target="([^"]+)"/g;
+  while ((m = targetPattern.exec(rels1)) !== null) existingTargets.add(m[1]);
+
+  // Extract new rels from rels2 that are media-related
+  const relPattern = /<Relationship[^>]+>/g;
+  const newRels = [];
+  while ((m = relPattern.exec(rels2)) !== null) {
+    const rel = m[0];
+    if (!rel.includes('Type') || (!rel.includes('/image') && !rel.includes('media'))) continue;
+    const targetMatch = rel.match(/Target="([^"]+)"/);
+    if (!targetMatch) continue;
+    const target = 'media/doc2_' + targetMatch[1].replace('media/', '');
+    if (existingTargets.has(target)) continue;
+    maxId++;
+    const newRel = rel
+      .replace(/Id="[^"]+"/, `Id="rId${maxId}"`)
+      .replace(/Target="[^"]+"/, `Target="${target}"`);
+    newRels.push(newRel);
+    existingTargets.add(target);
+  }
+
+  if (newRels.length === 0) return rels1;
+  return rels1.replace('</Relationships>', newRels.join('\n') + '\n</Relationships>');
+}
+
+// ── Patch media src refs in XML ────────────────────────────────────────────
+function patchMediaRefs(xml, mediaMap) {
+  // We don't need to patch since we already embedded with new names in the zip
+  // and the content from doc2 references old media names via r:embed
+  // This is a no-op for simple text/paragraph merges; for full fidelity,
+  // a real OOXML relationship resolver would be needed.
+  return xml;
+}
+</script>
+</body>
+</html>

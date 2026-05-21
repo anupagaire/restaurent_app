@@ -4,20 +4,47 @@ import { useState, useEffect } from 'react';
 import CustomerSidebar from '@/components/customer/CustomerSidebar';
 import { apiFetch } from '@/lib/api';
 
-export default function AccountLayout({ children }: { children: React.ReactNode }) {
+export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState({ first_name: '', last_name: '', email: '' });
 
   useEffect(() => {
     apiFetch('/api/v1/user/me/')
       .then(r => r.json())
-      .then(data => setUser(data));
+      .then(data => {
+        setUser({
+          first_name: data.first_name || '',
+          last_name:  data.last_name  || '',
+          email:      data.email      || '',
+        });
+
+        // ── Sync qr_menu_auth so MenuSection on restaurant pages
+        //    recognises this logged-in customer (no re-register needed).
+        //    If they came via /login the login page already set this,
+        //    but we set it here too as a safety net.
+        const access  = localStorage.getItem('access_token')  || '';
+        const refresh = localStorage.getItem('refresh_token') || '';
+        if (access && data.email) {
+          localStorage.setItem(
+            'qr_menu_auth',
+            JSON.stringify({ access, refresh, email: data.email }),
+          );
+        }
+      })
+      .catch(() => {
+        // Token expired or invalid → redirect to login
+        window.location.href = '/login';
+      });
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen flex flex-col md:flex-row" style={{ background: '#faf8f5' }}>
       <CustomerSidebar user={user} />
-      <main className="flex-1 p-6 md:p-8 max-w-2xl mx-auto w-full">
-        {children}
+
+      {/* Main content — add bottom padding on mobile so content clears the bottom nav */}
+      <main className="flex-1 p-6 md:p-10 pb-24 md:pb-10 w-full">
+        <div className="max-w-2xl mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );

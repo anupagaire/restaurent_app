@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface FormData {
   restaurant_name: string;
   cuisine_type: string;

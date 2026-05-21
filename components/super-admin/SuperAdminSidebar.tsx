@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { 
-  LayoutDashboard, 
+  LayoutDashboard, Dashboard,
   Users, 
   LogOut,Settings,Contact,User2,
   X 
@@ -14,6 +14,7 @@ const menuItems = [
   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
   { title: 'Users', href: '/super-admin/users', icon: Users },
   { title: 'Settings', href: '/super-admin/settings', icon: Settings },
+    { title: 'Pricing', href: '/super-admin/pricing', icon: Dashboard},
   { title: 'Applications', href: '/super-admin/restaurant-applications', icon: User2 },
   { title: 'Contact', href: '/super-admin/contact', icon: Contact }
 ];

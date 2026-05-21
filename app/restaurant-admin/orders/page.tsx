@@ -24,7 +24,7 @@ interface Order {
   status_display: string;
   total_price: string;
   items: OrderItem[];
-  table_number: number | null;   // ✅ null / 0 = online order; number = table order
+  table_number: number | null;
   customer_name: string;
   customer_phone: string;
   customer_email: string;
@@ -35,36 +35,60 @@ interface Order {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const REFRESH_INTERVAL = 30_000;
-const STORAGE_KEY = "qr_menu_token_data";
-
 type TabType = "all" | "online" | "table";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(dateStr: string) {
   return new Date(dateStr).toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
   });
 }
 
-function getStoredToken(): string {
+/** Fetch the active QR token from the API instead of localStorage.
+ *  GET /api/v1/menu-tokens/my_tokens/ → find active token → extract raw_token
+ */
+async function fetchQRToken(): Promise<string> {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return "";
-    const parsed = JSON.parse(saved);
-    const url = parsed.frontendUrl || "";
-    if (url.includes("token=")) {
-      return new URL(url).searchParams.get("token") || "";
+    const res = await apiFetch("/api/v1/menu-tokens/my_tokens/");
+    if (!res.ok) return "";
+    const data = await res.json();
+    const list: { id: number; is_active: boolean }[] =
+      Array.isArray(data) ? data : (data.results ?? []);
+
+    // Prefer active token, fall back to most recent
+    const active = list.find((t) => t.is_active) ?? list[0];
+    if (!active) return "";
+
+    // The QR generator saves the full menu URL in localStorage as:
+    // key:   qr_token_url_{id}
+    // value: https://yoursite.com/menu/8?token=lVgXlJx3...
+    // Extract the token query param from that saved URL
+    const savedUrl = localStorage.getItem(`qr_token_url_${active.id}`);
+    if (savedUrl?.includes("token=")) {
+      const token = new URL(savedUrl).searchParams.get("token");
+      if (token) return token;
     }
-  } catch {}
-  return "";
+
+    // Fallback: use id (works only if backend accepts numeric tokens)
+    return String(active.id);
+  } catch {
+    return "";
+  }
 }
 
 function isOnlineOrder(order: Order): boolean {
   return !order.table_number || order.table_number === 0;
+}
+
+function dedupeOrders(orders: Order[]): Order[] {
+  const seen = new Set<number>();
+  return orders.filter(o => {
+    if (seen.has(o.id)) return false;
+    seen.add(o.id);
+    return true;
+  });
 }
 
 // ─── Order Type Badge ─────────────────────────────────────────────────────────
@@ -92,9 +116,7 @@ function OrderTypeBadge({ order }: { order: Order }) {
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
-function StatCard({
-  label, value, sub, accent,
-}: {
+function StatCard({ label, value, sub, accent }: {
   label: string; value: string | number; sub?: string; accent: string;
 }) {
   return (
@@ -115,7 +137,6 @@ function OrderRow({ order }: { order: Order }) {
   const [expanded, setExpanded] = useState(false);
   const online = isOnlineOrder(order);
 
-  // Pull delivery address out of notes if present
   const lines = (order.notes || "").split("\n");
   const addressLine = lines.find((l) => l.toLowerCase().startsWith("delivery address:"));
   const deliveryAddress = addressLine?.replace(/delivery address:\s*/i, "").trim();
@@ -123,12 +144,10 @@ function OrderRow({ order }: { order: Order }) {
 
   return (
     <>
-      {/* Main row */}
       <tr
         className="hover:bg-gray-50 cursor-pointer transition-colors"
         onClick={() => setExpanded((p) => !p)}
       >
-        {/* Order ID + type */}
         <td className="py-4 px-4">
           <div className="flex flex-col gap-1.5">
             <span className="font-mono text-sm text-gray-500">#{order.id}</span>
@@ -136,7 +155,6 @@ function OrderRow({ order }: { order: Order }) {
           </div>
         </td>
 
-        {/* Customer */}
         <td className="py-4 px-4">
           <div className="flex items-center gap-2">
             <div
@@ -210,7 +228,6 @@ function OrderRow({ order }: { order: Order }) {
         <tr style={{ background: online ? "#f8fff9" : "#fffbf5" }}>
           <td colSpan={6} className="px-6 py-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#b8936a" }}>
                   Order Items
@@ -248,7 +265,6 @@ function OrderRow({ order }: { order: Order }) {
                 <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#b8936a" }}>
                   {online ? "Delivery Info" : "Table Info"}
                 </p>
-
                 {order.customer_name && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <User size={13} className="shrink-0 text-gray-400" />
@@ -267,7 +283,6 @@ function OrderRow({ order }: { order: Order }) {
                     {order.customer_email}
                   </div>
                 )}
-
                 {online && deliveryAddress && (
                   <div
                     className="flex items-start gap-2 text-sm px-3 py-2 rounded-xl"
@@ -277,7 +292,6 @@ function OrderRow({ order }: { order: Order }) {
                     <span>{deliveryAddress}</span>
                   </div>
                 )}
-
                 {!online && (
                   <div
                     className="flex items-center gap-2 text-sm px-3 py-2 rounded-xl font-bold"
@@ -287,7 +301,6 @@ function OrderRow({ order }: { order: Order }) {
                     Dine-in · Table {order.table_number}
                   </div>
                 )}
-
                 {otherNotes && (
                   <div className="flex items-start gap-2 text-sm text-gray-500">
                     <FileText size={13} className="shrink-0 mt-0.5 text-gray-400" />
@@ -303,32 +316,72 @@ function OrderRow({ order }: { order: Order }) {
   );
 }
 
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [token, setToken] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [orders,        setOrders]        = useState<Order[]>([]);
+  const [token,         setToken]         = useState<string>("");
+  const [loading,       setLoading]       = useState(true);
+  const [error,         setError]         = useState("");
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing,    setRefreshing]    = useState(false);
   const [showTodayOnly, setShowTodayOnly] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [activeTab,     setActiveTab]     = useState<TabType>("all");
 
   useRequirePermission("viewOrders");
 
+  // ── Fetch both token-based (table) AND jwt-based (online) orders ───────────
   const fetchOrders = useCallback(async (currentToken: string, isManual = false) => {
-    if (!currentToken) return;
     if (isManual) setRefreshing(true);
+
     try {
-      const res = await apiFetch(
-        `/api/v1/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`,
+      const results: Order[] = [];
+
+      // ── Fetch 1: Token-based orders (table orders via QR scan) ─────────────
+      // These are orders placed by customers scanning the table QR code
+      if (currentToken) {
+        try {
+          const tokenRes = await apiFetch(
+            `/api/v1/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`,
+          );
+          if (tokenRes.ok) {
+            const data = await tokenRes.json();
+            const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
+            results.push(...list);
+          }
+        } catch {
+          // token fetch failed silently — JWT fetch below will still run
+        }
+      }
+
+      // ── Fetch 2: JWT-based orders (online/delivery orders) ─────────────────
+      // These are orders placed by logged-in customers from the menu page
+      // Uses the admin's JWT so backend returns all orders for their restaurant
+      try {
+        const jwtRes = await apiFetch(`/api/v1/orders/?page_size=100`);
+        if (jwtRes.ok) {
+          const data = await jwtRes.json();
+          const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
+          results.push(...list);
+        } else if (jwtRes.status === 401) {
+          setError("Session expired. Please log in again.");
+          return;
+        }
+      } catch {
+        // jwt fetch failed silently
+      }
+
+      if (results.length === 0 && !currentToken) {
+        setError("NO_TOKEN");
+        return;
+      }
+
+      // Deduplicate (same order might appear in both fetches) and sort newest first
+      const merged = dedupeOrders(results).sort(
+        (a, b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime(),
       );
-      if (res.status === 401) { setError("Session expired. Please log in again."); return; }
-      if (!res.ok) throw new Error(`Failed to fetch orders (${res.status})`);
-      const data = await res.json();
-      const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
-      list.sort((a, b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime());
-      setOrders(list);
+
+      setOrders(merged);
       setError("");
       setLastRefreshed(new Date());
     } catch (err: unknown) {
@@ -340,9 +393,11 @@ export default function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    const t = getStoredToken();
-    if (t) { setToken(t); fetchOrders(t); }
-    else { setError("NO_TOKEN"); setLoading(false); }
+    // Fetch QR token from API (not localStorage — localStorage gets cleared)
+    fetchQRToken().then((t) => {
+      setToken(t);
+      fetchOrders(t);
+    });
   }, [fetchOrders]);
 
   useEffect(() => {
@@ -351,7 +406,7 @@ export default function OrdersPage() {
     return () => clearInterval(interval);
   }, [token, fetchOrders]);
 
-  // Today filter
+  // ── Filters ───────────────────────────────────────────────────────────────
   const todayOrders = useMemo(() => {
     if (!showTodayOnly) return orders;
     const today = new Date().toISOString().split("T")[0];
@@ -360,17 +415,17 @@ export default function OrdersPage() {
 
   const filteredOrders = useMemo(() => {
     if (activeTab === "online") return todayOrders.filter(isOnlineOrder);
-    if (activeTab === "table") return todayOrders.filter((o) => !isOnlineOrder(o));
+    if (activeTab === "table")  return todayOrders.filter((o) => !isOnlineOrder(o));
     return todayOrders;
   }, [todayOrders, activeTab]);
 
-  const onlineCount = todayOrders.filter(isOnlineOrder).length;
-  const tableCount = todayOrders.filter((o) => !isOnlineOrder(o)).length;
-  const totalRevenue = todayOrders.reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
+  const onlineCount   = todayOrders.filter(isOnlineOrder).length;
+  const tableCount    = todayOrders.filter((o) => !isOnlineOrder(o)).length;
+  const totalRevenue  = todayOrders.reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
   const onlineRevenue = todayOrders.filter(isOnlineOrder).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
-  const tableRevenue = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
+  const tableRevenue  = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
 
-
+  // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <div className="w-10 h-10 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
@@ -378,23 +433,10 @@ export default function OrdersPage() {
     </div>
   );
 
-  if (error === "NO_TOKEN") return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center px-6">
-      <div className="text-6xl">📵</div>
-      <h2 className="text-xl font-bold text-[#513012]">QR Token not found</h2>
-      <p className="text-gray-500 text-sm max-w-sm">
-        Please go to the QR Generator page first and generate a QR code.
-      </p>
-      <a href="/dashboard/qr" className="mt-2 px-6 py-3 rounded-xl font-semibold text-white"
-        style={{ background: "#513012" }}>
-        Go to QR Generator →
-      </a>
-    </div>
-  );
-
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
 
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
@@ -423,7 +465,7 @@ export default function OrdersPage() {
           </Button>
           <Button
             onClick={() => fetchOrders(token, true)}
-            disabled={refreshing || !token}
+            disabled={refreshing}
             variant="outline"
             className="flex items-center gap-2 text-sm"
           >
@@ -433,6 +475,7 @@ export default function OrdersPage() {
         </div>
       </div>
 
+      {/* Error */}
       {error && error !== "NO_TOKEN" && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
@@ -441,38 +484,28 @@ export default function OrdersPage() {
         </div>
       )}
 
+      {/* No token warning (non-blocking — online orders still show) */}
+      {!token && (
+        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
+          <AlertCircle className="w-5 h-5 shrink-0" />
+          <span>QR token not found — table orders won't appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
+        </div>
+      )}
+
+      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard
-          label="Total Orders"
-          value={todayOrders.length}
-          sub={`Rs. ${totalRevenue.toFixed(0)}`}
-          accent="#513012"
-        />
-        <StatCard
-          label="Online Orders"
-          value={onlineCount}
-          sub={`Rs. ${onlineRevenue.toFixed(0)}`}
-          accent="#16a34a"
-        />
-        <StatCard
-          label="Table Orders"
-          value={tableCount}
-          sub={`Rs. ${tableRevenue.toFixed(0)}`}
-          accent="#b45309"
-        />
-       
+        <StatCard label="Total Orders"  value={todayOrders.length} sub={`Rs. ${totalRevenue.toFixed(0)}`}  accent="#513012" />
+        <StatCard label="Online Orders" value={onlineCount}         sub={`Rs. ${onlineRevenue.toFixed(0)}`} accent="#16a34a" />
+        <StatCard label="Table Orders"  value={tableCount}          sub={`Rs. ${tableRevenue.toFixed(0)}`}  accent="#b45309" />
       </div>
 
-
-      <div
-        className="flex gap-1 p-1 rounded-2xl w-fit"
-        style={{ background: "#f3f4f6" }}
-      >
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-2xl w-fit" style={{ background: "#f3f4f6" }}>
         {(
           [
-            { key: "all", label: "All", icon: null },
-            { key: "online", label: "Online", icon: <Truck size={13} /> },
-            { key: "table", label: "Table / Dine-in", icon: <UtensilsCrossed size={13} /> },
+            { key: "all",    label: "All",             icon: null },
+            { key: "online", label: "Online",          icon: <Truck size={13} /> },
+            { key: "table",  label: "Table / Dine-in", icon: <UtensilsCrossed size={13} /> },
           ] as { key: TabType; label: string; icon: React.ReactNode }[]
         ).map(({ key, label, icon }) => (
           <button
@@ -503,6 +536,7 @@ export default function OrdersPage() {
         ))}
       </div>
 
+      {/* Orders table */}
       <Card style={{ border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
         <CardHeader>
           <div className="flex items-center justify-between">

@@ -7,10 +7,10 @@ import { useAuth } from '@/context/AuthContext';
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -19,6 +19,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // ── Step 1: Get JWT tokens ─────────────────────────────────────────────
       const res = await fetch(`${API}/api/v1/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -26,14 +27,13 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      console.log("LOGIN RESPONSE:", data);
 
       if (!res.ok) {
-        setError(data?.detail || "Login failed");
+        setError(data?.detail || "Invalid email or password");
         return;
       }
 
-      const access = data?.access;
+      const access  = data?.access;
       const refresh = data?.refresh;
 
       if (!access) {
@@ -41,13 +41,14 @@ export default function LoginPage() {
         return;
       }
 
+      // ── Step 2: Store tokens ───────────────────────────────────────────────
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
       document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
 
+      // ── Step 3: Fetch user profile ─────────────────────────────────────────
       const meRes = await apiFetch("/api/v1/user/me/");
-      const me = await meRes.json();
-      console.log("USER PROFILE:", me);
+      const me    = await meRes.json();
 
       if (!meRes.ok) {
         setError("Failed to fetch user profile");
@@ -59,37 +60,49 @@ export default function LoginPage() {
         localStorage.setItem("restaurant_id", String(me.restaurant));
       }
 
-      const role = (me?.role || "").toLowerCase();
-      const isSuperAdmin = !me?.restaurant; // ✅ restaurant null = super admin
-      const isAdmin = !isSuperAdmin && role === 'admin';
+      const role        = (me?.role || "").toLowerCase();
+      const isSuperAdmin = !me?.restaurant;
+      const isAdmin      = !isSuperAdmin && role === "admin";
 
-      document.cookie = `role=${isSuperAdmin ? 'super_admin' : role}; path=/; max-age=86400; SameSite=Lax`;
+      // ── Step 4: Set role cookie ────────────────────────────────────────────
+      const cookieRole = isSuperAdmin ? "super_admin" : role;
+      document.cookie  = `role=${cookieRole}; path=/; max-age=86400; SameSite=Lax`;
 
-      // Staff permissions
-      const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
+      // ── Step 5: If customer → also save to qr_menu_auth so MenuSection
+      //           recognises them as already logged in (no re-register needed)
+      if (role === "customer") {
+        localStorage.setItem(
+          "qr_menu_auth",
+          JSON.stringify({ access, refresh, email: me.email }),
+        );
+      }
+
+      // ── Step 6: AuthContext login ──────────────────────────────────────────
+      const allPerms  = JSON.parse(localStorage.getItem("staff_permissions") || "{}");
       const savedPerms = allPerms[me.email];
 
       login({
-        id: me.id,
-        name: `${me.first_name || ''} ${me.last_name || ''}`.trim() || me.email,
+        id:    me.id,
+        name:  `${me.first_name || ""} ${me.last_name || ""}`.trim() || me.email,
         email: me.email,
-        role: isSuperAdmin ? 'super_admin' : (me.role || 'staff'),
+        role:  isSuperAdmin ? "super_admin" : (me.role || "staff"),
         permissions: savedPerms || {
-          viewOrders: isAdmin,
-          manageOrders: isAdmin,
-          addMenuItems: isAdmin,
-          editMenuItems: isAdmin,
-          menuSettings: isAdmin,
+          viewOrders:     isAdmin,
+          manageOrders:   isAdmin,
+          addMenuItems:   isAdmin,
+          editMenuItems:  isAdmin,
+          menuSettings:   isAdmin,
           globalSettings: isAdmin,
-          manageStaff: isAdmin,
-        }
+          manageStaff:    isAdmin,
+        },
       });
 
-      // ✅ Cookie set हुन time दियो, अनि full reload गर्यो
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // ── Step 7: Redirect based on role ────────────────────────────────────
+      await new Promise(resolve => setTimeout(resolve, 100)); // let cookie set
 
-      // ✅ window.location.href — router.replace होइन
-      if (isSuperAdmin) {
+      if (role === "customer") {
+        window.location.href = "/customer";
+      } else if (isSuperAdmin) {
         window.location.href = "/super-admin";
       } else {
         window.location.href = "/restaurant-admin";
@@ -97,7 +110,7 @@ export default function LoginPage() {
 
     } catch (err) {
       console.error(err);
-      setError("Network error");
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -138,7 +151,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#513012] text-white py-3 rounded-lg"
+          className="w-full bg-[#513012] text-white py-3 rounded-lg font-semibold"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

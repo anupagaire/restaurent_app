@@ -13,6 +13,7 @@ interface MenuItem {
   category: number;
   image?: string | null;
   photo_url?: string | null;
+  photos?: { id: number; photo_url: string | null }[];
 }
 
 interface Category {
@@ -414,7 +415,7 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
   onUpdate: (delta: number) => void;
 }) {
   const [imgError, setImgError] = useState(false);
-  const rawImage = item.image || item.photo_url || null;
+  const rawImage = item.image || item.photo_url || (item as any).photos?.[0]?.photo_url || null;
   const imageUrl = resolveImage(rawImage);
   const showImage = imageUrl && !imgError;
 
@@ -582,7 +583,6 @@ export default function PublicMenuPage() {
     </>
   );
 
-  // ── Order success ──────────────────────────────────────────────────────────
   if (orderSuccess) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
