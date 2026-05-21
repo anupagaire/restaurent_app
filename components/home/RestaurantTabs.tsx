@@ -24,7 +24,7 @@ export default function RestaurantTabs({ menuItems, restaurantId, reviewCount = 
 
   return (
     <div>
-      {/* Tab bar */}
+      
       <div style={{
         display: 'flex',
         gap: 0,
@@ -56,7 +56,7 @@ export default function RestaurantTabs({ menuItems, restaurantId, reviewCount = 
         ))}
       </div>
 
-      {/* Tab content */}
+    
       {activeTab === 'menu' ? (
         menuItems.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888', marginTop: 60, fontSize: 16 }}>
