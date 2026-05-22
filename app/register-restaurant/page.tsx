@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import emailjs from "@emailjs/browser";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 interface FormData {
   restaurant_name: string;
@@ -53,7 +53,7 @@ const RegisterRestaurant = () => {
     setError(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/v1/admin/register-restaurant/`, {
+      const res = await fetch(`${BASE_URL}/api/v1/register-restaurant/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -63,7 +63,23 @@ const RegisterRestaurant = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.message || "Something went wrong. Please try again.");
       }
-
+await emailjs.send(
+  process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+  process.env.NEXT_PUBLIC_EMAILJS_RESTAURANT_TEMPLATE_ID!,
+  {
+    restaurant_name: form.restaurant_name,
+    cuisine_type: form.cuisine_type,
+    city: form.city,
+    area: form.area,
+    full_address: form.full_address,
+    description: form.description,
+    owner_name: form.owner_name,
+    phone: form.phone,
+    email: form.email,
+    whatsapp: form.whatsapp,
+  },
+  process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+);
       setSuccess(true);
       setForm(INITIAL_FORM);
     } catch (err: unknown) {

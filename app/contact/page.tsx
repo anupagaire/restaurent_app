@@ -5,8 +5,8 @@ import { Mail, PhoneCall, MapPin, Clock, Send } from "lucide-react";
 import Image from "next/image";
 import Footer from "@/components/layout/Footer";
 import { useState } from "react";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import emailjs from "@emailjs/browser";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface ContactForm {
   name: string;
@@ -45,7 +45,7 @@ const Contact = () => {
     setError(null);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/v1/admin/contact/`, {
+      const res = await fetch(`${BASE_URL}/api/v1/contact/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -56,6 +56,23 @@ const Contact = () => {
         throw new Error(data?.message || "Something went wrong. Please try again.");
       }
 
+       try {
+    await emailjs.send(
+      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+      process.env.NEXT_PUBLIC_EMAILJS_CONTACT_TEMPLATE_ID!,
+      {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        subject: form.subject,
+        message: form.message,
+      },
+      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+    );
+  } catch (emailError) {
+    console.error("EmailJS failed:", emailError);
+    // don't block success UI
+  }
       setSuccess(true);
       setForm(INITIAL_FORM);
     } catch (err: unknown) {
