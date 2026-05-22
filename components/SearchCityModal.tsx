@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, LocateFixed, X, Search } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 
 interface SearchAndFilterBarProps {
   search: string;

@@ -8,7 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Search, MapPin, Eye, Star, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 const ITEMS_PER_PAGE = 12;
 
 interface Restaurant {

@@ -39,7 +39,7 @@ export default function TopHeader({
         const userData = await userRes.json();
         setUser(userData);
 
-        // Restaurant
+       
         if (userData?.restaurant) {
           try {
             const restRes = await fetch(

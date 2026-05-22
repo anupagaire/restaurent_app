@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const MAX_DEPTH = 3;
 
 interface ReviewUser {
@@ -120,21 +120,17 @@ const directReplies = allReviews.filter(r => Number(r.parent) === Number(review.
         }),
       });
 
-      // if (!res.ok) {
-      //   const err = await res.json().catch(() => ({}));
-      //   setReplyError(err.detail || 'Failed to post reply. Try again.');
-      //   return;
-      // }
+   
       if (!res.ok) {
-  const err = await res.json().catch(() => ({}));
-  console.log('REPLY ERROR:', JSON.stringify(err)); // ← add gara
-  const msg = err?.errors
-    ? Object.values(err.errors).flat().join(', ')
-    : err?.detail || 'Failed to post reply.';
-  setReplyError(msg);
-  return;
+        const err = await res.json().catch(() => ({}));
+        console.log('REPLY ERROR:', JSON.stringify(err));
+        const msg = err?.errors
+          ? Object.values(err.errors).flat().join(', ')
+          : err?.detail || 'Failed to post reply.';
+              setReplyError(msg);
+             return;
 }
-console.log('REPLY SUCCESS:', await res.json()); // ← add gara
+console.log('REPLY SUCCESS:', await res.json()); 
 
       const created = await res.json();
       for (const file of replyPhotos) await uploadPhoto(created.id, file);

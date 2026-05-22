@@ -8,7 +8,6 @@ import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-// import { User } from '@/app/super-admin/users/page';
 import type { RestaurantAdmin } from '@/types/user';
 import { apiFetch } from '@/lib/api';
 
@@ -17,7 +16,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (newUser: RestaurantAdmin) => void;  // ← was User
+  onSuccess: (newUser: RestaurantAdmin) => void;  
 }
 
 export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModalProps) {

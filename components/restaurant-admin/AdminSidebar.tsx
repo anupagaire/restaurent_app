@@ -46,6 +46,13 @@ const menuItems: MenuItem[] = [
     icon: MenuIcon,
     permissionKey: 'menuSettings'
   },
+  {
+  title: 'Reviews',
+  href: '/restaurant-admin/review',   
+  icon: Store,                           
+  // permissionKey: 'viewReviews'     
+      permissionKey: 'menuSettings'      
+},
   { 
     title: 'QR Codes', 
     href: '/restaurant-admin/menu/qr', 

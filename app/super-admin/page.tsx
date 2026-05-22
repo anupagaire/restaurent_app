@@ -32,7 +32,6 @@ export default function SuperAdminDashboard() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [recentAdmins, setRecentAdmins] = useState<AdminSummary[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalRevenue, setTotalRevenue] = useState(0); // Future ma real API bata aaos
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -114,7 +113,6 @@ export default function SuperAdminDashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
       <div className="flex gap-4 flex-wrap">
        
        
@@ -137,7 +135,7 @@ export default function SuperAdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Restaurants */}
+      
         <Card>
           <CardHeader className="flex flex-row justify-between items-center">
             <CardTitle>Recent Restaurants</CardTitle>
@@ -154,7 +152,6 @@ export default function SuperAdminDashboard() {
                   <TableRow>
                     <TableHead>Restaurant Name</TableHead>
                     <TableHead>City</TableHead>
-                    <TableHead>Admins</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -163,9 +160,7 @@ export default function SuperAdminDashboard() {
                       <TableCell className="font-medium">{r.name}</TableCell>
                       <TableCell>{r.city || '-'}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">
-                          {r.users?.length || 0} Admin{r.users?.length !== 1 ? 's' : ''}
-                        </Badge>
+                       
                       </TableCell>
                     </TableRow>
                   ))}
@@ -176,47 +171,9 @@ export default function SuperAdminDashboard() {
             )}
           </CardContent>
         </Card>
-
-        {/* Recent Admins */}
-        <Card>
-          <CardHeader className="flex flex-row justify-between items-center">
-            <CardTitle>Recent Restaurant Admins</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/super-admin/users">View All Admins</Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {recentAdmins.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Admin</TableHead>
-                    <TableHead>Restaurant</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentAdmins.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell>
-                        <div className="font-medium">{admin.fullName}</div>
-                        <div className="text-sm text-gray-500">{admin.email}</div>
-                      </TableCell>
-                      <TableCell className="text-[#513012] font-medium">
-                        {admin.restaurantName}
-                      </TableCell>
-                     
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-gray-500 py-8 text-center">No admins yet.</p>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Future Sections (Placeholder) */}
+     
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
        
 

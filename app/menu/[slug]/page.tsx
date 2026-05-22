@@ -28,7 +28,7 @@ interface Restaurant {
   name: string;
   address: string;
   city: string;
-  table_count: number;        // ✅ needed for table picker
+  table_count: number;     
   photos?: { id: number; photo_url: string }[];
   categories?: Category[];
   menus?: MenuItem[];
@@ -40,7 +40,7 @@ interface CartItem {
   categoryName: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 
 function resolveImage(url?: string | null): string | null {
   if (!url) return null;

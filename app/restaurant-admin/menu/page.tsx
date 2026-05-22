@@ -62,7 +62,6 @@ export default function MenuPage() {
 
   useRequirePermission('menuSettings');
 
-  // ── Fetch restaurant ID + details ─────────────────────────────────────────
   const fetchRestaurantId = async () => {
     try {
       const res = await apiFetch('/api/v1/user/me/');

@@ -10,7 +10,7 @@ import SearchAndFilterBar from '@/components/SearchCityModal';
 import { MapPin, X } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Restaurant {
   id: number;

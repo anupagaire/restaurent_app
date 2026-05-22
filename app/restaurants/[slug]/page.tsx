@@ -40,7 +40,7 @@ interface ApiRestaurant {
   status?: boolean;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 
 function toSlug(name: string) {
   return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
