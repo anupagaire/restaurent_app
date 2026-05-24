@@ -7,6 +7,7 @@ import { apiFetch } from '@/lib/api';
 import { useRequirePermission } from '@/hooks/usePermission';
 import { Download, QrCode, RefreshCw, AlertTriangle, X } from 'lucide-react';
 import QRCode from 'react-qr-code';
+import SubscriptionGuard from '@/components/restaurant-admin/SubscriptionGuard';
 
 interface MenuToken {
   id: number;
@@ -457,69 +458,97 @@ export default function QRMenuPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {tokens.map((token) => {
-                const menuUrl = getMenuUrl(token);
-                return (
-                  <div
-                    key={token.id}
-                    className="rounded-2xl overflow-hidden border flex flex-col"
-                    style={{ borderColor: 'rgba(184,147,106,0.3)', background: '#fffdf8' }}
-                  >
-                    <div className="px-4 py-3 flex items-center justify-between" style={{ background: '#513012' }}>
-                      <span className="text-white font-semibold text-sm" style={{ fontFamily: 'Georgia, serif' }}>
-                        Token #{token.id}
-                      </span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        token.is_active ? 'bg-green-400 text-green-900' : 'bg-red-300 text-red-900'
-                      }`}>
-                        {token.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+  {tokens.map((token) => {
+    const menuUrl = getMenuUrl(token);
 
-                    <div className="flex justify-center items-center p-6 bg-white">
-                      <div className="p-3 rounded-xl" style={{ border: '2px solid rgba(184,147,106,0.25)', background: 'white' }}>
-                        <QRCode
-                          id={`qr-svg-${token.id}`}
-                          value={menuUrl}
-                          size={180}
-                          bgColor="#ffffff"
-                          fgColor="#1e0f02"
-                        />
-                      </div>
-                    </div>
+    return (
+      <SubscriptionGuard key={token.id}>
+        <div
+          className="rounded-2xl overflow-hidden border flex flex-col"
+          style={{
+            borderColor: 'rgba(184,147,106,0.3)',
+            background: '#fffdf8',
+          }}
+        >
+          <div
+            className="px-4 py-3 flex items-center justify-between"
+            style={{ background: '#513012' }}
+          >
+            <span
+              className="text-white font-semibold text-sm"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              Token #{token.id}
+            </span>
 
-                    <div className="px-4 pb-2">
-                      <p className="text-xs text-center text-gray-400 italic">
-                        Secure QR — scan to open menu
-                      </p>
-                      <p className="text-xs text-center mt-1" style={{ color: '#c0a080' }}>
-                        Created {formatDate(token.created_on)}
-                      </p>
-                    </div>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                token.is_active
+                  ? 'bg-green-400 text-green-900'
+                  : 'bg-red-300 text-red-900'
+              }`}
+            >
+              {token.is_active ? 'Active' : 'Inactive'}
+            </span>
+          </div>
 
-                    <div className="px-4 pb-4 pt-2">
-                      <Button
-                        onClick={() => downloadQR(token)}
-                        className="w-full"
-                        variant="outline"
-                        style={{ borderColor: '#513012', color: '#513012' }}
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        Download for Printing
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
+          <div className="flex justify-center items-center p-6 bg-white">
+            <div
+              className="p-3 rounded-xl"
+              style={{
+                border: '2px solid rgba(184,147,106,0.25)',
+                background: 'white',
+              }}
+            >
+              <QRCode
+                id={`qr-svg-${token.id}`}
+                value={menuUrl}
+                size={180}
+                bgColor="#ffffff"
+                fgColor="#1e0f02"
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </>
-  );
-}
+          </div>
 
+          <div className="px-4 pb-2">
+            <p className="text-xs text-center text-gray-400 italic">
+              Secure QR — scan to open menu
+            </p>
+
+            <p
+              className="text-xs text-center mt-1"
+              style={{ color: '#c0a080' }}
+            >
+              Created {formatDate(token.created_on)}
+            </p>
+          </div>
+
+          <div className="px-4 pb-4 pt-2">
+            <Button
+              onClick={() => downloadQR(token)}
+              className="w-full"
+              variant="outline"
+              style={{
+                borderColor: '#513012',
+                color: '#513012',
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download for Printing
+            </Button>
+          </div>
+        </div>
+      </SubscriptionGuard>
+    );
+  })}</div>
+      </CardContent>
+    </Card>
+  </div>
+</>
+);
+}
+{/* </div> */}
 function roundRect(
   ctx: CanvasRenderingContext2D,
   x: number, y: number, w: number, h: number, r: number

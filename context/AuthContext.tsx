@@ -32,24 +32,50 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function buildUserFromProfile(me: any): CurrentUser {
-  const role = (me?.role || 'staff');
-  const isOwnerOrAdmin = role === 'Owner' || role === 'Admin' || 
-                        role === 'admin' || role === 'owner';
+  // me.role = already resolved role string (from login flow)
+  // me.roles = [{id, name}] array (from /user/me/ API)
+  // Support both formats
+  let role = me?.role || '';
+
+  if (!role && me?.roles?.length) {
+    // Pick primary role from roles array
+    const roleNames: string[] = me.roles.map((r: any) =>
+      (r?.name ?? '').toLowerCase()
+    );
+    if (roleNames.some(r => r.includes('super')))       role = 'super_admin';
+    else if (roleNames.some(r => r.includes('admin')))  role = 'admin';
+    else if (roleNames.some(r => r.includes('staff')))  role = 'staff';
+    else if (roleNames.some(r => r.includes('customer'))) role = 'customer';
+    else role = 'staff';
+  }
+
+  if (!role) role = 'staff';
+
+  const r = role.toLowerCase();
+  const isOwnerOrAdmin = r === 'owner' || r === 'admin' || r === 'super_admin';
+
+  // Extract backend permission codenames if available
+  const backendPerms: string[] = (me?.roles ?? []).flatMap((role: any) =>
+    (role?.permissions ?? []).map((p: any) => p?.codename ?? '')
+  );
+
+  const hasPerm = (codename: string) =>
+    isOwnerOrAdmin || backendPerms.includes(codename) || me.permissions?.[codename] || false;
 
   return {
     id: me.id,
-    name: me.name || me.email || 'User',
+    name: me.name || `${me.first_name || ''} ${me.last_name || ''}`.trim() || me.email || 'User',
     email: me.email,
-    role: role,
+    role,
     permissions: {
-      viewOrders: isOwnerOrAdmin || me.permissions?.viewOrders || false,
-      manageOrders: isOwnerOrAdmin || me.permissions?.manageOrders || false,
-      addMenuItems: isOwnerOrAdmin || me.permissions?.addMenuItems || false,
-      editMenuItems: isOwnerOrAdmin || me.permissions?.editMenuItems || false,
-      menuSettings: isOwnerOrAdmin || me.permissions?.menuSettings || false,
-      globalSettings: isOwnerOrAdmin || me.permissions?.globalSettings || false,
-      manageStaff: isOwnerOrAdmin || me.permissions?.manageStaff || false,
-    }
+      viewOrders:     isOwnerOrAdmin || hasPerm('view_order')        || me.permissions?.viewOrders    || false,
+      manageOrders:   isOwnerOrAdmin || hasPerm('change_order')      || me.permissions?.manageOrders  || false,
+      addMenuItems:   isOwnerOrAdmin || hasPerm('add_menuitem')      || me.permissions?.addMenuItems  || false,
+      editMenuItems:  isOwnerOrAdmin || hasPerm('change_menuitem')   || me.permissions?.editMenuItems || false,
+      menuSettings:   isOwnerOrAdmin || hasPerm('add_category')      || me.permissions?.menuSettings  || false,
+      globalSettings: isOwnerOrAdmin || hasPerm('change_restaurant') || me.permissions?.globalSettings|| false,
+      manageStaff:    isOwnerOrAdmin || hasPerm('add_user')          || me.permissions?.manageStaff   || false,
+    },
   };
 }
 
@@ -61,8 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initAuth = () => {
       const token = localStorage.getItem('access_token');
-      // दुवै पुरानो र नयाँ key check गरौं
-      const savedUser = localStorage.getItem('user') || localStorage.getItem('currentUser');
+      const savedUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
 
       if (token && savedUser) {
         try {
@@ -71,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setCurrentUser(user);
           setIsAuthenticated(true);
         } catch (e) {
-          console.error("Auth parse error:", e);
+          console.error('Auth parse error:', e);
           clearAuthStorage();
         }
       }
@@ -86,12 +111,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('restaurant_id');
   };
 
   const login = (user: CurrentUser) => {
     setCurrentUser(user);
     setIsAuthenticated(true);
-    localStorage.setItem('currentUser', JSON.stringify(user)); // consistent key
+    localStorage.setItem('currentUser', JSON.stringify(user));
   };
 
   const logout = async () => {
@@ -100,19 +126,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (refresh) {
         await apiFetch('/api/v1/logout/', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh }),
         });
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Logout error:', error);
     } finally {
       clearAuthStorage();
-
-      // Clear cookies
       document.cookie = 'access_token=; path=/; max-age=0';
       document.cookie = 'role=; path=/; max-age=0';
-
       setCurrentUser(null);
       setIsAuthenticated(false);
       window.location.href = '/login';
@@ -120,15 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        login,
-        logout,
-        isAuthenticated,
-        isLoading,
-      }}
-    >
+    <AuthContext.Provider value={{ currentUser, login, logout, isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
@@ -136,8 +150,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used inside an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used inside an AuthProvider');
   return context;
 };

@@ -14,6 +14,7 @@ import { useRequirePermission } from '@/hooks/usePermission';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SubscriptionGuard from '@/components/restaurant-admin/SubscriptionGuard';
 
 interface MenuItem {
   id: number;
@@ -291,6 +292,8 @@ export default function MenuPage() {
 
   // ── Normal menu management UI ─────────────────────────────────────────────
   return (
+        <SubscriptionGuard>
+
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -416,5 +419,6 @@ export default function MenuPage() {
         onCategoryCreated={fetchCategories}
       />
     </div>
+      </SubscriptionGuard>
   );
 }

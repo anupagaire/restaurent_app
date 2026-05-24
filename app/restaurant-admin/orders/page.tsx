@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useRequirePermission } from "@/hooks/usePermission";
+import SubscriptionGuard from '@/components/restaurant-admin/SubscriptionGuard';
 
 interface OrderItem {
   id: number;
@@ -316,8 +317,6 @@ function OrderRow({ order }: { order: Order }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
 export default function OrdersPage() {
   const [orders,        setOrders]        = useState<Order[]>([]);
   const [token,         setToken]         = useState<string>("");
@@ -434,6 +433,8 @@ export default function OrdersPage() {
   );
 
   return (
+        <SubscriptionGuard>
+
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
 
       {/* Header */}
@@ -582,5 +583,7 @@ export default function OrdersPage() {
         </CardContent>
       </Card>
     </div>
+        </SubscriptionGuard>
+
   );
 }

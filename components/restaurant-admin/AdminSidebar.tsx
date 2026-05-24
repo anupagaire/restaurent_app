@@ -10,7 +10,9 @@ import {
   LogOut, 
   X,
   Menu as MenuIcon,
-  QrCode
+  QrCode,
+  History,
+  Star,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -26,44 +28,49 @@ const menuItems: MenuItem[] = [
     title: 'Dashboard', 
     href: '/restaurant-admin', 
     icon: LayoutDashboard,
-    permissionKey: null 
+    permissionKey: null,
   },
   { 
     title: 'Orders', 
     href: '/restaurant-admin/orders', 
     icon: Store,
-    permissionKey: 'viewOrders'
-  },
-  { 
-    title: 'Staff', 
-    href: '/restaurant-admin/staffs', 
-    icon: Users,
-    permissionKey: 'manageStaff'
+    permissionKey: null,
   },
   { 
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
     icon: MenuIcon,
-    permissionKey: 'menuSettings'
+    permissionKey: null,
   },
-  {
-  title: 'Reviews',
-  href: '/restaurant-admin/review',   
-  icon: Store,                           
-  // permissionKey: 'viewReviews'     
-      permissionKey: 'menuSettings'      
-},
   { 
     title: 'QR Codes', 
     href: '/restaurant-admin/menu/qr', 
     icon: QrCode,
-    permissionKey: 'menuSettings'
+    permissionKey: null,
+  },
+  { 
+    title: 'Staff', 
+    href: '/restaurant-admin/staffs', 
+    icon: Users,
+    permissionKey: 'manageStaff',
+  },
+  { 
+    title: 'Reviews', 
+    href: '/restaurant-admin/review', 
+    icon: Star,
+    permissionKey: null,
+  },
+  { 
+    title: 'Subscription History', 
+    href: '/restaurant-admin/subscription/history', 
+    icon: History,
+    permissionKey: null,
   },
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 
     icon: Settings,
-    permissionKey: 'globalSettings'
+    permissionKey: 'globalSettings',
   },
 ];
 
@@ -76,27 +83,27 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const { currentUser, logout } = useAuth();
 
-  // Filter menu items based on role and permissions
   const visibleMenuItems = menuItems.filter((item) => {
-    if (item.permissionKey === null) return true; // Dashboard always visible
+    // Always show items with no permission requirement
+    if (item.permissionKey === null) return true;
 
     if (!currentUser) return false;
 
-    if (currentUser.role === 'Owner' || currentUser.role === 'Admin') {
-      return true;
-    }
+    // Admin/Owner sees everything
+    const role = currentUser.role?.toLowerCase();
+    if (role === 'owner' || role === 'admin') return true;
 
-    // For normal staff - check specific permission
+    // Staff — check specific permission
     return currentUser.permissions?.[item.permissionKey] === true;
   });
 
-const handleLogout = async () => {
-  await logout();
-};
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <>
-    
+      {/* Mobile overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/60 z-40 md:hidden"
@@ -110,6 +117,7 @@ const handleLogout = async () => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         
+        {/* Logo */}
         <div className="p-6 border-b border-[#513012]/10 flex items-center justify-between">
           <Link href="/restaurant-admin" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-[#513012] to-[#5D0565] rounded-xl flex items-center justify-center">
@@ -131,17 +139,17 @@ const handleLogout = async () => {
           </button>
         </div>
 
+        {/* Nav */}
         <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-1">
             {visibleMenuItems.length > 0 ? (
               visibleMenuItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                
                 return (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      onClick={onClose}                   
+                      onClick={onClose}
                       className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all
                         ${isActive 
                           ? 'bg-[#513012] text-white shadow-sm' 
@@ -162,7 +170,7 @@ const handleLogout = async () => {
           </ul>
         </nav>
 
- 
+        {/* Logout */}
         <div className="p-4 border-t border-[#513012]/10 mt-auto">
           <button 
             onClick={handleLogout}

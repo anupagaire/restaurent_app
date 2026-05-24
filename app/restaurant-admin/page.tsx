@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import SubscriptionBanner from '@/components/restaurant-admin/SubscriptionBanner';
+
 import type { MenuItem, Category } from '@/types/menu';
 
 export default function RestaurantAdminDashboard() {
@@ -43,8 +45,8 @@ export default function RestaurantAdminDashboard() {
         });
 
         if (!res.ok) throw new Error("Failed to fetch user");
-
-        const data = await res.json();
+        const raw = await res.json();
+        const data = raw.data ?? raw; 
         setUser(data);
       } catch (err) {
         console.error(err);
@@ -149,8 +151,8 @@ return (
       </div>
 
       {error && <p className="text-red-500 mb-6">{error}</p>}
-
-      {/* KPI Cards — sabai dekhaucha */}
+<SubscriptionBanner /> 
+     
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
         <Card>
           <CardHeader className="pb-2">

@@ -40,47 +40,49 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState<RestaurantAdmin | null>(null);
 
   const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const [restaurantsRes] = await Promise.all([
-        apiFetch('/api/v1/restaurant/'),
-      ]);
+  setLoading(true);
+  try {
+    const [restaurantsRes, usersRes] = await Promise.all([
+      apiFetch('/api/v1/restaurant/?page_size=100'),
+      apiFetch('/api/v1/user/?page_size=100'),
+    ]);
 
-      const restaurantsData = await restaurantsRes.json();
-      const rawRestaurants = Array.isArray(restaurantsData)
-        ? restaurantsData
-        : restaurantsData.results ?? [];
+    const restaurantsData = await restaurantsRes.json();
+    const usersData = await usersRes.json();
 
-      setRestaurants(rawRestaurants.map((r: any) => ({ id: r.id, name: r.name })));
+    const rawRestaurants = restaurantsData.results ?? restaurantsData.data ?? [];
+    const rawUsers = usersData.data ?? usersData.results ?? [];
 
-      const allUsers: RestaurantAdmin[] = [];
-      rawRestaurants.forEach((r: any) => {
-        if (r.users && Array.isArray(r.users)) {
-          r.users.forEach((u: any) => {
-            if ((u.role || '').toLowerCase() !== 'admin') return;
+    setRestaurants(rawRestaurants.map((r: any) => ({ id: r.id, name: r.name })));
 
-            allUsers.push({
-              id: u.id,
-              email: u.email,
-              fullName: `${u.first_name || ''} ${u.last_name || ''}`.trim() || '-',
-              phone: u.contact_no || '-',
-              role: u.role || 'admin',
-              restaurantId: r.id,
-              restaurantName: r.name,
-              address: r.address || '',
-              city: r.city || '',
-            });
-          });
-        }
+    const admins: RestaurantAdmin[] = rawUsers
+      .filter((u: any) =>
+        u.roles?.some((r: any) =>
+          r.name === 'Admin' || r.name === 'AdminGroup'
+        )
+      )
+      .map((u: any) => {
+        const restaurant = rawRestaurants.find((r: any) => r.id === u.restaurant);
+        return {
+          id: u.id,
+          email: u.email,
+          fullName: `${u.first_name || ''} ${u.last_name || ''}`.trim() || '-',
+          phone: u.contact_no || '-',
+          role: u.roles?.[0]?.name ?? 'Admin',
+          restaurantId: u.restaurant,
+          restaurantName: restaurant?.name ?? '-',
+          address: restaurant?.address ?? '',
+          city: restaurant?.city ?? '',
+        };
       });
 
-      setUsers(allUsers);
-    } catch (err) {
-      console.error('Error fetching users:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setUsers(admins);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchUsers();
