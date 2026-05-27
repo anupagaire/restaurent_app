@@ -66,6 +66,7 @@ export default function RestaurantTabs({ menuItems, restaurantId, reviewCount = 
           <MenuSection 
           menuItems={menuItems}
            restaurantId={restaurantId}
+           
           acceptsOnlineOrders={true} />
         )
       ) : (

@@ -61,20 +61,21 @@ export default function MenuPage() {
   const [savingTableCount, setSavingTableCount] = useState(false);
   const [tableCountError, setTableCountError] = useState<string | null>(null);
 
-  useRequirePermission('menuSettings');
+ useRequirePermission(null); 
 
-  const fetchRestaurantId = async () => {
-    try {
-      const res = await apiFetch('/api/v1/user/me/');
-      const user = await res.json();
-      if (user?.restaurant) {
-        setRestaurantId(user.restaurant);
-        await fetchRestaurant(user.restaurant);
-      }
-    } catch (err) {
-      console.error('Failed to fetch restaurant ID', err);
+ const fetchRestaurantId = async () => {
+  try {
+    const res = await apiFetch('/api/v1/user/me/');
+    const raw = await res.json();
+    const user = raw.data ?? raw; // ← fix
+    if (user?.restaurant) {
+      setRestaurantId(user.restaurant);
+      await fetchRestaurant(user.restaurant);
     }
-  };
+  } catch (err) {
+    console.error('Failed to fetch restaurant ID', err);
+  }
+};
 
   const fetchRestaurant = async (id: number) => {
     try {
@@ -126,13 +127,17 @@ export default function MenuPage() {
     }
   };
 
-  const fetchAll = async () => {
-    setLoading(true);
+const fetchAll = async () => {
+  setLoading(true);
+  try {
     await Promise.all([fetchCategories(), fetchMenuItems(), fetchMenuPhotos()]);
     if (restaurantId) await fetchRestaurant(restaurantId);
-    setLoading(false);
-  };
-
+  } catch (err) {
+    console.error('fetchAll error:', err);
+  } finally {
+    setLoading(false); 
+  }
+};
   // ── Save table count ──────────────────────────────────────────────────────
   const handleSaveTableCount = async () => {
     if (!restaurantId) return;

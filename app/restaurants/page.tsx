@@ -7,8 +7,6 @@ import Footer from "@/components/layout/Footer";
 import Image from 'next/image';
 import SearchAndFilterBar from '@/components/SearchCityModal';
 
-import { MapPin, X } from 'lucide-react';
-
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 

@@ -31,6 +31,7 @@ export default function Footer() {
             <div className="space-y-3 text-gray-300">
               <Link href="/register-restaurant" className="block hover:text-white transition">Register Restauarant</Link>
               <Link href="/about" className="block hover:text-white transition">About Us</Link>
+              <Link href="/pricing" className="block hover:text-white transition">Pricing</Link>
               <Link href="/contact" className="block hover:text-white transition">Contact</Link>
             </div>
           </div>
@@ -38,8 +39,7 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-lg">For Restaurants</h3>
             <div className="space-y-3 text-gray-300">
-              <Link href="/login" className="block hover:text-white transition">Restaurant Login</Link>
-              <Link href="/super-admin" className="block hover:text-white transition">Super Admin</Link>
+              <Link href="/login" className="block hover:text-white transition"> Login</Link>
               <Link href="/terms-and-privacy" className="block hover:text-white transition">Terms And Condition</Link>
             </div>
           </div>

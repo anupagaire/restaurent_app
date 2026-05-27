@@ -8,19 +8,21 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Loader2, UserCheck } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+
+interface Role {
+  id: number;
+  name: string;
+}
 
 interface Staff {
   id: number;
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
   contact_no: string;
-  role: string;
+  address: string;
+  roles: Role[];
   restaurant: number;
 }
 
@@ -30,57 +32,37 @@ interface StaffModalProps {
   editingStaff: Staff | null;
   onSubmit: (data: any) => void;
   submitting: boolean;
-  availableRoles: string[];
+  roles: Role[];
 }
 
-const DEFAULT_PERMISSIONS = {
-  viewOrders: false,
-  manageOrders: false,
-  addMenuItems: false,
-  editMenuItems: false,
-  menuSettings: false,
-  globalSettings: false,
-  manageStaff: false,
-};
-
 export default function StaffModal({
-  isOpen, onClose, editingStaff, onSubmit, submitting, availableRoles,
+  isOpen, onClose, editingStaff, onSubmit, submitting, roles,
 }: StaffModalProps) {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     contact_no: '',
-    address: '',
-    role: 'staff',
     password1: '',
-    permissions: { ...DEFAULT_PERMISSIONS },
+    role_id: null as number | null,
   });
 
   useEffect(() => {
-    if (isOpen) {
-      if (editingStaff) {
-        // Existing staff ko saved permissions load garo
-        const allPerms = JSON.parse(localStorage.getItem('staff_permissions') || '{}');
-        const savedPerms = allPerms[editingStaff.email] || DEFAULT_PERMISSIONS;
-
-        setFormData({
-          first_name: editingStaff.first_name || '',
-          last_name: editingStaff.last_name || '',
-          email: editingStaff.email || '',
-          contact_no: editingStaff.contact_no || '',
-          address: '',
-          role: editingStaff.role || 'staff',
-          password1: '',
-          permissions: { ...savedPerms },
-        });
-      } else {
-        setFormData({
-          first_name: '', last_name: '', email: '',
-          contact_no: '', address: '', role: 'staff', password1: '',
-          permissions: { ...DEFAULT_PERMISSIONS },
-        });
-      }
+    if (!isOpen) return;
+    if (editingStaff) {
+      setFormData({
+        first_name: editingStaff.first_name || '',
+        last_name:  editingStaff.last_name  || '',
+        email:      editingStaff.email      || '',
+        contact_no: editingStaff.contact_no || '',
+        password1:  '',
+        role_id:    editingStaff.roles?.[0]?.id ?? null,
+      });
+    } else {
+      setFormData({
+        first_name: '', last_name: '', email: '',
+        contact_no: '', password1: '', role_id: null,
+      });
     }
   }, [isOpen, editingStaff]);
 
@@ -94,135 +76,97 @@ export default function StaffModal({
     onSubmit(formData);
   };
 
-  const permissionItems = [
-    { key: 'viewOrders', label: 'View Orders', desc: 'Can see all orders' },
-    { key: 'manageOrders', label: 'Manage Orders', desc: 'Update order status' },
-    { key: 'addMenuItems', label: 'Add Menu Items', desc: 'Create new dishes' },
-    { key: 'editMenuItems', label: 'Edit Menu Items', desc: 'Update prices & details' },
-    { key: 'menuSettings', label: 'Menu Settings', desc: 'Manage menu categories' },
-    { key: 'globalSettings', label: 'Settings', desc: 'Restaurant settings' },
-    { key: 'manageStaff', label: 'Manage Staff', desc: 'Add/edit other staff' },
-  ];
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[#513012]">
             {editingStaff ? 'Edit Staff Member' : 'Add New Staff Member'}
           </DialogTitle>
           <DialogDescription>
             {editingStaff
-              ? 'Update staff details and permissions'
-              : 'Create a new staff account with specific permissions.'}
+              ? 'Update staff details and role.'
+              : 'Create a new staff account and assign a role.'}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>First Name *</Label>
-              <Input
-                value={formData.first_name}
-                onChange={e => setFormData({ ...formData, first_name: e.target.value })}
-                placeholder="First name"
-                required
-              />
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Name */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label>First Name <span className="text-red-500">*</span></Label>
+              <Input required value={formData.first_name}
+                onChange={e => setFormData({ ...formData, first_name: e.target.value })} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label>Last Name</Label>
-              <Input
-                value={formData.last_name}
-                onChange={e => setFormData({ ...formData, last_name: e.target.value })}
-                placeholder="Last name"
-              />
+              <Input value={formData.last_name}
+                onChange={e => setFormData({ ...formData, last_name: e.target.value })} />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Email *</Label>
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={e => setFormData({ ...formData, email: e.target.value })}
-              placeholder="staff@restaurant.com"
-              required
+          {/* Email */}
+          <div className="space-y-1">
+            <Label>Email <span className="text-red-500">*</span></Label>
+            <Input required type="email" value={formData.email}
               disabled={!!editingStaff}
-            />
+              onChange={e => setFormData({ ...formData, email: e.target.value })} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Phone</Label>
-              <Input
-                value={formData.contact_no}
-                onChange={e => setFormData({ ...formData, contact_no: e.target.value })}
-                placeholder="+977 98XXXXXXXX"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Role</Label>
-              <Select
-                value={formData.role}
-                onValueChange={value => setFormData({ ...formData, role: value })}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {availableRoles.map(role => (
-                    <SelectItem key={role} value={role}>{role}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Phone */}
+          <div className="space-y-1">
+            <Label>Phone</Label>
+            <Input placeholder="+977 98XXXXXXXX" value={formData.contact_no}
+              onChange={e => setFormData({ ...formData, contact_no: e.target.value })} />
           </div>
 
-          <div className="space-y-2">
-            <Label>{editingStaff ? 'New Password (blank = no change)' : 'Password *'}</Label>
-            <Input
-              type="password"
-              value={formData.password1}
-              onChange={e => setFormData({ ...formData, password1: e.target.value })}
-              placeholder={editingStaff ? '••••••••' : 'Min 8 characters'}
+          {/* Password */}
+          <div className="space-y-1">
+            <Label>
+              {editingStaff ? 'New Password (blank = no change)' : 'Password'}
+              {!editingStaff && <span className="text-red-500"> *</span>}
+            </Label>
+            <Input type="password" value={formData.password1}
+              placeholder={editingStaff ? 'Leave blank to keep current' : 'Min 8 characters'}
               required={!editingStaff}
-            />
+              onChange={e => setFormData({ ...formData, password1: e.target.value })} />
           </div>
 
-          {/* ✅ PERMISSIONS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 pb-1 border-b">
-              <UserCheck className="w-5 h-5 text-[#513012]" />
-              <Label className="text-base font-semibold text-[#513012]">Permissions</Label>
-            </div>
-            <p className="text-xs text-gray-500">Choose what this staff member can access in the dashboard</p>
-
-            <div className="grid grid-cols-1 gap-2">
-              {permissionItems.map((perm) => (
-                <div key={perm.key} className="flex items-center justify-between border rounded-xl px-4 py-3">
-                  <div>
-                    <p className="font-medium text-sm">{perm.label}</p>
-                    <p className="text-xs text-gray-500">{perm.desc}</p>
-                  </div>
-                  <Switch
-                    checked={formData.permissions[perm.key as keyof typeof formData.permissions]}
-                    onCheckedChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        permissions: { ...formData.permissions, [perm.key]: checked },
-                      })
-                    }
-                  />
-                </div>
-              ))}
-            </div>
+          {/* Role */}
+          <div className="space-y-2">
+            <Label>Role <span className="text-red-500">*</span></Label>
+            {roles.length === 0 ? (
+              <p className="text-sm text-gray-400">Loading roles...</p>
+            ) : (
+              <div className="space-y-2">
+                {roles.map(role => (
+                  <label key={role.id}
+                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${
+                      formData.role_id === role.id
+                        ? 'border-[#513012] bg-[#513012]/5'
+                        : 'border-gray-200 hover:border-[#513012]/40'
+                    }`}>
+                    <input type="radio" name="role" value={role.id}
+                      checked={formData.role_id === role.id}
+                      onChange={() => setFormData({ ...formData, role_id: role.id })}
+                      className="accent-[#513012]" />
+                    <p className="font-semibold text-sm text-gray-800">{role.name}</p>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="pt-2">
             <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting} className="bg-[#513012] hover:bg-[#513012]/90">
-              {submitting && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
-              {editingStaff ? 'Save Changes' : 'Create Staff'}
+            <Button type="submit" disabled={submitting || !formData.role_id}
+              className="bg-[#513012] hover:bg-[#3f260f]">
+              {submitting
+                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…</>
+                : editingStaff ? '✓ Save Changes' : '✓ Create Staff'}
             </Button>
           </DialogFooter>
         </form>

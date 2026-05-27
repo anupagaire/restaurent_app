@@ -1,105 +1,70 @@
 'use client';
 
-import { Bell, Menu, LogOut } from 'lucide-react';
+import { Bell, Menu, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 interface TopHeaderProps {
   title: string;
   onMenuClick?: () => void;
 }
 
-export default function TopHeader({
-  title,
-  onMenuClick,
-}: TopHeaderProps) {
+export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
+  const { logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [restaurantName, setRestaurantName] = useState<string>('Loading...');
   const [user, setUser] = useState<any>(null);
-  const [restaurantName, setRestaurantName] =
-    useState<string>('Loading...');
-  const router = useRouter();
 
   useEffect(() => {
-    const loadHeaderData = async () => {
+    const load = async () => {
       try {
         const token = localStorage.getItem('access_token');
-
-        // User
-        const userRes = await fetch(
+        const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
+        if (!res.ok) throw new Error('Failed');
+        const raw  = await res.json();
+        const data = raw.data ?? raw;
+        setUser(data);
 
-        if (!userRes.ok) throw new Error('Failed to fetch user');
-
-        const userData = await userRes.json();
-        setUser(userData);
-
-       
-        if (userData?.restaurant) {
+        if (data?.restaurant) {
           try {
-            const restRes = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/${userData.restaurant}/`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
+            const rRes = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/${data.restaurant}/`,
+              { headers: { Authorization: `Bearer ${token}` } }
             );
-
-            if (restRes.ok) {
-              const restaurant = await restRes.json();
-              setRestaurantName(
-                restaurant.name ||
-                  `Restaurant #${userData.restaurant}`
-              );
+            if (rRes.ok) {
+              const r    = await rRes.json();
+              const rData = r.data ?? r;
+              setRestaurantName(rData.name || `Restaurant #${data.restaurant}`);
             } else {
-              setRestaurantName(
-                `Restaurant #${userData.restaurant}`
-              );
+              setRestaurantName(`Restaurant #${data.restaurant}`);
             }
           } catch {
-            setRestaurantName(
-              `Restaurant #${userData.restaurant}`
-            );
+            setRestaurantName(`Restaurant #${data.restaurant}`);
           }
         } else {
           setRestaurantName('No Restaurant');
         }
-      } catch (err) {
-        console.error('Header load failed:', err);
+      } catch {
         setRestaurantName('Restaurant');
       }
     };
-
-    loadHeaderData();
+    load();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    document.cookie =
-      'access_token=; path=/; max-age=0';
-
-    router.push('/login');
-  };
-
   const displayName =
-    user?.first_name && user?.last_name
-      ? `${user.first_name} ${user.last_name}`.trim()
+    user?.first_name
+      ? `${user.first_name} ${user.last_name || ''}`.trim()
       : user?.email?.split('@')[0] || 'Admin';
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const initials = displayName
+    .split(' ')
+    .map((w: string) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[#513012]/10 px-3 sm:px-4 md:px-6 py-3">
@@ -107,7 +72,6 @@ export default function TopHeader({
 
         {/* LEFT */}
         <div className="flex items-center gap-3 min-w-0">
-
           {onMenuClick && (
             <button
               onClick={onMenuClick}
@@ -116,82 +80,68 @@ export default function TopHeader({
               <Menu className="w-6 h-6 text-[#513012]" />
             </button>
           )}
-
           <div className="min-w-0">
             <p className="text-sm sm:text-lg md:text-2xl font-bold text-black truncate">
               {restaurantName}
             </p>
-
-            <h1 className="text-xs sm:text-sm md:text-lg text-[#513012] truncate">
+            <h1 className="text-xs sm:text-sm md:text-base text-[#513012] truncate">
               {title}
             </h1>
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
 
-          {/* Notification */}
+          {/* Notification bell */}
           <button className="relative p-2 rounded-full hover:bg-[#513012]/5 transition-colors">
             <Bell className="w-5 h-5 text-[#513012]" />
-
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white" />
           </button>
 
           {/* Profile */}
           <div className="relative">
-
             <button
-              onClick={() =>
-                setShowProfileMenu(!showProfileMenu)
-              }
-              className="flex items-center gap-2 sm:gap-3 rounded-xl p-1.5 sm:pr-3 hover:bg-[#513012]/5 transition-colors"
+              onClick={() => setShowProfileMenu(p => !p)}
+              className="flex items-center gap-2 rounded-xl p-1.5 sm:pr-3 hover:bg-[#513012]/5 transition-colors"
             >
-              {/* TEXT */}
               <div className="hidden md:block text-right max-w-[140px]">
-                <p className="text-sm font-medium text-[#513012] truncate">
-                  {displayName}
-                </p>
-
-                <p className="text-xs text-gray-500 truncate">
-                  {restaurantName}
-                </p>
+                <p className="text-sm font-semibold text-[#513012] truncate">{displayName}</p>
+                <p className="text-xs text-gray-400 truncate">{restaurantName}</p>
               </div>
-
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#513012] to-[#47034E] flex items-center justify-center text-white text-sm font-semibold border-2 border-white">
-                {getInitials(displayName)}
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#513012] to-[#47034E] flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
+                {initials}
               </div>
+              <ChevronDown className="hidden md:block w-4 h-4 text-gray-400" />
             </button>
 
-            {/* DROPDOWN */}
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-[260px] sm:w-72 bg-white rounded-xl shadow-xl border border-[#513012]/10 py-2 z-50">
-
-                <div className="px-4 py-3 border-b">
-                  <p className="font-semibold text-[#513012] truncate">
-                    {displayName}
-                  </p>
-
-                  <p className="text-sm text-gray-500 truncate">
-                    {user?.email}
-                  </p>
-
-                  <p className="text-xs text-[#513012] mt-1 truncate">
-                    {restaurantName}
-                  </p>
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-[#513012]/10 py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#513012] to-[#47034E] flex items-center justify-center text-white text-sm font-bold">
+                        {initials}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-[#513012] truncate">{displayName}</p>
+                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                        <p className="text-xs text-[#b8936a] truncate mt-0.5">{restaurantName}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="py-1 px-2">
+                    <button
+                      onClick={() => { setShowProfileMenu(false); logout(); }}
+                      className="w-full px-3 py-2.5 text-left text-sm rounded-xl hover:bg-red-50 flex items-center gap-3 text-red-600 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
                 </div>
-
-                <div className="py-1">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600"
-                  >
-                    <LogOut className="w-4 h-4" />
-
-                    Logout
-                  </button>
-                </div>
-              </div>
+              </>
             )}
           </div>
         </div>

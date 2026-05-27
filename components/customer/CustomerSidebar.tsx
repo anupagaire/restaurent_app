@@ -10,6 +10,8 @@ interface Props {
 const NAV = [
   { href: '/customer/orders',  label: 'My Orders',  icon: ShoppingBag },
   { href: '/customer/profile', label: 'Profile',    icon: User },
+    { href: '/customer/menu-review', label: 'Menu Review',    icon: User },
+
 ];
 
 function getInitials(first: string, last: string, email: string) {

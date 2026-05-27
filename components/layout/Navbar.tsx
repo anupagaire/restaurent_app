@@ -211,8 +211,14 @@ export default function Navbar() {
                   )}
                 </AnimatePresence>
               </div>
-
-              {/* CTA */}
+<Link
+    href="/login"
+    className="whitespace-nowrap px-4 py-2 rounded-full border border-white/30
+      text-white text-sm font-medium hover:bg-white/10 transition"
+  >
+    Login
+  </Link>
+          
               <Link
                 href="/register-restaurant"
                 className="whitespace-nowrap px-5 py-2 rounded-full border border-white/20
@@ -281,6 +287,14 @@ export default function Navbar() {
                   <Link href="/contact" onClick={closeMenu} className="hover:text-[#c45cd1] transition font-medium">Contact</Link>
 
                   <div className="pt-4 border-t border-white/10">
+                  <Link
+  href="/login"
+  onClick={closeMenu}
+  className="block w-full text-center px-5 py-3 rounded-full text-white font-medium
+    border border-white/20 hover:bg-white/10 transition"
+>
+  Login
+</Link>
                     <Link
                       href="/register-restaurant"
                       onClick={closeMenu}

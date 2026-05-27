@@ -32,19 +32,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function buildUserFromProfile(me: any): CurrentUser {
-  // me.role = already resolved role string (from login flow)
-  // me.roles = [{id, name}] array (from /user/me/ API)
-  // Support both formats
   let role = me?.role || '';
 
   if (!role && me?.roles?.length) {
-    // Pick primary role from roles array
     const roleNames: string[] = me.roles.map((r: any) =>
       (r?.name ?? '').toLowerCase()
     );
-    if (roleNames.some(r => r.includes('super')))       role = 'super_admin';
-    else if (roleNames.some(r => r.includes('admin')))  role = 'admin';
-    else if (roleNames.some(r => r.includes('staff')))  role = 'staff';
+    if (roleNames.some(r => r.includes('super')))         role = 'super_admin';
+    else if (roleNames.some(r => r.includes('admin')))    role = 'admin';
+    else if (roleNames.some(r => r.includes('staff')))    role = 'staff';
     else if (roleNames.some(r => r.includes('customer'))) role = 'customer';
     else role = 'staff';
   }
@@ -53,14 +49,14 @@ function buildUserFromProfile(me: any): CurrentUser {
 
   const r = role.toLowerCase();
   const isOwnerOrAdmin = r === 'owner' || r === 'admin' || r === 'super_admin';
+  const isStaff = r === 'staff';
 
-  // Extract backend permission codenames if available
   const backendPerms: string[] = (me?.roles ?? []).flatMap((role: any) =>
     (role?.permissions ?? []).map((p: any) => p?.codename ?? '')
   );
 
   const hasPerm = (codename: string) =>
-    isOwnerOrAdmin || backendPerms.includes(codename) || me.permissions?.[codename] || false;
+    isOwnerOrAdmin || backendPerms.includes(codename) || false;
 
   return {
     id: me.id,
@@ -68,13 +64,13 @@ function buildUserFromProfile(me: any): CurrentUser {
     email: me.email,
     role,
     permissions: {
-      viewOrders:     isOwnerOrAdmin || hasPerm('view_order')        || me.permissions?.viewOrders    || false,
-      manageOrders:   isOwnerOrAdmin || hasPerm('change_order')      || me.permissions?.manageOrders  || false,
-      addMenuItems:   isOwnerOrAdmin || hasPerm('add_menuitem')      || me.permissions?.addMenuItems  || false,
-      editMenuItems:  isOwnerOrAdmin || hasPerm('change_menuitem')   || me.permissions?.editMenuItems || false,
-      menuSettings:   isOwnerOrAdmin || hasPerm('add_category')      || me.permissions?.menuSettings  || false,
-      globalSettings: isOwnerOrAdmin || hasPerm('change_restaurant') || me.permissions?.globalSettings|| false,
-      manageStaff:    isOwnerOrAdmin || hasPerm('add_user')          || me.permissions?.manageStaff   || false,
+      viewOrders:     isOwnerOrAdmin || isStaff || hasPerm('view_order'),
+      manageOrders:   isOwnerOrAdmin || isStaff || hasPerm('change_order'),
+      addMenuItems:   isOwnerOrAdmin || isStaff || hasPerm('add_menuitem'),
+      editMenuItems:  isOwnerOrAdmin || isStaff || hasPerm('change_menuitem'),
+      menuSettings:   isOwnerOrAdmin || isStaff,
+      globalSettings: isOwnerOrAdmin,
+      manageStaff:    isOwnerOrAdmin,
     },
   };
 }

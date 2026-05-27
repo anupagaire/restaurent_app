@@ -28,49 +28,56 @@ const menuItems: MenuItem[] = [
     title: 'Dashboard', 
     href: '/restaurant-admin', 
     icon: LayoutDashboard,
-    permissionKey: null,
+    permissionKey: null, // sabailai
   },
   { 
     title: 'Orders', 
     href: '/restaurant-admin/orders', 
     icon: Store,
-    permissionKey: null,
+    permissionKey: null, // sabailai
   },
+
   { 
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
     icon: MenuIcon,
-    permissionKey: null,
+    permissionKey: null, // sabailai
   },
   { 
     title: 'QR Codes', 
     href: '/restaurant-admin/menu/qr', 
     icon: QrCode,
-    permissionKey: null,
+    permissionKey: 'menuSettings', 
   },
   { 
     title: 'Staff', 
     href: '/restaurant-admin/staffs', 
     icon: Users,
-    permissionKey: 'manageStaff',
+    permissionKey: 'manageStaff', 
   },
   { 
     title: 'Reviews', 
     href: '/restaurant-admin/review', 
     icon: Star,
-    permissionKey: null,
+    permissionKey: null, // sabailai
+  },
+  {
+    title: 'Permissions',
+    href: '/restaurant-admin/permissions',
+    icon: Star,
+    permissionKey: 'globalSettings', // admin only(temporary, since staff can't manage promotions for now)
   },
   { 
     title: 'Subscription History', 
     href: '/restaurant-admin/subscription/history', 
     icon: History,
-    permissionKey: null,
+    permissionKey: 'globalSettings', 
   },
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 
     icon: Settings,
-    permissionKey: 'globalSettings',
+    permissionKey: 'globalSettings', // admin matra
   },
 ];
 

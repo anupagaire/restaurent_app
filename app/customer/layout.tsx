@@ -16,11 +16,6 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           last_name:  data.last_name  || '',
           email:      data.email      || '',
         });
-
-        // ── Sync qr_menu_auth so MenuSection on restaurant pages
-        //    recognises this logged-in customer (no re-register needed).
-        //    If they came via /login the login page already set this,
-        //    but we set it here too as a safety net.
         const access  = localStorage.getItem('access_token')  || '';
         const refresh = localStorage.getItem('refresh_token') || '';
         if (access && data.email) {

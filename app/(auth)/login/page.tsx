@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from '@/context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
+  const [showPw, setShowPw]     = useState(false);
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -61,14 +63,25 @@ export default function LoginPage() {
       let primaryRole: string;
 
       if (!hasRestaurant) {
-        const isCustomer   = roleNames.some(r => r.includes('customer') || r.includes('public'));
+        const isCustomer   = roleNames.some(r =>
+          r.includes('customer') || r.includes('public') || r.includes('customergroup')
+        );
         const isSuperAdmin = roleNames.some(r => r.includes('super'));
         if (isCustomer)        primaryRole = 'customer';
         else if (isSuperAdmin) primaryRole = 'super_admin';
-        else                   primaryRole = 'super_admin'; // no restaurant = super admin
+        else                   primaryRole = 'super_admin';
       } else {
-        const isAdmin = roleNames.some(r => r.includes('admin'));
-        primaryRole   = isAdmin ? 'admin' : 'staff';
+        const isCustomer = roleNames.some(r =>
+          r.includes('customer') || r.includes('customergroup')
+        );
+        if (isCustomer) {
+          primaryRole = 'customer';
+        } else {
+          const isAdmin = roleNames.some(r =>
+            r.includes('admin') && !r.includes('super')
+          );
+          primaryRole = isAdmin ? 'admin' : 'staff';
+        }
       }
 
       // ── Step 5: Set role cookie ────────────────────────────────────────────
@@ -83,20 +96,19 @@ export default function LoginPage() {
       }
 
       // ── Step 7: AuthContext login ──────────────────────────────────────────
-      const allPerms   = JSON.parse(localStorage.getItem("staff_permissions") || "{}");
-      const savedPerms = allPerms[me.email];
-      const isAdmin    = primaryRole === 'admin';
+      const isAdmin = primaryRole === 'admin';
+      const isStaff = primaryRole === 'staff';
 
       login({
         id:    me.id,
         name:  `${me.first_name || ""} ${me.last_name || ""}`.trim() || me.email,
         email: me.email,
         role:  primaryRole,
-        permissions: savedPerms || {
-          viewOrders:     isAdmin,
-          manageOrders:   isAdmin,
-          addMenuItems:   isAdmin,
-          editMenuItems:  isAdmin,
+        permissions: {
+          viewOrders:     isAdmin || isStaff,
+          manageOrders:   isAdmin || isStaff,
+          addMenuItems:   isAdmin || isStaff,
+          editMenuItems:  isAdmin || isStaff,
           menuSettings:   isAdmin,
           globalSettings: isAdmin,
           manageStaff:    isAdmin,
@@ -111,6 +123,7 @@ export default function LoginPage() {
       } else if (primaryRole === 'customer') {
         window.location.href = "/customer";
       } else {
+        // admin or staff
         window.location.href = "/restaurant-admin";
       }
 
@@ -123,35 +136,60 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-[#513012]">Login</h2>
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
+      >
+        <div className="text-center mb-2">
+          <h2 className="text-2xl font-bold text-[#513012]">Welcome Back</h2>
+          <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
+        </div>
 
-        <input
-          className="w-full border p-3 rounded-lg mb-4"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        {/* Email */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Email</label>
+          <input
+            className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#513012]/30 focus:border-[#513012] transition-all"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-        <input
-          className="w-full border p-3 rounded-lg mb-6"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        {/* Password with eye toggle */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Password</label>
+          <div className="relative">
+            <input
+              className="w-full border border-gray-200 p-3 pr-11 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#513012]/30 focus:border-[#513012] transition-all"
+              type={showPw ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw(p => !p)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
 
         {error && (
-          <p className="text-red-600 text-sm mb-3 text-center">{error}</p>
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl text-center">
+            {error}
+          </div>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#513012] text-white py-3 rounded-lg font-semibold hover:bg-[#3f260f] transition-colors disabled:opacity-60"
+          className="w-full bg-[#513012] text-white py-3 rounded-xl font-semibold hover:bg-[#3f260f] transition-colors disabled:opacity-60 mt-2"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

@@ -143,7 +143,22 @@ function GenerateConfirmDialog({
     </>
   );
 }
-
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number, w: number, h: number, r: number
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
 export default function QRMenuPage() {
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
   const [restaurantName, setRestaurantName] = useState<string>('');
@@ -155,37 +170,42 @@ export default function QRMenuPage() {
   useRequirePermission('menuSettings');
 
   const fetchRestaurantId = async () => {
-    try {
-      const res = await apiFetch('/api/v1/user/me/');
-      const user = await res.json();
-      if (user?.restaurant) setRestaurantId(user.restaurant);
-      if (user?.restaurant_name) setRestaurantName(user.restaurant_name);
-      else if (user?.name) setRestaurantName(user.name);
-    } catch (err) {
-      console.error('Failed to fetch user:', err);
-    }
-  };
+  try {
+    const res = await apiFetch('/api/v1/user/me/');
+    const raw = await res.json();
+    const user = raw.data ?? raw; // ← fix
+    if (user?.restaurant) setRestaurantId(user.restaurant);
+  } catch (err) {
+    console.error('Failed to fetch user:', err);
+  }
+};
 
-  const fetchTokens = async () => {
-    try {
-      const res = await apiFetch('/api/v1/menu-tokens/my_tokens/');
-      if (!res.ok) {
-        if (res.status === 401) { alert('Session expired. Please login again.'); return; }
-        throw new Error('Failed to fetch');
-      }
-      const data = await res.json();
-      const list: MenuToken[] = Array.isArray(data) ? data : data.results || [];
-      setTokens(list);
-    } catch (err) {
-      console.error('Failed to fetch tokens:', err);
-    } finally {
-      setLoading(false);
+ const fetchTokens = async () => {
+  try {
+    const res = await apiFetch('/api/v1/menu-tokens/my_tokens/');
+    if (!res.ok) {
+      setTokens([]);
+      return; // silent fail
     }
-  };
+    const data = await res.json();
+    const list: MenuToken[] = Array.isArray(data) ? data : data.results ?? [];
+    setTokens(list);
+  } catch (err) {
+    setTokens([]);
+  } finally {
+    setLoading(false); // ← always
+  }
+};
 
   useEffect(() => { fetchRestaurantId(); }, []);
-  useEffect(() => { if (restaurantId !== null) fetchTokens(); }, [restaurantId]);
-
+useEffect(() => { 
+  if (restaurantId !== null) {
+    fetchTokens();
+  } else {
+    // restaurantId null bhaye pani loading false gara
+    setLoading(false);
+  }
+}, [restaurantId]);
   const getMenuUrl = (tokenItem: MenuToken): string => {
     if (tokenItem.menu_url?.includes('/menu/')) return tokenItem.menu_url;
     if (tokenItem.raw_token) return `${window.location.origin}/menu/${restaurantId}?token=${tokenItem.raw_token}`;
@@ -542,26 +562,10 @@ export default function QRMenuPage() {
       </SubscriptionGuard>
     );
   })}</div>
-      </CardContent>
-    </Card>
-  </div>
-</>
-);
-}
-{/* </div> */}
-function roundRect(
-  ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number, r: number
-) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
+     
+</CardContent>
+        </Card>
+      </div>
+    </>
+  );
 }
