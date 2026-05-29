@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MapPin, LocateFixed, X, Search } from 'lucide-react';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 
 interface SearchAndFilterBarProps {
   search: string;
@@ -230,11 +228,10 @@ export default function SearchAndFilterBar({
 
   return (
     <div className="w-full">
-      {/* Search input */}
       <div className="flex justify-center mb-6">
         <input
           type="text"
-          placeholder="Search restaurants..."
+          placeholder="Search venues..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full max-w-md px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#513012]"

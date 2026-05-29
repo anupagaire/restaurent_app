@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 const sections = {
   terms: [
     {
@@ -118,7 +116,6 @@ export default function LegalPage() {
 
   return (
     <>
-   <Navbar/>
     <div className="min-h-screen   text-black font-sans">
       {/* Header */}
       <div className="relative overflow-hidden border-b border-white/10">
@@ -226,7 +223,6 @@ export default function LegalPage() {
         </div>
       </div>
     </div>
-       <Footer/>
 
      </>
   );

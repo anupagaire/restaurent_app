@@ -63,7 +63,7 @@ function PlanFormModal({
   onClose,
   onSaved,
 }: {
-  initial: Plan | null;       // null = create, Plan = edit
+  initial: Plan | null;       
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -75,8 +75,8 @@ function PlanFormModal({
           description:  initial.description,
           price:        initial.price,
           duration_days:initial.duration_days,
-          features:     initial.features,
-          limits:       initial.limits,
+          features:      typeof initial.features === 'string' ? initial.features : JSON.stringify(initial.features ?? ''),
+          limits:        typeof initial.limits === 'string' ? initial.limits : JSON.stringify(initial.limits ?? ''),
           is_trial:     initial.is_trial,
           is_active:    initial.is_active,
           ordering:     initial.ordering,

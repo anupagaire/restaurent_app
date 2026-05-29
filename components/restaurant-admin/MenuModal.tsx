@@ -68,7 +68,7 @@ export default function MenuModal({
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [categoryError, setCategoryError] = useState('');
   const [uploadError, setUploadError] = useState('');
-
+const [previewImage, setPreviewImage] = useState<string | null>(null);
   useEffect(() => {
     if (editingItem) {
       setFormData({
@@ -171,12 +171,10 @@ export default function MenuModal({
       description: formData.description.trim() || null,
       price: formData.price.toString(),
       status: formData.isAvailable,
-      // Only pass image URL if no file selected (URL input fallback)
       image: selectedFile ? null : formData.image || null,
     };
 
     try {
-      // Pass selectedFile to parent — parent will upload after getting the menu item ID
       await onSubmit(payload, selectedFile);
       onClose();
     } catch (err) {
@@ -266,7 +264,6 @@ export default function MenuModal({
             </div>
           </div>
 
-          {/* New Category Input */}
           {showAddCategory && (
             <div className="p-4 bg-gray-50 border border-dashed border-[#513012]/30 rounded-xl space-y-3">
               <Label>New Category Name</Label>
@@ -289,7 +286,6 @@ export default function MenuModal({
             </div>
           )}
 
-          {/* Image Upload Section */}
           <div className="space-y-4">
             <Label>Menu Item Image</Label>
 
@@ -299,7 +295,6 @@ export default function MenuModal({
                 <p className="font-medium text-sm">Click to upload image</p>
                 <p className="text-sm text-gray-500 mt-1">JPG, PNG, JPEG • Max 5MB</p>
               </div>
-              {/* ✅ Fixed: type="file" instead of type="menu" */}
               <input
                 type="file"
                 accept="image/*"

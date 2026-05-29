@@ -12,7 +12,8 @@ import {
   Menu as MenuIcon,
   QrCode,
   History,
-  Star,
+  Star, 
+
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -28,20 +29,20 @@ const menuItems: MenuItem[] = [
     title: 'Dashboard', 
     href: '/restaurant-admin', 
     icon: LayoutDashboard,
-    permissionKey: null, // sabailai
+    permissionKey: null,
   },
   { 
     title: 'Orders', 
     href: '/restaurant-admin/orders', 
     icon: Store,
-    permissionKey: null, // sabailai
+    permissionKey: null,
   },
 
   { 
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
     icon: MenuIcon,
-    permissionKey: null, // sabailai
+    permissionKey: null, 
   },
   { 
     title: 'QR Codes', 
@@ -59,13 +60,7 @@ const menuItems: MenuItem[] = [
     title: 'Reviews', 
     href: '/restaurant-admin/review', 
     icon: Star,
-    permissionKey: null, // sabailai
-  },
-  {
-    title: 'Permissions',
-    href: '/restaurant-admin/permissions',
-    icon: Star,
-    permissionKey: 'globalSettings', // admin only(temporary, since staff can't manage promotions for now)
+    permissionKey: null, 
   },
   { 
     title: 'Subscription History', 
@@ -73,11 +68,12 @@ const menuItems: MenuItem[] = [
     icon: History,
     permissionKey: 'globalSettings', 
   },
+
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 
     icon: Settings,
-    permissionKey: 'globalSettings', // admin matra
+    permissionKey: 'globalSettings', 
   },
 ];
 

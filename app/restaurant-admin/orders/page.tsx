@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -33,12 +34,27 @@ interface Order {
   created_on: string;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const REFRESH_INTERVAL = 30_000;
 type TabType = "all" | "online" | "table";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string; border: string }> = {
+  pending:    { label: "Pending",     bg: "#fef9c3", color: "#854d0e", border: "rgba(133,77,14,0.3)" },
+  confirmed:  { label: "Confirmed",   bg: "#dbeafe", color: "#1d4ed8", border: "rgba(29,78,216,0.3)" },
+  preparing:  { label: "Preparing",   bg: "#fef3c7", color: "#b45309", border: "rgba(180,83,9,0.3)"  },
+  ready:      { label: "Ready",       bg: "#d1fae5", color: "#065f46", border: "rgba(6,95,70,0.3)"   },
+  delivered:  { label: "Delivered",   bg: "#f0fdf4", color: "#16a34a", border: "rgba(22,163,74,0.3)" },
+  cancelled:  { label: "Cancelled",   bg: "#fee2e2", color: "#991b1b", border: "rgba(153,27,27,0.3)" },
+};
+
+// Next valid status transitions
+const STATUS_FLOW: Record<string, string[]> = {
+  pending:   ["confirmed", "cancelled"],
+  confirmed: ["preparing", "cancelled"],
+  preparing: ["ready", "cancelled"],
+  ready:     ["delivered"],
+  delivered: [],
+  cancelled: [],
+};
 
 function formatTime(dateStr: string) {
   return new Date(dateStr).toLocaleString("en-US", {
@@ -47,9 +63,6 @@ function formatTime(dateStr: string) {
   });
 }
 
-/** Fetch the active QR token from the API instead of localStorage.
- *  GET /api/v1/menu-tokens/my_tokens/ → find active token → extract raw_token
- */
 async function fetchQRToken(): Promise<string> {
   try {
     const res = await apiFetch("/api/v1/menu-tokens/my_tokens/");
@@ -57,22 +70,13 @@ async function fetchQRToken(): Promise<string> {
     const data = await res.json();
     const list: { id: number; is_active: boolean }[] =
       Array.isArray(data) ? data : (data.results ?? []);
-
-    // Prefer active token, fall back to most recent
     const active = list.find((t) => t.is_active) ?? list[0];
     if (!active) return "";
-
-    // The QR generator saves the full menu URL in localStorage as:
-    // key:   qr_token_url_{id}
-    // value: https://yoursite.com/menu/8?token=lVgXlJx3...
-    // Extract the token query param from that saved URL
     const savedUrl = localStorage.getItem(`qr_token_url_${active.id}`);
     if (savedUrl?.includes("token=")) {
       const token = new URL(savedUrl).searchParams.get("token");
       if (token) return token;
     }
-
-    // Fallback: use id (works only if backend accepts numeric tokens)
     return String(active.id);
   } catch {
     return "";
@@ -92,8 +96,96 @@ function dedupeOrders(orders: Order[]): Order[] {
   });
 }
 
-// ─── Order Type Badge ─────────────────────────────────────────────────────────
+// ─── Status Badge ─────────────────────────────────────────────────────────────
+function StatusBadge({ status }: { status: string }) {
+  const cfg = STATUS_CONFIG[status] ?? { label: status, bg: "#f3f4f6", color: "#374151", border: "rgba(0,0,0,0.1)" };
+  return (
+    <span
+      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold"
+      style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}
+    >
+      {cfg.label}
+    </span>
+  );
+}
 
+// ─── Status Changer ───────────────────────────────────────────────────────────
+function StatusChanger({
+  order,
+  onStatusChanged,
+}: {
+  order: Order;
+  onStatusChanged: (orderId: number, newStatus: string) => void;
+}) {
+  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState("");
+  const nextStatuses = STATUS_FLOW[order.status] ?? [];
+
+  if (nextStatuses.length === 0) {
+    return (
+      <div className="mt-3 flex items-center gap-2">
+        <StatusBadge status={order.status} />
+        <span className="text-xs text-gray-400 italic">No further actions</span>
+      </div>
+    );
+  }
+
+  const handleStatusChange = async (newStatus: string) => {
+    setUpdating(true);
+    setError("");
+    try {
+      const res = await apiFetch(`/api/v1/orders/${order.id}/`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || errData.error || `Failed (${res.status})`);
+      }
+      onStatusChanged(order.id, newStatus);
+    } catch (e: any) {
+      setError(e.message || "Update failed");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  return (
+    <div className="mt-3">
+      <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#b8936a" }}>
+        Update Status
+      </p>
+      <div className="flex items-center gap-2 flex-wrap">
+        <StatusBadge status={order.status} />
+        <span className="text-gray-300 text-sm">→</span>
+        {nextStatuses.map((s) => {
+          const cfg = STATUS_CONFIG[s] ?? { label: s, bg: "#513012", color: "#fff", border: "transparent" };
+          const isDanger = s === "cancelled";
+          return (
+            <button
+              key={s}
+              disabled={updating}
+              onClick={(e) => { e.stopPropagation(); handleStatusChange(s); }}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+              style={{
+                background: isDanger ? "#fee2e2" : cfg.bg,
+                color: isDanger ? "#991b1b" : cfg.color,
+                border: `1.5px solid ${isDanger ? "rgba(153,27,27,0.4)" : cfg.border}`,
+                opacity: updating ? 0.6 : 1,
+                cursor: updating ? "not-allowed" : "pointer",
+              }}
+            >
+              {updating ? "..." : `→ ${cfg.label}`}
+            </button>
+          );
+        })}
+      </div>
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+    </div>
+  );
+}
+
+// ─── Order Type Badge ─────────────────────────────────────────────────────────
 function OrderTypeBadge({ order }: { order: Order }) {
   if (isOnlineOrder(order)) {
     return (
@@ -116,7 +208,6 @@ function OrderTypeBadge({ order }: { order: Order }) {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-
 function StatCard({ label, value, sub, accent }: {
   label: string; value: string | number; sub?: string; accent: string;
 }) {
@@ -133,8 +224,13 @@ function StatCard({ label, value, sub, accent }: {
 }
 
 // ─── Expandable Order Row ─────────────────────────────────────────────────────
-
-function OrderRow({ order }: { order: Order }) {
+function OrderRow({
+  order,
+  onStatusChanged,
+}: {
+  order: Order;
+  onStatusChanged: (orderId: number, newStatus: string) => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const online = isOnlineOrder(order);
 
@@ -195,6 +291,11 @@ function OrderRow({ order }: { order: Order }) {
         </td>
 
         <td className="py-4 px-4">
+          {/* Status badge in table row */}
+          <StatusBadge status={order.status} />
+        </td>
+
+        <td className="py-4 px-4">
           <div className="flex items-center gap-1.5 text-sm text-gray-500">
             <Clock size={12} />
             {formatTime(order.created_on)}
@@ -227,8 +328,9 @@ function OrderRow({ order }: { order: Order }) {
 
       {expanded && (
         <tr style={{ background: online ? "#f8fff9" : "#fffbf5" }}>
-          <td colSpan={6} className="px-6 py-5">
+          <td colSpan={7} className="px-6 py-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Items */}
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#b8936a" }}>
                   Order Items
@@ -260,8 +362,12 @@ function OrderRow({ order }: { order: Order }) {
                     Rs. {parseFloat(order.total_price || "0").toFixed(0)}
                   </span>
                 </div>
+
+                {/* ✅ Status changer — inline in expanded row */}
+                <StatusChanger order={order} onStatusChanged={onStatusChanged} />
               </div>
 
+              {/* Customer / delivery info */}
               <div className="space-y-3">
                 <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#b8936a" }}>
                   {online ? "Delivery Info" : "Table Info"}
@@ -317,6 +423,7 @@ function OrderRow({ order }: { order: Order }) {
   );
 }
 
+// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function OrdersPage() {
   const [orders,        setOrders]        = useState<Order[]>([]);
   const [token,         setToken]         = useState<string>("");
@@ -328,36 +435,46 @@ export default function OrdersPage() {
   const [activeTab,     setActiveTab]     = useState<TabType>("all");
 
   useRequirePermission("viewOrders");
+const currentMonth = new Date().getMonth();
+const currentYear = new Date().getFullYear();
 
-  // ── Fetch both token-based (table) AND jwt-based (online) orders ───────────
+const monthlyOrders = orders.filter(o => {
+  const d = new Date(o.created_on);
+  return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+});
+
+const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
+  // ✅ Status update handler — updates local state without refetch
+  const handleStatusChanged = useCallback((orderId: number, newStatus: string) => {
+    setOrders(prev =>
+      prev.map(o =>
+        o.id === orderId
+          ? { ...o, status: newStatus, status_display: STATUS_CONFIG[newStatus]?.label ?? newStatus }
+          : o
+      )
+    );
+  }, []);
+
   const fetchOrders = useCallback(async (currentToken: string, isManual = false) => {
     if (isManual) setRefreshing(true);
-
     try {
       const results: Order[] = [];
 
-      // ── Fetch 1: Token-based orders (table orders via QR scan) ─────────────
-      // These are orders placed by customers scanning the table QR code
       if (currentToken) {
         try {
           const tokenRes = await apiFetch(
-            `/api/v1/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`,
+            `/api/v1/admin/orders/?token=${encodeURIComponent(currentToken)}&page_size=100`,
           );
           if (tokenRes.ok) {
             const data = await tokenRes.json();
             const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
             results.push(...list);
           }
-        } catch {
-          // token fetch failed silently — JWT fetch below will still run
-        }
+        } catch { /* silent */ }
       }
 
-      // ── Fetch 2: JWT-based orders (online/delivery orders) ─────────────────
-      // These are orders placed by logged-in customers from the menu page
-      // Uses the admin's JWT so backend returns all orders for their restaurant
       try {
-        const jwtRes = await apiFetch(`/api/v1/orders/?page_size=100`);
+        const jwtRes = await apiFetch(`/api/v1/admin/orders/?page_size=100`);
         if (jwtRes.ok) {
           const data = await jwtRes.json();
           const list: Order[] = Array.isArray(data) ? data : (data.results ?? []);
@@ -366,16 +483,13 @@ export default function OrdersPage() {
           setError("Session expired. Please log in again.");
           return;
         }
-      } catch {
-        // jwt fetch failed silently
-      }
+      } catch { /* silent */ }
 
       if (results.length === 0 && !currentToken) {
         setError("NO_TOKEN");
         return;
       }
 
-      // Deduplicate (same order might appear in both fetches) and sort newest first
       const merged = dedupeOrders(results).sort(
         (a, b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime(),
       );
@@ -392,7 +506,6 @@ export default function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    // Fetch QR token from API (not localStorage — localStorage gets cleared)
     fetchQRToken().then((t) => {
       setToken(t);
       fetchOrders(t);
@@ -405,7 +518,6 @@ export default function OrdersPage() {
     return () => clearInterval(interval);
   }, [token, fetchOrders]);
 
-  // ── Filters ───────────────────────────────────────────────────────────────
   const todayOrders = useMemo(() => {
     if (!showTodayOnly) return orders;
     const today = new Date().toISOString().split("T")[0];
@@ -424,7 +536,6 @@ export default function OrdersPage() {
   const onlineRevenue = todayOrders.filter(isOnlineOrder).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
   const tableRevenue  = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
 
-  // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <div className="w-10 h-10 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
@@ -433,157 +544,161 @@ export default function OrdersPage() {
   );
 
   return (
-        <SubscriptionGuard>
+    <SubscriptionGuard>
+      <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
 
-    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {lastRefreshed
-              ? `Last updated: ${lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 30s`
-              : "Loading..."}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button
-            variant={showTodayOnly ? "default" : "outline"}
-            onClick={() => setShowTodayOnly(true)}
-            className="flex items-center gap-2 text-sm"
-            style={showTodayOnly ? { background: "#513012" } : {}}
-          >
-            <Calendar className="w-4 h-4" /> Today
-          </Button>
-          <Button
-            variant={!showTodayOnly ? "default" : "outline"}
-            onClick={() => setShowTodayOnly(false)}
-            className="text-sm"
-            style={!showTodayOnly ? { background: "#513012" } : {}}
-          >
-            All Orders
-          </Button>
-          <Button
-            onClick={() => fetchOrders(token, true)}
-            disabled={refreshing}
-            variant="outline"
-            className="flex items-center gap-2 text-sm"
-          >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-        </div>
-      </div>
-
-      {/* Error */}
-      {error && error !== "NO_TOKEN" && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>{error}</span>
-          <button onClick={() => fetchOrders(token, true)} className="ml-auto underline">Retry</button>
-        </div>
-      )}
-
-      {/* No token warning (non-blocking — online orders still show) */}
-      {!token && (
-        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>QR token not found — table orders won't appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Total Orders"  value={todayOrders.length} sub={`Rs. ${totalRevenue.toFixed(0)}`}  accent="#513012" />
-        <StatCard label="Online Orders" value={onlineCount}         sub={`Rs. ${onlineRevenue.toFixed(0)}`} accent="#16a34a" />
-        <StatCard label="Table Orders"  value={tableCount}          sub={`Rs. ${tableRevenue.toFixed(0)}`}  accent="#b45309" />
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-2xl w-fit" style={{ background: "#f3f4f6" }}>
-        {(
-          [
-            { key: "all",    label: "All",             icon: null },
-            { key: "online", label: "Online",          icon: <Truck size={13} /> },
-            { key: "table",  label: "Table / Dine-in", icon: <UtensilsCrossed size={13} /> },
-          ] as { key: TabType; label: string; icon: React.ReactNode }[]
-        ).map(({ key, label, icon }) => (
-          <button
-            key={key}
-            onClick={() => setActiveTab(key)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            style={
-              activeTab === key
-                ? {
-                    background: key === "online" ? "#16a34a" : key === "table" ? "#b45309" : "#513012",
-                    color: "#fff",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                  }
-                : { color: "#6b7280" }
-            }
-          >
-            {icon} {label}
-            <span
-              className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
-              style={{
-                background: activeTab === key ? "rgba(255,255,255,0.2)" : "#e5e7eb",
-                color: activeTab === key ? "#fff" : "#374151",
-              }}
-            >
-              {key === "all" ? todayOrders.length : key === "online" ? onlineCount : tableCount}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Orders table */}
-      <Card style={{ border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-800">
-              {activeTab === "all" ? "All Orders" : activeTab === "online" ? "🚚 Online Orders" : "🍽️ Table Orders"}
-              <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length})</span>
-            </h2>
-            <p className="text-xs text-gray-400">Click a row to expand</p>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
+            <p className="text-gray-500 text-sm mt-1">
+              {lastRefreshed
+                ? `Last updated: ${lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 30s`
+                : "Loading..."}
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {filteredOrders.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <div className="text-5xl mb-4">
-                {activeTab === "online" ? "🚚" : activeTab === "table" ? "🍽️" : "📋"}
-              </div>
-              <p className="font-medium">No orders found</p>
-              <p className="text-sm mt-1">
-                {showTodayOnly ? "No orders placed today yet." : "No orders available."}
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
-                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Order</th>
-                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Customer</th>
-                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Location</th>
-                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Time</th>
-                    <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Items</th>
-                    <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider text-gray-400">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {filteredOrders.map((order) => (
-                    <OrderRow key={order.id} order={order} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-        </SubscriptionGuard>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant={showTodayOnly ? "default" : "outline"}
+              onClick={() => setShowTodayOnly(true)}
+              className="flex items-center gap-2 text-sm"
+              style={showTodayOnly ? { background: "#513012" } : {}}
+            >
+              <Calendar className="w-4 h-4" /> Today
+            </Button>
+            <Button
+              variant={!showTodayOnly ? "default" : "outline"}
+              onClick={() => setShowTodayOnly(false)}
+              className="text-sm"
+              style={!showTodayOnly ? { background: "#513012" } : {}}
+            >
+              All Orders
+            </Button>
+            <Button
+              onClick={() => fetchOrders(token, true)}
+              disabled={refreshing}
+              variant="outline"
+              className="flex items-center gap-2 text-sm"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
+        </div>
 
+        {/* Error */}
+        {error && error !== "NO_TOKEN" && (
+          <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span>{error}</span>
+            <button onClick={() => fetchOrders(token, true)} className="ml-auto underline">Retry</button>
+          </div>
+        )}
+
+        {!token && (
+          <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span>QR token not found — table orders won't appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          <StatCard label="Total Orders"  value={todayOrders.length} sub={`Rs. ${totalRevenue.toFixed(0)}`}  accent="#513012" />
+          <StatCard label="Online Orders" value={onlineCount}         sub={`Rs. ${onlineRevenue.toFixed(0)}`} accent="#16a34a" />
+          <StatCard label="Table Orders"  value={tableCount}          sub={`Rs. ${tableRevenue.toFixed(0)}`}  accent="#b45309" />
+          <StatCard label="Today Revenue"   value={`Rs. ${totalRevenue.toFixed(0)}`}   sub={`${todayOrders.length} orders`}   accent="#513012" />
+<StatCard label="Monthly Revenue" value={`Rs. ${monthlyRevenue.toFixed(0)}`} sub={`${monthlyOrders.length} orders`} accent="#7e22ce" />
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 p-1 rounded-2xl w-fit" style={{ background: "#f3f4f6" }}>
+          {(
+            [
+              { key: "all",    label: "All",             icon: null },
+              { key: "online", label: "Online",          icon: <Truck size={13} /> },
+              { key: "table",  label: "Table / Dine-in", icon: <UtensilsCrossed size={13} /> },
+            ] as { key: TabType; label: string; icon: React.ReactNode }[]
+          ).map(({ key, label, icon }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+              style={
+                activeTab === key
+                  ? {
+                      background: key === "online" ? "#16a34a" : key === "table" ? "#b45309" : "#513012",
+                      color: "#fff",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                    }
+                  : { color: "#6b7280" }
+              }
+            >
+              {icon} {label}
+              <span
+                className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
+                style={{
+                  background: activeTab === key ? "rgba(255,255,255,0.2)" : "#e5e7eb",
+                  color: activeTab === key ? "#fff" : "#374151",
+                }}
+              >
+                {key === "all" ? todayOrders.length : key === "online" ? onlineCount : tableCount}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Orders table */}
+        <Card style={{ border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {activeTab === "all" ? "All Orders" : activeTab === "online" ? "🚚 Online Orders" : "🍽️ Table Orders"}
+                <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length})</span>
+              </h2>
+              <p className="text-xs text-gray-400">Click a row to expand · Change status in expanded view</p>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {filteredOrders.length === 0 ? (
+              <div className="text-center py-20 text-gray-400">
+                <div className="text-5xl mb-4">
+                  {activeTab === "online" ? "🚚" : activeTab === "table" ? "🍽️" : "📋"}
+                </div>
+                <p className="font-medium">No orders found</p>
+                <p className="text-sm mt-1">
+                  {showTodayOnly ? "No orders placed today yet." : "No orders available."}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Order</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Customer</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Location</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Status</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Time</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Items</th>
+                      <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider text-gray-400">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredOrders.map((order) => (
+                      <OrderRow
+                        key={order.id}
+                        order={order}
+                        onStatusChanged={handleStatusChanged}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </SubscriptionGuard>
   );
 }

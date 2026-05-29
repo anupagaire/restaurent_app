@@ -3,21 +3,25 @@ import CTASection from '@/components/home/CTASection';
 import Testimonials from '../components/home/Testimonials';
 import WhyMultiCusine from '../components/home/WhyMultiCuisine';
 import HowItWorks from '@/components/home/HowItWorks';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+import { getWebsiteContent } from '@/lib/websiteContent';
+
 import FeaturedRestaurants from '@/components/home/FeaturedRestaurants';
-export default function Home() {
+export default async function HomePage() {
+    const content = await getWebsiteContent();
+
   return (
     <>
-      <Navbar />
+    <div>
       <Hero  />
        <FeaturedRestaurants />
    <WhyMultiCusine />
    <HowItWorks />    
 
-      <Testimonials /> 
+   
+            <Testimonials data={content?.testimonials_section ?? null} />
+
       <CTASection />
-      <Footer />
+      </div>
     </>
   );
 }

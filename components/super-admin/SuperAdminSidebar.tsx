@@ -9,7 +9,7 @@ import {
   Settings,
   Contact,
   ClipboardList,
-  CreditCard,
+  CreditCard,Globe ,
   FileText,
   Tag,
   X
@@ -24,6 +24,11 @@ const menuItems = [
   { title: 'Plans', href: '/super-admin/subscriptions/plans', icon: CreditCard },
   { title: 'Promo Codes', href: '/super-admin/subscriptions/promo', icon: Tag },
   { title: 'Contact', href: '/super-admin/contact', icon: Contact },
+    {
+  title: 'Website Content',
+  href: '/super-admin/website-content',
+  icon: Globe
+},
   { title: 'Settings', href: '/super-admin/settings', icon: Settings },
 ];
 

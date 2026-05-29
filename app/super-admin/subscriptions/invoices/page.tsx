@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback} from 'react';
 import {
-  Search, RefreshCw, Loader2, Send, Download,
-  CheckCircle2, Clock, XCircle, Building2, ChevronDown, ChevronUp,
+  Search, RefreshCw, Loader2, Download,
+  CheckCircle2, Clock, XCircle, Building2, 
 } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? '';
@@ -28,6 +28,7 @@ interface PaymentRequest {
   amount: string;
   discount_amount: string;
   final_amount: string;
+  plan?: number;
   transaction_reference: string;
   payment_note: string;
   admin_notes: string;

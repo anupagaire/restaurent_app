@@ -115,7 +115,7 @@ const list: Role[] = (d.data ?? d.results ?? []).map((r: any) => ({ id: r.id, na
 
   // ── Step 2: Create User (POST /api/v1/user/) ───────────────────────────────
   // Uses authenticated endpoint, assigns restaurant
-  // Does NOT send role — that's step 3
+  
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -163,6 +163,8 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
         id:             createdUserId,
         email:          userForm.email,
         fullName:       `${userForm.first_name} ${userForm.last_name}`.trim() || '-',
+        first_name:     userForm.first_name,  
+        last_name:      userForm.last_name, 
         phone:          userForm.contact_no || '-',
         role:           assignedRole?.name ?? 'Admin',
         restaurantId:   restaurantId!,

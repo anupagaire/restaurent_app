@@ -33,7 +33,8 @@ export default function RestaurantAdminDashboard() {
   // Menu Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
-
+  const [orders, setOrders] = useState<any[]>([]);
+ 
   // Fetch User
   useEffect(() => {
     const loadUser = async () => {
@@ -57,36 +58,52 @@ export default function RestaurantAdminDashboard() {
     loadUser();
   }, []);
 
-  // Fetch Restaurant + Menu + Categories
-  const fetchDashboardData = async (restaurantId: number) => {
-    try {
-      setLoading(true);
-      const [restRes, menuRes, catRes] = await Promise.all([
-        apiFetch(`/api/v1/restaurant/${restaurantId}/`),
-        apiFetch(`/api/v1/menu/?restaurant=${restaurantId}&limit=6`), // recent 6 items
-        apiFetch(`/api/v1/category/?restaurant=${restaurantId}`),
-      ]);
-
-      const restData = await restRes.json();
-      const menuData = await menuRes.json();
-      const catData = await catRes.json();
-
-      setRestaurant(restData);
-      setMenuItems(Array.isArray(menuData) ? menuData : menuData.results || []);
-      setCategories(Array.isArray(catData) ? catData : catData.results || []);
-    } catch (err) {
-      console.error("Dashboard data fetch error:", err);
-      setError("Failed to load dashboard data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const currentMonth = new Date().getMonth();
+const currentYear = new Date().getFullYear();
+const monthlyOrders = orders.filter(o => {
+  const d = new Date(o.created_on);
+  return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+});
+const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
   useEffect(() => {
     if (user?.restaurant) {
       fetchDashboardData(user.restaurant);
     }
   }, [user]);
+
+  const fetchDashboardData = async (restaurantId: number) => {
+  try {
+    setLoading(true);
+
+    const [restRes, menuRes, catRes] = await Promise.all([
+      apiFetch(`/api/v1/restaurant/${restaurantId}/`),
+      apiFetch(`/api/v1/menu/?restaurant=${restaurantId}&limit=6`),
+      apiFetch(`/api/v1/category/?restaurant=${restaurantId}`),
+    ]);
+
+    const restData = await restRes.json();
+    const menuData = await menuRes.json();
+    const catData  = await catRes.json();
+
+    setRestaurant(restData);
+    setMenuItems(Array.isArray(menuData) ? menuData : menuData.results || []);
+    setCategories(Array.isArray(catData) ? catData : catData.results || []);
+
+    try {
+      const ordersRes  = await apiFetch(`/api/v1/admin/orders/?page_size=200`);
+      const ordersData = await ordersRes.json();
+      setOrders(Array.isArray(ordersData) ? ordersData : ordersData.results || []);
+    } catch {
+      setOrders([]);
+    }
+
+  } catch (err) {
+    console.error("Dashboard data fetch error:", err);
+    setError("Failed to load dashboard data");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const activeMenuItems = menuItems.filter(item => item.status).length;
 
@@ -153,7 +170,7 @@ return (
       {error && <p className="text-red-500 mb-6">{error}</p>}
 <SubscriptionBanner /> 
      
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-gray-500">Total Menu Items</CardTitle>
@@ -186,6 +203,17 @@ return (
             <p className="text-xl font-semibold truncate">{restaurant?.name || '-'}</p>
           </CardContent>
         </Card>
+       
+
+<Card>
+  <CardHeader className="pb-2">
+    <CardTitle className="text-sm text-gray-500">Monthly Revenue</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p className="text-3xl font-bold text-purple-600">Rs. {monthlyRevenue.toFixed(0)}</p>
+    <p className="text-xs text-gray-400 mt-1">{monthlyOrders.length} orders</p>
+  </CardContent>
+</Card>
       </div>
 
       {/* ✅ Quick Actions — permission based */}

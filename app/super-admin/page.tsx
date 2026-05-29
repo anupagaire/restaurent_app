@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Users, Building2, TrendingUp, RefreshCw, Eye } from 'lucide-react';
+import {Users, Building2,  RefreshCw, } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 
 interface Restaurant {
@@ -86,7 +85,7 @@ export default function SuperAdminDashboard() {
           Welcome back, Super Admin
         </h2>
         <p className="text-gray-600 mt-2">
-          Here&apos;s what&apos;s happening across all restaurants
+          Here&apos;s what&apos;s happening across all venues you manage. Keep an eye on the latest stats and updates.
         </p>
       </div>
 

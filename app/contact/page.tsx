@@ -1,9 +1,7 @@
 "use client";
 
-import Navbar from "@/components/layout/Navbar";
 import { Mail, PhoneCall, MapPin, Clock, Send } from "lucide-react";
 import Image from "next/image";
-import Footer from "@/components/layout/Footer";
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -84,8 +82,6 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#faf8f5]">
-      <Navbar />
-
       <section className="relative min-h-[38vh] w-full overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -99,13 +95,13 @@ const Contact = () => {
         </div>
         <div className="relative mx-auto max-w-screen-md w-full min-h-[38vh] flex flex-col justify-center items-center text-white text-center px-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b78f] mb-3">
-            We'd love to hear from you
+            We&apos;d love to hear from you
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
             Get in Touch
           </h1>
           <p className="text-base text-white/75 max-w-lg">
-            Whether you're a restaurant owner looking to join our platform or a customer needing help — we're here.
+            Whether you&apos;re a venue owner looking to join our platform or a customer needing help — we&apos;re here.
           </p>
         </div>
       </section>
@@ -175,7 +171,7 @@ const Contact = () => {
                 </div>
                 <h3 className="text-lg font-semibold text-[#513012] mb-2">Message sent!</h3>
                 <p className="text-sm text-[#776552] mb-6 max-w-xs">
-                  Thanks for reaching out. We'll get back to you within 24 hours.
+                  Thanks for reaching out. We&apos;ll get back to you within 24 hours.
                 </p>
                 <button
                   onClick={() => setSuccess(false)}
@@ -323,7 +319,6 @@ const Contact = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

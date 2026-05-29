@@ -2,8 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
 import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
@@ -55,7 +53,6 @@ const responsiveVibes = {
 const About = () => {
   return (
     <div className="min-h-screen w-full bg-[#faf7f2] text-[#011659] font-light">
-      <Navbar />
 
       <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
               <div className="absolute inset-0 w-full h-full">
@@ -287,7 +284,6 @@ We believe technology should make things easier â€” not more complicated. Thatâ€
               </div>
             </div>
           </section>
-          <Footer/>
     </div>
   );
 };

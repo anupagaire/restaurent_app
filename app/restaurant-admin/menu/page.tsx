@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw, UtensilsCrossed } from 'lucide-react';
+import { Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw, UtensilsCrossed, X } from 'lucide-react';
 import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +54,7 @@ export default function MenuPage() {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | 'All'>('All');
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
-
+const [previewImage, setPreviewImage] = useState<string | null>(null);
   // Table count gate
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [tableCountInput, setTableCountInput] = useState('');
@@ -67,7 +67,7 @@ export default function MenuPage() {
   try {
     const res = await apiFetch('/api/v1/user/me/');
     const raw = await res.json();
-    const user = raw.data ?? raw; // ← fix
+    const user = raw.data ?? raw; 
     if (user?.restaurant) {
       setRestaurantId(user.restaurant);
       await fetchRestaurant(user.restaurant);
@@ -90,7 +90,6 @@ export default function MenuPage() {
   useEffect(() => { fetchRestaurantId(); }, []);
   useEffect(() => { if (restaurantId) fetchAll(); }, [restaurantId]);
 
-  // ── Fetchers ──────────────────────────────────────────────────────────────
   const fetchCategories = async () => {
     if (!restaurantId) return;
     try {
@@ -210,10 +209,14 @@ const fetchAll = async () => {
     setEditingItem(null);
   };
 
-  const handleEdit = (item: MenuItem) => {
-    setEditingItem(item);
-    setIsModalOpen(true);
-  };
+const handleEdit = (item: MenuItem) => {
+  const photo = menuPhotos[item.id];
+  setEditingItem({
+    ...item,
+    image: photo?.photo_url || item.image || '',
+  });
+  setIsModalOpen(true);
+};
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure?')) return;
@@ -297,6 +300,7 @@ const fetchAll = async () => {
 
   // ── Normal menu management UI ─────────────────────────────────────────────
   return (
+    
         <SubscriptionGuard>
 
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -373,18 +377,19 @@ const fetchAll = async () => {
                   return (
                     <TableRow key={item.id}>
                       <TableCell>
-                        {imageUrl ? (
-                          <Image
-                            src={imageUrl}
-                            alt={item.name}
-                            width={48}
-                            height={48}
-                            className="w-12 h-12 object-cover rounded border"
-                          />
-                        ) : (
-                          <ImageIcon className="w-8 h-8 text-gray-400" />
-                        )}
-                      </TableCell>
+  {imageUrl ? (
+    <Image
+      src={imageUrl}
+      alt={item.name}
+      width={48}
+      height={48}
+      className="w-12 h-12 object-cover rounded border cursor-pointer hover:opacity-80 transition"
+      onClick={() => setPreviewImage(imageUrl)}
+    />
+  ) : (
+    <ImageIcon className="w-8 h-8 text-gray-400" />
+  )}
+</TableCell>
                       <TableCell className="font-medium">{item.name}</TableCell>
                       <TableCell>
                         {item.category_name
@@ -424,6 +429,28 @@ const fetchAll = async () => {
         onCategoryCreated={fetchCategories}
       />
     </div>
+    {previewImage && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    onClick={() => setPreviewImage(null)}
+  >
+    <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute -top-10 right-0 text-white text-sm flex items-center gap-1 hover:opacity-70"
+      >
+        <X className="w-5 h-5" /> Close
+      </button>
+      <Image
+        src={previewImage}
+        alt="preview"
+        width={800}
+        height={600}
+        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
+    </div>
+  </div>
+)}
       </SubscriptionGuard>
   );
 }

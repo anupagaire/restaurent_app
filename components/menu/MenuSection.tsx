@@ -12,15 +12,10 @@ import Image from 'next/image';
 // ── Import the new review section ──────────────────────────────────────────
 import MenuReviewSection from './MenuReviewSection';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIG
-// ─────────────────────────────────────────────────────────────────────────────
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const AUTH_KEY = 'qr_menu_auth';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TYPES
-// ─────────────────────────────────────────────────────────────────────────────
+
 interface MenuItem {
   id: string | number;
   name: string;
@@ -269,9 +264,7 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ORDER DRAWER
-// ─────────────────────────────────────────────────────────────────────────────
+
 function OrderDrawer({
   cart, restaurantId, auth, onClose, onUpdateQty, onSuccess, onAuthChange,
 }: {
@@ -287,7 +280,7 @@ function OrderDrawer({
   const [phone,   setPhone]   = useState('');
   const [address, setAddress] = useState('');
   const [notes,   setNotes]   = useState('');
-
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
   const [email,           setEmail]           = useState('');
   const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -313,13 +306,16 @@ function OrderDrawer({
     try {
       let currentAuth = auth;
       if (!currentAuth) {
-        setStep('registering');
-        await apiRegister({ email, password, name: name.trim() || 'Guest', phone: phone.trim() || null, restaurantId });
-        setStep('logging_in');
-        currentAuth = await apiLogin(email, password);
-        saveAuth(currentAuth);
-        onAuthChange(currentAuth);
-      }
+  if (authMode === 'register') {
+    setStep('registering');
+    await apiRegister({ email, password, name: name.trim() || 'Guest', phone: phone.trim() || null, restaurantId });
+  }
+  setStep('logging_in');
+  currentAuth = await apiLogin(email, password);
+  saveAuth(currentAuth);
+  onAuthChange(currentAuth);
+}
+     
       setStep('placing');
       await apiPlaceOrder({
         restaurant:     restaurantId,
@@ -432,8 +428,106 @@ function OrderDrawer({
 
           <hr style={{ borderColor: 'rgba(184,147,106,0.3)', marginBottom: 20 }} />
 
+
+bash
+
+
+
+{/* ── Auth Section (Login or Register) ── */}
+{!isLoggedIn && (
+  <div className="mb-6 p-4 rounded-xl" style={{ background: '#fffbf5', border: '1px solid rgba(184,147,106,0.35)' }}>
+    <div className="flex items-center gap-2 mb-3">
+      <LogIn size={15} color="#513012" />
+      <p className="text-sm font-bold" style={{ color: '#513012' }}>Sign in to order</p>
+    </div>
+
+    {/* Mode toggle */}
+    <div className="flex gap-2 mb-4">
+      {(['login', 'register'] as const).map((m) => (
+        <button key={m} onClick={() => { setAuthMode(m); setError(''); }}
+          style={{
+            padding: '6px 14px', borderRadius: 20,
+            border: '1px solid #513012',
+            background: authMode === m ? '#513012' : 'transparent',
+            color: authMode === m ? '#fdf6ec' : '#513012',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}>
+          {m === 'login' ? 'I have an account' : 'New account'}
+        </button>
+      ))}
+    </div>
+
+    <div className="space-y-3">
+      {authMode === 'register' && (
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+          placeholder="Your name (optional)"
+          className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+          style={inputStyle(name)} />
+      )}
+      <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setError(''); }}
+        placeholder="Email *"
+        className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+        style={inputStyle(email, true)} />
+      <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(''); }}
+        placeholder={authMode === 'register' ? 'Password (min 8 chars) *' : 'Password *'}
+        className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+        style={inputStyle(password, true)} />
+      {authMode === 'register' && (
+        <div>
+          <input type="password" value={confirmPassword}
+            onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
+            placeholder="Confirm password *"
+            className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+            style={{
+              ...inputStyle(confirmPassword, true),
+              ...(confirmPassword && password !== confirmPassword ? { borderColor: 'rgba(192,57,43,0.5)' } : {}),
+            }} />
+          {confirmPassword && password !== confirmPassword && (
+            <p className="text-xs mt-1" style={{ color: '#c0392b' }}>Passwords don't match</p>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           {/* Registration Section */}
-          {!isLoggedIn && (
+          {/* {!isLoggedIn && (
             <div className="mb-6 p-4 rounded-xl" style={{ background: '#fffbf5', border: '1px solid rgba(184,147,106,0.35)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <LogIn size={15} color="#513012" />
@@ -470,7 +564,7 @@ function OrderDrawer({
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Delivery Details */}
           <div className="space-y-3">

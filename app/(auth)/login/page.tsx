@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import { useRouter } from "next/navigation";
 
-const API = process.env.NEXT_PUBLIC_API_URL;
+const Base_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function LoginPage() {
   const [email, setEmail]       = useState("");
@@ -14,15 +15,37 @@ export default function LoginPage() {
   const [error, setError]       = useState("");
   const [showPw, setShowPw]     = useState(false);
   const { login } = useAuth();
+const router = useRouter();
+  const { isAuthenticated, isLoading, currentUser } = useAuth();
 
+  // ── Already logged in
+  useEffect(() => {
+    if (isLoading) return; 
+    if (!isAuthenticated) return; 
+
+    const role = currentUser?.role?.toLowerCase();
+    if (role === 'super_admin') {
+      router.replace('/super-admin');
+    } else if (role === 'customer') {
+      router.replace('/customer');
+    } else {
+      router.replace('/restaurant-admin');
+    }
+  }, [isAuthenticated, isLoading, currentUser, router]);
+   if (isLoading || isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-8 h-8 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      // ── Step 1: Get JWT tokens ─────────────────────────────────────────────
-      const res = await fetch(`${API}/api/v1/login/`, {
+      const res = await fetch(`${Base_URL}/api/v1/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

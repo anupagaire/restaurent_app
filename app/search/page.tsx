@@ -4,11 +4,9 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import { Search, MapPin, Eye, Star, X, SlidersHorizontal, ChevronDown } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const ITEMS_PER_PAGE = 12;
 
 interface Restaurant {
@@ -33,24 +31,6 @@ function resolvePhoto(url: string | null | undefined): string | null {
   if (!url) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
-}
-
-async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; count: number }> {
-  try {
-    const res = await fetch(
-      `${BASE_URL}/api/v1/restaurant-reviews/?restaurant=${restaurantId}&page_size=200`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) return { avg: 0, count: 0 };
-    const data = await res.json();
-    const reviews: { rating: number; parent: number | null }[] = data.results ?? [];
-    const topLevel = reviews.filter((r) => r.parent === null);
-    if (topLevel.length === 0) return { avg: 0, count: 0 };
-    const avg = topLevel.reduce((s, r) => s + r.rating, 0) / topLevel.length;
-    return { avg, count: topLevel.length };
-  } catch {
-    return { avg: 0, count: 0 };
-  }
 }
 
 function StarDisplay({ avg, count }: { avg: number; count: number }) {
@@ -135,13 +115,24 @@ function SearchPageContent() {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch cities for filter
+  // Fetch cities once, cache in sessionStorage
   useEffect(() => {
+    const cached = sessionStorage.getItem('allCities');
+    if (cached) {
+      setAllCities(JSON.parse(cached));
+      return;
+    }
     fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => {
-        const cities = [...new Set((data.results ?? []).map((r: Restaurant) => r.city).filter(Boolean))] as string[];
-        setAllCities(cities.sort());
+        const cities = [
+          ...new Set(
+            (data.results ?? []).map((r: Restaurant) => r.city).filter(Boolean)
+          ),
+        ] as string[];
+        const sorted = cities.sort();
+        setAllCities(sorted);
+        sessionStorage.setItem('allCities', JSON.stringify(sorted));
       })
       .catch(() => {});
   }, []);
@@ -155,16 +146,23 @@ function SearchPageContent() {
   }, [searchParams]);
 
   const fetchResults = useCallback(async () => {
-    // No query AND no city = show empty state
-    if (!query.trim() && !selectedCity) { setResults([]); setTotalCount(0); return; }
+    if (!query.trim() && !selectedCity) {
+      setResults([]);
+      setTotalCount(0);
+      return;
+    }
+
     setLoading(true);
     try {
-      // NO city param sent to backend — filter client-side instead
       const params = new URLSearchParams({ status: 'true', page_size: '200' });
       if (query.trim()) params.set('search', query.trim());
 
       const res = await fetch(`${BASE_URL}/api/v1/restaurant/?${params}`, { cache: 'no-store' });
-      if (!res.ok) { setResults([]); setTotalCount(0); return; }
+      if (!res.ok) {
+        setResults([]);
+        setTotalCount(0);
+        return;
+      }
       const data = await res.json();
       let items: Restaurant[] = data.results ?? [];
 
@@ -187,23 +185,47 @@ function SearchPageContent() {
       setResults(paginated);
       setTotalCount(total);
 
-      // Fetch ratings for visible results
-      paginated.forEach((r) => {
-        if (ratings[r.id] !== undefined) return;
-        fetchAvgRating(r.id).then((rating) => {
-          setRatings((prev) => ({ ...prev, [r.id]: rating }));
-        });
-      });
+      // Batch fetch ratings for all visible results in ONE request
+      const uncachedIds = paginated.map((r) => r.id).filter((id) => ratings[id] === undefined);
+      if (uncachedIds.length > 0) {
+        try {
+          const ratingRes = await fetch(
+            `${BASE_URL}/api/v1/restaurant-reviews/?restaurant__in=${uncachedIds.join(',')}&page_size=1000`,
+            { cache: 'no-store' }
+          );
+          if (ratingRes.ok) {
+            const ratingData = await ratingRes.json();
+            const reviews: { rating: number; parent: number | null; restaurant: number }[] =
+              ratingData.results ?? [];
+
+            const newRatings: RatingCache = {};
+            uncachedIds.forEach((id) => {
+              const topLevel = reviews.filter((rev) => rev.restaurant === id && rev.parent === null);
+              if (topLevel.length === 0) {
+                newRatings[id] = { avg: 0, count: 0 };
+              } else {
+                const avg = topLevel.reduce((s, rev) => s + rev.rating, 0) / topLevel.length;
+                newRatings[id] = { avg, count: topLevel.length };
+              }
+            });
+            setRatings((prev) => ({ ...prev, ...newRatings }));
+          }
+        } catch {
+          // Ratings failed silently — cards still show without ratings
+        }
+      }
     } catch {
       setResults([]);
       setTotalCount(0);
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, currentPage, selectedCity, sortBy]);
 
-  useEffect(() => { fetchResults(); }, [fetchResults]);
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -227,9 +249,7 @@ function SearchPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
-      {/* Hero search bar */}
+            {/* Hero search bar */}
       <div className="bg-gradient-to-br from-[#2a1505] via-[#3d1a08] to-[#1a0b02] py-10 px-4">
         <div className="max-w-2xl mx-auto">
           <p className="text-amber-200/60 text-xs font-medium uppercase tracking-widest mb-2 text-center">
@@ -242,7 +262,7 @@ function SearchPageContent() {
           {/* Search input */}
           <div className="relative">
             <div className="flex items-center bg-white rounded-2xl shadow-xl overflow-visible">
-              <Search size={18} className="ml-4 text-gray-400 flex-shrink-0" />
+              <Search size={18} className="ml-4 text-gray-400" />
               <input
                 ref={inputRef}
                 type="text"
@@ -268,12 +288,12 @@ function SearchPageContent() {
             </div>
           </div>
 
-          {/* Quick filters */}
+          {/* Quick city filters */}
           {allCities.length > 0 && (
             <div className="flex gap-2 mt-4 overflow-x-auto pb-1 scrollbar-hide">
               <button
                 onClick={() => setSelectedCity('')}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={` px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   !selectedCity ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
                 }`}
               >
@@ -283,7 +303,7 @@ function SearchPageContent() {
                 <button
                   key={city}
                   onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     selectedCity === city ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
                   }`}
                 >
@@ -378,7 +398,7 @@ function SearchPageContent() {
           </div>
         )}
 
-        {/* Empty state — no query and no city selected */}
+        {/* Empty state */}
         {!query && !selectedCity && !loading && (
           <div className="text-center py-24">
             <div className="text-7xl mb-4">🔍</div>
@@ -453,7 +473,7 @@ function SearchPageContent() {
                 href="/restaurants"
                 className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
               >
-                Browse all restaurants
+                Browse all venues
               </Link>
             </div>
           </div>
@@ -506,12 +526,10 @@ function SearchPageContent() {
         )}
       </div>
 
-      <Footer />
     </div>
   );
 }
 
-// Wrap in Suspense because useSearchParams() requires it in Next.js App Router
 export default function SearchPage() {
   return (
     <Suspense fallback={

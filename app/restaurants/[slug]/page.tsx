@@ -1,93 +1,52 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import RestaurantTabs from '@/components/home/RestaurantTabs';
 import { Eye } from 'lucide-react';
 import type { Metadata } from 'next';
-
-//Dynamic SEO per restaurant
+import RestaurantAbout from '@/components/restaurant/RestaurantAbout';
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
   const restaurantId = await getRestaurantIdBySlug(slug);
-  if (!restaurantId) {
-    return {
-      title: 'Restaurant Not Found',
-      description: 'This restaurant could not be found.',
-    };
-  }
+  if (!restaurantId) return { title: 'Restaurant Not Found' };
 
   const restaurant = await getRestaurantDetail(restaurantId);
-  if (!restaurant) {
-    return {
-      title: 'Restaurant Not Found',
-      description: 'This restaurant could not be found.',
-    };
-  }
+  if (!restaurant) return { title: 'Restaurant Not Found' };
 
-  const coverPhoto = resolveUrl(restaurant.photos?.[0]?.photo_url);
-
-  // Build keywords from restaurant data
-  const keywords = [
-    restaurant.name,
-    restaurant.city,
-    `${restaurant.name} menu`,
-    `${restaurant.name} ${restaurant.city}`,
-    `restaurants in ${restaurant.city}`,
-    `${restaurant.name} online order`,
-    `${restaurant.name} reviews`,
-    'Nepal restaurant',
-    'QR menu Nepal',
-    'food ordering Nepal',
-  ];
-
-  const title = `${restaurant.name} in ${restaurant.city} | Menu, Reviews & QR Ordering`;
-  const description = `View ${restaurant.name} in ${restaurant.city}: menu, prices, photos, customer reviews, and QR ordering. ${restaurant.address ? `Located at ${restaurant.address}.` : ''}`;
-  const pageUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/restaurants/${slug}`;
+  const seo = restaurant.seo;
+  const coverPhoto = seo?.open_graph?.['og:image'] ?? resolveUrl(restaurant.photos?.[0]?.photo_url);
+  const pageUrl = seo?.canonical_url ?? '';
 
   return {
-    title,
-    description,
-    keywords,
+    title: seo?.title,
+    description: seo?.meta_description,
+    keywords: seo?.keywords ?? [],
 
-    // Open Graph (Facebook, WhatsApp, LinkedIn preview)
     openGraph: {
-      title,
-      description,
+      title: seo?.open_graph?.['og:title'],
+      description: seo?.open_graph?.['og:description'],
       type: 'website',
-      url: pageUrl,
-      siteName: 'Restaurant Nepal',
+      url: seo?.open_graph?.['og:url'] ?? pageUrl,
+      siteName: seo?.open_graph?.['og:site_name'],
       ...(coverPhoto && {
-        images: [
-          {
-            url: coverPhoto,
-            width: 1200,
-            height: 630,
-            alt: `${restaurant.name} cover photo`,
-          },
-        ],
+        images: [{ url: coverPhoto, width: 1200, height: 630, alt: restaurant.name }],
       }),
     },
 
-    // Twitter card
     twitter: {
-      card: coverPhoto ? 'summary_large_image' : 'summary',
-      title,
-      description,
-      ...(coverPhoto && { images: [coverPhoto] }),
+      card: seo?.twitter?.['twitter:card'] as any ?? 'summary_large_image',
+      title: seo?.twitter?.['twitter:title'],
+      description: seo?.twitter?.['twitter:description'],
+      ...(seo?.twitter?.['twitter:image'] && {
+        images: [seo.twitter['twitter:image']],
+      }),
     },
 
-    // Canonical URL — important for Google
     alternates: {
       canonical: pageUrl,
     },
 
-    // Robots
-    robots: {
-      index: true,
-      follow: true,
-    },
+    robots: seo?.robots ?? 'index,follow',
   };
 }
 interface PageProps {
@@ -123,6 +82,16 @@ interface ApiRestaurant {
   categories: { id: number; name: string; status: boolean }[];
   menus: ApiMenu[];
   status?: boolean;
+  seo?: {                                      
+    title?: string;
+    meta_description?: string;
+    keywords?: string[];
+    canonical_url?: string;
+    robots?: string;
+    json_ld?: any;
+    open_graph?: Record<string, string>;
+    twitter?: Record<string, string>;
+  };
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
@@ -131,7 +100,6 @@ function toSlug(name: string) {
   return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
-// ── Resolve any URL to an absolute URL ──────────────────────────────────────
 function resolveUrl(url?: string | null): string | null {
   if (!url) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
@@ -195,71 +163,74 @@ export default async function RestaurantPage({ params }: PageProps) {
     };
   });
 
-  // Restaurant cover photo
+ 
   const restaurantImage = resolveUrl(restaurant.photos?.[0]?.photo_url) ?? '/placeholder-restaurant.jpg';
 
   return (
     <div style={{ background: '#faf8f5', minHeight: '100vh' }}>
-      <Navbar />
-      <div className="flex flex-col md:flex-row h-auto md:h-[500px] overflow-hidden rounded-2xl">
-        <div className="relative w-full h-64 md:w-1/2 md:h-full">
-          <Image
-            src={restaurantImage}
-            alt={restaurant.name}
-            fill
-            priority
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
+      {restaurant.seo?.json_ld && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(restaurant.seo.json_ld),
+          }}
+        />
+      )}
 
-        <div
-          className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center text-white"
-          style={{ background: 'linear-gradient(135deg, #513012, #47034E, #5D0565)' }}
-        >
-          <h1
-            style={{
-              fontFamily: 'Georgia,"Times New Roman",serif',
-              fontSize: 'clamp(2rem,3vw,3rem)',
-              fontWeight: 700,
-              marginBottom: 16,
-              lineHeight: 1.1,
-            }}
-          >
-            {restaurant.name}
-          </h1>
-          {restaurant.view_count > 0 && (
-  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-    <Eye size={14} color="rgba(255,255,255,0.7)" />
-    <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.7)' }}>
-      {restaurant.view_count >= 1000
-        ? `${(restaurant.view_count / 1000).toFixed(1)}k views`
-        : `${restaurant.view_count} views`}
-    </span>
+      {/* Hero Section */}
+<div className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+  <Image
+    src={restaurantImage}
+    alt={restaurant.name}
+    fill
+    priority
+    style={{ objectFit: 'cover' }}
+  />
+  {/* Gradient overlay */}
+  <div className="absolute inset-0" style={{
+    background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
+  }} />
+
+  {/* Content */}
+  <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+    <h1 style={{
+      fontFamily: 'Georgia,"Times New Roman",serif',
+      fontSize: 'clamp(2rem,4vw,3.5rem)',
+      fontWeight: 700,
+      color: '#fff',
+      lineHeight: 1.1,
+      marginBottom: 16,
+      textShadow: '0 2px 12px rgba(0,0,0,0.4)',
+    }}>
+      {restaurant.name}
+    </h1>
+
+    <div className="flex flex-wrap items-center gap-3">
+      {restaurant.view_count > 0 && (
+        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm"
+          style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff' }}>
+          <Eye size={13} />
+          {restaurant.view_count >= 1000
+            ? `${(restaurant.view_count / 1000).toFixed(1)}k views`
+            : `${restaurant.view_count} views`}
+        </span>
+      )}
+      {restaurant.availability && (
+        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm"
+          style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff' }}>
+          🕒 {restaurant.availability}
+        </span>
+      )}
+      {restaurant.address && (
+        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm"
+          style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff' }}>
+          📍 {restaurant.address}{restaurant.city ? `, ${restaurant.city}` : ''}
+        </span>
+      )}
+    </div>
   </div>
-)}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {restaurant.availability && (
-              <span
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  background: 'rgba(255,255,255,0.15)',
-                  border: '1px solid rgba(255,255,255,0.25)',
-                  borderRadius: 24, padding: '8px 14px', fontSize: 13,
-                }}
-              >
-                🕒 {restaurant.availability}
-              </span>
-            )}
-            {restaurant.address && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, opacity: 0.9 }}>
-                📍 {restaurant.address}{restaurant.city ? `, ${restaurant.city}` : ''}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
+</div>
+<RestaurantAbout restaurant={restaurant} />
       {/* Menu section */}
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 80px' }}>
         <RestaurantTabs
@@ -268,7 +239,6 @@ export default async function RestaurantPage({ params }: PageProps) {
         />
       </div>
 
-      <Footer />
     </div>
   );
 }

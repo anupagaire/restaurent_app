@@ -12,7 +12,7 @@ const HeroSection: React.FC = () => {
   {
     src: "/7.jpg",
     alt: "Restaurant",
-    title: "Welcome to Our Restaurant",
+    title: "Welcome to Our Venue",
     link: "/restaurants",
   },
   {

@@ -1,7 +1,4 @@
 "use client";
-
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import emailjs from "@emailjs/browser";
@@ -92,13 +89,12 @@ await emailjs.send(
   if (success) {
     return (
       <div className="min-h-screen w-full">
-        <Navbar />
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
           <div className="bg-white border border-[#d4b78f] rounded-2xl p-10 max-w-md w-full">
             <div className="text-4xl mb-4">🎉</div>
             <h2 className="text-2xl font-semibold text-[#513012] mb-2">Application Submitted!</h2>
             <p className="text-[#776552] mb-6">
-              We've received your restaurant details. Our team will review your application and get
+              We&apos;ve received your venue details. Our team will review your application and get
               back to you within 2–3 business days.
             </p>
             <button
@@ -109,27 +105,24 @@ await emailjs.send(
             </button>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen w-full bg-[#faf8f5]">
-      <Navbar />
-
       <div className="max-w-screen-md mx-auto px-4 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#513012] mb-2">Register Your Restaurant</h1>
+          <h1 className="text-3xl font-bold text-[#513012] mb-2">Register Your Venue</h1>
           <p className="text-[#776552]">
             Fill in the details below and our team will set up your digital menu and QR ordering system.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Section title="Restaurant details">
+          <Section title="Venue details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Restaurant name" required>
+              <Field label="Venue name" required>
                 <input
                   name="restaurant_name"
                   value={form.restaurant_name}
@@ -193,7 +186,7 @@ await emailjs.send(
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                placeholder="Tell us a bit about your restaurant…"
+                placeholder="Tell us a bit about your venue…"
                 rows={3}
                 className={inputClass}
               />
@@ -272,8 +265,6 @@ await emailjs.send(
           </div>
         </form>
       </div>
-
-      <Footer />
     </div>
   );
 };

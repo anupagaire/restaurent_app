@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Image from 'next/image';
 import SearchAndFilterBar from '@/components/SearchCityModal';
+
+
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -236,7 +236,7 @@ export default function RestaurantsPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [locationBanner, setLocationBanner] = useState('');
-
+  const fetchedRef = useRef(false);
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Build unique city list from all restaurants
@@ -277,34 +277,40 @@ export default function RestaurantsPage() {
     }
   }, [currentPage, search, selectedCity]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-        setAllRestaurants(data.results ?? []);
-      } catch { }
-    };
-    fetchAll();
-  }, []);
+ useEffect(() => {
+  if (fetchedRef.current) return; 
+  fetchedRef.current = true;
+  
+  const fetchAll = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      setAllRestaurants(data.results ?? []);
+    } catch { }
+  };
+  fetchAll();
+}, []); 
 
   useEffect(() => { fetchRestaurants(); }, [fetchRestaurants]);
-  useEffect(() => { setCurrentPage(1); }, [search, selectedCity]);
-
+  // useEffect(() => { setCurrentPage(1); }, [search, selectedCity]);
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setCurrentPage(1);
+  }, 400); // 400ms wait
+  return () => clearTimeout(timer);
+}, [search]);
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         <h1 className="text-3xl sm:text-5xl font-bold text-[#513012] text-center mb-4">
-          All Restaurants
+          All venues in Nepal
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Discover the best restaurants in Nepal
+          Discover the best venues in Nepal
         </p>
 
-        {/* ✨ USE THE COMPONENT HERE */}
         <SearchAndFilterBar
           search={search}
           onSearchChange={setSearch}
@@ -399,7 +405,7 @@ export default function RestaurantsPage() {
       </div>
 
       <FloatingRateWidget restaurants={allRestaurants} />
-      <Footer />
-    </div>
+
+   </div>
   );
 }

@@ -20,7 +20,7 @@ export default function RestaurantAdminLayout({
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopHeader 
-          title="Restaurant Admin Dashboard" 
+          title="Venue Admin Dashboard" 
           onMenuClick={() => setSidebarOpen(true)} 
         />
 
