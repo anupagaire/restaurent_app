@@ -32,6 +32,7 @@ interface Props {
 }
 
 
+
 function parseReview(raw: string): { name: string | null; text: string } {
   const match = raw.match(/^\[(.+?)\] ([\s\S]*)$/);
   if (match) return { name: match[1], text: match[2] };

@@ -321,8 +321,6 @@ function ReviewCard({
             </div>
           )}
         </div>
-
-        {/* Info */}
         <div className="flex-1 p-3 space-y-1 min-w-0">
           {loadingMeta ? (
             <div className="space-y-2 pt-1">
@@ -331,7 +329,6 @@ function ReviewCard({
             </div>
           ) : (
             <>
-              {/* Menu name + price */}
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-semibold text-gray-900 text-sm leading-tight truncate">
                   {menu?.name ?? `Menu #${review.menu}`}
@@ -343,7 +340,6 @@ function ReviewCard({
                 )}
               </div>
 
-              {/* Restaurant name + city */}
               {restaurant && (
                 <div className="flex items-center gap-1 text-xs text-gray-500">
                   <MapPin className="w-3 h-3 shrink-0" />
@@ -356,14 +352,12 @@ function ReviewCard({
             </>
           )}
 
-          {/* Rating + date */}
           <div className="flex items-center gap-2 pt-0.5">
             <StarRating value={review.rating} readonly />
             <span className="text-xs text-gray-400">{formatDate(review.created_on)}</span>
           </div>
         </div>
 
-        {/* Action buttons */}
         <div className="flex flex-col gap-1 p-2 shrink-0">
           <button
             onClick={() => onEdit(review)}

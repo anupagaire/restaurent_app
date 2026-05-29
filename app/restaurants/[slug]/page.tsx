@@ -231,8 +231,7 @@ export default async function RestaurantPage({ params }: PageProps) {
   </div>
 </div>
 <RestaurantAbout restaurant={restaurant} />
-      {/* Menu section */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 80px' }}>
+      <div style={{ maxWidth: 1300, margin: '0 auto', padding: '24px 24px 80px' }}>
         <RestaurantTabs
           menuItems={menuItems}
           restaurantId={restaurantId}

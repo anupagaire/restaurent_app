@@ -47,7 +47,7 @@ const resolvedLogo = {
 };
   const resolvedLinks = links ?? DEFAULT_LINKS;
   const resolvedLoginBtn = loginBtn ?? { text: 'Login', url: '/login' };
-  const resolvedRegisterBtn = registerBtn ?? { text: 'List Your Restaurant', url: '/register-restaurant' };
+  const resolvedRegisterBtn = registerBtn ?? { text: 'List Your Venue', url: '/register-restaurant' };
 
   const closeMenu = () => setIsOpen(false);
 

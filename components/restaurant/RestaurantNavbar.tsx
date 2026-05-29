@@ -22,7 +22,8 @@ export default function RestaurantNavbar({
     { href: base,             label: 'Home' },
     { href: `${base}/menu`,   label: 'Menu' },
     { href: `${base}/reviews`,label: 'Reviews' },
-    { href: `${base}/about`,  label: 'About Us' },
+    {href: `/register-restaurant`,   label: 'List Your Venue' },
+    {href: `/login`,   label: 'Login' },
   ];
 
   return (
@@ -46,17 +47,50 @@ export default function RestaurantNavbar({
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6">
-          {links.map(l => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
+        {/* Desktop links */}
+<div className="hidden md:flex items-center gap-4">
+  
+  {/* Normal nav links */}
+  <Link
+    href={base}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    Home
+  </Link>
+
+  <Link
+    href={`${base}/menu`}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    Menu
+  </Link>
+
+  <Link
+    href={`${base}/reviews`}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    Reviews
+  </Link>
+
+  {/* CTA Buttons */}
+  <div className="flex items-center gap-3 ml-2">
+    
+    <Link
+      href="/register-restaurant"
+      className="px-4 py-2 rounded-full border border-[#513012] text-[#513012] text-sm font-semibold hover:bg-[#513012] hover:text-white transition-all"
+    >
+      List Your Venue
+    </Link>
+
+    <Link
+      href="/login"
+      className="px-4 py-2 rounded-full bg-[#513012] text-white text-sm font-semibold hover:opacity-90 transition-all shadow-sm"
+    >
+      Login
+    </Link>
+
+  </div>
+</div>
 
         {/* Mobile hamburger */}
         <button className="md:hidden" onClick={() => setOpen(p => !p)}>

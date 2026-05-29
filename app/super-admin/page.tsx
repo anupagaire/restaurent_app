@@ -44,7 +44,6 @@ export default function SuperAdminDashboard() {
 
       setRestaurants(allRestaurants);
 
-      // Recent Admins prepare (sabai restaurants ko users collect garera last 5)
       const admins: AdminSummary[] = [];
       allRestaurants.forEach((r: any) => {
         if (r.users && Array.isArray(r.users)) {

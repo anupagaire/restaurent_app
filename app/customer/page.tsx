@@ -119,8 +119,6 @@ export default function CustomerDashboard() {
 
   return (
     <div className="space-y-6 pb-8">
-
-      {/* ── Welcome Banner ─────────────────────────────────────────────────── */}
       <div
         className="rounded-3xl px-6 py-8 relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #1e0f02 0%, #513012 60%, #7a4a20 100%)' }}
@@ -142,8 +140,6 @@ export default function CustomerDashboard() {
             : 'Welcome! Start exploring restaurants'}
         </p>
       </div>
-
-      {/* ── Stats ──────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: 'Total Orders',    value: totalOrders,              sub: 'All time',       color: '#513012' },
@@ -159,7 +155,6 @@ export default function CustomerDashboard() {
         ))}
       </div>
 
-      {/* ── Quick Actions ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3">
         {[
           {
@@ -193,7 +188,6 @@ export default function CustomerDashboard() {
         ))}
       </div>
 
-      {/* ── Restaurants Visited ────────────────────────────────────────────── */}
       {restaurants.length > 0 && (
         <div>
           <h2 className="font-bold text-base mb-3" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>

@@ -234,6 +234,8 @@ export default function RestaurantsPage() {
   const [loading, setLoading] = useState(true);
   const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
   const [selectedCity, setSelectedCity] = useState('');
+  const [sortBy, setSortBy] = useState<'default' | 'most_viewed' | 'most_rated'>('default');
+  const [ratingsMap, setRatingsMap] = useState<Record<number, { avg: number; count: number }>>({});
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [locationBanner, setLocationBanner] = useState('');
   const fetchedRef = useRef(false);
@@ -276,7 +278,14 @@ export default function RestaurantsPage() {
       setLoading(false);
     }
   }, [currentPage, search, selectedCity]);
-
+useEffect(() => {
+  if (restaurants.length === 0) return;
+  restaurants.forEach((r) => {
+    fetchAvgRating(r.id).then((data) => {
+      setRatingsMap((prev) => ({ ...prev, [r.id]: data }));
+    });
+  });
+}, [restaurants]);
  useEffect(() => {
   if (fetchedRef.current) return; 
   fetchedRef.current = true;
@@ -300,6 +309,15 @@ useEffect(() => {
   }, 400); // 400ms wait
   return () => clearTimeout(timer);
 }, [search]);
+const sortedRestaurants = [...restaurants].sort((a, b) => {
+  if (sortBy === 'most_viewed') return b.view_count - a.view_count;
+  if (sortBy === 'most_rated') {
+    const aRating = ratingsMap[a.id]?.avg ?? 0;
+    const bRating = ratingsMap[b.id]?.avg ?? 0;
+    return bRating - aRating;
+  }
+  return 0;
+});
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -321,7 +339,40 @@ useEffect(() => {
           locationBanner={locationBanner}
           onLocationBannerChange={setLocationBanner}
         />
+{/* Sort bar */}
+<div className="flex items-center justify-between flex-wrap gap-4 mt-6 bg-gray-100 rounded-2xl px-5 py-4">
+  <div>
+    <p className="text-sm text-gray-600">
+      Showing <span className="font-semibold text-[#513012]">{totalCount}</span> venues in Nepal
+    </p>
+    <p className="text-xs text-gray-400 mt-0.5">
+      {sortBy === 'default' && 'Default order'}
+      {sortBy === 'most_viewed' && 'Sorted by most viewed'}
+      {sortBy === 'most_rated' && 'Sorted by top rated'}
+    </p>
+  </div>
 
+  <div className="flex gap-1.5 bg-white border border-gray-200 rounded-xl p-1">
+    {[
+      { key: 'default',     label: 'Default',      icon: '↕' },
+      { key: 'most_viewed', label: 'Most viewed',  icon: '👁' },
+      { key: 'most_rated',  label: 'Top rated',    icon: '★' },
+    ].map((opt) => (
+      <button
+        key={opt.key}
+        onClick={() => setSortBy(opt.key as typeof sortBy)}
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+          sortBy === opt.key
+            ? 'bg-[#513012] text-white'
+            : 'text-gray-500 hover:text-[#513012] hover:bg-orange-50'
+        }`}
+      >
+        <span>{opt.icon}</span>
+        {opt.label}
+      </button>
+    ))}
+  </div>
+</div>
         {/* Grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
@@ -352,7 +403,7 @@ useEffect(() => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-            {restaurants.map((restaurant) => {
+            {sortedRestaurants.map((restaurant) => {
               const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
               return (
                 <Link
