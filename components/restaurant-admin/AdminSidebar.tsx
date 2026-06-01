@@ -57,6 +57,12 @@ const menuItems: MenuItem[] = [
     permissionKey: 'manageStaff', 
   },
   { 
+    title: 'Gallery', 
+    href: '/restaurant-admin/gallery', 
+    icon: LayoutDashboard,
+    permissionKey: null,
+  },
+  { 
     title: 'Reviews', 
     href: '/restaurant-admin/review', 
     icon: Star,

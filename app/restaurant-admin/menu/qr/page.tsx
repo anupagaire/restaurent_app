@@ -308,6 +308,8 @@ useEffect(() => {
               formData.append('object_id', String(token.id));
               formData.append('type', 'qr');
               formData.append('photo', blob, `qr-${token.id}.png`);
+              formData.append('purpose', 'qr');                 
+formData.append('alt', `QR Token #${token.id}`); 
               formData.append('id', String(token.id));
 
               const photoRes = await apiFetch('/api/v1/photo/', {

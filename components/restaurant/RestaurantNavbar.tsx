@@ -22,6 +22,8 @@ export default function RestaurantNavbar({
     { href: base,             label: 'Home' },
     { href: `${base}/menu`,   label: 'Menu' },
     { href: `${base}/reviews`,label: 'Reviews' },
+    // {href: `/menusearch`,   label: 'Search Menu' },
+
     {href: `/register-restaurant`,   label: 'List Your Venue' },
     {href: `/login`,   label: 'Login' },
   ];

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -20,6 +21,8 @@ export default function FooterContentPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const { currentUser } = useAuth();
+  const router = useRouter();
+
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
   useEffect(() => {
     const fetchFooter = async () => {
@@ -104,6 +107,9 @@ export default function FooterContentPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+  ← Back
+</button>
       <h1 className="text-2xl font-bold text-[#513012]">Footer Content</h1>
 
       {/* BRAND */}

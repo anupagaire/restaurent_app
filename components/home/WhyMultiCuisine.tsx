@@ -59,8 +59,8 @@ if (!c || !w) return null;
       {/* ── COMMITMENT SECTION ── */}
       <section className="text-black px-6 py-8 md:py-12 lg:px-20 relative">
         <div className="max-w-screen-2xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 space-y-10 z-10">
-            <motion.div
+<div className="lg:col-span-5 space-y-10 z-10 min-w-0 overflow-hidden">
+              <motion.div
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.8, ease: 'easeOut' }}
               className="space-y-4"
@@ -71,13 +71,13 @@ if (!c || !w) return null;
               </h2>
             </motion.div>
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl text-[#011659]/80 font-light leading-relaxed"
-            >
-              {c.description}
-            </motion.p>
+              className="text-xl text-[#011659]/80 font-light leading-relaxed ql-content break-words"
+              dangerouslySetInnerHTML={{ __html: c.description }}
+            />
+            
 
             <motion.div
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
@@ -95,13 +95,13 @@ if (!c || !w) return null;
               </div>
             </motion.div>
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
               viewport={{ once: true }} transition={{ duration: 1, delay: 0.6 }}
-              className="pt-8 text-sm tracking-widest uppercase font-extralight text-[#011659]/40"
-            >
-              {c.bottom_text}
-            </motion.p>
+              className="pt-8 text-sm tracking-widest uppercase font-extralight text-[#011659]/40 ql-content break-words"
+              dangerouslySetInnerHTML={{ __html: c.bottom_text }}
+            />
+             
           </div>
 
           <div className="lg:col-span-1 hidden lg:block" />
@@ -139,8 +139,9 @@ if (!c || !w) return null;
               className="space-y-8"
             >
               <h2 className="text-4xl md:text-5xl font-serif text-[#011659] leading-tight">{w.title}</h2>
-              <p className="text-lg text-[#011659]/80 font-light leading-relaxed">{w.description}</p>
-            </motion.div>
+<div className="text-lg text-[#011659]/80 font-light leading-relaxed ql-content break-words"
+  dangerouslySetInnerHTML={{ __html: w.description }}
+/>            </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {w.benefits.map((benefit, index) => {
@@ -162,13 +163,13 @@ if (!c || !w) return null;
             </div>
           </div>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }}
-            className="pt-8 pb-8 text-sm tracking-widest uppercase font-extralight text-[#011659]"
-          >
-            {w.bottom_text}
-          </motion.p>
+            className="pt-8 pb-8 text-sm tracking-widest uppercase font-extralight text-[#011659] ql-content"
+            dangerouslySetInnerHTML={{ __html: w.bottom_text }}
+          />
+           
         </div>
       </section>
     </>

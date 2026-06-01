@@ -1,7 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const ICON_OPTIONS = ['users', 'globe', 'compass', 'star', 'heart', 'zap', 'shield', 'check'];
@@ -11,6 +15,7 @@ export default function AboutSectionsAdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [token, setToken] = useState<string | null>(null);
+const router = useRouter();
 
   useEffect(() => { setToken(localStorage.getItem('access_token')); }, []);
 
@@ -57,6 +62,9 @@ export default function AboutSectionsAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+  ← Back
+</button>
       <h1 className="text-2xl font-bold text-[#513012]">About Sections Content</h1>
 
       {/* ── COMMITMENT ── */}
@@ -75,15 +83,18 @@ export default function AboutSectionsAdminPage() {
         ))}
 
         {[
-          { label: 'Description', path: ['commitment_section', 'description'] },
-          { label: 'Bottom Text', path: ['commitment_section', 'bottom_text'] },
-        ].map(({ label, path }) => (
-          <div key={label}>
-            <label className="block text-sm font-medium mb-1">{label}</label>
-            <textarea rows={3} className={`${inputCls} resize-none`} value={path.reduce((o, k) => o?.[k], data) ?? ''} onChange={e => update(path, e.target.value)} />
-          </div>
-        ))}
-
+  { label: 'Description', path: ['commitment_section', 'description'] },
+  { label: 'Bottom Text', path: ['commitment_section', 'bottom_text'] },
+].map(({ label, path }) => (
+  <div key={label}>
+    <label className="block text-sm font-medium mb-1">{label}</label>
+    <ReactQuill
+      value={path.reduce((o, k) => o?.[k], data) ?? ''}
+      onChange={val => update(path, val)}
+      className="rounded-lg"
+    />
+  </div>
+))}
         {/* Experience Points */}
         <div>
           <label className="block text-sm font-medium mb-2">Experience Points</label>
@@ -131,15 +142,18 @@ export default function AboutSectionsAdminPage() {
         ))}
 
         {[
-          { label: 'Description', path: ['why_choose_us_section', 'description'] },
-          { label: 'Bottom Text', path: ['why_choose_us_section', 'bottom_text'] },
-        ].map(({ label, path }) => (
-          <div key={label}>
-            <label className="block text-sm font-medium mb-1">{label}</label>
-            <textarea rows={3} className={`${inputCls} resize-none`} value={path.reduce((o, k) => o?.[k], data) ?? ''} onChange={e => update(path, e.target.value)} />
-          </div>
-        ))}
-
+  { label: 'Description', path: ['why_choose_us_section', 'description'] },
+  { label: 'Bottom Text', path: ['why_choose_us_section', 'bottom_text'] },
+].map(({ label, path }) => (
+  <div key={label}>
+    <label className="block text-sm font-medium mb-1">{label}</label>
+    <ReactQuill
+      value={path.reduce((o, k) => o?.[k], data) ?? ''}
+      onChange={val => update(path, val)}
+      className="rounded-lg"
+    />
+  </div>
+))}
         {/* Benefits */}
         <div>
           <label className="block text-sm font-medium mb-2">Benefits</label>

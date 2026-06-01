@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -9,6 +10,8 @@ export default function NavbarHeroAdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
+
 
   useEffect(() => { setToken(localStorage.getItem('access_token')); }, []);
 
@@ -81,6 +84,9 @@ export default function NavbarHeroAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+  ← Back
+</button>
       <h1 className="text-2xl font-bold text-[#513012]">Navbar & Hero Content</h1>
 
       {/* Site Settings */}

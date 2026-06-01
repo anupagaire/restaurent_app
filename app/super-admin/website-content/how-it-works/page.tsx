@@ -1,8 +1,18 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
+const ReactQuill = dynamic(
+  () => import('react-quill-new'),
+  {
+    ssr: false,
+    loading: () => <p>Loading editor...</p>,
+  }
+);
+import 'react-quill-new/dist/quill.snow.css';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { useRouter } from 'next/navigation';
 
 const ICON_OPTIONS = ['qr_code', 'menu', 'utensils_crossed', 'star', 'heart', 'phone', 'map_pin', 'clock'];
 
@@ -26,6 +36,7 @@ export default function HowItWorksAdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [token, setToken] = useState<string | null>(null);
+const router = useRouter();
 
   useEffect(() => { setToken(localStorage.getItem('access_token')); }, []);
 
@@ -87,6 +98,9 @@ export default function HowItWorksAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+  ← Back
+</button>
       <h1 className="text-2xl font-bold text-[#513012]">How It Works Content</h1>
 
       {/* Section Header */}
@@ -102,12 +116,17 @@ export default function HowItWorksAdminPage() {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea
+          {/* <textarea
             rows={2}
             className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 resize-none"
             value={description}
             onChange={e => updateSection('description', e.target.value)}
-          />
+          /> */}
+          <ReactQuill
+  value={description}
+  onChange={val => updateSection('description', val)}
+  className="rounded-lg"
+/>
         </div>
       </section>
 
@@ -147,12 +166,11 @@ export default function HowItWorksAdminPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1">Description</label>
-              <textarea
-                rows={2}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 resize-none"
-                value={step.description}
-                onChange={e => updateStep(idx, 'description', e.target.value)}
-              />
+<ReactQuill
+  value={step.description}
+  onChange={val => updateStep(idx, 'description', val)}
+  className="rounded-lg"
+/>
             </div>
           </div>
         ))}

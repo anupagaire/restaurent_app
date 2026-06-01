@@ -7,9 +7,7 @@ const contentSections = [
   { title: 'Testimonials', href: '/super-admin/website-content/testimonials', icon: Star, description: 'Edit testimonials section and restaurant cards' },
   { title: 'About Sections', href: '/super-admin/website-content/about-sections', icon: Info, description: 'Edit commitment section and why choose us' },
   { title: 'Footer',       href: '/super-admin/website-content/footer',  icon: Layout,   description: 'Edit footer links, contact info, socials' },
-  // { title: 'Hero Section', href: '/super-admin/website-content/hero',    icon: FileText, description: 'Edit homepage banner text and image' },
-  // { title: 'About Page',   href: '/super-admin/website-content/about',   icon: Info,     description: 'Edit about us content' },
-  // { title: 'Contact Page', href: '/super-admin/website-content/contact', icon: Mail,     description: 'Edit contact page details' },
+  { title: 'About Page',   href: '/super-admin/website-content/aboutpage',   icon: Info,     description: 'Edit about us content' },
 ];
 
 export default function WebsiteContentPage() {
