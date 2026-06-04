@@ -1,7 +1,7 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useUser } from '@/context/UserContext';   // ← replaces fetch on mount
 import { apiFetch } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,20 +12,17 @@ import { CheckCircle2, AlertCircle, Loader2, User, Lock, Eye, EyeOff } from 'luc
 function Alert({ type, msg }: { type: 'success' | 'error'; msg: string }) {
   return (
     <div className={`flex items-center gap-3 p-4 rounded-xl text-sm border ${
-      type === 'success'
-        ? 'bg-green-50 border-green-200 text-green-700'
-        : 'bg-red-50 border-red-200 text-red-700'
+      type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
     }`}>
-      {type === 'success'
-        ? <CheckCircle2 className="w-5 h-5 shrink-0" />
-        : <AlertCircle className="w-5 h-5 shrink-0" />}
+      {type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
       {msg}
     </div>
   );
 }
 
 export default function CustomerProfilePage() {
-  const [loading, setLoading]   = useState(true);
+  // ── Pull user from Context — no API call on mount ──
+  const { user, loading, updateUser } = useUser();
 
   const [profile, setProfile] = useState({
     email: '', first_name: '', last_name: '', contact_no: '', address: '',
@@ -41,29 +38,18 @@ export default function CustomerProfilePage() {
   const [pwSuccess, setPwSuccess] = useState('');
   const [pwError,   setPwError]   = useState('');
 
-  // ── Load user ──────────────────────────────────────────────────────────────
+  // Sync form when context user loads
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res  = await apiFetch('/api/v1/user/me/');
-        const raw  = await res.json();
-        if (!res.ok) throw new Error(raw?.detail ?? 'Failed to load profile');
-        const data = raw.data ?? raw; // ← fix wrapper
-        setProfile({
-          email:      data.email      ?? '',
-          first_name: data.first_name ?? '',
-          last_name:  data.last_name  ?? '',
-          contact_no: data.contact_no ?? '',
-          address:    data.address    ?? '',
-        });
-      } catch (err: any) {
-        setProfileError(err.message || 'Failed to load profile');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+    if (user) {
+      setProfile({
+        email:      user.email      ?? '',
+        first_name: user.first_name ?? '',
+        last_name:  user.last_name  ?? '',
+        contact_no: user.contact_no ?? '',
+        address:    user.address    ?? '',
+      });
+    }
+  }, [user]);
 
   // ── Save profile ───────────────────────────────────────────────────────────
   const handleProfileSave = async (e: React.FormEvent) => {
@@ -72,9 +58,9 @@ export default function CustomerProfilePage() {
     setProfileSuccess('');
     setProfileError('');
     try {
-      const res  = await apiFetch('/api/v1/user/me/', {
+      const res = await apiFetch('/api/v1/user/me/', {
         method: 'PATCH',
-        body:   JSON.stringify({
+        body: JSON.stringify({
           email:      profile.email,
           first_name: profile.first_name,
           last_name:  profile.last_name,
@@ -85,10 +71,11 @@ export default function CustomerProfilePage() {
       const raw  = await res.json();
       if (!res.ok) throw new Error(raw?.detail ?? JSON.stringify(raw));
       const data = raw.data ?? raw;
-      // Update localStorage
-      const stored = localStorage.getItem('user');
-      if (stored) localStorage.setItem('user', JSON.stringify({ ...JSON.parse(stored), ...data }));
-      setProfileSuccess('✅ Profile updated successfully!');
+
+      // ← Update context so Dashboard/Sidebar name updates instantly, no refetch
+      updateUser(data);
+
+      setProfileSuccess('Profile updated successfully!');
       setTimeout(() => setProfileSuccess(''), 3000);
     } catch (err: any) {
       setProfileError(err.message);
@@ -106,13 +93,13 @@ export default function CustomerProfilePage() {
     if (pw.password1 !== pw.confirm) { setPwError('Passwords do not match.'); return; }
     setPwSaving(true);
     try {
-      const res  = await apiFetch('/api/v1/user/me/', {
+      const res = await apiFetch('/api/v1/user/me/', {
         method: 'PATCH',
-        body:   JSON.stringify({ password1: pw.password1 }),
+        body: JSON.stringify({ password1: pw.password1 }),
       });
-      const raw  = await res.json();
+      const raw = await res.json();
       if (!res.ok) throw new Error(raw?.detail ?? raw?.password1?.[0] ?? JSON.stringify(raw));
-      setPwSuccess('✅ Password updated successfully!');
+      setPwSuccess('Password updated successfully!');
       setPw({ password1: '', confirm: '' });
       setTimeout(() => setPwSuccess(''), 3000);
     } catch (err: any) {
@@ -135,7 +122,6 @@ export default function CustomerProfilePage() {
         <p className="text-gray-500 mt-1 text-sm">Manage your account details</p>
       </div>
 
-      {/* ── Profile Card ── */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[#513012] text-lg">
@@ -145,55 +131,36 @@ export default function CustomerProfilePage() {
         <CardContent className="space-y-4">
           {profileSuccess && <Alert type="success" msg={profileSuccess} />}
           {profileError   && <Alert type="error"   msg={profileError}   />}
-
           <form onSubmit={handleProfileSave} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>First Name</Label>
-                <Input value={profile.first_name}
-                  onChange={e => setProfile({ ...profile, first_name: e.target.value })}
-                  placeholder="First name" />
+                <Input value={profile.first_name} onChange={e => setProfile({ ...profile, first_name: e.target.value })} placeholder="First name" />
               </div>
               <div className="space-y-1">
                 <Label>Last Name</Label>
-                <Input value={profile.last_name}
-                  onChange={e => setProfile({ ...profile, last_name: e.target.value })}
-                  placeholder="Last name" />
+                <Input value={profile.last_name} onChange={e => setProfile({ ...profile, last_name: e.target.value })} placeholder="Last name" />
               </div>
             </div>
-
             <div className="space-y-1">
               <Label>Email Address <span className="text-red-500">*</span></Label>
-              <Input type="email" required value={profile.email}
-                onChange={e => setProfile({ ...profile, email: e.target.value })}
-                placeholder="you@example.com" />
+              <Input type="email" required value={profile.email} onChange={e => setProfile({ ...profile, email: e.target.value })} placeholder="you@example.com" />
             </div>
-
             <div className="space-y-1">
               <Label>Phone</Label>
-              <Input value={profile.contact_no}
-                onChange={e => setProfile({ ...profile, contact_no: e.target.value })}
-                placeholder="+977 98XXXXXXXX" />
+              <Input value={profile.contact_no} onChange={e => setProfile({ ...profile, contact_no: e.target.value })} placeholder="+977 98XXXXXXXX" />
             </div>
-
             <div className="space-y-1">
               <Label>Address</Label>
-              <Input value={profile.address}
-                onChange={e => setProfile({ ...profile, address: e.target.value })}
-                placeholder="Your address" />
+              <Input value={profile.address} onChange={e => setProfile({ ...profile, address: e.target.value })} placeholder="Your address" />
             </div>
-
-            <Button type="submit" disabled={profileSaving}
-              className="w-full bg-[#513012] hover:bg-[#3f260f]">
-              {profileSaving
-                ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</>
-                : 'Save Profile'}
+            <Button type="submit" disabled={profileSaving} className="w-full bg-[#513012] hover:bg-[#3f260f]">
+              {profileSaving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</> : 'Save Profile'}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* ── Password Card ── */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[#513012] text-lg">
@@ -203,48 +170,32 @@ export default function CustomerProfilePage() {
         <CardContent className="space-y-4">
           {pwSuccess && <Alert type="success" msg={pwSuccess} />}
           {pwError   && <Alert type="error"   msg={pwError}   />}
-
           <form onSubmit={handlePasswordSave} className="space-y-4">
             <div className="space-y-1">
               <Label>New Password <span className="text-red-500">*</span></Label>
               <div className="relative">
-                <Input type={showPw1 ? 'text' : 'password'} required
-                  value={pw.password1} placeholder="Min 8 characters"
-                  onChange={e => setPw({ ...pw, password1: e.target.value })}
-                  className="pr-10" />
-                <button type="button" onClick={() => setShowPw1(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <Input type={showPw1 ? 'text' : 'password'} required value={pw.password1} placeholder="Min 8 characters"
+                  onChange={e => setPw({ ...pw, password1: e.target.value })} className="pr-10" />
+                <button type="button" onClick={() => setShowPw1(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   {showPw1 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
-
             <div className="space-y-1">
               <Label>Confirm New Password <span className="text-red-500">*</span></Label>
               <div className="relative">
-                <Input type={showPw2 ? 'text' : 'password'} required
-                  value={pw.confirm} placeholder="Repeat new password"
-                  onChange={e => setPw({ ...pw, confirm: e.target.value })}
-                  className="pr-10" />
-                <button type="button" onClick={() => setShowPw2(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <Input type={showPw2 ? 'text' : 'password'} required value={pw.confirm} placeholder="Repeat new password"
+                  onChange={e => setPw({ ...pw, confirm: e.target.value })} className="pr-10" />
+                <button type="button" onClick={() => setShowPw2(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   {showPw2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {pw.confirm && pw.confirm !== pw.password1 && (
-                <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
-              )}
-              {pw.confirm && pw.confirm === pw.password1 && pw.password1.length >= 8 && (
-                <p className="text-xs text-green-600 mt-1">✓ Passwords match</p>
-              )}
+              {pw.confirm && pw.confirm !== pw.password1 && <p className="text-xs text-red-500 mt-1">Passwords do not match</p>}
+              {pw.confirm && pw.confirm === pw.password1 && pw.password1.length >= 8 && <p className="text-xs text-green-600 mt-1">✓ Passwords match</p>}
             </div>
-
-            <Button type="submit"
-              disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
+            <Button type="submit" disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
               className="w-full bg-[#513012] hover:bg-[#3f260f]">
-              {pwSaving
-                ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating…</>
-                : 'Update Password'}
+              {pwSaving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating…</> : 'Update Password'}
             </Button>
           </form>
         </CardContent>

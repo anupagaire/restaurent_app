@@ -14,10 +14,6 @@ export default async function HomePage() {
     <>
     <div>
       <Hero  />
-
-
-
-
       <MenuComparison />
        <FeaturedRestaurants />
           <Teaser/>

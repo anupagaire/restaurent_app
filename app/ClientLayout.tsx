@@ -29,7 +29,7 @@ export default function ClientLayout({
     <AuthProvider>
       {!shouldHideLayout && <Navbar {...navbarProps} />}
       {children}
-      {!shouldHideLayout && <Footer data={footerData} />}
+      {  <Footer data={footerData} />}
     </AuthProvider>
   );
 }

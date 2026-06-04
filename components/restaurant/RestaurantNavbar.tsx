@@ -22,7 +22,7 @@ export default function RestaurantNavbar({
     { href: base,             label: 'Home' },
     { href: `${base}/menu`,   label: 'Menu' },
     { href: `${base}/reviews`,label: 'Reviews' },
-    // {href: `/menusearch`,   label: 'Search Menu' },
+    { href: `${base}/gallery`,label: 'Gallery' },
 
     {href: `/register-restaurant`,   label: 'List Your Venue' },
     {href: `/login`,   label: 'Login' },
@@ -72,6 +72,12 @@ export default function RestaurantNavbar({
     className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
   >
     Reviews
+  </Link>
+   <Link
+    href={`${base}/gallery`}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    Gallery
   </Link>
 
   {/* CTA Buttons */}

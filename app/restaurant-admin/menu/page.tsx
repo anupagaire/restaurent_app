@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import SubscriptionGuard from '@/components/restaurant-admin/SubscriptionGuard';
-
+import { useAuth } from '@/context/AuthContext';
 interface MenuItem {
   id: number;
   name: string;
@@ -60,22 +60,15 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [tableCountInput, setTableCountInput] = useState('');
   const [savingTableCount, setSavingTableCount] = useState(false);
   const [tableCountError, setTableCountError] = useState<string | null>(null);
-
+const { profile } = useAuth();
  useRequirePermission(null); 
 
- const fetchRestaurantId = async () => {
-  try {
-    const res = await apiFetch('/api/v1/user/me/');
-    const raw = await res.json();
-    const user = raw.data ?? raw; 
-    if (user?.restaurant) {
-      setRestaurantId(user.restaurant);
-      await fetchRestaurant(user.restaurant);
-    }
-  } catch (err) {
-    console.error('Failed to fetch restaurant ID', err);
+ useEffect(() => {
+  if (profile?.restaurant) {
+    setRestaurantId(profile.restaurant);
+    fetchRestaurant(profile.restaurant);
   }
-};
+}, [profile]);
 
   const fetchRestaurant = async (id: number) => {
     try {
@@ -87,7 +80,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
     }
   };
 
-  useEffect(() => { fetchRestaurantId(); }, []);
+ 
   useEffect(() => { if (restaurantId) fetchAll(); }, [restaurantId]);
 
   const fetchCategories = async () => {

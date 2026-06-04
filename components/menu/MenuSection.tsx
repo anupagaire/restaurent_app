@@ -3,12 +3,12 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  UtensilsCrossed, ShoppingCart, X, Plus, Minus,
-  Truck, CheckCircle2, LogIn, Star, MessageSquare,
-  Send, Loader2,
+ ShoppingCart, X, Plus, Minus,
+  Truck, CheckCircle2, LogIn, Star, 
 } from 'lucide-react';
 import Image from 'next/image';
 import MenuReviewSection from './MenuReviewSection';
+import CategorySlider from '@/components/home/CategorySlider';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const AUTH_KEY = 'qr_menu_auth';
@@ -308,9 +308,7 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
          
         </div>
 
-        {/* Content */}
         <div className="flex flex-col flex-1 p-3 sm:p-4 min-w-0">
-          {/* Category tag */}
           {item.category && (
             <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit mb-1.5 uppercase tracking-wide">
               {item.category}
@@ -421,7 +419,6 @@ export default function MenuSection({ menuItems, restaurantId, acceptsOnlineOrde
     <>
       <div style={{ paddingBottom: cart.length > 0 ? 100 : 24 }}>
 
-        {/* Online order banner — slim Swiggy style */}
         {acceptsOnlineOrders && (
           <div className="flex items-center gap-2.5 bg-green-50 border border-green-200 rounded-2xl px-4 py-3 mb-6">
             <span className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center shrink-0">
@@ -435,25 +432,11 @@ export default function MenuSection({ menuItems, restaurantId, acceptsOnlineOrde
           </div>
         )}
 
-        {/* Sticky category tabs — Swiggy style */}
-        <div className="sticky top-0 bg-white z-10 -mx-4 px-4 border-b border-gray-100 mb-6">
-          <div className="flex gap-0 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-            {categories.map((cat) => (
-              <button 
-              key={cat}
-               onClick={() => setActiveCategory(cat)}
-                className="shrink-0 px-4 py-3 text-sm font-semibold border-b-2 transition-all whitespace-nowrap"
-                style={{
-                  borderBottomColor: activeCategory === cat ? '#513012' : 'transparent',
-                  color: activeCategory === cat ? '#513012' : '#6b7280',
-                  background: 'transparent',
-                }}>
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
+        <CategorySlider
+  categories={categories}
+  activeCategory={activeCategory}
+  onSelect={setActiveCategory}
+/>
         <p className="text-xs text-gray-400 font-medium mb-4 uppercase tracking-wide">
           {filtered.length} items
         </p>

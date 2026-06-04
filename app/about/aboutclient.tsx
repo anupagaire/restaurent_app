@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-
+import Image from "next/image";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // ── Types ──────────────────────────────────────────────────
@@ -121,8 +121,10 @@ export default function About() {
       {/* ── HERO ── */}
       <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
-          <img
+          <Image
             src={hero.image}
+            width={400}
+            height={300}
             className="w-full h-full object-cover"
             alt={hero.title}
           />
@@ -153,8 +155,10 @@ export default function About() {
               className="relative order-2 lg:order-1"
             >
               <div className="relative h-[400px] md:h-[600px] w-full z-10 rounded-tl-[2.5rem] rounded-br-[2.5rem] overflow-hidden shadow-2xl shadow-[#8c6d46]/10 border border-[#e5d3b8]/20">
-                <img
+                <Image
                   src={introSection.image}
+                  width={400}
+                  height={300}
                   className="w-full h-full object-cover"
                   alt="Restaurant Interior"
                 />
@@ -201,7 +205,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── VISION ── */}
       <section className="py-12 bg-white text-black">
         <div className="max-w-screen-xl mx-auto px-6 sm:px-12 lg:px-24">
           <motion.div
@@ -231,9 +234,9 @@ export default function About() {
               variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
               className="flex flex-col justify-center space-y-6 text-left"
             >
-              <h2 className="text-4xl md:text-5xl font-light text-[#011659] leading-tight">
+              <h3 className="text-4xl md:text-5xl font-light text-[#011659] leading-tight">
                 {visionSection.right.title}
-              </h2>
+              </h3>
               <div className="space-y-4 text-lg text-[#011659]/80 font-light leading-relaxed">
                 {visionSection.right.content.map((line, i) => (
                   <p key={i}>{line}</p>
@@ -304,9 +307,11 @@ export default function About() {
                   <div className="mb-6 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                     <div className="w-28 h-28 flex items-center justify-center rounded-full bg-gradient-to-tr from-[#f5e9d6] to-white shadow-inner overflow-hidden">
                       {feature.image ? (
-                        <img
+                        <Image
                           src={feature.image}
                           alt={feature.title}
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-contain"
                         />
                       ) : (

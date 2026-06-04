@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,8 +11,8 @@ export default function NavbarHeroAdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [token, setToken] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null); // 'logo', 'slide-0', 'slide-1', etc.
   const router = useRouter();
-
 
   useEffect(() => { setToken(localStorage.getItem('access_token')); }, []);
 
@@ -26,6 +27,50 @@ export default function NavbarHeroAdminPage() {
     };
     fetchData();
   }, [token]);
+
+ const handleImageUpload = async (section: string, index: number | null, e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file || !token) return;
+
+  setUploading(index !== null ? `${section}-${index}` : section);
+  
+  const formData = new FormData();
+  formData.append('photo', file);
+  formData.append('purpose', section === 'logo' ? 'logo' : 'hero');
+  formData.append('type', 'navbar_content');
+  formData.append('alt', '');
+  
+  
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/photo/`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+    });
+
+    const responseData = await res.json();
+    
+    if (res.ok) {
+      const imageUrl = responseData.photo_url;
+      
+      if (section === 'logo') {
+        updatePath(['site_settings', 'logo', 'image'], imageUrl);
+      } else if (section === 'slide' && index !== null) {
+        const slides = [...data.hero_section.slides];
+        slides[index] = { ...slides[index], image: imageUrl };
+        updatePath(['hero_section', 'slides'], slides);
+      }
+    } else {
+      console.error('Upload failed:', responseData);
+      alert(`Upload failed: ${JSON.stringify(responseData.errors || responseData.message)}`);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    alert('Something went wrong during upload.');
+  } finally {
+    setUploading(null);
+  }
+};
 
   const handleSave = async () => {
     setSaving(true);
@@ -85,8 +130,8 @@ export default function NavbarHeroAdminPage() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
-  ← Back
-</button>
+        ← Back
+      </button>
       <h1 className="text-2xl font-bold text-[#513012]">Navbar & Hero Content</h1>
 
       {/* Site Settings */}
@@ -98,12 +143,38 @@ export default function NavbarHeroAdminPage() {
             value={data.site_settings?.site_name ?? ''}
             onChange={e => updatePath(['site_settings', 'site_name'], e.target.value)} />
         </div>
+        
+        {/* ✅ LOGO UPLOAD */}
         <div>
-          <label className="block text-sm font-medium mb-1">Logo URL</label>
-          <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
-            value={data.site_settings?.logo?.image ?? ''}
-            onChange={e => updatePath(['site_settings', 'logo', 'image'], e.target.value)} />
+          <label className="block text-sm font-medium mb-1">Logo</label>
+          <div className="flex items-center gap-4">
+            {data.site_settings?.logo?.image && (
+              <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-300 bg-white">
+                <Image 
+                  src={data.site_settings.logo.image} 
+                  alt={data.site_settings.logo.alt || 'Logo'} 
+                  fill 
+                  className="object-contain p-2" 
+                />
+              </div>
+            )}
+            <label className="cursor-pointer flex items-center gap-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition">
+              {uploading === 'logo' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              {uploading === 'logo' ? 'Uploading...' : 'Choose File'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleImageUpload('logo', null, e)}
+                disabled={uploading !== null}
+              />
+            </label>
+          </div>
+          {data.site_settings?.logo?.image && (
+            <p className="text-xs text-gray-400 mt-1 truncate">{data.site_settings.logo.image}</p>
+          )}
         </div>
+
         <div>
           <label className="block text-sm font-medium mb-1">Logo Alt Text</label>
           <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
@@ -172,8 +243,37 @@ export default function NavbarHeroAdminPage() {
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
+            
+            {/* ✅ SLIDE IMAGE UPLOAD */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Slide Image</label>
+              <div className="flex items-center gap-4">
+                {slide.image && (
+                  <div className="relative w-32 h-16 rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
+                    <Image 
+                      src={slide.image} 
+                      alt={slide.alt || 'Slide'} 
+                      fill 
+                      className="object-cover" 
+                    />
+                  </div>
+                )}
+                <label className="cursor-pointer flex items-center gap-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition">
+                  {uploading === `slide-${idx}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                  {uploading === `slide-${idx}` ? 'Uploading...' : 'Choose File'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload('slide', idx, e)}
+                    disabled={uploading !== null}
+                  />
+                </label>
+              </div>
+              {slide.image && <p className="text-xs text-gray-400 mt-1 truncate">{slide.image}</p>}
+            </div>
+
             {[
-              { field: 'image', label: 'Image URL' },
               { field: 'alt', label: 'Alt Text' },
               { field: 'title', label: 'Title' },
               { field: 'button_text', label: 'Button Text' },

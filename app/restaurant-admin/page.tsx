@@ -17,13 +17,12 @@ import SubscriptionBanner from '@/components/restaurant-admin/SubscriptionBanner
 import type { MenuItem, Category } from '@/types/menu';
 
 export default function RestaurantAdminDashboard() {
-  const { currentUser } = useAuth();
+  const { currentUser, profile } = useAuth();
   const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
   const canViewOrders = isAdmin || currentUser?.permissions?.viewOrders;
   const canManageMenu = isAdmin || currentUser?.permissions?.menuSettings;
   const canViewSettings = isAdmin || currentUser?.permissions?.globalSettings;
 
-  const [user, setUser] = useState<any>(null);
   const [restaurant, setRestaurant] = useState<any>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -34,30 +33,13 @@ export default function RestaurantAdminDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
- 
-  // Fetch User
+
+
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const raw = await res.json();
-        const data = raw.data ?? raw; 
-        setUser(data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load user information");
-      }
-    };
-
-    loadUser();
-  }, []);
-
+  if (profile?.restaurant) {
+    fetchDashboardData(profile.restaurant);
+  }
+}, [profile]);
 const currentMonth = new Date().getMonth();
 const currentYear = new Date().getFullYear();
 const monthlyOrders = orders.filter(o => {
@@ -65,11 +47,6 @@ const monthlyOrders = orders.filter(o => {
   return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
 });
 const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
-  useEffect(() => {
-    if (user?.restaurant) {
-      fetchDashboardData(user.restaurant);
-    }
-  }, [user]);
 
   const fetchDashboardData = async (restaurantId: number) => {
   try {
@@ -117,14 +94,13 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
     setIsModalOpen(true);
   };
 
-  const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
-    // Simple version: refresh after submit
-    if (user?.restaurant) {
-      await fetchDashboardData(user.restaurant);
-    }
-    setIsModalOpen(false);
-    setEditingItem(null);
-  };
+const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
+  if (profile?.restaurant) {  
+    await fetchDashboardData(profile.restaurant);  
+  }
+  setIsModalOpen(false);
+  setEditingItem(null);
+};
 
   if (loading) {
     return (
@@ -141,7 +117,8 @@ return (
       <div className="flex justify-between items-start mb-10">
         <div>
           <h1 className="text-4xl font-bold text-[#513012]">
-            Welcome back, {user?.first_name || "Admin"}!
+            Welcome back, {profile?.first_name || "Admin"}!
+
           </h1>
           <p className="text-gray-600 text-lg mt-1">
             {restaurant?.name || "Manage your restaurant efficiently"}
@@ -216,7 +193,6 @@ return (
 </Card>
       </div>
 
-      {/* ✅ Quick Actions — permission based */}
       <div className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-4">
@@ -260,13 +236,11 @@ return (
           )}
         </div>
 
-        {/* Kei permission chhaina bhane */}
         {!canManageMenu && !canViewSettings && !canViewOrders && (
           <p className="text-gray-400 text-sm py-4">No quick actions available for your role.</p>
         )}
       </div>
 
-      {/* Recent Menu Items + QR Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader className="flex flex-row justify-between items-center">
@@ -332,10 +306,9 @@ return (
           editingItem={editingItem}
           onSubmit={handleMenuSubmit}
           categories={categories}
-          restaurantId={user?.restaurant || 0}
+          restaurantId={profile?.restaurant || 0}
           onCategoryCreated={async () => {
-            if (user?.restaurant) {
-              await fetchDashboardData(user.restaurant);
+            if (profile?.restaurant) { await fetchDashboardData(profile.restaurant) 
             }
         }}
         />

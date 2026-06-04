@@ -1,7 +1,13 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,6 +16,7 @@ interface Restaurant {
   name: string;
   description: string;
   image: string;
+  image_id?: number; 
   rating: number;
   status: string;
 }
@@ -25,6 +32,7 @@ interface TestimonialsData {
 export default function TestimonialsAdminPage() {
   const [data, setData] = useState<TestimonialsData | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
   const [message, setMessage] = useState('');
   const [token, setToken] = useState<string | null>(null);
 
@@ -37,11 +45,15 @@ export default function TestimonialsAdminPage() {
   useEffect(() => {
     if (!token) return;
     const fetchData = async () => {
-      const res = await fetch(`${BASE_URL}/api/v1/website-content/testimonials/`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      const json = await res.json();
-      setData(json);
+      try {
+        const res = await fetch(`${BASE_URL}/api/v1/website-content/testimonials/`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const json = await res.json();
+        setData(json);
+      } catch (error) {
+        console.error("Failed to fetch testimonials", error);
+      }
     };
     fetchData();
   }, [token]);
@@ -67,13 +79,51 @@ export default function TestimonialsAdminPage() {
       testimonials_section: { ...prev.testimonials_section, [field]: value }
     } : prev);
 
-  const updateRestaurant = (idx: number, field: keyof Restaurant, value: string | number) =>
+  const updateRestaurant = (idx: number, field: keyof Restaurant, value: any) =>
     setData(prev => {
       if (!prev) return prev;
       const restaurants = [...prev.testimonials_section.restaurants];
       restaurants[idx] = { ...restaurants[idx], [field]: value };
       return { ...prev, testimonials_section: { ...prev.testimonials_section, restaurants } };
     });
+
+  const handleImageUpload = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !token) return;
+
+    setUploadingIdx(idx);
+    const formData = new FormData();
+    
+    formData.append('photo', file);
+    formData.append('type', 'testimonials_section'); 
+    formData.append('purpose', 'testimonial');
+    formData.append('alt', data?.testimonials_section.restaurants[idx].name || 'Testimonial');
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/v1/photo/`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}` 
+        },
+        body: formData,
+      });
+
+      const responseData = await res.json();
+      
+      if (res.ok) {
+        updateRestaurant(idx, 'image', responseData.photo_url);
+        updateRestaurant(idx, 'image_id', responseData.id);
+      } else {
+        console.error("❌ Upload Error:", responseData);
+        alert(`Upload failed: ${JSON.stringify(responseData.errors || responseData)}`);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('Something went wrong during upload.');
+    } finally {
+      setUploadingIdx(null);
+    }
+  };
 
   const addRestaurant = () =>
     setData(prev => {
@@ -84,7 +134,7 @@ export default function TestimonialsAdminPage() {
         description: '',
         image: '',
         rating: 5.0,
-        status: 'Available to Order',
+        status: 'Verified Customer',
       };
       return {
         ...prev,
@@ -109,8 +159,8 @@ export default function TestimonialsAdminPage() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
       <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
-  ← Back
-</button>
+        ← Back
+      </button>
       <h1 className="text-2xl font-bold text-[#513012]">Testimonials Content</h1>
 
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
@@ -123,23 +173,26 @@ export default function TestimonialsAdminPage() {
             onChange={e => updateSection('title', e.target.value)}
           />
         </div>
+        
+        {/* ✅ Section Description with React Quill */}
         <div>
           <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea
-            rows={2}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 resize-none"
-            value={description}
-            onChange={e => updateSection('description', e.target.value)}
+          <ReactQuill
+            value={description || ''}
+            onChange={(val) => updateSection('description', val)}
+            theme="snow"
+            className="rounded-lg bg-white"
+            placeholder="Enter section description..."
           />
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-semibold text-lg">Restaurants</h2>
+        <h2 className="font-semibold text-lg">Restaurants / Testimonials</h2>
         {restaurants.map((r, idx) => (
-          <div key={r.id} className="border border-gray-200 rounded-xl p-5 space-y-3">
+          <div key={r.id} className="border border-gray-200 rounded-xl p-5 space-y-4">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-semibold text-gray-600">#{idx + 1}</span>
+              <span className="text-sm font-semibold text-gray-600">#{idx + 1} {r.name && `- ${r.name}`}</span>
               <button
                 onClick={() => removeRestaurant(idx)}
                 className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
@@ -147,30 +200,64 @@ export default function TestimonialsAdminPage() {
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
-            {([
-              { field: 'name',        label: 'Name',        type: 'text' },
-              { field: 'image',       label: 'Image URL',   type: 'text' },
-              { field: 'status',      label: 'Status',      type: 'text' },
-              { field: 'description', label: 'Description', type: 'textarea' },
-            ] as const).map(({ field, label, type }) => (
-              <div key={field}>
-                <label className="block text-sm font-medium mb-1">{label}</label>
-                {type === 'textarea' ? (
-                  <textarea
-                    rows={3}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 resize-none"
-                    value={r[field] as string}
-                    onChange={e => updateRestaurant(idx, field, e.target.value)}
-                  />
-                ) : (
-                  <input
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
-                    value={r[field] as string}
-                    onChange={e => updateRestaurant(idx, field, e.target.value)}
-                  />
+            
+            {/* ✅ IMAGE UPLOAD UI */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Image</label>
+              <div className="flex items-center gap-4">
+                {r.image && (
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                    <Image src={r.image} alt="Preview" fill className="object-cover" />
+                  </div>
                 )}
+                <label className="cursor-pointer flex items-center gap-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition">
+                  {uploadingIdx === idx ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                  {uploadingIdx === idx ? 'Uploading...' : 'Choose File'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(idx, e)}
+                    disabled={uploadingIdx !== null}
+                  />
+                </label>
               </div>
-            ))}
+              {r.image && <p className="text-xs text-gray-400 mt-1 truncate max-w-xs">{r.image}</p>}
+            </div>
+
+            {/* Name Field */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Name</label>
+              <input
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                value={r.name}
+                onChange={e => updateRestaurant(idx, 'name', e.target.value)}
+              />
+            </div>
+
+            {/* Status Field */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Status</label>
+              <input
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                value={r.status}
+                onChange={e => updateRestaurant(idx, 'status', e.target.value)}
+              />
+            </div>
+            
+            {/* ✅ Restaurant Description with React Quill */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <ReactQuill
+                value={r.description || ''}
+                onChange={(val) => updateRestaurant(idx, 'description', val)}
+                theme="snow"
+                className="rounded-lg bg-white"
+                placeholder="Enter testimonial description..."
+              />
+            </div>
+            
+            {/* Rating Field */}
             <div>
               <label className="block text-sm font-medium mb-1">Rating (0–5)</label>
               <input
@@ -189,7 +276,7 @@ export default function TestimonialsAdminPage() {
           onClick={addRestaurant}
           className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition"
         >
-          <Plus className="w-4 h-4" /> Add Restaurant
+          <Plus className="w-4 h-4" /> Add Testimonial
         </button>
       </section>
 

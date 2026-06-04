@@ -40,9 +40,7 @@ function StarDisplay({ avg, count }: { avg: number; count: number }) {
       <span className="text-xs font-semibold text-amber-700">{avg.toFixed(1)}</span>
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((s) => (
-          <Star
-            key={s}
-            size={11}
+          <Star key={s} size={11}
             className={s <= Math.round(avg) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}
           />
         ))}
@@ -61,10 +59,7 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
     >
       <div className="relative h-44 bg-gray-100 flex-shrink-0">
         {photo ? (
-          <Image
-            src={photo}
-            alt={restaurant.name}
-            fill
+          <Image src={photo} alt={restaurant.name} fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -76,9 +71,7 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
         {restaurant.view_count > 0 && (
           <span className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
             <Eye size={10} />
-            {restaurant.view_count >= 1000
-              ? `${(restaurant.view_count / 1000).toFixed(1)}k`
-              : restaurant.view_count}
+            {restaurant.view_count >= 1000 ? `${(restaurant.view_count / 1000).toFixed(1)}k` : restaurant.view_count}
           </span>
         )}
       </div>
@@ -100,9 +93,9 @@ function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialQuery = searchParams.get('q') ?? '';
-
-  const [query, setQuery] = useState(initialQuery);
+const cityScrollRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -112,24 +105,18 @@ function SearchPageContent() {
   const [selectedCity, setSelectedCity] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'default' | 'views' | 'name'>('default');
+  const [nearMeLoading, setNearMeLoading] = useState(false);
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch cities once, cache in sessionStorage
+  // Fetch cities
   useEffect(() => {
     const cached = sessionStorage.getItem('allCities');
-    if (cached) {
-      setAllCities(JSON.parse(cached));
-      return;
-    }
+    if (cached) { setAllCities(JSON.parse(cached)); return; }
     fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => {
-        const cities = [
-          ...new Set(
-            (data.results ?? []).map((r: Restaurant) => r.city).filter(Boolean)
-          ),
-        ] as string[];
+        const cities = [...new Set((data.results ?? []).map((r: Restaurant) => r.city).filter(Boolean))] as string[];
         const sorted = cities.sort();
         setAllCities(sorted);
         sessionStorage.setItem('allCities', JSON.stringify(sorted));
@@ -151,41 +138,28 @@ function SearchPageContent() {
       setTotalCount(0);
       return;
     }
-
     setLoading(true);
     try {
       const params = new URLSearchParams({ status: 'true', page_size: '200' });
       if (query.trim()) params.set('search', query.trim());
 
       const res = await fetch(`${BASE_URL}/api/v1/restaurant/?${params}`, { cache: 'no-store' });
-      if (!res.ok) {
-        setResults([]);
-        setTotalCount(0);
-        return;
-      }
+      if (!res.ok) { setResults([]); setTotalCount(0); return; }
       const data = await res.json();
       let items: Restaurant[] = data.results ?? [];
 
-      // Client-side city filter
       if (selectedCity) {
-        items = items.filter((r) =>
-          r.city?.toLowerCase().includes(selectedCity.toLowerCase())
-        );
+        items = items.filter((r) => r.city?.toLowerCase().includes(selectedCity.toLowerCase()));
       }
-
-      // Client-side sort
       if (sortBy === 'views') items = [...items].sort((a, b) => b.view_count - a.view_count);
       if (sortBy === 'name') items = [...items].sort((a, b) => a.name.localeCompare(b.name));
 
-      // Manual pagination after filtering
       const total = items.length;
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
       const paginated = items.slice(start, start + ITEMS_PER_PAGE);
-
       setResults(paginated);
       setTotalCount(total);
 
-      // Batch fetch ratings for all visible results in ONE request
       const uncachedIds = paginated.map((r) => r.id).filter((id) => ratings[id] === undefined);
       if (uncachedIds.length > 0) {
         try {
@@ -195,24 +169,17 @@ function SearchPageContent() {
           );
           if (ratingRes.ok) {
             const ratingData = await ratingRes.json();
-            const reviews: { rating: number; parent: number | null; restaurant: number }[] =
-              ratingData.results ?? [];
-
+            const reviews: { rating: number; parent: number | null; restaurant: number }[] = ratingData.results ?? [];
             const newRatings: RatingCache = {};
             uncachedIds.forEach((id) => {
               const topLevel = reviews.filter((rev) => rev.restaurant === id && rev.parent === null);
-              if (topLevel.length === 0) {
-                newRatings[id] = { avg: 0, count: 0 };
-              } else {
-                const avg = topLevel.reduce((s, rev) => s + rev.rating, 0) / topLevel.length;
-                newRatings[id] = { avg, count: topLevel.length };
-              }
+              newRatings[id] = topLevel.length === 0
+                ? { avg: 0, count: 0 }
+                : { avg: topLevel.reduce((s, rev) => s + rev.rating, 0) / topLevel.length, count: topLevel.length };
             });
             setRatings((prev) => ({ ...prev, ...newRatings }));
           }
-        } catch {
-          // Ratings failed silently — cards still show without ratings
-        }
+        } catch {}
       }
     } catch {
       setResults([]);
@@ -220,22 +187,15 @@ function SearchPageContent() {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, currentPage, selectedCity, sortBy]);
 
-  useEffect(() => {
-    fetchResults();
-  }, [fetchResults]);
+  useEffect(() => { fetchResults(); }, [fetchResults]);
 
-  const handleSearch = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSearch = () => {
     if (!inputValue.trim()) return;
     setCurrentPage(1);
     router.push(`/search?q=${encodeURIComponent(inputValue.trim())}`);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSearch();
   };
 
   const clearSearch = () => {
@@ -247,78 +207,150 @@ function SearchPageContent() {
     inputRef.current?.focus();
   };
 
+  const handleNearMe = () => {
+    if (!navigator.geolocation) return;
+    setNearMeLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const data = await res.json();
+          const detectedCity = data.address?.city || data.address?.town || data.address?.village;
+          if (!detectedCity) return;
+          const match = allCities.find(
+            (c) =>
+              c.toLowerCase().includes(detectedCity.toLowerCase()) ||
+              detectedCity.toLowerCase().includes(c.toLowerCase())
+          );
+          if (match) { setSelectedCity(match); setCurrentPage(1); }
+        } finally {
+          setNearMeLoading(false);
+        }
+      },
+      () => setNearMeLoading(false),
+      { timeout: 8000 }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-            {/* Hero search bar */}
-      <div className="bg-gradient-to-br from-[#2a1505] via-[#3d1a08] to-[#1a0b02] py-10 px-4">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-amber-200/60 text-xs font-medium uppercase tracking-widest mb-2 text-center">
-            Search
-          </p>
-          <h1 className="text-white text-2xl sm:text-3xl font-bold text-center mb-6">
-            Find your next favourite restaurant
-          </h1>
 
-          {/* Search input */}
-          <div className="relative">
-            <div className="flex items-center bg-white rounded-2xl shadow-xl overflow-visible">
-              <Search size={18} className="ml-4 text-gray-400" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Restaurant name, cuisine, city..."
-                className="flex-1 px-3 py-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 bg-transparent"
-                autoFocus
-              />
-              {inputValue && (
-                <button onClick={clearSearch} className="px-2 text-gray-300 hover:text-gray-500 transition-colors">
-                  <X size={16} />
-                </button>
-              )}
-              <button
-                onClick={() => handleSearch()}
-                disabled={!inputValue.trim()}
-                className="m-2 px-5 py-2.5 bg-[#513012] text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors flex-shrink-0"
-              >
-                Search
+      {/* ── HERO ── */}
+      <div className="bg-gradient-to-br from-[#2a1505] via-[#3d1a08] to-[#1a0b02] py-14 px-4">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3 text-center">
+            🍽️ Discover Nepal&apos;s Best
+          </p>
+          <h1 className="text-white text-3xl sm:text-4xl font-bold text-center mb-2 leading-tight">
+            Find Your Next<br />
+            <span className="text-amber-400">Favourite Restaurant</span>
+          </h1>
+          <p className="text-white/40 text-sm text-center mb-8">
+            Search across hundreds of venues in Nepal
+          </p>
+
+          {/* Search bar */}
+          <div className="flex items-center bg-white rounded-2xl shadow-2xl p-2 gap-2">
+            <Search size={18} className="ml-2 text-gray-400 flex-shrink-0" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder="Restaurant name, cuisine, city..."
+              className="flex-1 px-2 py-2.5 text-sm text-gray-800 outline-none placeholder:text-gray-400 bg-transparent"
+              autoFocus
+            />
+            {inputValue && (
+              <button onClick={clearSearch} className="text-gray-300 hover:text-gray-500 p-1 transition-colors">
+                <X size={16} />
               </button>
-            </div>
+            )}
+            <button
+              onClick={handleSearch}
+              disabled={!inputValue.trim()}
+              className="px-5 py-2.5 bg-[#513012] text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors flex-shrink-0"
+            >
+              Search
+            </button>
           </div>
 
-          {/* Quick city filters */}
-          {allCities.length > 0 && (
-            <div className="flex gap-2 mt-4 overflow-x-auto pb-1 scrollbar-hide">
-              <button
-                onClick={() => setSelectedCity('')}
-                className={` px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  !selectedCity ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
-                }`}
-              >
-                All cities
-              </button>
-              {allCities.slice(0, 8).map((city) => (
-                <button
-                  key={city}
-                  onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    selectedCity === city ? 'bg-amber-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
-                  }`}
-                >
-                  {city}
+          {/* City pills */}
+         {/* City pills — arrows सहित */}
+{allCities.length > 0 && (
+  <div className="relative mt-4">
+    {/* Left fade */}
+    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#2a1505] to-transparent z-10 pointer-events-none" />
+    {/* Right fade */}
+    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#1a0b02] to-transparent z-10 pointer-events-none" />
+
+    <div
+      ref={cityScrollRef}
+      className="flex gap-2 overflow-x-auto pb-1"
+      style={{ scrollbarWidth: 'none' }}
+    >
+      {/* All */}
+      <button
+        onClick={() => { setSelectedCity(''); setCurrentPage(1); }}
+        className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+          !selectedCity ? ' text-white' : 'bg-white/10 text-white '
+        }`}
+      >
+        All
+      </button>
+
+      {/* Near Me */}
+      <button
+        onClick={handleNearMe}
+        disabled={nearMeLoading}
+        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-400/30 transition-all disabled:opacity-60"
+      >
+        <MapPin size={11} className={nearMeLoading ? 'animate-pulse' : ''} />
+        {nearMeLoading ? 'Detecting...' : 'Near Me'}
+      </button>
+
+      {/* Cities */}
+      {allCities.map((city) => (
+        <button
+          key={city}
+          onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
+          className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
+            selectedCity === city
+              ? 'bg-amber-400 text-white'
+              : 'bg-white/10 text-white/70 hover:bg-white/20'
+          }`}
+        >
+          {city}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+          {/* Active city badge */}
+          {selectedCity && (
+            <div className="flex justify-center mt-3">
+              <span className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs px-3 py-1.5 rounded-full">
+                <MapPin size={11} />
+                Showing in <strong>{selectedCity}</strong>
+                <button onClick={() => setSelectedCity('')} className="hover:text-white transition-colors">
+                  <X size={11} />
                 </button>
-              ))}
+              </span>
             </div>
           )}
         </div>
       </div>
 
+      {/* ── CONTENT ── */}
       <div className="max-w-6xl mx-auto px-4 py-8">
 
         {/* Results header + filters */}
-        {query && (
+        {(query || selectedCity) && (
           <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
             <div>
               {loading ? (
@@ -328,19 +360,18 @@ function SearchPageContent() {
                   {totalCount > 0 ? (
                     <>
                       <span className="font-semibold text-[#513012]">{totalCount}</span>{' '}
-                      result{totalCount !== 1 ? 's' : ''} for{' '}
-                      <span className="font-semibold">&ldquo;{query}&rdquo;</span>
+                      result{totalCount !== 1 ? 's' : ''}
+                      {query && <> for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>}
                       {selectedCity && <span className="text-gray-400"> in {selectedCity}</span>}
                     </>
                   ) : (
-                    <>No results for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>
+                    <>No results{query && <> for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>}</>
                   )}
                 </p>
               )}
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Sort */}
               <div className="relative">
                 <select
                   value={sortBy}
@@ -354,16 +385,17 @@ function SearchPageContent() {
                 <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
 
-              {/* Filter toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
-                  showFilters || selectedCity ? 'bg-[#513012] text-white border-[#513012]' : 'border-gray-200 text-gray-600 bg-white hover:bg-gray-50'
+                  showFilters || selectedCity
+                    ? 'bg-[#513012] text-white border-[#513012]'
+                    : 'border-gray-200 text-gray-600 bg-white hover:bg-gray-50'
                 }`}
               >
                 <SlidersHorizontal size={13} />
                 Filters
-                {selectedCity && <span className="bg-white/20 text-white rounded-full px-1">1</span>}
+                {selectedCity && <span className="bg-white/20 text-white rounded-full px-1.5 text-[10px]">1</span>}
               </button>
             </div>
           </div>
@@ -400,23 +432,20 @@ function SearchPageContent() {
 
         {/* Empty state */}
         {!query && !selectedCity && !loading && (
-          <div className="text-center py-24">
+          <div className="text-center py-20">
             <div className="text-7xl mb-4">🔍</div>
             <h2 className="text-xl font-bold text-gray-700 mb-2">Search for a restaurant</h2>
-            <p className="text-gray-400 text-sm max-w-sm mx-auto">
+            <p className="text-gray-400 text-sm max-w-sm mx-auto mb-8">
               Type a restaurant name, cuisine type, or city name above to get started.
             </p>
             {allCities.length > 0 && (
-              <div className="mt-8">
-                <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">Browse by city</p>
+              <>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">Or browse by city</p>
                 <div className="flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
                   {allCities.map((city) => (
                     <button
                       key={city}
-                      onClick={() => {
-                        setInputValue(city);
-                        router.push(`/search?q=${encodeURIComponent(city)}`);
-                      }}
+                      onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
                       className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-[#513012] hover:text-[#513012] hover:bg-amber-50 transition-colors flex items-center gap-1.5"
                     >
                       <MapPin size={12} />
@@ -424,7 +453,7 @@ function SearchPageContent() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </>
             )}
           </div>
         )}
@@ -446,33 +475,27 @@ function SearchPageContent() {
         )}
 
         {/* No results */}
-        {!loading && query && results.length === 0 && (
+        {!loading && (query || selectedCity) && results.length === 0 && (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">😕</div>
             <h2 className="text-lg font-bold text-gray-700 mb-2">No results found</h2>
             <p className="text-gray-400 text-sm mb-6">
-              We couldn&apos;t find any restaurants matching &ldquo;{query}&rdquo;
-              {selectedCity ? ` in ${selectedCity}` : ''}.
+              {query && <>No restaurants matching &ldquo;{query}&rdquo;</>}
+              {selectedCity && <> in {selectedCity}</>}.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               {selectedCity && (
-                <button
-                  onClick={() => setSelectedCity('')}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
-                >
+                <button onClick={() => setSelectedCity('')}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50">
                   Search all cities
                 </button>
               )}
-              <button
-                onClick={clearSearch}
-                className="px-4 py-2 rounded-xl bg-[#513012] text-white text-sm font-medium hover:bg-[#3d2209]"
-              >
+              <button onClick={clearSearch}
+                className="px-4 py-2 rounded-xl bg-[#513012] text-white text-sm font-medium hover:bg-[#3d2209]">
                 Clear search
               </button>
-              <Link
-                href="/restaurants"
-                className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
-              >
+              <Link href="/restaurants"
+                className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50">
                 Browse all venues
               </Link>
             </div>
@@ -483,11 +506,7 @@ function SearchPageContent() {
         {!loading && results.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {results.map((restaurant) => (
-              <RestaurantCard
-                key={restaurant.id}
-                restaurant={restaurant}
-                rating={ratings[restaurant.id]}
-              />
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} rating={ratings[restaurant.id]} />
             ))}
           </div>
         )}
@@ -495,37 +514,27 @@ function SearchPageContent() {
         {/* Pagination */}
         {totalPages > 1 && !loading && (
           <div className="flex justify-center mt-10 gap-2 flex-wrap">
-            <button
-              onClick={() => setCurrentPage((p) => p - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 rounded-lg border border-gray-200 text-sm disabled:opacity-40 hover:bg-gray-50 transition-colors"
-            >
+            <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm disabled:opacity-40 hover:bg-gray-50 transition-colors">
               ← Prev
             </button>
             {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
+              <button key={i} onClick={() => setCurrentPage(i + 1)}
                 className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                   currentPage === i + 1
                     ? 'bg-[#513012] text-white border-[#513012]'
                     : 'border-gray-200 bg-white hover:bg-gray-50'
-                }`}
-              >
+                }`}>
                 {i + 1}
               </button>
             ))}
-            <button
-              onClick={() => setCurrentPage((p) => p + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-lg border border-gray-200 text-sm disabled:opacity-40 hover:bg-gray-50 transition-colors"
-            >
+            <button onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm disabled:opacity-40 hover:bg-gray-50 transition-colors">
               Next →
             </button>
           </div>
         )}
       </div>
-
     </div>
   );
 }

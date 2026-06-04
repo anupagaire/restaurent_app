@@ -2,6 +2,9 @@ import { refreshAccessToken } from "./auth";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
 export async function apiFetch(url: string, options: any = {}) {
   let token = localStorage.getItem("access_token");
 
@@ -9,7 +12,7 @@ export async function apiFetch(url: string, options: any = {}) {
 
   const headers = {
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
-    Authorization: `Bearer ${token}`,
+    ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
 
@@ -18,17 +21,34 @@ export async function apiFetch(url: string, options: any = {}) {
     headers,
   });
 
-  // Token expired → refresh and retry
-  if (res.status === 401) {
-    const newToken = await refreshAccessToken();
+  // ✅ Token expired → refresh and retry
+  if (res.status === 401 && !url.includes('/auth/refresh/') && !url.includes('/token/refresh/')) {
+    console.log('🔄 401 detected, refreshing token...');
+    
+    // Prevent multiple simultaneous refresh attempts
+    if (isRefreshing && refreshPromise) {
+      console.log('⏳ Already refreshing, waiting...');
+      await refreshPromise;
+    } else {
+      isRefreshing = true;
+      refreshPromise = refreshAccessToken();
+      const newToken = await refreshPromise;
+      isRefreshing = false;
+      refreshPromise = null;
 
-    if (!newToken) {
-      throw new Error("Session expired");
+      if (!newToken) {
+        console.error('❌ Refresh failed, redirecting to login');
+        throw new Error("Session expired");
+      }
+
+      token = newToken;
     }
 
+    console.log('🔄 Retrying request with new token...');
+    
     const retryHeaders = {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
-      Authorization: `Bearer ${newToken}`,
+      Authorization: `Bearer ${token}`,
       ...options.headers,
     };
 

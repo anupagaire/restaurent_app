@@ -13,7 +13,7 @@ interface Restaurant {
   status: boolean;
   availability: string;
   view_count: number;
-  photos: { id: number; photo_url: string }[];
+  coverPhotoUrl?: string | null; // We'll add this after fetching photos
 }
 
 function toSlug(name: string) {
@@ -23,7 +23,24 @@ function toSlug(name: string) {
 function resolvePhoto(url: string | null | undefined): string | null {
   if (!url) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+  const base = BASE_URL?.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+  return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+// ── Fetch cover photo for a specific restaurant ────────────────────────────
+async function fetchCoverPhoto(restaurantId: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/v1/photo/?type=restaurant&object_id=${restaurantId}&purpose=cover`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const photo = data.results?.[0];
+    return photo?.photo_url ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // ── Fetch average rating from API ────────────────────────────
@@ -45,7 +62,7 @@ async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; coun
   }
 }
 
-// ── Star Rating — database ma save ───────────────────────────
+// ── Star Rating ──────────────────────────────────────────────
 function StarRating({ restaurantId }: { restaurantId: number }) {
   const [myRating, setMyRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -82,7 +99,6 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
       });
       if (res.ok) {
         setSubmitted(true);
-        // avg refresh gara
         setTimeout(() => loadAvg(), 500);
       } else {
         setMyRating(0);
@@ -98,24 +114,17 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
 
   return (
     <div onClick={(e) => e.preventDefault()}>
-      {/* Average rating */}
       {count > 0 && (
         <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
           <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
           <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((s) => (
-              <span
-                key={s}
-                className="text-xs"
-                style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}
-              >★</span>
+              <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}>★</span>
             ))}
           </div>
           <span className="text-[10px] text-gray-400">({count} reviews)</span>
         </div>
       )}
-
-      {/* My rating */}
       <div className="mt-2 pt-2 border-t border-gray-100">
         <p className="text-[10px] text-gray-400 mb-1">
           {submitted ? 'Your rating:' : 'Rate this place:'}
@@ -150,16 +159,29 @@ export default function FeaturedRestaurants() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
+    const fetchRestaurantsWithPhotos = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          `${BASE_URL}/api/v1/restaurant/?status=true&page_size=8`,
-          { cache: 'no-store' }
-        );
+        
+        // Step 1: Fetch restaurants
+        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=8`, {
+          cache: 'no-store',
+        });
         if (!res.ok) { setRestaurants([]); return; }
         const data = await res.json();
-        setRestaurants(data.results ?? []);
+        const restaurantList: Restaurant[] = data.results ?? [];
+        
+        // Step 2: Fetch cover photos for all restaurants in parallel
+        const photosPromises = restaurantList.map(r => fetchCoverPhoto(r.id));
+        const photos = await Promise.all(photosPromises);
+        
+        // Step 3: Combine restaurants with their photos
+        const restaurantsWithPhotos = restaurantList.map((r, index) => ({
+          ...r,
+          coverPhotoUrl: photos[index],
+        }));
+        
+        setRestaurants(restaurantsWithPhotos);
       } catch (err) {
         console.error('Failed to fetch restaurants:', err);
         setRestaurants([]);
@@ -167,7 +189,8 @@ export default function FeaturedRestaurants() {
         setLoading(false);
       }
     };
-    fetchRestaurants();
+    
+    fetchRestaurantsWithPhotos();
   }, []);
 
   return (
@@ -195,7 +218,8 @@ export default function FeaturedRestaurants() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {restaurants.map((restaurant) => {
-              const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
+              const photo = resolvePhoto(restaurant.coverPhotoUrl);
+
               return (
                 <Link
                   key={restaurant.id}
@@ -216,19 +240,20 @@ export default function FeaturedRestaurants() {
                         🍽️
                       </div>
                     )}
+
                     {restaurant.availability && !/^\d{4}-\d{2}-\d{2}/.test(restaurant.availability) && (
-                      <span className="absolute top-2 left-2 bg-green-600 text-white text-[10px] font-medium px-2 py-0.5 rounded-full">
+                      <span className="absolute top-2 left-2 bg-green-600 text-white text-[10px] font-medium px-2 py-0.5 rounded-full z-10">
                         {restaurant.availability}
                       </span>
                     )}
 
                     {restaurant.view_count > 0 && (
-  <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
-    👀  {restaurant.view_count >= 1000
-      ? `${(restaurant.view_count / 1000).toFixed(1)}k`
-      : restaurant.view_count}
-  </span>
-)}
+                      <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
+                        👀 {restaurant.view_count >= 1000
+                          ? `${(restaurant.view_count / 1000).toFixed(1)}k`
+                          : restaurant.view_count}
+                      </span>
+                    )}
                   </div>
 
                   <div className="p-3">

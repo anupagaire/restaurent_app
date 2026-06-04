@@ -5,7 +5,7 @@ const contentSections = [
 { title: 'Navbar & Hero', href: '/super-admin/website-content/navbar-hero', icon: Layout, description: 'Edit navbar links, buttons, hero slides' },
 { title: 'How It Works', href: '/super-admin/website-content/how-it-works', icon: HelpCircle, description: 'Edit steps shown on the how it works section' },
   { title: 'Testimonials', href: '/super-admin/website-content/testimonials', icon: Star, description: 'Edit testimonials section and restaurant cards' },
-  { title: 'About Sections', href: '/super-admin/website-content/about-sections', icon: Info, description: 'Edit commitment section and why choose us' },
+  { title: 'About Sections', href: '/super-admin/website-content/commitments', icon: Info, description: 'Edit commitment section and why choose us' },
   { title: 'Footer',       href: '/super-admin/website-content/footer',  icon: Layout,   description: 'Edit footer links, contact info, socials' },
   { title: 'About Page',   href: '/super-admin/website-content/aboutpage',   icon: Info,     description: 'Edit about us content' },
 ];

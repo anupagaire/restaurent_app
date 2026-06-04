@@ -11,7 +11,7 @@ import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { useRequirePermission } from '@/hooks/usePermission';
 import StaffModal from '@/components/restaurant-admin/StaffModal';
-
+import { useAuth } from '@/context/AuthContext';
 interface Role {
   id: number;
   name: string;
@@ -28,7 +28,7 @@ interface Staff {
   restaurant: number;
 }
 
-const CUSTOMER_ROLE_ID = 7; // Customer role id — remove this after user creation
+const CUSTOMER_ROLE_ID = 7; 
 
 export default function StaffsPage() {
   const [staffList, setStaffList]     = useState<Staff[]>([]);
@@ -38,7 +38,7 @@ export default function StaffsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
   const [submitting, setSubmitting]   = useState(false);
-
+const { profile } = useAuth()
   useRequirePermission('manageStaff');
 
   // ── Fetch staff list ───────────────────────────────────────────────────────
@@ -112,11 +112,8 @@ setRoles(list.filter(r =>
   const handleSubmitStaff = async (formData: any) => {
     setSubmitting(true);
     try {
-      // Get current user's restaurant
-      const meRes = await apiFetch('/api/v1/user/me/');
-      const meRaw = await meRes.json();
-      const me    = meRaw.data ?? meRaw;
-      const restaurantId = me.restaurant;
+ 
+   const restaurantId = profile?.restaurant;
 
       if (editingStaff) {
         // ── PATCH user ───────────────────────────────────────────────────────

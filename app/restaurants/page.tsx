@@ -17,8 +17,7 @@ interface Restaurant {
   city: string;
   status: boolean;
   view_count: number;
-  cover_photo: { photo_url: string; alt: string } | null;
-  // photos: { id: number; photo_url: string }[];
+coverPhotoUrl?: string | null;
 }
 
 function toSlug(name: string) {
@@ -30,7 +29,19 @@ function resolvePhoto(url: string | null | undefined): string | null {
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 }
-
+async function fetchCoverPhoto(restaurantId: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/v1/photo/?type=restaurant&object_id=${restaurantId}&purpose=cover`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.results?.[0]?.photo_url ?? null;
+  } catch {
+    return null;
+  }
+}
 async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; count: number }> {
   try {
     const res = await fetch(
@@ -249,7 +260,7 @@ export default function RestaurantsPage() {
     setAvailableCities(cities);
   }, [allRestaurants]);
 
-  const fetchRestaurants = useCallback(async () => {
+    const fetchRestaurants = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -269,8 +280,16 @@ export default function RestaurantsPage() {
         );
       }
 
-      setRestaurants(results);
-      setTotalCount(selectedCity ? results.length : (data.count ?? 0));
+      const resultsWithPhotos = await Promise.all(
+        results.map(async (r) => {
+          const photoUrl = await fetchCoverPhoto(r.id);
+          return { ...r, coverPhotoUrl: photoUrl };
+        })
+      );
+      // ────────────────────────────────────────────────────────
+
+      setRestaurants(resultsWithPhotos); 
+      setTotalCount(selectedCity ? resultsWithPhotos.length : (data.count ?? 0));
     } catch (err) {
       console.error(err);
       setRestaurants([]);
@@ -404,8 +423,7 @@ const sortedRestaurants = [...restaurants].sort((a, b) => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {sortedRestaurants.map((restaurant) => {
-              // const photo = resolvePhoto(restaurant.photos?.[0]?.photo_url);
-const photo = resolvePhoto(restaurant.cover_photo?.photo_url);
+const photo = resolvePhoto(restaurant.coverPhotoUrl);
               return (
                 <Link
                   key={restaurant.id}
@@ -413,22 +431,21 @@ const photo = resolvePhoto(restaurant.cover_photo?.photo_url);
                   className="group bg-white rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
                 >
                   <div className="relative h-40 bg-gray-100">
-                    {/* {photo ? (
-                      <Image
-                        src={photo} alt={restaurant.name} fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">🍽️</div>
-                    )} */}
+                   
                  
 {photo ? (
+  // <Image
+  //   src={photo} alt={restaurant.cover_photo?.alt || restaurant.name} fill
+  //   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+  //   className="object-cover"
+  // />
   <Image
-    src={photo} alt={restaurant.cover_photo?.alt || restaurant.name} fill
-    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-    className="object-cover"
-  />
+  src={photo}
+  alt={restaurant.name}
+  fill
+  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+  className="object-cover"
+/>
 ) : (
   <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">🍽️</div>
 )}

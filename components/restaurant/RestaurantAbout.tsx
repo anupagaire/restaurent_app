@@ -1,5 +1,5 @@
-import Image from 'next/image';
-
+import Link from 'next/link';
+import RestaurantPhotoSlider from './RestaurantPhotoSlider';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface RestaurantAboutProps {
@@ -18,7 +18,13 @@ interface RestaurantAboutProps {
     }[];
   };
 }
-
+function toSlug(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+}
 function resolveUrl(url?: string | null): string | null {
   if (!url) return null;
   if (url.startsWith('http')) return url;
@@ -55,25 +61,23 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
           )}
         </div>
 
-        {/* Gallery */}
-        {restaurant.photos && restaurant.photos.length > 1 && (
-          <div>
-            <h2 className="font-bold text-gray-800 text-lg mb-4">Gallery</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {restaurant.photos.slice(0, 6).map((photo) => {
-                const url = resolveUrl(photo.photo_url);
-                if (!url) return null;
-                return (
-                  <div key={photo.id} className="relative h-40 rounded-xl overflow-hidden">
-                    <Image src={url} alt={restaurant.name} fill style={{ objectFit: 'cover' }} />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+     {restaurant.photos && restaurant.photos.length > 0 && (
+  <div>
+    <h2 className="font-bold text-gray-800 text-lg mb-4">Gallery</h2>
+    
+    <RestaurantPhotoSlider 
+      photos={restaurant.photos} 
+      restaurantName={restaurant.name} 
+    />
 
-      </div>
+   <Link
+  href={`/restaurants/${toSlug(restaurant.name)}/gallery`}
+  className="inline-flex mt-6 px-5 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+>
+  View All Photos
+</Link>
+  </div>
+)}      </div>
     </div>
   );
 }

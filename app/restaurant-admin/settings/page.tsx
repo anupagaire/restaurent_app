@@ -19,7 +19,8 @@ interface RestaurantData {
   zip: string;
   availability: string | null;
   status: boolean;
-  photos: { id: number; photo_url: string }[];
+  // photos: { id: number; photo_url: string }[];
+  photos: { id: number; photo_url: string; purpose: string }[];
 }
 
 function Alert({ type, msg }: { type: 'success' | 'error'; msg: string }) {
@@ -46,6 +47,7 @@ export default function GlobalSettingsPage() {
   const [isDeletingPhoto, setIsDeletingPhoto]   = useState<number | null>(null);
   const [error, setError]                 = useState('');
   const [successMsg, setSuccessMsg]       = useState('');
+const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
 
   // Password
   const [pw, setPw]             = useState({ password1: '', confirm: '' });
@@ -126,10 +128,17 @@ export default function GlobalSettingsPage() {
       formData.append('type', 'restaurant');
       formData.append('object_id', restaurantId);
       formData.append('photo', file);
-      const res = await apiFetch('/api/v1/photo/', { method: 'POST', body: formData });
+      formData.append('purpose', 'cover');
+
+      const existingCover = restaurant?.photos?.find(p => p.purpose === 'cover');
+
+      const res = existingCover
+        ? await apiFetch(`/api/v1/photo/${existingCover.id}/`, { method: 'PATCH', body: formData })
+        : await apiFetch('/api/v1/photo/', { method: 'POST', body: formData });
+
       if (!res.ok) { setError(`Photo upload failed (${res.status}).`); return; }
       await fetchRestaurant();
-      setSuccessMsg('✅ Photo uploaded successfully!');
+      setSuccessMsg('✅ Cover photo updated successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch {
       setError('Network error uploading photo.');
@@ -202,44 +211,42 @@ export default function GlobalSettingsPage() {
             <CardTitle className="text-[#513012] font-bold">Restaurant Photos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {restaurant?.photos && restaurant.photos.length > 0 ? (
-              <div className="grid grid-cols-3 gap-2">
-                {restaurant.photos.map(photo => (
-                  <div key={photo.id} className="relative group">
-                    <Image src={photo.photo_url} alt="Restaurant photo"
-                      width={120} height={120}
-                      className="w-full h-24 object-cover rounded-lg border border-gray-200" />
-                    <button
-                      onClick={() => handleDeletePhoto(photo.id)}
-                      disabled={isDeletingPhoto === photo.id}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      {isDeletingPhoto === photo.id
-                        ? <Loader2 className="w-3 h-3 animate-spin" />
-                        : <Trash2 className="w-3 h-3" />}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#513012]/20 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                  <Upload className="w-8 h-8 text-gray-400" />
-                </div>
-                <p className="text-gray-500 text-sm">No photos uploaded yet</p>
-              </div>
-            )}
-            <div className="flex justify-center">
-              <label htmlFor="photo-upload"
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#513012] text-[#513012] text-sm font-medium cursor-pointer hover:bg-[#513012]/5 transition-colors ${isUploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
-                {isUploadingPhoto
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
-                  : <><Upload className="h-4 w-4" /> Upload Photo</>}
-              </label>
-              <input id="photo-upload" type="file" accept="image/*" className="hidden"
-                onChange={handlePhotoUpload} disabled={isUploadingPhoto} />
-            </div>
-          </CardContent>
+  {coverPhoto ? (
+    <div className="relative group w-full h-48">
+      <Image
+        src={coverPhoto.photo_url}
+        alt="Cover photo"
+        fill
+        className="object-cover rounded-lg border border-gray-200"
+      />
+      <button
+        onClick={() => handleDeletePhoto(coverPhoto.id)}
+        disabled={isDeletingPhoto === coverPhoto.id}
+        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        {isDeletingPhoto === coverPhoto.id
+          ? <Loader2 className="w-3 h-3 animate-spin" />
+          : <Trash2 className="w-3 h-3" />}
+      </button>
+    </div>
+  ) : (
+    <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#513012]/20 rounded-2xl p-8 text-center">
+      <Upload className="w-8 h-8 text-gray-400 mb-2" />
+      <p className="text-gray-500 text-sm">No cover photo uploaded yet</p>
+    </div>
+  )}
+
+  <div className="flex justify-center">
+    <label htmlFor="photo-upload"
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#513012] text-[#513012] text-sm font-medium cursor-pointer hover:bg-[#513012]/5 transition-colors ${isUploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
+      {isUploadingPhoto
+        ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
+        : <><Upload className="h-4 w-4" /> {coverPhoto ? 'Change Cover Photo' : 'Upload Cover Photo'}</>}
+    </label>
+    <input id="photo-upload" type="file" accept="image/*" className="hidden"
+      onChange={handlePhotoUpload} disabled={isUploadingPhoto} />
+  </div>
+</CardContent>
         </Card>
         <Card>
           <CardHeader>

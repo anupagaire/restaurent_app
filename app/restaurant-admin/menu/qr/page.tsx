@@ -8,7 +8,7 @@ import { useRequirePermission } from '@/hooks/usePermission';
 import { Download, QrCode, RefreshCw, AlertTriangle, X } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import SubscriptionGuard from '@/components/restaurant-admin/SubscriptionGuard';
-
+import { useAuth } from '@/context/AuthContext';
 interface MenuToken {
   id: number;
   restaurant: number;
@@ -166,19 +166,13 @@ export default function QRMenuPage() {
   const [generating, setGenerating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
+const { profile } = useAuth()
 
   useRequirePermission('menuSettings');
 
-  const fetchRestaurantId = async () => {
-  try {
-    const res = await apiFetch('/api/v1/user/me/');
-    const raw = await res.json();
-    const user = raw.data ?? raw; // ← fix
-    if (user?.restaurant) setRestaurantId(user.restaurant);
-  } catch (err) {
-    console.error('Failed to fetch user:', err);
-  }
-};
+  useEffect(() => {
+  if (profile?.restaurant) setRestaurantId(profile.restaurant)
+}, [profile])
 
  const fetchTokens = async () => {
   try {
@@ -197,12 +191,10 @@ export default function QRMenuPage() {
   }
 };
 
-  useEffect(() => { fetchRestaurantId(); }, []);
 useEffect(() => { 
   if (restaurantId !== null) {
     fetchTokens();
   } else {
-    // restaurantId null bhaye pani loading false gara
     setLoading(false);
   }
 }, [restaurantId]);

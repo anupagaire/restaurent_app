@@ -4,11 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { apiFetch } from '@/lib/api';
 import {
   Clock, ChevronDown, ChevronUp,
-  Phone, Mail, FileText, User, RefreshCw, Package,
-  UtensilsCrossed, Truck, ShoppingBag
+  Phone, Mail, FileText, User, RefreshCw,UtensilsCrossed, Truck, ShoppingBag
 } from 'lucide-react';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface MenuPhoto {
   id: number;
@@ -51,7 +48,6 @@ interface Order {
   updated_on: string;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<string, { bg: string; color: string; icon: string; label: string }> = {
   pending:   { bg: '#fef3e2', color: '#b45309', icon: '⏳', label: 'Pending' },

@@ -1,7 +1,6 @@
 
 import { notFound } from 'next/navigation';
 import RestaurantNavbar from '@/components/restaurant/RestaurantNavbar';
-import RestaurantFooter from '@/components/restaurant/RestaurantFooter';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,7 +43,6 @@ export default async function RestaurantSlugLayout({
       <RestaurantNavbar restaurant={restaurant} slug={slug} />
       
       {children}
-<RestaurantFooter restaurant={restaurant} slug={slug} />  
   </div>
   );
 }

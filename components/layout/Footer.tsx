@@ -54,7 +54,10 @@ function SocialIcon({ icon }: { icon: string }) {
 function BrandSection({ brand }: { brand: Brand }) {
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
+      <Link 
+        href="/" 
+        className="flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity group"
+      >
         {brand.logo ? (
           <div className="relative w-20 h-20">
             <Image
@@ -62,12 +65,16 @@ function BrandSection({ brand }: { brand: Brand }) {
               alt={brand.name}
               fill
               sizes="(max-width: 768px) 112px, 160px"
-              className="object-contain"
+              className="object-contain transition-transform group-hover:scale-105"
             />
           </div>
         ) : null}
-        <h2 className="text-3xl font-bold">{brand.name}</h2>
-      </div>
+        
+        <h2 className="text-3xl font-bold group-hover:text-amber-200 transition-colors">
+          {brand.name}
+        </h2>
+      </Link>
+
       <p className="text-gray-300 text-sm leading-relaxed">
         {brand.description}
         <br />
