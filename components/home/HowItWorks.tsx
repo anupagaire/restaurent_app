@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { QrCode, Menu, UtensilsCrossed, LucideIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,33 +43,122 @@ export default function HowItWorks() {
   const { title, description, steps } = data.how_it_works_section;
 
   return (
-    <div className="py-20 bg-gray-50">
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-serif text-[#5D0565]">{title}</h2>
-          <div className="text-gray-600 mt-3" dangerouslySetInnerHTML={{ __html: description }} />
+    <section
+      aria-label="How to find and order from restaurants in Nepal"
+      className="relative bg-[#fdf9f4] py-8 overflow-hidden"
+    >
+      <div className="relative z-10 max-w-4xl mx-auto px-5">
 
-        </div>
+        {/* ── HEADER ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-12 md:mb-16 lg:mb-2"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-light text-[#011659] leading-tight tracking-tight">
+              {title || 'How It Works'}
+            </h2>
+            <div
+              className="text-base sm:text-lg text-[#011659]/55 font-light leading-relaxed self-end ql-content"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-10">
-          {steps.map((step, index) => {
-            const Icon = iconMap[step.icon] ?? QrCode;
-            return (
-              <div key={step.id} className="text-center relative">
-                <div className="w-20 h-20 mx-auto bg-[#513012] text-white rounded-2xl flex items-center justify-center mb-6">
-                  <Icon className="w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-3">{step.title}</h3>
-                <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: step.description }} />
+        {/* ── STEPS ── */}
+        <div className="relative">
 
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute w-20 h-0.5 bg-[#513012]/20 mt-10" />
-                )}
-              </div>
-            );
-          })}
+          {/* Vertical connector line (desktop) */}
+          <div
+            aria-hidden="true"
+            className="hidden lg:block absolute left-[2.35rem] top-10 bottom-10 w-px bg-[#d4b78f]/20"
+          />
+
+          {/* Animated fill line */}
+          <motion.div
+            aria-hidden="true"
+            className="hidden lg:block absolute left-[2.35rem] top-10 w-px bg-[#d4b78f]/50 origin-top"
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+            style={{ height: 'calc(100% - 5rem)' }}
+          />
+
+          <div className="space-y-8 sm:space-y-10 md:space-y-12">
+            {steps.map((step, index) => {
+              const Icon = iconMap[step.icon] ?? QrCode;
+              const isLast = index === steps.length - 1;
+
+              return (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, x: -24 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, delay: index * 0.18, ease: 'easeOut' }}
+                  className="group relative flex flex-col lg:flex-row gap-6 lg:gap-10"
+                >
+                  {/* ── LEFT: Step number + icon bubble ── */}
+                  <div className="flex lg:flex-col items-center lg:items-center gap-4 lg:gap-0 shrink-0">
+
+                    {/* Step number badge */}
+                    <div className="relative z-10 w-16 h-16  rounded-2xl bg-[#011659] flex flex-col items-center justify-center shrink-0 group-hover:bg-[#d4b78f] transition-colors duration-500">
+                      <span className="text-[10px] tracking-[0.25em] text-white/40 uppercase font-light group-hover:text-[#011659]/60 transition-colors duration-500">
+                        Step
+                      </span>
+                      <span className="text-2xl sm:text-[28px] font-black text-white group-hover:text-[#011659] transition-colors duration-500 leading-none">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+
+                    {/* Mobile connector (vertical line between steps) */}
+                    {!isLast && (
+                      <div
+                        aria-hidden="true"
+                        className="lg:hidden w-px h-8 sm:h-10 bg-[#d4b78f]/30 ml-[2.1rem]"
+                      />
+                    )}
+                  </div>
+
+                  {/* ── RIGHT: Card ── */}
+                  <div className="flex-1 bg-white rounded-2xl border border-[#d4b78f]/15 p-6 sm:p-7 md:p-9 hover:border-[#d4b78f]/40 transition-all duration-400 group-hover:shadow-[0_0_0_1px_rgba(212,183,143,0.25)] relative overflow-hidden">
+
+                    {/* Subtle corner accent */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-0 right-0 w-24 h-24 rounded-bl-[4rem]  group-hover:bg-[#d4b78f]/10 transition-colors duration-500"
+                    />
+
+                    <div className="flex items-start gap-5 relative z-10">
+                      {/* Icon circle */}
+                      <div className="shrink-0 w-11 h-11 rounded-xl bg-[#d4b78f]/12 border border-[#d4b78f]/20 flex items-center justify-center group-hover:bg-[#d4b78f]/20 transition-colors duration-400">
+                        <Icon className="w-5 h-5 text-[#d4b78f]" />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-xl sm:text-2xl font-medium text-[#011659] mb-3 leading-snug">
+                          {step.title}
+                        </h3>
+                        <div
+                          className="text-base text-[#011659]/55 font-light leading-relaxed ql-content"
+                          dangerouslySetInnerHTML={{ __html: step.description }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom animated underline */}
+                    <div className="mt-6 h-px w-0 group-hover:w-full bg-[#d4b78f]/40 transition-all duration-500 ease-out" />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

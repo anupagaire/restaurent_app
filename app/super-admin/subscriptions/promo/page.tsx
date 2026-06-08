@@ -7,8 +7,6 @@ import {
 } from 'lucide-react';
 import { promosApi, plansApi, PromoCode, Plan } from '@/lib/subscription-api';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('en-NP', { year: 'numeric', month: 'short', day: 'numeric' });
 }

@@ -6,6 +6,9 @@ title: "About Us - Nepal's Best Restaurant Platform | QR Menu & Ordering",
 description: "Learn about Nepal's leading restaurant platform. Discover how we help restaurants grow, enable customers to compare menus, scan QR codes, order online, book tables, and rate their experience.",  openGraph: {
     title: "About – Fine Indian, Western & Nepali Cuisine in Kathmandu",
     description: "Discover the story of restaurant, where we blend Indian spices, Western comfort foods, and Nepalese dishes to create an unforgettable dining experience in Kathmandu.",
+    alternates: {
+    canonical: "https://restaurent-app-sepia.vercel.app/about",
+  },
     keywords: [
     "about restaurant platform Nepal",
     "QR menu Nepal",

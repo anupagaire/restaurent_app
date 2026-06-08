@@ -2,21 +2,80 @@ import Link from 'next/link';
 
 export default function CTASection() {
   return (
-    <div className="bg-[#513012] text-white py-20">
-      <div className="max-w-4xl mx-auto text-center px-6">
-        <h2                       className="text-4xl md:text-5xl font-serif text-white"
->Ready to Enjoy Great Food?</h2>
-        <p className="text-xl text-white/80 mb-10">
+    <section className="relative bg-[#011659] overflow-hidden py-3">
+
+      {/* Ghost watermark */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+      >
+        <span
+          className="text-[22vw] font-black leading-none text-white whitespace-nowrap"
+          style={{ opacity: 0.025, lineHeight: 1 }}
+        >
+          ORDER
+        </span>
+      </div>
+
+      {/* Top gold accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/60 to-transparent" />
+      {/* Bottom gold accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/60 to-transparent" />
+
+      {/* Decorative circles */}
+      <div
+        aria-hidden="true"
+        className="absolute -left-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#d4b78f]/8 pointer-events-none"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -left-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#d4b78f]/6 pointer-events-none"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -right-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#d4b78f]/8 pointer-events-none"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -right-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#d4b78f]/6 pointer-events-none"
+      />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-3xl mx-auto px-6 sm:px-10 text-center">
+
+        {/* Title */}
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.05] tracking-tight mb-6">
+          Ready to Enjoy{' '}
+          <span className="italic" style={{ color: '#d4b78f' }}>
+            Great Food?
+          </span>
+        </h2>
+
+        {/* Subtitle */}
+        <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed mb-12 max-w-xl mx-auto">
           Scan the QR code on your table and start ordering now
         </p>
+
+        {/* CTA Button */}
         <Link href="/contact">
-          <button className="bg-white text-[#513012] px-12 py-5 rounded-2xl text-xl font-semibold hover:bg-orange-50 transition-all">
-Contact Us          </button>
+          <span className="group inline-flex items-center gap-3 cursor-pointer">
+            <span className="relative inline-flex items-center gap-3 bg-[#d4b78f] text-[#011659] px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all duration-300 hover:bg-white">
+              Contact Us
+              {/* Arrow icon */}
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </span>
+          </span>
         </Link>
       </div>
-      <div className="border-t border-white/20 mt-7 text-center text-sm text-white"></div>
-
-    </div>
-    
+    </section>
   );
 }

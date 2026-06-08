@@ -1,10 +1,35 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
+import Head from "next/head";
+import { motion, Variants } from "framer-motion";
+
+const fadeUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 32,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.75,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // ── Types ──────────────────────────────────────────────────
@@ -51,7 +76,6 @@ interface AboutContent {
   features: Feature[];
 }
 
-// ── Carousel config ────────────────────────────────────────
 const responsiveVibes = {
   superLargeDesktop: { breakpoint: { max: 4000, min: 1536 }, items: 4 },
   desktop:           { breakpoint: { max: 1536, min: 1024 }, items: 3 },
@@ -59,12 +83,10 @@ const responsiveVibes = {
   mobile:            { breakpoint: { max: 640,  min: 0    }, items: 1 },
 };
 
-// ── Skeleton ───────────────────────────────────────────────
 function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse bg-gray-200 rounded ${className}`} />;
+  return <div className={`animate-pulse bg-[#e8ddd0] rounded ${className}`} />;
 }
 
-// ── Main Component ─────────────────────────────────────────
 export default function About() {
   const [data, setData]       = useState<AboutContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +100,6 @@ export default function About() {
         });
         if (!res.ok) throw new Error(`Failed to fetch about page (${res.status})`);
         const json = await res.json();
-        // API wraps content in aboutPageContent key
         setData(json.aboutPageContent ?? json);
       } catch (err: any) {
         console.error(err);
@@ -90,187 +111,296 @@ export default function About() {
     fetchContent();
   }, []);
 
-  // ── Loading State ──
+  // ── Loading ──
   if (loading) return (
-    <div className="min-h-screen w-full bg-[#faf7f2] space-y-12 p-8">
-      <Skeleton className="h-[40vh] w-full rounded-none" />
+    <div className="min-h-screen bg-[#fdf9f4] space-y-12 p-8">
+      <Skeleton className="h-[55vh] w-full rounded-none" />
       <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 gap-12">
-        <Skeleton className="h-[400px] w-full" />
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-2/3" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-[420px] w-full rounded-[2rem]" />
+        <div className="space-y-5 pt-8">
+          <Skeleton className="h-8 w-2/3 rounded-full" />
+          <Skeleton className="h-4 w-full rounded-full" />
+          <Skeleton className="h-4 w-5/6 rounded-full" />
+          <Skeleton className="h-4 w-4/5 rounded-full" />
         </div>
       </div>
     </div>
   );
 
-  // ── Error State ──
+  // ── Error ──
   if (error || !data) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#faf7f2]">
-      <p className="text-red-500 text-center">{error || "Content unavailable."}</p>
+    <div className="min-h-screen flex items-center justify-center bg-[#fdf9f4]">
+      <p className="text-red-400 text-center font-light">{error || "Content unavailable."}</p>
     </div>
   );
 
   const { hero, introSection, visionSection, vibes, features } = data;
 
   return (
-    <div className="min-h-screen w-full bg-[#faf7f2] text-[#011659] font-light">
+    <>
+      {/* SEO Meta */}
+      <Head>
+        <title>{hero.title} | About Us</title>
+        <meta name="description" content={hero.subtitle} />
+        <meta property="og:title" content={hero.title} />
+        <meta property="og:description" content={hero.subtitle} />
+        {hero.image && <meta property="og:image" content={hero.image} />}
+        <meta name="robots" content="index, follow" />
+      </Head>
 
-      {/* ── HERO ── */}
-      <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
-          <Image
-            src={hero.image}
-            width={400}
-            height={300}
-            className="w-full h-full object-cover"
-            alt={hero.title}
-          />
+      <main className="min-h-screen w-full bg-[#fdf9f4] text-[#1a1208] font-light overflow-x-hidden">
+
+        {/* ═══════════════════════════════════════
+            HERO — full-bleed cinematic
+        ═══════════════════════════════════════ */}
+        <section
+          aria-label={`${hero.title} hero banner`}
+          className="relative h-[60vh] md:h-[72vh] w-full overflow-hidden"
+        >
+          {/* Background image */}
+          <div className="absolute inset-0">
+            <Image
+              src={hero.image}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+              alt={hero.title}
+            />
+          </div>
+
+          {/* Layered overlay: rich warm gradient */}
           {hero.overlay !== false && (
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1a0e05]/75 via-[#1a0e05]/35 to-[#fdf9f4]" />
           )}
-        </div>
-        <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 pt-16">
-          <h1 className="text-4xl md:text-6xl font-serif text-white tracking-[0.1em] drop-shadow-xl uppercase">
-            {hero.title}
-          </h1>
-          <div className="w-20 h-1 bg-amber-500 mt-6 mb-4 rounded-full" />
-          <p className="text-gray-200 text-lg md:text-xl italic font-light tracking-wide max-w-2xl">
-            &quot;{hero.subtitle}&quot;
-          </p>
-        </div>
-      </section>
 
-      {/* ── INTRO ── */}
-      <section className="py-8 md:py-12 bg-white overflow-hidden">
-        <div className="max-w-screen-xl mx-auto px-6 sm:px-12 lg:px-24">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* Gold corner accent lines */}
+          <div aria-hidden="true" className="absolute top-8 left-8 w-20 h-20 border-l border-t border-[#d4b78f]/60 pointer-events-none" />
+          <div aria-hidden="true" className="absolute bottom-0 right-8 w-20 h-20 border-r border-b border-[#d4b78f]/40 pointer-events-none" />
+
+          {/* Content */}
+          <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 pt-20 pb-16">
+
+            {/* Label pill */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative order-2 lg:order-1"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-[#d4b78f]/40 bg-[#d4b78f]/10 backdrop-blur-sm"
             >
-              <div className="relative h-[400px] md:h-[600px] w-full z-10 rounded-tl-[2.5rem] rounded-br-[2.5rem] overflow-hidden shadow-2xl shadow-[#8c6d46]/10 border border-[#e5d3b8]/20">
-                <Image
-                  src={introSection.image}
-                  width={400}
-                  height={300}
-                  className="w-full h-full object-cover"
-                  alt="Restaurant Interior"
-                />
-              </div>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b78f]" />
+              <span className="text-[#d4b78f] text-xs tracking-[0.4em] uppercase font-light">
+                Our Story
+              </span>
             </motion.div>
 
-            <div className="order-1 lg:order-2 space-y-10 relative z-10">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.1, ease: "easeOut" }}
+              className="text-5xl md:text-7xl lg:text-8xl font-light text-white leading-[1.0] tracking-tight drop-shadow-lg"
+            >
+              {hero.title}
+            </motion.h1>
+
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="w-16 h-px bg-[#d4b78f] my-6 origin-left"
+            />
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-white/80 text-lg md:text-xl font-light italic max-w-2xl leading-relaxed"
+            >
+              &ldquo;{hero.subtitle}&rdquo;
+            </motion.p>
+          </div>
+        </section>
+
+   
+        <section
+          aria-labelledby="intro-heading"
+          className="relative py-2 md:py-8 bg-white overflow-hidden"
+        >
+         
+          <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+             
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="space-y-6"
+                transition={{ duration: 0.85, ease: "easeOut" }}
+                className="lg:col-span-5 order-2 lg:order-1"
               >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#011659] leading-[1.15]">
-                  {introSection.heading.split("Restaurant Platform")[0]}
-                  <br />
-                  <span className="font-serif text-[#d4b78f]">
-                    {introSection.heading.includes("Restaurant Platform")
-                      ? "Restaurant Platform"
-                      : ""}
-                  </span>
-                </h2>
+                {/* Decorative frame */}
+                <div className="relative">
+                  {/* Offset box behind image */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute -bottom-4 -right-4 w-full h-full rounded-[2rem] border border-[#d4b78f]/30 pointer-events-none"
+                  />
+                  <div className="relative h-[420px] md:h-[560px] rounded-[2rem] overflow-hidden shadow-[0_30px_80px_rgba(26,18,8,0.12)]">
+                    <Image
+                      src={introSection.image}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 45vw"
+                      className="object-cover hover:scale-105 transition-transform duration-700"
+                      alt={introSection.heading}
+                    />
+                  </div>
+                </div>
               </motion.div>
 
+              {/* Gap */}
+              <div className="lg:col-span-1 hidden lg:block" />
+
+              {/* Text — col 7–12 */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                variants={stagger}
+                initial="hidden"
+                whileInView="show"
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-                className="space-y-6 text-lg text-[#011659]/80 font-light leading-relaxed"
+                className="lg:col-span-6 order-1 lg:order-2 space-y-8"
               >
-                {introSection.paragraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-                {introSection.subHeading && (
-                  <h2 className="text-2xl font-medium text-[#011659]">
-                    {introSection.subHeading}
-                  </h2>
-                )}
+                {/* Section label */}
+                
+
+                <motion.h2
+                  id="intro-heading"
+                  variants={fadeUp}
+                  className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1a1208] leading-[1.1] tracking-tight"
+                >
+                  {introSection.heading.split("Restaurant Platform")[0]}
+                  {introSection.heading.includes("Restaurant Platform") && (
+                    <>
+                      <br />
+                      <span className="italic text-[#d4b78f]">Restaurant Platform</span>
+                    </>
+                  )}
+                </motion.h2>
+
+                <div className="w-12 h-px bg-[#d4b78f]/60" />
+
+                <motion.div variants={fadeUp} className="space-y-5">
+                  {introSection.paragraphs.map((p, i) => (
+                    <p key={i} className="text-lg text-[#1a1208]/65 font-light leading-relaxed">
+                      {p}
+                    </p>
+                  ))}
+                  {introSection.subHeading && (
+                    <p className="text-xl font-medium text-[#1a1208] pt-2">
+                      {introSection.subHeading}
+                    </p>
+                  )}
+                </motion.div>
               </motion.div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-12 bg-white text-black">
-        <div className="max-w-screen-xl mx-auto px-6 sm:px-12 lg:px-24">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={{ visible: { transition: { staggerChildren: 0.3 } }, hidden: {} }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start"
+        {/* ═══════════════════════════════════════
+            VISION — two-column with gold divider
+        ═══════════════════════════════════════ */}
+        <section
+          aria-labelledby="vision-heading"
+          className="relative py-2 md:py-8 bg-[#fdf9f4] overflow-hidden"
+        >
+          
+
+          <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+
+              {/* Left column */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="pr-0 lg:pr-16 pb-12 lg:pb-0 border-b lg:border-b-0 lg:border-r border-[#d4b78f]/25"
+              >
+                <h2
+                  id="vision-heading"
+                  className="text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1208] leading-tight mb-8"
+                >
+                  {visionSection.left.title}
+                </h2>
+                <div className="space-y-4">
+                  {visionSection.left.content.map((line, i) => (
+                    <p key={i} className="text-base md:text-lg text-[#1a1208]/60 font-light leading-relaxed">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Right column */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+                className="pt-12 lg:pt-0 lg:pl-16"
+              >
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1208] leading-tight mb-8">
+                  {visionSection.right.title}
+                </h3>
+                <div className="space-y-4">
+                  {visionSection.right.content.map((line, i) => (
+                    <p key={i} className="text-base md:text-lg text-[#1a1208]/60 font-light leading-relaxed">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════
+            VIBES CAROUSEL — warm immersive strip
+        ═══════════════════════════════════════ */}
+        {vibes.images && vibes.images.length > 0 && (
+          <section
+            aria-labelledby="vibes-heading"
+            className="py-2 md:py-8 bg-white overflow-hidden"
           >
-            {/* Left */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="flex flex-col justify-center space-y-6 text-left"
-            >
-              <h2 className="text-4xl md:text-5xl font-light text-[#011659] leading-tight">
-                {visionSection.left.title}
-              </h2>
-              <div className="space-y-2 text-lg text-[#011659]/80 font-light leading-relaxed">
-                {visionSection.left.content.map((line, i) => (
-                  <p key={i}>{line}</p>
-                ))}
-              </div>
-            </motion.div>
+            <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 mb-14">
+              
 
-            {/* Right */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-              className="flex flex-col justify-center space-y-6 text-left"
-            >
-              <h3 className="text-4xl md:text-5xl font-light text-[#011659] leading-tight">
-                {visionSection.right.title}
-              </h3>
-              <div className="space-y-4 text-lg text-[#011659]/80 font-light leading-relaxed">
-                {visionSection.right.content.map((line, i) => (
-                  <p key={i}>{line}</p>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── VIBES CAROUSEL ── */}
-      {vibes.images && vibes.images.length > 0 && (
-        <section className="py-8 md:py-12 bg-[#faf7f2]">
-          <div className="max-w-screen-2xl w-full mx-auto px-6 md:px-12">
-            <div className="text-center mb-16 space-y-4">
-              <h2 className="text-3xl md:text-5xl font-light text-[#011659]">
+              <motion.h2
+                id="vibes-heading"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1a1208] leading-tight tracking-tight"
+              >
                 {vibes.title.includes("Restaurant") ? (
                   <>
                     {vibes.title.split("Restaurant")[0]}
-                    <span className="font-serif text-[#d4b78f]">Restaurant</span>
+                    <span className="italic text-[#d4b78f]">Restaurant</span>
                     {vibes.title.split("Restaurant")[1]}
                   </>
                 ) : vibes.title}
-              </h2>
+              </motion.h2>
             </div>
-            <div className="w-full">
+
+            {/* Full-width carousel */}
+            <div className="px-6 md:px-12">
               <Carousel
                 responsive={responsiveVibes}
-                infinite={true}
-                autoPlay={true}
-                autoPlaySpeed={3000}
-                keyBoardControl={true}
-                customTransition="transform 500ms ease-in-out"
-                transitionDuration={500}
+                infinite
+                autoPlay
+                autoPlaySpeed={3200}
+                keyBoardControl
+                customTransition="transform 600ms cubic-bezier(0.4,0,0.2,1)"
+                transitionDuration={600}
                 containerClass="carousel-container"
                 removeArrowOnDeviceType={["tablet", "mobile"]}
                 itemClass="px-2"
@@ -278,60 +408,111 @@ export default function About() {
                 {vibes.images.map((src, index) => (
                   <div
                     key={index}
-                    className="relative overflow-hidden rounded-2xl group cursor-pointer shadow-lg hover:shadow-xl transition-all duration-500 h-[400px] w-full"
+                    className="relative overflow-hidden rounded-[1.5rem] group cursor-pointer h-[380px] md:h-[440px]"
                   >
                     <img
                       src={src}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                      alt={`Vibe ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+                      alt={`${vibes.title} ${index + 1}`}
+                      loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300" />
+                    {/* Warm vignette on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0e05]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                    {/* Bottom gold line reveal */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#d4b78f] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                   </div>
                 ))}
               </Carousel>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* ── FEATURES ── */}
-      {features && features.length > 0 && (
-        <section className="w-full py-8 md:py-12 relative overflow-hidden bg-[#faf7f2]">
-          <div className="w-full max-w-screen-xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="group flex flex-col items-center p-10 rounded-xl bg-white/10 backdrop-blur border border-[#e5d3b8] shadow-md hover:shadow-xl hover:translate-y-[-4px] hover:bg-white/20 transition-all duration-300"
-                >
-                  <div className="mb-6 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                    <div className="w-28 h-28 flex items-center justify-center rounded-full bg-gradient-to-tr from-[#f5e9d6] to-white shadow-inner overflow-hidden">
+        {/* ═══════════════════════════════════════
+            FEATURES — editorial bento grid
+        ═══════════════════════════════════════ */}
+        {features && features.length > 0 && (
+          <section
+            aria-labelledby="features-heading"
+            className="relative py-2 md:py-8 bg-[#fdf9f4] overflow-hidden"
+          >
+
+            <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
+
+              <motion.h2
+                id="features-heading"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="text-4xl md:text-5xl font-light text-[#1a1208] leading-tight mb-14 max-w-xl"
+              >
+                Everything you need,{" "}
+                <span className="italic text-[#d4b78f]">in one place</span>
+              </motion.h2>
+
+              {/* Feature cards grid */}
+              <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+              >
+                {features.map((feature, index) => (
+                  <motion.article
+                    key={index}
+                    variants={fadeUp}
+                    className="group relative flex flex-col rounded-[1.75rem] bg-white border border-[#d4b78f]/15 hover:border-[#d4b78f]/40 p-8 md:p-10 transition-all duration-500 overflow-hidden"
+                  >
+                    {/* Corner accent */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-0 right-0 w-20 h-20 rounded-bl-[4rem] bg-[#d4b78f]/5 group-hover:bg-[#d4b78f]/12 transition-colors duration-500"
+                    />
+
+                    {/* Index number */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute top-7 right-8 text-5xl font-black text-[#1a1208]/5 group-hover:text-[#d4b78f]/12 transition-colors duration-500 select-none leading-none"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    {/* Feature image / icon */}
+                    <div className="mb-6 w-16 h-16 rounded-2xl bg-[#d4b78f]/10 border border-[#d4b78f]/20 flex items-center justify-center overflow-hidden group-hover:bg-[#d4b78f]/18 transition-colors duration-400">
                       {feature.image ? (
                         <Image
                           src={feature.image}
                           alt={feature.title}
-                          width={80}
-                          height={80}
-                          className="w-20 h-20 object-contain"
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-contain"
                         />
                       ) : (
-                        <span className="text-4xl">🍽️</span>
+                        <span className="text-2xl">🍽️</span>
                       )}
                     </div>
-                  </div>
-                  <h2 className="text-xl md:text-2xl font-medium text-[#d4b78f] mb-3 tracking-wide text-center">
-                    {feature.title}
-                  </h2>
-                  <p className="text-gray-500 text-center leading-relaxed max-w-sm">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-    </div>
+                    {/* Title */}
+                    <h3 className="text-xl font-medium text-[#1a1208] mb-3 leading-snug">
+                      {feature.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-[#1a1208]/55 text-base font-light leading-relaxed flex-1">
+                      {feature.description}
+                    </p>
+
+                    {/* Bottom animated line */}
+                    <div className="mt-6 h-px w-0 group-hover:w-full bg-[#d4b78f]/50 transition-all duration-500 ease-out" />
+                  </motion.article>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+        )}
+
+      </main>
+    </>
   );
 }

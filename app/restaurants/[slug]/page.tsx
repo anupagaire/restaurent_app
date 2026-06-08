@@ -132,6 +132,19 @@ async function getRestaurantDetail(id: number): Promise<ApiRestaurant | null> {
     return null;
   }
 }
+async function getRestaurantCoverPhoto(restaurantId: number): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/v1/photo/?type=restaurant&object_id=${restaurantId}&purpose=cover`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.results?.[0]?.photo_url ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export default async function RestaurantPage({ params }: PageProps) {
   const { slug } = await params;
@@ -141,6 +154,8 @@ export default async function RestaurantPage({ params }: PageProps) {
 
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return notFound();
+const coverPhotoUrl = await getRestaurantCoverPhoto(restaurantId);
+  const restaurantImage = resolveUrl(coverPhotoUrl) ?? resolveUrl(restaurant.photos?.[0]?.photo_url) ?? '/placeholder-restaurant.jpg';
 
   // Category id → name map
   const categoryMap = Object.fromEntries(
@@ -162,9 +177,6 @@ export default async function RestaurantPage({ params }: PageProps) {
       category: item.category_name || categoryMap[item.category] || 'Other',
     };
   });
-
- 
-  const restaurantImage = resolveUrl(restaurant.photos?.[0]?.photo_url) ?? '/placeholder-restaurant.jpg';
 
   return (
     <div style={{ background: '#faf8f5', minHeight: '100vh' }}>

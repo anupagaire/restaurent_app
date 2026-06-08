@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://restaurent-app-sepia.vercel.app/sitemap.xml

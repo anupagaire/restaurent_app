@@ -11,18 +11,17 @@ const HeroSection: React.FC = () => {
  const slides = [
   {
     src: "/7.jpg",
-    alt: "Restaurant",
-    title: "Welcome to Our Venue",
+    alt: "Best Restaurants in Nepal",
+    title: "Best Restaurants in Nepal",
     link: "/restaurants",
   },
   {
     src: "/food11.jpg",
-    alt: "Restaurant",
-    title: "Experience the Best Cuisine",
+    alt: "Compare Menus & Order Food Online",
+    title: "Compare Menus & Order Food Online",
     link: "/about",
   },
 ];
-
   const [currentImage, setCurrentImage] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -81,6 +80,7 @@ const HeroSection: React.FC = () => {
   };
 
   return (
+    <>
     <motion.div
       ref={containerRef}
       className="relative w-full h-[40vh] md:h-[75vh] overflow-hidden"
@@ -112,11 +112,13 @@ const HeroSection: React.FC = () => {
 </h1>
 
   <a
-    href={slides[currentImage].link}
-    className="bg-white text-black px-5 py-2 md:px-6 md:py-3 rounded-full font-medium hover:bg-gray-200 transition"
-  >
-    Explore Now
-  </a>
+href={slides[currentImage].link}
+  className="bg-white text-black px-5 py-2 md:px-6 md:py-3 rounded-full font-medium hover:bg-gray-200 transition"
+>
+  {currentImage === 0 ? "Browse Restaurants" : "Learn More"}
+</a>
+
+
 
 </div>
  
@@ -141,6 +143,23 @@ const HeroSection: React.FC = () => {
         ))}
       </div>
     </motion.div>
+    <div className="sr-only">
+        <p>
+          Discover the best restaurants in Nepal all in one place. Browse and compare menus
+          from top-rated restaurants across Kathmandu, Pokhara, and beyond. Whether you want
+          to order food online, book a table, or scan a QR menu at your favorite spot, our
+          platform makes it simple. Read honest reviews from real diners, explore cuisines
+          ranging from traditional Nepali dal bhat to international dishes, and find the
+          perfect restaurant for any occasion. Our restaurant listing platform helps food
+          lovers and restaurant owners connect seamlessly. Restaurant owners can register
+          their business, upload their menu, and receive online orders and table bookings
+          directly. Customers can rate restaurants, leave reviews, and share their dining
+          experiences. Explore top restaurants near you, filter by cuisine, price range, or
+          location, and make informed dining decisions. Join thousands of food lovers already
+          using Nepal&apos;s most complete restaurant discovery platform.
+        </p>
+      </div>
+   </>
   );
 };
 

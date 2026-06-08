@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { MapPin, Eye } from 'lucide-react';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -13,7 +15,7 @@ interface Restaurant {
   status: boolean;
   availability: string;
   view_count: number;
-  coverPhotoUrl?: string | null; // We'll add this after fetching photos
+  coverPhotoUrl?: string | null;
 }
 
 function toSlug(name: string) {
@@ -27,7 +29,6 @@ function resolvePhoto(url: string | null | undefined): string | null {
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-// ── Fetch cover photo for a specific restaurant ────────────────────────────
 async function fetchCoverPhoto(restaurantId: number): Promise<string | null> {
   try {
     const res = await fetch(
@@ -43,7 +44,6 @@ async function fetchCoverPhoto(restaurantId: number): Promise<string | null> {
   }
 }
 
-// ── Fetch average rating from API ────────────────────────────
 async function fetchAvgRating(restaurantId: number): Promise<{ avg: number; count: number }> {
   try {
     const res = await fetch(
@@ -78,9 +78,7 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
     });
   };
 
-  useEffect(() => {
-    loadAvg();
-  }, [restaurantId]);
+  useEffect(() => { loadAvg(); }, [restaurantId]);
 
   const handleRate = async (val: number) => {
     if (submitting) return;
@@ -97,57 +95,81 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
           is_published: true,
         }),
       });
-      if (res.ok) {
-        setSubmitted(true);
-        setTimeout(() => loadAvg(), 500);
-      } else {
-        setMyRating(0);
-      }
-    } catch {
-      setMyRating(0);
-    } finally {
-      setSubmitting(false);
-    }
+      if (res.ok) { setSubmitted(true); setTimeout(() => loadAvg(), 500); }
+      else setMyRating(0);
+    } catch { setMyRating(0); }
+    finally { setSubmitting(false); }
   };
 
   const displayRating = hover || myRating;
 
   return (
-    <div onClick={(e) => e.preventDefault()}>
+    <div onClick={(e) => e.preventDefault()} className="mt-auto pt-3 border-t border-black/10">
+      {/* Avg stars row */}
       {count > 0 && (
-        <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
-          <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
+        <div className="flex items-center gap-1.5 mb-2">
+          <span className="text-[#cf8319] text-xs font-medium">{avg.toFixed(1)}</span>
           <div className="flex gap-0.5">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}>★</span>
+            {[1,2,3,4,5].map((s) => (
+              <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#cf8319' : 'rgba(255,255,255,0.19)' }}>★</span>
             ))}
           </div>
-          <span className="text-[10px] text-gray-400">({count} reviews)</span>
+          <span className="text-[10px] text-black/30">({count})</span>
         </div>
       )}
-      <div className="mt-2 pt-2 border-t border-gray-100">
-        <p className="text-[10px] text-gray-400 mb-1">
-          {submitted ? 'Your rating:' : 'Rate this place:'}
-        </p>
-        <div className="flex gap-0.5">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              disabled={submitted || submitting}
-              onMouseEnter={() => !submitted && setHover(star)}
-              onMouseLeave={() => !submitted && setHover(0)}
-              onClick={() => !submitted && handleRate(star)}
-              className="text-base leading-none focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
-              aria-label={`Rate ${star} stars`}
-            >
-              <span style={{ color: star <= displayRating ? '#f59e0b' : '#d1d5db' }}>★</span>
-            </button>
-          ))}
-        </div>
-        <p className="text-[10px] mt-0.5 text-gray-400">
-          {submitting ? 'Saving...' : submitted ? `Saved ${myRating} ★` : 'Tap to rate'}
-        </p>
+
+      {/* Interactive rating */}
+      <div>
+  <p className="text-xs text-black/65 tracking-[0.2em] uppercase mb-1">
+    {submitted ? 'Rated' : 'Rate this place'}
+  </p>
+
+  <div className="flex gap-0.5">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <button
+        key={star}
+        type="button"
+        disabled={submitted || submitting}
+        onMouseEnter={() => !submitted && setHover(star)}
+        onMouseLeave={() => !submitted && setHover(0)}
+        onClick={() => !submitted && handleRate(star)}
+        className="text-base leading-none focus:outline-none transition-transform hover:scale-110 disabled:cursor-default"
+        aria-label={`Rate ${star} stars`}
+      >
+        <span
+          style={{
+            color: star <= displayRating
+              ? '#d4b78f' // selected/hovered stars
+              : '#cfcfcf', // always visible inactive stars
+          }}
+        >
+          ★
+        </span>
+      </button>
+    ))}
+  </div>
+
+  <p className="text-sm mt-0.5 text-black/60">
+    {submitting
+      ? 'Saving…'
+      : submitted
+      ? `Saved ${myRating} ★`
+      : 'Tap to rate'}
+  </p>
+</div>
+    </div>
+  );
+}
+
+// ── Skeleton card ────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="rounded-[1.5rem] overflow-hidden bg-black/[0.04] border border-black/8 animate-pulse">
+      <div className="h-48 bg-black/10" />
+      <div className="p-5 space-y-3">
+        <div className="h-4 bg-black/10 rounded-full w-3/4" />
+        <div className="h-3 bg-black/8 rounded-full w-1/2" />
+        <div className="h-3 bg-black/8 rounded-full w-2/3" />
       </div>
     </div>
   );
@@ -162,26 +184,13 @@ export default function FeaturedRestaurants() {
     const fetchRestaurantsWithPhotos = async () => {
       try {
         setLoading(true);
-        
-        // Step 1: Fetch restaurants
-        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=8`, {
-          cache: 'no-store',
-        });
+        const res = await fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=8`, { cache: 'no-store' });
         if (!res.ok) { setRestaurants([]); return; }
         const data = await res.json();
         const restaurantList: Restaurant[] = data.results ?? [];
-        
-        // Step 2: Fetch cover photos for all restaurants in parallel
         const photosPromises = restaurantList.map(r => fetchCoverPhoto(r.id));
         const photos = await Promise.all(photosPromises);
-        
-        // Step 3: Combine restaurants with their photos
-        const restaurantsWithPhotos = restaurantList.map((r, index) => ({
-          ...r,
-          coverPhotoUrl: photos[index],
-        }));
-        
-        setRestaurants(restaurantsWithPhotos);
+        setRestaurants(restaurantList.map((r, i) => ({ ...r, coverPhotoUrl: photos[i] })));
       } catch (err) {
         console.error('Failed to fetch restaurants:', err);
         setRestaurants([]);
@@ -189,84 +198,122 @@ export default function FeaturedRestaurants() {
         setLoading(false);
       }
     };
-    
     fetchRestaurantsWithPhotos();
   }, []);
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl font-serif text-center text-[#5D0565] mb-10">
-          Featured Restaurants
-        </h2>
+    <section className="relative  py-8 overflow-hidden">
+      {/* Top gold rule */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/40 to-transparent" />
 
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
+
+        {/* ── HEADER ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-14 md:mb-18"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-black leading-tight tracking-tight">
+              Featured{' '}
+              <span className="italic" style={{ color: '#d4b78f' }}>
+                Restaurants
+              </span>
+            </h2>
+            <Link
+              href="/restaurants"
+              className="inline-flex items-center gap-2 text-sm text-black/40 hover:text-[#d4b78f] transition-colors duration-300 font-light tracking-wide shrink-0 group"
+            >
+              View all
+              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+          <div className="mt-8 w-full h-px bg-[#d4b78f]/15" />
+        </motion.div>
+
+        {/* ── GRID ── */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-40 bg-gray-200" />
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2" />
-                  <div className="h-3 bg-gray-200 rounded w-2/3" />
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-4 md:gap-5">
+            {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : restaurants.length === 0 ? (
-          <p className="text-center text-gray-500">No restaurants available at the moment</p>
+          <p className="text-center text-black/30 py-10 font-light">No restaurants available at the moment</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5"
+          >
             {restaurants.map((restaurant) => {
               const photo = resolvePhoto(restaurant.coverPhotoUrl);
-
               return (
-                <Link
+                <motion.div
                   key={restaurant.id}
-                  href={`/restaurants/${toSlug(restaurant.name)}`}
-                  className="bg-white rounded-2xl shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+                  variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } } }}
                 >
-                  <div className="relative h-40 bg-gray-100">
-                    {photo ? (
-                      <Image
-                        src={photo}
-                        alt={restaurant.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-4xl bg-gray-50">
-                        🍽️
+                  <Link
+                    href={`/restaurants/${toSlug(restaurant.name)}`}
+                    className="group flex flex-col rounded-[1.5rem] overflow-hidden border border-black/8 hover:border-[#d4b78f]/35 bg-black/[0.04] hover:bg-black/[0.08] transition-all duration-400 h-full"
+                  >
+                    {/* Image */}
+                    <div className="relative h-44 sm:h-48 overflow-hidden bg-black/5 shrink-0">
+                      {photo ? (
+                        <Image
+                          src={photo}
+                          alt={restaurant.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <span className="text-5xl opacity-30">🍽️</span>
+                        </div>
+                      )}
+
+
+                      {/* Availability badge */}
+                      {restaurant.availability && !/^\d{4}-\d{2}-\d{2}/.test(restaurant.availability) && (
+                        <span className="absolute top-3 left-3 bg-[#d4b78f] text-[#011659] text-[9px] font-medium px-2.5 py-1 rounded-full tracking-[0.15em] uppercase z-10">
+                          {restaurant.availability}
+                        </span>
+                      )}
+
+                      {/* View count */}
+                      {restaurant.view_count > 0 && (
+                        <span className="absolute top-3 right-3 bg-black/50 text-white text-base px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
+                          <Eye className="w-3 h-3" />
+                          {restaurant.view_count >= 1000
+                            ? `${(restaurant.view_count / 1000).toFixed(1)}k`
+                            : restaurant.view_count}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Card body */}
+                    <div className="flex flex-col flex-1 p-4 sm:p-5 gap-2">
+                      <h3 className="font-medium text-black text-base sm:text-lg leading-snug line-clamp-1  ">
+                        {restaurant.name}
+                      </h3>
+                      <div className="flex items-center gap-1.5 ">
+                        <MapPin className="w-3 h-3 shrink-0" />
+                        <p className="text-xs font-light truncate">{restaurant.city}</p>
                       </div>
-                    )}
 
-                    {restaurant.availability && !/^\d{4}-\d{2}-\d{2}/.test(restaurant.availability) && (
-                      <span className="absolute top-2 left-2 bg-green-600 text-white text-[10px] font-medium px-2 py-0.5 rounded-full z-10">
-                        {restaurant.availability}
-                      </span>
-                    )}
-
-                    {restaurant.view_count > 0 && (
-                      <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
-                        👀 {restaurant.view_count >= 1000
-                          ? `${(restaurant.view_count / 1000).toFixed(1)}k`
-                          : restaurant.view_count}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="p-3">
-                    <h3 className="font-semibold text-[#513012] text-sm leading-tight line-clamp-1">
-                      {restaurant.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">📍 {restaurant.city}</p>
-                    <StarRating restaurantId={restaurant.id} />
-                  </div>
-                </Link>
+                      <StarRating restaurantId={restaurant.id} />
+                    </div>
+                  </Link>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

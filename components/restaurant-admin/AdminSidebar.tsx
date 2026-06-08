@@ -74,7 +74,18 @@ const menuItems: MenuItem[] = [
     icon: History,
     permissionKey: 'globalSettings', 
   },
-
+ { 
+    title: 'About Page', 
+    href: '/restaurant-admin/about', 
+    icon: MenuIcon,
+    permissionKey: null, 
+  },
+  { 
+    title: 'Service Page', 
+    href: '/restaurant-admin/services', 
+    icon: MenuIcon,
+    permissionKey: null, 
+  },
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 

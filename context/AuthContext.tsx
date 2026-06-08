@@ -128,14 +128,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (e) {
       console.error('Profile fetch error:', e);
-    } finally {
-      setProfileLoading(false);
-    }
-  };
+      localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+  } finally {
+    setProfileLoading(false);
+  }
+};
+    
   // ─────────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => { 
       const token     = localStorage.getItem('access_token');
       const savedUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
 
@@ -145,10 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const user = buildUserFromProfile(me);
           setCurrentUser(user);
           setIsAuthenticated(true);
-
-          // ── ADD: fetch fresh profile on mount if logged in ───────────────
-          fetchProfile();
-          // ─────────────────────────────────────────────────────────────────
+          await fetchProfile();
         } catch (e) {
           console.error('Auth parse error:', e);
           clearAuthStorage();

@@ -23,6 +23,9 @@ export default function RestaurantNavbar({
     { href: `${base}/menu`,   label: 'Menu' },
     { href: `${base}/reviews`,label: 'Reviews' },
     { href: `${base}/gallery`,label: 'Gallery' },
+        { href: `${base}/about`,label: 'About' },
+        { href: `${base}/services`,label: 'Services' },
+
 
     {href: `/register-restaurant`,   label: 'List Your Venue' },
     {href: `/login`,   label: 'Login' },
@@ -72,6 +75,18 @@ export default function RestaurantNavbar({
     className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
   >
     Reviews
+  </Link>
+   <Link
+    href={`${base}/about`}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    About Us
+  </Link>
+  <Link
+    href={`${base}/services`}
+    className="text-sm font-medium text-gray-600 hover:text-[#513012] transition-colors"
+  >
+    Services
   </Link>
    <Link
     href={`${base}/gallery`}
