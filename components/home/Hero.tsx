@@ -1,166 +1,592 @@
-
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const HeroSection: React.FC = () => {
 
- const slides = [
-  {
-    src: "/7.jpg",
-    alt: "Best Restaurants in Nepal",
-    title: "Best Restaurants in Nepal",
-    link: "/restaurants",
-  },
-  {
-    src: "/food11.jpg",
-    alt: "Compare Menus & Order Food Online",
-    title: "Compare Menus & Order Food Online",
-    link: "/about",
-  },
+const POPULAR_SEARCHES = ["Momo", "Chowmein", "Sekuwa", "Coffee", "Newari Khaja", "Pizza"];
+
+const STATS = [
+  { value: "500+", label: "Restaurants" },
+  { value: "12K+", label: "Happy Diners" },
+  { value: "40+", label: "Cuisines" },
 ];
-  const [currentImage, setCurrentImage] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
 
+export default function HeroSection() {
+  const [query, setQuery] = useState("");
+  const [scrollY, setScrollY] = useState(0);
+  const [entered, setEntered] = useState(false);
+  const heroRef = useRef(null);
 
-  const handleNext = useCallback(() => {
-    setDirection(1);
-    setCurrentImage((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
-
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentImage((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
+  // Parallax
   useEffect(() => {
-    if (!isAutoPlaying) return;
-    const interval = setInterval(() => handleNext(), 4000);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, handleNext]);
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const kenBurnsVariants: Variants = {
-    initial: { scale: 1, x: 0, y: 0 },
-    animate: { scale: 1.1, x: [0, -20, 0], y: [0, -10, 0], transition: { duration: 4, ease: "easeInOut" } },
-  };
+  // Entrance animation trigger
+  useEffect(() => {
+    const t = setTimeout(() => setEntered(true), 80);
+    return () => clearTimeout(t);
+  }, []);
 
-  const slideVariants: Variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 1000 : -1000, opacity: 0 }),
-    center: { x: 0, opacity: 1, zIndex: 1 },
-    exit: (dir: number) => ({ x: dir < 0 ? 1000 : -1000, opacity: 0, zIndex: 0 }),
-  };
-
-  const TextReveal: React.FC<{ text: string; delay?: number }> = ({ text, delay = 0 }) => {
-    const letters = text.split("");
-
-    const container: Variants = {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { staggerChildren: 0.03, delayChildren: delay } },
-    };
-
-    const child: Variants = {
-      hidden: { opacity: 0, y: 20 },
-      visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 12, stiffness: 200 } },
-    };
-
-    return (
-      <motion.span variants={container} initial="hidden" animate="visible" className="inline-block">
-        {letters.map((letter, index) => (
-          <motion.span key={index} variants={child} className="inline-block">
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        ))}
-      </motion.span>
-    );
+const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query.trim()) {
+      window.location.href = `/menusearch?q=${encodeURIComponent(query.trim())}`;
+    }
   };
 
   return (
     <>
-    <motion.div
-      ref={containerRef}
-      className="relative w-full h-[40vh] md:h-[75vh] overflow-hidden"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
-    >
-      <AnimatePresence initial={false} custom={direction}>
-        <motion.div
-          key={currentImage}
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
-          className="absolute inset-0"
-        >
-          <motion.div variants={kenBurnsVariants} initial="initial" animate="animate" className="relative w-full h-full">
-            <Image src={slides[currentImage].src} alt={slides[currentImage].alt} fill className="object-cover" priority={currentImage === 0} />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
-<div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:px-20 z-10 text-white">
-  
- <h1 className="text-2xl md:text-5xl font-bold mb-4 drop-shadow-lg">
-  <TextReveal text={slides[currentImage].title} />
-</h1>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Outfit:wght@300;400;500&display=swap');
 
-  <a
-href={slides[currentImage].link}
-  className="bg-white text-black px-5 py-2 md:px-6 md:py-3 rounded-full font-medium hover:bg-gray-200 transition"
->
-  {currentImage === 0 ? "Browse Restaurants" : "Learn More"}
-</a>
+        :root {
+          --cream:   #F2E8D5;
+          --gold:    #C9973A;
+          --gold-lt: #E8B85A;
+          --red:     #9B2335;
+          --ink:     #1A0D06;
+          --mist:    rgba(242,232,213,0.08);
+        }
 
+        .hero {
+          position: relative;
+          width: 100%;
+          height: 100svh;
+          min-height: 640px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Outfit', sans-serif;
+        }
 
-
-</div>
- 
-
-      <motion.button onClick={handlePrev} className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-20 hover:backdrop-blur-md p-2 md:p-4 rounded-full">
-        <ChevronLeft className="w-4 h-4 text-white" />
-      </motion.button>
-      <motion.button onClick={handleNext} className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-20 hover:backdrop-blur-md p-2 md:p-4 rounded-full">
-        <ChevronRight className="w-4 h-4 text-white" />
-      </motion.button>
-
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2 md:hidden">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              setDirection(index > currentImage ? 1 : -1);
-              setCurrentImage(index);
-            }}
-            className={`w-2 h-2 rounded-full transition-all ${index === currentImage ? "bg-white w-6" : "bg-white/50"}`}
-          />
-        ))}
-      </div>
-    </motion.div>
-    <div className="sr-only">
-        <p>
-          Discover the best restaurants in Nepal all in one place. Browse and compare menus
-          from top-rated restaurants across Kathmandu, Pokhara, and beyond. Whether you want
-          to order food online, book a table, or scan a QR menu at your favorite spot, our
-          platform makes it simple. Read honest reviews from real diners, explore cuisines
-          ranging from traditional Nepali dal bhat to international dishes, and find the
-          perfect restaurant for any occasion. Our restaurant listing platform helps food
-          lovers and restaurant owners connect seamlessly. Restaurant owners can register
-          their business, upload their menu, and receive online orders and table bookings
-          directly. Customers can rate restaurants, leave reviews, and share their dining
-          experiences. Explore top restaurants near you, filter by cuisine, price range, or
-          location, and make informed dining decisions. Join thousands of food lovers already
-          using Nepal&apos;s most complete restaurant discovery platform.
-        </p>
-      </div>
-   </>
+        /* ── Background image with parallax ── */
+        .hero__bg {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          transform: translateY(calc(var(--scroll) * 0.35px));
+          will-change: transform;
+        }
+        .hero__bg img {
+          object-position: center 60%;
+        }
+@media (min-width: 769px) {
+  .hero__bg {
+    inset: -80px 0;
+  }
+}
+        /* ── Layered overlays ── */
+        .hero__overlay-base {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background: linear-gradient(
+    to bottom,
+    rgba(14,6,2,0.35) 0%,
+    rgba(14,6,2,0.55) 55%,
+    rgba(14,6,2,0.65) 90%,
+    rgba(14,6,2,0.75) 100%
   );
-};
+        }
 
-export default HeroSection;
+        /* Warm vignette sides */
+        .hero__overlay-vignette {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          background:
+            radial-gradient(ellipse at 0% 50%, rgba(155,35,53,0.18) 0%, transparent 55%),
+            radial-gradient(ellipse at 100% 50%, rgba(201,151,58,0.12) 0%, transparent 55%);
+        }
+
+        /* Grain texture */
+        .hero__grain {
+          position: absolute;
+          inset: 0;
+          z-index: 3;
+          opacity: 0.035;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          background-size: 180px;
+        }
+
+        /* ── Decorative border frame ── */
+        .hero__frame {
+          position: absolute;
+          inset: 20px;
+          z-index: 4;
+          border: 1px solid rgba(201,151,58,0.22);
+          pointer-events: none;
+        }
+        .hero__frame::before {
+          content: '';
+          position: absolute;
+          inset: 6px;
+          border: 1px solid rgba(201,151,58,0.1);
+        }
+        /* Corner ornaments */
+        .hero__frame::after {
+          content: '';
+          position: absolute;
+          top: -1px; left: -1px;
+          width: 32px; height: 32px;
+          border-top: 2px solid var(--gold);
+          border-left: 2px solid var(--gold);
+        }
+        .corner-br, .corner-tl-r, .corner-bl {
+          position: absolute;
+          width: 32px; height: 32px;
+          pointer-events: none;
+        }
+        .corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .corner-tl-r { top: -1px; right: -1px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+
+        /* ── Content ── */
+        .hero__content {
+          position: relative;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 0 20px;
+          width: 100%;
+          max-width: 860px;
+        }
+
+        /* ── Entrance animations ── */
+        .anim {
+          opacity: 0;
+          transform: translateY(22px);
+          transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        .anim.in { opacity: 1; transform: translateY(0); }
+
+        /* ── Eyebrow ── */
+        .hero__eyebrow {
+          font-family: 'Outfit', sans-serif;
+          font-size: 11px;
+          font-weight: 400;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--gold);
+          margin-bottom: 18px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          transition-delay: 0.05s;
+        }
+        .hero__eyebrow span { display: inline-block; width: 28px; height: 1px; background: var(--gold); opacity: 0.6; }
+
+        /* ── Headline ── */
+        .hero__headline {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(48px, 8vw, 96px);
+          font-weight: 600;
+          line-height: 0.95;
+          color: var(--cream);
+          letter-spacing: -0.01em;
+          margin-bottom: 0;
+          transition-delay: 0.15s;
+        }
+        .hero__headline em {
+          font-style: italic;
+          font-weight: 300;
+          color: var(--gold-lt);
+        }
+
+        /* ── Gold rule + sub ── */
+        .hero__rule {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin: 22px 0 18px;
+          transition-delay: 0.25s;
+        }
+        .hero__rule::before, .hero__rule::after {
+          content: '';
+          flex: 1;
+          max-width: 120px;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(201,151,58,0.5));
+        }
+        .hero__rule::after { background: linear-gradient(90deg, rgba(201,151,58,0.5), transparent); }
+        .hero__rule-diamond {
+          width: 6px; height: 6px;
+          background: var(--gold);
+          transform: rotate(45deg);
+        }
+
+        .hero__sub {
+          font-family: 'Outfit', sans-serif;
+          font-size: clamp(13px, 1.6vw, 16px);
+          font-weight: 300;
+          color: rgba(242,232,213,0.65);
+          letter-spacing: 0.04em;
+          max-width: 480px;
+          line-height: 1.65;
+          margin-bottom: 36px;
+          transition-delay: 0.3s;
+        }
+
+        /* ── Search bar ── */
+        .hero__search-wrap {
+          width: 100%;
+          max-width: 560px;
+          margin-bottom: 28px;
+          transition-delay: 0.4s;
+        }
+        .hero__search {
+          display: flex;
+          align-items: center;
+          background: rgba(242,232,213,0.08);
+          border: 1px solid rgba(201,151,58,0.35);
+          border-radius: 3px;
+          overflow: hidden;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: border-color 0.3s;
+        }
+        .hero__search:focus-within {
+          border-color: rgba(201,151,58,0.7);
+          background: rgba(242,232,213,0.12);
+        }
+        .hero__search-icon {
+          padding: 0 16px;
+          color: rgba(201,151,58,0.7);
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+        .hero__search input {
+          flex: 1;
+          background: transparent;
+          border: none;
+          outline: none;
+          color: var(--cream);
+          font-family: 'Outfit', sans-serif;
+          font-size: 14px;
+          font-weight: 300;
+          letter-spacing: 0.04em;
+          padding: 16px 0;
+        }
+        .hero__search input::placeholder { color: rgba(242,232,213,0.35); }
+        .hero__search-btn {
+          background: var(--gold);
+          border: none;
+          padding: 0 28px;
+          height: 54px;
+          cursor: pointer;
+          font-family: 'Outfit', sans-serif;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--ink);
+          transition: background 0.25s;
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        .hero__search-btn:hover { background: var(--gold-lt); }
+
+        /* Quick pills */
+        .hero__pills {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: center;
+          margin-top: 12px;
+        }
+        .hero__pill {
+          font-family: 'Outfit', sans-serif;
+          font-size: 11px;
+          font-weight: 400;
+          letter-spacing: 0.1em;
+          color: rgba(242,232,213,0.5);
+          padding: 5px 14px;
+          border: 1px solid rgba(242,232,213,0.12);
+          border-radius: 2px;
+          cursor: pointer;
+          transition: color 0.2s, border-color 0.2s, background 0.2s;
+          background: transparent;
+        }
+        .hero__pill:hover {
+          color: var(--gold-lt);
+          border-color: rgba(201,151,58,0.4);
+          background: rgba(201,151,58,0.06);
+        }
+
+        /* ── CTA buttons ── */
+        .hero__ctas {
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-top: 8px;
+          transition-delay: 0.5s;
+        }
+        .hero__btn-primary {
+          font-family: 'Outfit', sans-serif;
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--ink);
+          background: var(--gold);
+          border: none;
+          padding: 15px 38px;
+          border-radius: 2px;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          transition: background 0.25s, transform 0.2s;
+        }
+        .hero__btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+        .hero__btn-primary svg { width: 14px; height: 14px; }
+
+        .hero__btn-secondary {
+          font-family: 'Outfit', sans-serif;
+          font-size: 12px;
+          font-weight: 400;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--cream);
+          background: transparent;
+          border: 1px solid rgba(242,232,213,0.3);
+          padding: 15px 38px;
+          border-radius: 2px;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          transition: border-color 0.25s, background 0.25s, transform 0.2s;
+        }
+        .hero__btn-secondary:hover {
+          border-color: rgba(242,232,213,0.6);
+          background: rgba(242,232,213,0.06);
+          transform: translateY(-2px);
+        }
+.hero__top-fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 40px;
+  z-index: 5;
+
+
+
+  backdrop-filter: blur(12px);
+}
+        .hero__stats {
+          position: absolute;
+          bottom: 40px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 0;
+          opacity: 0;
+          transition: opacity 0.9s ease 0.7s;
+        }
+        .hero__stats.in { opacity: 1; }
+        .hero__stat {
+          text-align: center;
+          padding: 0 36px;
+          position: relative;
+        }
+        .hero__stat + .hero__stat::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 50%;
+          transform: translateY(-50%);
+          width: 1px; height: 28px;
+          background: rgba(201,151,58,0.3);
+        }
+        .hero__stat-val {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 28px;
+          font-weight: 600;
+          color: var(--gold-lt);
+          line-height: 1;
+          display: block;
+        }
+        .hero__stat-label {
+          font-family: 'Outfit', sans-serif;
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: rgba(242,232,213,0.4);
+          display: block;
+          margin-top: 4px;
+        }
+
+        /* Scroll indicator */
+        .hero__scroll {
+          position: absolute;
+          bottom: 38px;
+          right: 44px;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          opacity: 0;
+          transition: opacity 0.9s ease 0.9s;
+        }
+        .hero__scroll.in { opacity: 1; }
+        .hero__scroll span {
+          font-family: 'Outfit', sans-serif;
+          font-size: 9px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(201,151,58,0.5);
+          writing-mode: vertical-rl;
+        }
+        .hero__scroll-line {
+          width: 1px;
+          height: 40px;
+          background: linear-gradient(to bottom, rgba(201,151,58,0.5), transparent);
+          animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+          0%,100% { transform: scaleY(1); opacity: 0.5; }
+          50% { transform: scaleY(0.5); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+          .hero__frame { inset: 10px; }
+          .hero__stat { padding: 0 20px; }
+          .hero__scroll { display: none; }
+          .hero__ctas { flex-direction: column; align-items: center; }
+          .hero__btn-primary, .hero__btn-secondary { width: 100%; justify-content: center; }
+        }
+      `}</style>
+
+      <section
+        className="hero"
+        ref={heroRef}
+        style={{ "--scroll": String(scrollY) } as React.CSSProperties}
+      >
+    
+        <div className="hero__bg">
+          <Image
+            src="/bg1.jpg"
+            alt="Best Restaurants in Nepal"
+            fill
+            priority
+            quality={90}
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+
+        {/* ── Overlays ── */}
+        <div className="hero__overlay-base" />
+        <div className="hero__overlay-vignette" />
+        <div className="hero__grain" />
+<div className="hero__top-fade" />
+        {/* ── Decorative frame ── */}
+        <div className="hero__frame" aria-hidden="true">
+          <div className="corner-br" />
+          <div className="corner-tl-r" />
+          <div className="corner-bl" />
+        </div>
+
+        {/* ── Main content ── */}
+        <div className="hero__content">
+
+          <p className={`hero__eyebrow anim${entered ? " in" : ""}`}>
+            <span />
+            Kathmandu · Pokhara · Beyond
+            <span />
+          </p>
+
+          <h1 className={`hero__headline anim${entered ? " in" : ""}`}>
+            Nepal&apos;s <em>Finest</em><br />
+            Restaurants
+          </h1>
+
+          <div className={`hero__rule anim${entered ? " in" : ""}`}>
+            <div className="hero__rule-diamond" />
+          </div>
+
+          <p className={`hero__sub anim${entered ? " in" : ""}`}>
+            Discover, compare menus &amp; book tables at the best restaurants
+            across Nepal — from soulful dal bhat to world cuisine.
+          </p>
+
+          {/* Search */}
+          <div className={`hero__search-wrap anim${entered ? " in" : ""}`}>
+            <form onSubmit={handleSearch}>
+              <div className="hero__search">
+                <div className="hero__search-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M16.5 16.5L21 21" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search a dish — momo, thakali, sekuwa…"
+                />
+                <button type="submit" className="hero__search-btn">Search</button>
+              </div>
+            </form>
+
+            <div className="hero__pills">
+              {POPULAR_SEARCHES.map((tag) => (
+                <button
+                  key={tag}
+                  className="hero__pill"
+                  onClick={() => {
+                    setQuery(tag);
+                    window.location.href = `/menusearch?q=${encodeURIComponent(tag)}`;
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* CTAs */}
+          <div className={`hero__ctas anim${entered ? " in" : ""}`}>
+            <Link href="/restaurants" className="hero__btn-primary">
+              Browse Restaurants
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            <Link href="/menusearch" className="hero__btn-secondary">
+              Compare Menus
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Stats bar ── */}
+        <div className={`hero__stats${entered ? " in" : ""}`}>
+          {STATS.map((s) => (
+            <div key={s.label} className="hero__stat">
+              <span className="hero__stat-val">{s.value}</span>
+              <span className="hero__stat-label">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}

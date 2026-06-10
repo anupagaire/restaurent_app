@@ -38,9 +38,11 @@ interface FooterData {
   columns: Column[];
   socials: Social[];
 }
+
 interface FooterProps {
   data: FooterData | null;
 }
+
 function SocialIcon({ icon }: { icon: string }) {
   const cls = 'w-4 h-4';
   switch (icon.toLowerCase()) {
@@ -70,12 +72,12 @@ function BrandSection({ brand }: { brand: Brand }) {
           </div>
         ) : null}
         
-        <h2 className="text-3xl font-bold group-hover:text-amber-200 transition-colors">
+        <h2 className="text-3xl font-bold text-[#f6a93c] group-hover:text-white transition-colors">
           {brand.name}
         </h2>
       </Link>
 
-      <p className="text-gray-300 text-sm leading-relaxed">
+      <p className="text-white/70 text-sm leading-relaxed">
         {brand.description}
         <br />
         {brand.tagline}
@@ -88,10 +90,14 @@ function LinksColumn({ column }: { column: Column }) {
   const items = column.items as LinkItem[];
   return (
     <div>
-      <h3 className="font-semibold mb-4 text-lg">{column.title}</h3>
-      <div className="space-y-3 text-gray-300">
+      <h3 className="font-semibold mb-4 text-lg text-[#f6a93c]">{column.title}</h3>
+      <div className="space-y-3 text-white/70">
         {items.map((item) => (
-          <Link key={item.href} href={item.href} className="block hover:text-white transition">
+          <Link 
+            key={item.href} 
+            href={item.href} 
+            className="block hover:text-[#f6a93c] transition-colors"
+          >
             {item.label}
           </Link>
         ))}
@@ -104,25 +110,26 @@ function ContactColumn({ column }: { column: Column }) {
   const contact = column.items as ContactItems;
   return (
     <div>
-      <h3 className="font-semibold mb-4 text-lg">{column.title}</h3>
-      <div className="space-y-4 text-gray-300">
+      <h3 className="font-semibold mb-4 text-lg text-[#f6a93c]">{column.title}</h3>
+      <div className="space-y-4 text-white/70">
         <div className="flex items-start gap-3">
-          <MapPin className="mt-1 w-5 h-5 shrink-0" />
+          <MapPin className="mt-1 w-5 h-5 shrink-0 text-[#f6a93c]" />
           <div>
             {contact.addressLine1}
             <br />
             {contact.addressLine2}
           </div>
         </div>
+       
         <div className="flex items-center gap-3">
-          <Phone className="w-5 h-5 shrink-0" />
-          <a href={`tel:${contact.phone}`} className="hover:text-white">
+          <Phone className="w-5 h-5 shrink-0 text-[#f6a93c]" />
+          <a href={`tel:${contact.phone}`} className="hover:text-[#f6a93c] transition-colors">
             {contact.phone}
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5 shrink-0" />
-          <a href={`mailto:${contact.email}`} className="hover:text-white">
+          <Mail className="w-5 h-5 shrink-0 text-[#f6a93c]" />
+          <a href={`mailto:${contact.email}`} className="hover:text-[#f6a93c] transition-colors">
             {contact.email}
           </a>
         </div>
@@ -130,11 +137,12 @@ function ContactColumn({ column }: { column: Column }) {
     </div>
   );
 }
+
 export default function Footer({ data }: FooterProps) {
   if (!data) return null;
 
   return (
-    <footer className="bg-[#513012] text-white">
+    <footer className="bg-[#3B1C32] text-white">
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <BrandSection brand={data.brand} />
@@ -147,12 +155,19 @@ export default function Footer({ data }: FooterProps) {
           )}
         </div>
 
-        <div className="border-t border-white/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white">
+        <div className="border-t border-[#f6a93c]/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/70">
           <span>© {new Date().getFullYear()} Food Nepal. All rights reserved.</span>
           {data.socials.length > 0 && (
             <div className="flex items-center gap-4">
               {data.socials.map((s) => (
-                <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.name} className="hover:text-gray-300 transition">
+                <a 
+                  key={s.href} 
+                  href={s.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  aria-label={s.name} 
+                  className="w-9 h-9 rounded-full bg-[#513012] flex items-center justify-center hover:bg-[#f6a93c] hover:text-[#3B1C32] transition-all"
+                >
                   <SocialIcon icon={s.icon} />
                 </a>
               ))}

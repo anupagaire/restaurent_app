@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, Eye } from 'lucide-react';
-
+import SectionHeader from '@/components/layout/SectionHeader';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Restaurant {
@@ -207,36 +207,14 @@ export default function FeaturedRestaurants() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/40 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
+        <SectionHeader
+  title="Featured"
+  highlight="Restaurants"
+  linkText="View all"
+  linkHref="/restaurants"
+/>
 
-        {/* ── HEADER ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-14 md:mb-18"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-black leading-tight tracking-tight">
-              Featured{' '}
-              <span className="italic" style={{ color: '#d4b78f' }}>
-                Restaurants
-              </span>
-            </h2>
-            <Link
-              href="/restaurants"
-              className="inline-flex items-center gap-2 text-sm text-black/40 hover:text-[#d4b78f] transition-colors duration-300 font-light tracking-wide shrink-0 group"
-            >
-              View all
-              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-          <div className="mt-8 w-full h-px bg-[#d4b78f]/15" />
-        </motion.div>
-
-        {/* ── GRID ── */}
+       
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-4 md:gap-5">
             {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}

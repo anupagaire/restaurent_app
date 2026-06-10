@@ -2,42 +2,29 @@ import Link from 'next/link';
 
 export default function CTASection() {
   return (
-    <section className="relative bg-[#011659] overflow-hidden py-3">
-
-      {/* Ghost watermark */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-      >
-        <span
-          className="text-[22vw] font-black leading-none text-white whitespace-nowrap"
-          style={{ opacity: 0.025, lineHeight: 1 }}
-        >
-          ORDER
-        </span>
-      </div>
+    <section className="relative bg-[#3B1C32] overflow-hidden py-3">
 
       {/* Top gold accent line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/60 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#f6a93c]/60 to-transparent" />
       {/* Bottom gold accent line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/60 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#f6a93c]/60 to-transparent" />
 
       {/* Decorative circles */}
       <div
         aria-hidden="true"
-        className="absolute -left-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#d4b78f]/8 pointer-events-none"
+        className="absolute -left-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#f6a93c]/8 pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute -left-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#d4b78f]/6 pointer-events-none"
+        className="absolute -left-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#f6a93c]/6 pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute -right-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#d4b78f]/8 pointer-events-none"
+        className="absolute -right-32 top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-[#f6a93c]/8 pointer-events-none"
       />
       <div
         aria-hidden="true"
-        className="absolute -right-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#d4b78f]/6 pointer-events-none"
+        className="absolute -right-20 top-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-[#f6a93c]/6 pointer-events-none"
       />
 
       {/* Content */}
@@ -46,7 +33,7 @@ export default function CTASection() {
         {/* Title */}
         <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.05] tracking-tight mb-6">
           Ready to Enjoy{' '}
-          <span className="italic" style={{ color: '#d4b78f' }}>
+          <span className="italic text-[#f6a93c]">
             Great Food?
           </span>
         </h2>
@@ -59,7 +46,7 @@ export default function CTASection() {
         {/* CTA Button */}
         <Link href="/contact">
           <span className="group inline-flex items-center gap-3 cursor-pointer">
-            <span className="relative inline-flex items-center gap-3 bg-[#d4b78f] text-[#011659] px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all duration-300 hover:bg-white">
+            <span className="relative inline-flex items-center gap-3 bg-[#f6a93c] text-[#3B1C32] px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:shadow-lg hover:shadow-[#f6a93c]/20">
               Contact Us
               {/* Arrow icon */}
               <svg

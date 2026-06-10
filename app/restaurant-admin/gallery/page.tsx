@@ -173,6 +173,7 @@ export default function GalleryAdminPage() {
         </div>
       </section>
 
+
       {/* ── GALLERY GRID ── */}
       <section className="space-y-4">
         <h2 className="font-semibold text-lg">Gallery Photos ({photos.length})</h2>

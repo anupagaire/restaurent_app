@@ -16,7 +16,7 @@ export default function NotFound() {
           Oops! Table Not Found
         </h2>
 
-        <p className="text-gray-600 text-lg mb-8">
+        <p className="text-[#3B1C32] text-lg mb-8">
           Looks like this page got lost in the kitchen. 
           Don&apos;t worry, our chef is working on it!
         </p>

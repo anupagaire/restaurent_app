@@ -128,7 +128,7 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
   onUpdateQty: (itemId: string | number, delta: number) => void; onSuccess: () => void; onAuthChange: (a: AuthData | null) => void;
 }) {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('+977');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
@@ -229,7 +229,7 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
                 {authMode === 'register' && (
                   <div>
                     <input type="password" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }} placeholder="Confirm password *" style={{ ...inp(confirmPassword, true), ...(confirmPassword && password !== confirmPassword ? { borderColor: '#ef4444' } : {}) }} />
-                    {confirmPassword && password !== confirmPassword && <p className="text-xs text-red-500 mt-1">Passwords don't match</p>}
+                    {confirmPassword && password !== confirmPassword && <p className="text-xs text-red-500 mt-1">Passwords don&apos;t match</p>}
                   </div>
                 )}
               </div>
@@ -240,7 +240,27 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
           <div className="space-y-3 mb-4">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Delivery Details</p>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" style={inp(name)} />
-            <input type="tel" value={phone} onChange={(e) => { setPhone(e.target.value); setError(''); }} placeholder="Phone number *" style={inp(phone, true)} />
+        
+<input
+  type="tel"
+  value={phone}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (!value.startsWith('+977')) {
+      setPhone('+977');
+      return;
+    }
+
+    setPhone(value);
+    setError('');
+  }}
+  placeholder="Phone number *"
+  style={inp(phone, true)}
+/>
+
+
+
+
             <textarea value={address} onChange={(e) => { setAddress(e.target.value); setError(''); }} placeholder="Delivery address *" rows={2} style={{ ...inp(address, true), resize: 'none' }} />
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special notes (optional)" rows={2} style={{ ...inp(notes), resize: 'none' }} />
           </div>
@@ -270,7 +290,7 @@ function OrderSuccess({ onBack }: { onBack: () => void }) {
       <div className="text-6xl mb-4">🎉</div>
       <h2 className="font-bold text-2xl text-gray-900 mb-1">Order Placed!</h2>
       <p className="text-sm text-green-600 font-semibold flex items-center gap-1 mb-4"><Truck size={14} /> On its way to you</p>
-      <p className="text-sm text-gray-500 mb-8 max-w-xs">Your order has been received. We'll contact you shortly to confirm delivery.</p>
+      <p className="text-sm text-gray-500 mb-8 max-w-xs">Your order has been received. We&apos;ll contact you shortly to confirm delivery.</p>
       <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold bg-[#513012] text-white">Back to Menu</button>
     </div>
   );

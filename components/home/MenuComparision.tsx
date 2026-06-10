@@ -333,7 +333,11 @@ export default function MenuComparison({
       setLoading(false);
     }
   }, []);
-
+useEffect(() => {
+  if (initialQuery.trim()) {
+    fetchResults(initialQuery.trim());
+  }
+}, [initialQuery, fetchResults]);
   const handleSearch = (term?: string) => {
     const t = (term ?? query).trim();
     if (!t) return;

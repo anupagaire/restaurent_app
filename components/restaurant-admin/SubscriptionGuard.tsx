@@ -1,5 +1,3 @@
-// components/restaurant-admin/SubscriptionGuard.tsx
-// Wrap any page/component that requires active subscription
 
 'use client';
 

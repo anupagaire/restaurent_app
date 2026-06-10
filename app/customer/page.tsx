@@ -164,7 +164,7 @@ export default function CustomerDashboard() {
       {restaurants.length > 0 && (
         <div>
           <h2 className="font-bold text-base mb-3" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
-            Restaurants You've Visited
+            Restaurants You&apos;ve Visited
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {restaurants.map(r => (

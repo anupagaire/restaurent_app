@@ -1,8 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+const MAIN_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost:3000';
 
-export function middleware(request: NextRequest) {
+// export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host') ?? '';
+
+  // ── Custom domain check (enterprise) ──────────────────────────────────────
+  const isMainDomain = host === MAIN_DOMAIN || host.includes('localhost');
+
+  if (!isMainDomain) {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/lookup/?host=${host}`
+      );
+
+      if (res.ok) {
+        const restaurant = await res.json();
+        // Rewrite to enterprise route, pass restaurant id via header
+        const url = request.nextUrl.clone();
+        url.pathname = `/enterprise${pathname}`;
+        const response = NextResponse.rewrite(url);
+        response.headers.set('x-restaurant-id', String(restaurant.id));
+        response.headers.set('x-is-enterprise', 'true');
+        return response;
+        }
+    } catch (e) {
+      console.error('Domain lookup failed:', e);
+    }
+
+    // Custom domain but restaurant not found
+    return NextResponse.redirect(new URL('/not-found', request.url));
+  }
+
+
 
   const isAdminRoute    = pathname.startsWith("/super-admin") || pathname.startsWith("/restaurant-admin");
   const isCustomerRoute = pathname.startsWith("/customer");
@@ -51,5 +83,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/super-admin/:path*", "/restaurant-admin/:path*", "/customer/:path*"],
+  matcher: ["/super-admin/:path*", "/restaurant-admin/:path*", "/customer/:path*",
+    "/((?!_next|favicon.ico|api).*)",
+  ],
 };

@@ -71,7 +71,7 @@ export default async function RestaurantServicesPage({ params }: PageProps) {
           <div className="sv-empty__card">
             <span className="sv-empty__icon">🍽️</span>
             <h1>Services Page Not Available</h1>
-            <p>This restaurant hasn't created their services page yet.</p>
+            <p>This restaurant hasn&apos;t created their services page yet.</p>
             <Link href={`/restaurants/${slug}`} className="sv-empty__link">← Back to Restaurant</Link>
           </div>
         </div>

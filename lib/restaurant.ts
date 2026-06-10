@@ -58,3 +58,23 @@ export async function getMenuItemRatings(menuItemIds: number[]) {
 
   return results;
 }
+
+
+
+// ADD these two functions to your existing lib/restaurants.ts
+
+export async function lookupByDomain(host: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/lookup/?host=${host}`
+  )
+  if (!res.ok) return null
+  return res.json()
+}
+
+export async function fetchRestaurantById(id: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/${id}/`,
+    { next: { revalidate: 60 } }
+  )
+  return res.json()
+}

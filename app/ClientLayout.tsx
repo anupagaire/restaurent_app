@@ -24,10 +24,12 @@ export default function ClientLayout({
     // Hide only on individual restaurant pages (slug), but show on /restaurants list
     /^\/restaurants\/[^/]+$/.test(pathname)||
   /^\/restaurants\/[^/]+\/.*$/.test(pathname); 
+const isHomePage = pathname === '/';
 
   return (
     <AuthProvider>
-      {!shouldHideLayout && <Navbar {...navbarProps} />}
+        {!shouldHideLayout && <Navbar {...navbarProps} darkBg={!isHomePage} />}
+      {/* {!shouldHideLayout && <Navbar {...navbarProps} />} */}
       {children}
       {  <Footer data={footerData} />}
     </AuthProvider>

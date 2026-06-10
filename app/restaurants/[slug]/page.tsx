@@ -1,9 +1,11 @@
-import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import RestaurantTabs from '@/components/home/RestaurantTabs';
 import { Eye } from 'lucide-react';
 import type { Metadata } from 'next';
 import RestaurantAbout from '@/components/restaurant/RestaurantAbout';
+import { notFound, redirect } from 'next/navigation'; 
+import ScrollToTop from '@/components/ScrollToTop'; 
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
@@ -13,6 +15,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return { title: 'Restaurant Not Found' };
 
+ if (restaurantId === 8) {
+    redirect('/enterprise-test')
+  }
+
+// if (restaurant.custom_domain && restaurant.custom_domain_verified === true) {
+//     redirect(`https://${restaurant.custom_domain}`);
+//   }
   const seo = restaurant.seo;
   const coverPhoto = seo?.open_graph?.['og:image'] ?? resolveUrl(restaurant.photos?.[0]?.photo_url);
   const pageUrl = seo?.canonical_url ?? '';
@@ -180,6 +189,7 @@ const coverPhotoUrl = await getRestaurantCoverPhoto(restaurantId);
 
   return (
     <div style={{ background: '#faf8f5', minHeight: '100vh' }}>
+      <ScrollToTop />
       {restaurant.seo?.json_ld && (
         <script
           type="application/ld+json"

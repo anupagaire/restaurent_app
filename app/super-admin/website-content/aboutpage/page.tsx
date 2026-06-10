@@ -42,7 +42,7 @@ export default function AboutAdminPage() {
     const formData = new FormData();
     formData.append('photo', file);
     formData.append('purpose', section);
-    formData.append('type', 'about_page');
+    formData.append('type', 'about_page_content');
     formData.append('alt', '');
 
     try {
@@ -113,7 +113,6 @@ export default function AboutAdminPage() {
       </button>
       <h1 className="text-2xl font-bold text-[#513012]">About Page Content</h1>
 
-      {/* ── HERO ─ */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
         <h2 className="font-semibold text-lg">Hero Section</h2>
         <div>
@@ -125,7 +124,6 @@ export default function AboutAdminPage() {
           />
         </div>
         
-        {/* ✅ Subtitle with React Quill */}
         <div>
           <label className="block text-sm font-medium mb-1">Subtitle</label>
           <ReactQuill

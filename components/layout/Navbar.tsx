@@ -18,6 +18,7 @@ interface NavbarProps {
   links?: NavLink[];
   loginBtn?: NavButton;
   registerBtn?: NavButton;
+  darkBg?: boolean;
 }
 
 const DEFAULT_LINKS: NavLink[] = [
@@ -28,7 +29,7 @@ const DEFAULT_LINKS: NavLink[] = [
   { name: 'Contact', url: '/contact' },
 ];
 
-export default function Navbar({ logo, links, loginBtn, registerBtn }: NavbarProps) {
+export default function Navbar({ logo, links, loginBtn, registerBtn, darkBg = false}: NavbarProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +40,17 @@ export default function Navbar({ logo, links, loginBtn, registerBtn }: NavbarPro
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+const [scrolled, setScrolled] = useState(false);
 
+useEffect(() => {
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 50);
+  };
+
+  window.addEventListener('scroll', handleScroll);
+
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
   // Use props or fallback
 const resolvedLogo = {
   image: logo?.image?.trim() || '/logo.png',
@@ -153,7 +164,22 @@ const resolvedLogo = {
   );
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
+    <nav
+className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+  scrolled || darkBg
+    ? 'bg-black/70 backdrop-blur-xl border-b border-white/10'
+    : 'bg-transparent'
+}`}
+
+
+
+
+  // className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+  //   scrolled
+  //     ? 'bg-black/70 backdrop-blur-xl border-b border-white/10'
+  //     : 'bg-transparent'
+  // }`}
+>
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {/* DESKTOP */}
@@ -178,7 +204,7 @@ const resolvedLogo = {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 ">
             <div className="relative" ref={searchRef}>
               <button
                 onClick={() => { setIsSearchDesktop(!isSearchDesktop); setSearchQuery(''); setSuggestions([]); }}
@@ -210,7 +236,7 @@ const resolvedLogo = {
 
         {/* MOBILE */}
         <div className="md:hidden h-16 flex items-center justify-between">
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" >
             <div className="relative h-10 w-24">
   {resolvedLogo.image && (
     <Image

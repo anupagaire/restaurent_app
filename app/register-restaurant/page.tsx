@@ -26,7 +26,7 @@ const INITIAL_FORM: FormData = {
   full_address: "",
   description: "",
   owner_name: "",
-  phone: "",
+  phone: "+977 ",
   email: "",
   whatsapp: "",
 };
