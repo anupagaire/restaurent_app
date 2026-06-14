@@ -117,8 +117,8 @@ function SortButton({
       onClick={onClick}
       className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
         active
-          ? 'bg-[#513012] text-white border-[#513012]'
-          : 'bg-white border-gray-200 text-gray-600 hover:border-[#513012] hover:text-[#513012]'
+          ? 'bg-secondary text-white border-secondary'
+          : 'bg-white border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary'
       }`}
     >
       {children}
@@ -141,7 +141,7 @@ function MenuCard({
   onUpdateQty: (delta: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-[#513012]/20 transition-all group">
+    <div className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-secondary/20 transition-all group">
       <div
         className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
           rank === 0
@@ -165,9 +165,9 @@ function MenuCard({
       </Link>
 
       <Link href={`/restaurants/${r.restaurantSlug}`} className="flex-1 min-w-0">
-        <p className="font-semibold text-[#513012] text-sm group-hover:underline truncate">{r.restaurantName}</p>
+        <p className="font-semibold text-secondary text-sm group-hover:underline truncate">{r.restaurantName}</p>
         <p className="text-xs text-gray-400 mb-1">
-          📍 {r.restaurantCity} · <span className="text-[#513012] font-medium">{r.name}</span>
+          📍 {r.restaurantCity} · <span className="text-secondary font-medium">{r.name}</span>
         </p>
         {r.description && <p className="text-xs text-gray-400 truncate">{r.description}</p>}
         <div className="mt-1">
@@ -185,12 +185,12 @@ function MenuCard({
         {qty === 0 ? (
           <button
             onClick={onAdd}
-            className="px-4 py-1.5 rounded-xl text-xs font-bold border-2 border-[#513012] text-[#513012] hover:bg-[#513012] hover:text-white transition-all"
+            className="px-4 py-1.5 rounded-xl text-xs font-bold border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all"
           >
             ADD
           </button>
         ) : (
-          <div className="flex items-center gap-1.5 bg-[#513012] rounded-xl px-2 py-1">
+          <div className="flex items-center gap-1.5 bg-secondary rounded-xl px-2 py-1">
             <button onClick={() => onUpdateQty(-1)} className="w-5 h-5 flex items-center justify-center text-white">
               <Minus size={11} />
             </button>
@@ -355,11 +355,11 @@ useEffect(() => {
 
         {isHomePage && (
           <div className="text-center mb-10">
-            <span className="inline-block bg-[#513012]/10 text-[#513012] text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
+            <span className="inline-block bg-secondary/10 text-secondary text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
               Menu Finder
             </span>
             <h2 className="text-3xl md:text-4xl font-serif text-[#1a0a00] mb-3">
-              Find the Best <span className="text-[#513012] italic">Dish</span> Near You
+              Find the Best <span className="text-secondary italic">Dish</span> Near You
             </h2>
             <p className="text-gray-500 text-sm max-w-md mx-auto">
               Search any dish and compare it across restaurants — ranked by rating or price.
@@ -371,7 +371,7 @@ useEffect(() => {
         {availableCities.length > 0 && (
           <div className="flex justify-center mb-4">
             {selectedCity ? (
-              <span className="bg-[#513012]/10 text-[#513012] text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
+              <span className="bg-secondary/10 text-secondary text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
                 <MapPin size={13} />
                 Showing menus in <strong>{selectedCity}</strong>
                 <button
@@ -385,7 +385,7 @@ useEffect(() => {
               <select
                 value=""
                 onChange={(e) => onCityChange(e.target.value)}
-                className="bg-white border border-gray-200 text-sm text-gray-600 rounded-full px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#513012] cursor-pointer hover:border-[#513012] transition-colors"
+                className="bg-white border border-gray-200 text-sm text-gray-600 rounded-full px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-secondary cursor-pointer hover:border-secondary transition-colors"
               >
                 <option value="" disabled>📍 Filter by City</option>
                 {availableCities.map((city) => (
@@ -405,13 +405,13 @@ useEffect(() => {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Search a dish... e.g. Momo, Pizza, Thali"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 shadow-sm"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30 shadow-sm"
             />
           </div>
           <button
             onClick={() => handleSearch()}
             disabled={loading || !query.trim()}
-            className="bg-[#513012] text-white px-6 py-3.5 rounded-2xl text-sm font-semibold disabled:opacity-40 hover:bg-[#3d2209] transition-colors shadow-sm whitespace-nowrap"
+            className="bg-secondary text-white px-6 py-3.5 rounded-2xl text-sm font-semibold disabled:opacity-40 hover:bg-[#3d2209] transition-colors shadow-sm whitespace-nowrap"
           >
             {loading ? '...' : 'Compare'}
           </button>
@@ -423,7 +423,7 @@ useEffect(() => {
             <button
               key={term}
               onClick={() => handleQuick(term)}
-              className="px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:border-[#513012] hover:text-[#513012] transition-colors"
+              className="px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary transition-colors"
             >
               {term}
             </button>
@@ -472,7 +472,7 @@ useEffect(() => {
             {selectedCity && (
               <button 
                 onClick={() => onCityChange('')} 
-                className="mt-3 text-sm text-[#513012] underline hover:text-[#3d2209]"
+                className="mt-3 text-sm text-secondary underline hover:text-[#3d2209]"
               >
                 Clear city filter to see all results
               </button>
@@ -487,14 +487,14 @@ useEffect(() => {
               {isHomePage ? (
                 <>
                   Showing top{' '}
-                  <span className="font-semibold text-[#513012]">{Math.min(HOME_LIMIT, sorted.length)}</span> of{' '}
-                  <span className="font-semibold text-[#513012]">{sorted.length}</span> results for{' '}
+                  <span className="font-semibold text-secondary">{Math.min(HOME_LIMIT, sorted.length)}</span> of{' '}
+                  <span className="font-semibold text-secondary">{sorted.length}</span> results for{' '}
                   <span className="font-semibold">&quot;{searched}&quot;</span>
                   {selectedCity && <span> in <strong>{selectedCity}</strong></span>}
                 </>
               ) : (
                 <>
-                  <span className="font-semibold text-[#513012]">{sorted.length}</span> results for{' '}
+                  <span className="font-semibold text-secondary">{sorted.length}</span> results for{' '}
                   <span className="font-semibold">&quot;{searched}&quot;</span>
                   {selectedCity && <span> in <strong>{selectedCity}</strong></span>}
                 </>
@@ -527,7 +527,7 @@ useEffect(() => {
             {isHomePage && sorted.length > HOME_LIMIT && (
               <Link
                 href={`/menu-search?q=${encodeURIComponent(searched)}${selectedCity ? `&city=${encodeURIComponent(selectedCity)}` : ''}`}
-                className="flex items-center justify-center gap-2 mt-5 py-3 rounded-2xl border-2 border-[#513012] text-[#513012] text-sm font-semibold hover:bg-[#513012] hover:text-white transition-colors"
+                className="flex items-center justify-center gap-2 mt-5 py-3 rounded-2xl border-2 border-secondary text-secondary text-sm font-semibold hover:bg-secondary hover:text-white transition-colors"
               >
                 See all {sorted.length} results for &quot;{searched}&quot; →
               </Link>
@@ -549,7 +549,7 @@ useEffect(() => {
                     onClick={() => setPage(i + 1)}
                     className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                       page === i + 1
-                        ? 'bg-[#513012] text-white border-[#513012]'
+                        ? 'bg-secondary text-white border-secondary'
                         : 'border-gray-200 bg-white hover:bg-gray-50'
                     }`}
                   >

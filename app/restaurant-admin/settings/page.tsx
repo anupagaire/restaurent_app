@@ -10,6 +10,7 @@ import { Upload, Save, Trash2, Loader2, Lock, CheckCircle2, AlertCircle } from '
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
 import { useRequirePermission } from '@/hooks/usePermission';
+import CustomDomainSettings from '@/components/restaurant-admin/CustomDomainSettings'
 
 interface RestaurantData {
   id: number;
@@ -48,7 +49,7 @@ export default function GlobalSettingsPage() {
   const [error, setError]                 = useState('');
   const [successMsg, setSuccessMsg]       = useState('');
 const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
-
+const [isEnterprisePlan, setIsEnterprisePlan] = useState(false);
   // Password
   const [pw, setPw]             = useState({ password1: '', confirm: '' });
   const [pwSaving, setPwSaving] = useState(false);
@@ -68,7 +69,17 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
     }
     fetchRestaurant();
   }, []);
-
+useEffect(() => {
+  const checkPlan = async () => {
+    try {
+      const res = await apiFetch('/api/v1/subscription/subscriptions/current/')
+      const data = await res.json()
+      const planName = data?.current_subscription?.plan?.name?.toLowerCase() ?? ''
+      setIsEnterprisePlan(planName.includes('enterprise'))
+    } catch {}
+  }
+  checkPlan()
+}, [])
   const fetchRestaurant = async () => {
     try {
       setLoadingPage(true);
@@ -190,15 +201,16 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
   if (loadingPage) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-[#513012]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      {isEnterprisePlan && <CustomDomainSettings />}
       <div>
-        <h2 className="text-3xl font-bold text-[#513012]">Global Settings</h2>
+        <h2 className="text-3xl font-bold text-">Global Settings</h2>
         <p className="text-gray-600 mt-1">Manage your restaurant profile and account</p>
       </div>
 
@@ -208,7 +220,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-[#513012] font-bold">Restaurant Photos</CardTitle>
+            <CardTitle className="text-secondary font-bold">Restaurant Photos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
   {coverPhoto ? (
@@ -230,7 +242,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
       </button>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#513012]/20 rounded-2xl p-8 text-center">
+    <div className="flex flex-col items-center justify-center border-2 border-dashed border-secondary/20 rounded-2xl p-8 text-center">
       <Upload className="w-8 h-8 text-gray-400 mb-2" />
       <p className="text-gray-500 text-sm">No cover photo uploaded yet</p>
     </div>
@@ -238,7 +250,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
 
   <div className="flex justify-center">
     <label htmlFor="photo-upload"
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#513012] text-[#513012] text-sm font-medium cursor-pointer hover:bg-[#513012]/5 transition-colors ${isUploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-secondary text-secondary text-sm font-medium cursor-pointer hover:bg-secondary/5 transition-colors ${isUploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
       {isUploadingPhoto
         ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
         : <><Upload className="h-4 w-4" /> {coverPhoto ? 'Change Cover Photo' : 'Upload Cover Photo'}</>}
@@ -250,7 +262,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-[#513012] font-bold">Restaurant Information</CardTitle>
+            <CardTitle className="text-secondary font-bold">Restaurant Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
@@ -280,7 +292,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
               </div>
             </div>
             <Button onClick={handleSaveInfo} disabled={isSaving}
-              className="w-full bg-[#513012] hover:bg-[#513012]/90">
+              className="w-full bg-secondary hover:bg-secondary/90">
               {isSaving
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
                 : <><Save className="mr-2 h-4 w-4" /> Save Changes</>}
@@ -291,7 +303,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
 
       <Card className="max-w-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#513012]">
+          <CardTitle className="flex items-center gap-2 text-secondary">
             <Lock className="w-5 h-5" /> Change Password
           </CardTitle>
         </CardHeader>
@@ -320,7 +332,7 @@ const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
             </div>
             <Button type="submit"
               disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
-              className="w-full bg-[#513012] hover:bg-[#513012]/90">
+              className="w-full bg-secondary hover:bg-secondary/90">
               {pwSaving
                 ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating...</>
                 : 'Update Password'}

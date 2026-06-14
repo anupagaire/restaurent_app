@@ -84,10 +84,10 @@ const DetailModal = ({
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-4 border-b border-[#d4b78f] sticky top-0 bg-[#faf8f5] z-10">
           <div className="flex-1 pr-4">
-            <h2 className="text-base font-semibold text-[#513012] leading-snug">{msg.subject}</h2>
+            <h2 className="text-base font-semibold text-secondary leading-snug">{msg.subject}</h2>
             <p className="text-xs text-[#8c6d46] mt-0.5">Message #{msg.id}</p>
           </div>
-          <button onClick={onClose} className="text-[#776552] hover:text-[#513012] transition text-xl leading-none mt-0.5">
+          <button onClick={onClose} className="text-[#776552] hover:text-secondary transition text-xl leading-none mt-0.5">
             ✕
           </button>
         </div>
@@ -105,7 +105,7 @@ const DetailModal = ({
               </div>
               <div>
                 <p className="text-xs text-[#8c6d46]">Email</p>
-                <a href={`mailto:${msg.email}`} className="text-sm font-medium text-[#513012] hover:underline">
+                <a href={`mailto:${msg.email}`} className="text-sm font-medium text-secondary hover:underline">
                   {msg.email}
                 </a>
               </div>
@@ -167,7 +167,7 @@ const DetailModal = ({
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-5 py-2 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+                  className="px-5 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
                 >
                   {saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}
                 </button>
@@ -256,7 +256,7 @@ export default function ContactMessagesPage() {
         {/* Heading */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-[#513012]">Contact Messages</h1>
+            <h1 className="text-3xl font-bold text-secondary">Contact Messages</h1>
             <p className="text-[#776552] mt-1">
               {count} total · {pendingCount} pending
             </p>
@@ -273,7 +273,7 @@ export default function ContactMessagesPage() {
                 placeholder="Search by name, email, subject…"
                 className="flex-1 px-3 py-2 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-[#8c6d46] transition"
               />
-              <button type="submit" className="px-4 py-2 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] transition">
+              <button type="submit" className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition">
                 Search
               </button>
               {search && (
@@ -377,7 +377,7 @@ export default function ContactMessagesPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelected(msg)}
-                            className="px-3 py-1.5 text-xs text-[#513012] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
+                            className="px-3 py-1.5 text-xs text-secondary border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
                           >
                             View
                           </button>

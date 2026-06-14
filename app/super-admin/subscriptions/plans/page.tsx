@@ -120,7 +120,7 @@ function PlanFormModal({
     </div>
   );
 
-  const inputCls = "w-full px-3 py-2.5 rounded-xl text-sm outline-none border border-gray-200 bg-white focus:border-[#513012]";
+  const inputCls = "w-full px-3 py-2.5 rounded-xl text-sm outline-none border border-gray-200 bg-white focus:border-secondary";
 
   return (
     <>
@@ -450,7 +450,7 @@ export default function SuperAdminPlansPage() {
       {/* Grid */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : plans.length === 0 ? (
         <div className="text-center py-16 text-gray-400">

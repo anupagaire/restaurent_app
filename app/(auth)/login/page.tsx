@@ -35,7 +35,7 @@ const router = useRouter();
    if (isLoading || isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -164,7 +164,7 @@ const router = useRouter();
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
         <div className="text-center mb-2">
-          <h2 className="text-2xl font-bold text-[#513012]">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-secondary">Welcome Back</h2>
           <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
         </div>
 
@@ -172,7 +172,7 @@ const router = useRouter();
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Email</label>
           <input
-            className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#513012]/30 focus:border-[#513012] transition-all"
+            className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary transition-all"
             type="email"
             placeholder="you@example.com"
             value={email}
@@ -186,7 +186,7 @@ const router = useRouter();
           <label className="text-sm font-medium text-gray-700">Password</label>
           <div className="relative">
             <input
-              className="w-full border border-gray-200 p-3 pr-11 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#513012]/30 focus:border-[#513012] transition-all"
+              className="w-full border border-gray-200 p-3 pr-11 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary transition-all"
               type={showPw ? "text" : "password"}
               placeholder="••••••••"
               value={password}
@@ -212,7 +212,7 @@ const router = useRouter();
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#513012] text-white py-3 rounded-xl font-semibold hover:bg-[#3f260f] transition-colors disabled:opacity-60 mt-2"
+          className="w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-[#3f260f] transition-colors disabled:opacity-60 mt-2"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

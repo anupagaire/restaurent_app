@@ -117,7 +117,7 @@ export default function GalleryAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <h1 className="text-2xl font-bold text-[#513012]">Restaurant Gallery</h1>
+      <h1 className="text-2xl font-bold text-secondary">Restaurant Gallery</h1>
 
       {/* ── UPLOAD ── */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-4">
@@ -126,7 +126,7 @@ export default function GalleryAdminPage() {
         {/* File picker */}
         <div
           onClick={() => fileRef.current?.click()}
-          className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-[#513012]/40 hover:bg-[#513012]/5 transition"
+          className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-secondary/40 hover:bg-secondary/5 transition"
         >
           {preview ? (
             <img src={preview} alt="Preview" className="w-full max-h-48 object-cover rounded-lg" />
@@ -149,7 +149,7 @@ export default function GalleryAdminPage() {
         <div>
           <label className="block text-sm font-medium mb-1">Alt Text (optional)</label>
           <input
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             placeholder="e.g. Restaurant interior"
             value={altText}
             onChange={e => setAltText(e.target.value)}
@@ -160,7 +160,7 @@ export default function GalleryAdminPage() {
           <button
             onClick={handleUpload}
             disabled={!selectedFile || uploading}
-            className="flex items-center gap-2 bg-[#513012] text-white px-6 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium text-sm"
+            className="flex items-center gap-2 bg-secondary text-white px-6 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium text-sm"
           >
             <Plus className="w-4 h-4" />
             {uploading ? 'Uploading...' : 'Upload Photo'}

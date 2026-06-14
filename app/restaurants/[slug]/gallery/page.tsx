@@ -49,7 +49,7 @@ export default async function RestaurantGalleryPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Header - Menu Page जस्तै */}
-      <div className="relative w-full h-52 bg-[#513012] overflow-hidden">
+      <div className="relative w-full h-52 bg-secondary overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-8">

@@ -106,7 +106,7 @@ const handleMenuSubmit = async (payload: any, selectedFile: File | null) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <RefreshCw className="w-8 h-8 animate-spin text-[#513012]" />
+          <RefreshCw className="w-8 h-8 animate-spin text-secondary" />
           <p>Loading dashboard...</p>
         </div>
       </div>
@@ -116,7 +116,7 @@ return (
     <div className="px-6 py-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-start mb-10">
         <div>
-          <h1 className="text-4xl font-bold text-[#513012]">
+          <h1 className="text-4xl font-bold text-secondary">
             Welcome back, {profile?.first_name || "Admin"}!
 
           </h1>
@@ -135,7 +135,7 @@ return (
             </Button>
           )}
           {canManageMenu && (
-            <Button asChild className="bg-[#513012]">
+            <Button asChild className="bg-secondary">
               <Link href="/restaurant-admin/menu/qr">
                 <QrCode className="mr-2 h-4 w-4" /> QR Generator
               </Link>
@@ -197,7 +197,7 @@ return (
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-4">
           {canManageMenu && (
-            <Button onClick={handleAddNew} className="h-20 w-40 flex-col bg-[#513012] hover:bg-[#513012]/90">
+            <Button onClick={handleAddNew} className="h-20 w-40 flex-col bg-secondary hover:bg-secondary/90">
               <Plus className="h-6 w-6 mb-1" />
               Add New Item
             </Button>
@@ -287,7 +287,7 @@ return (
               <CardTitle>Table QR Code</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center py-10 text-center">
-              <QrCode className="w-16 h-16 text-[#513012] mb-4" />
+              <QrCode className="w-16 h-16 text-secondary mb-4" />
               <p className="text-gray-600 mb-6">
                 Generate QR code for your tables so customers can easily view the menu.
               </p>

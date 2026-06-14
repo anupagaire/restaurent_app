@@ -92,14 +92,14 @@ await emailjs.send(
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
           <div className="bg-white border border-[#d4b78f] rounded-2xl p-10 max-w-md w-full">
             <div className="text-4xl mb-4">🎉</div>
-            <h2 className="text-2xl font-semibold text-[#513012] mb-2">Application Submitted!</h2>
+            <h2 className="text-2xl font-semibold text-secondary mb-2">Application Submitted!</h2>
             <p className="text-[#776552] mb-6">
               We&apos;ve received your venue details. Our team will review your application and get
               back to you within 2–3 business days.
             </p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2 bg-[#513012] text-white rounded-lg text-sm hover:bg-[#7a4b2a] transition"
+              className="px-6 py-2 bg-secondary text-white rounded-lg text-sm hover:bg-[#7a4b2a] transition"
             >
               Back to Home
             </button>
@@ -113,7 +113,7 @@ await emailjs.send(
     <div className="min-h-screen w-full bg-[#faf8f5]">
       <div className="max-w-screen-md mx-auto px-4 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#513012] mb-2">Register Your Venue</h1>
+          <h1 className="text-3xl font-bold text-secondary mb-2">Register Your Venue</h1>
           <p className="text-[#776552]">
             Fill in the details below and our team will set up your digital menu and QR ordering system.
           </p>
@@ -258,7 +258,7 @@ await emailjs.send(
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+              className="px-6 py-2.5 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
             >
               {loading ? "Submitting…" : "Submit application"}
             </button>

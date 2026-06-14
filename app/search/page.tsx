@@ -76,7 +76,7 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
         )}
       </div>
       <div className="p-3.5 flex flex-col gap-1.5 flex-1">
-        <h3 className="text-sm font-bold text-[#513012] line-clamp-1 group-hover:text-[#7a4a1e] transition-colors">
+        <h3 className="text-sm font-bold text-secondary line-clamp-1 group-hover:text-[#7a4a1e] transition-colors">
           {restaurant.name}
         </h3>
         <div className="flex items-center gap-1 text-gray-500">
@@ -273,7 +273,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
             <button
               onClick={handleSearch}
               disabled={!inputValue.trim()}
-              className="px-5 py-2.5 bg-[#513012] text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors flex-shrink-0"
+              className="px-5 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors flex-shrink-0"
             >
               Search
             </button>
@@ -359,7 +359,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                 <p className="text-gray-700 text-sm">
                   {totalCount > 0 ? (
                     <>
-                      <span className="font-semibold text-[#513012]">{totalCount}</span>{' '}
+                      <span className="font-semibold text-secondary">{totalCount}</span>{' '}
                       result{totalCount !== 1 ? 's' : ''}
                       {query && <> for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>}
                       {selectedCity && <span className="text-gray-400"> in {selectedCity}</span>}
@@ -376,7 +376,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                 <select
                   value={sortBy}
                   onChange={(e) => { setSortBy(e.target.value as typeof sortBy); setCurrentPage(1); }}
-                  className="appearance-none pl-3 pr-8 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 bg-white focus:outline-none focus:ring-1 focus:ring-[#513012] cursor-pointer"
+                  className="appearance-none pl-3 pr-8 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 bg-white focus:outline-none focus:ring-1 focus:ring-secondary cursor-pointer"
                 >
                   <option value="default">Sort: Default</option>
                   <option value="views">Most viewed</option>
@@ -389,7 +389,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
                   showFilters || selectedCity
-                    ? 'bg-[#513012] text-white border-[#513012]'
+                    ? 'bg-secondary text-white border-secondary'
                     : 'border-gray-200 text-gray-600 bg-white hover:bg-gray-50'
                 }`}
               >
@@ -407,7 +407,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-gray-700">Filter by city</p>
               {selectedCity && (
-                <button onClick={() => setSelectedCity('')} className="text-xs text-[#513012] hover:underline">
+                <button onClick={() => setSelectedCity('')} className="text-xs text-secondary hover:underline">
                   Clear
                 </button>
               )}
@@ -419,8 +419,8 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                   onClick={() => { setSelectedCity(selectedCity === city ? '' : city); setCurrentPage(1); }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                     selectedCity === city
-                      ? 'bg-[#513012] text-white border-[#513012]'
-                      : 'border-gray-200 text-gray-600 hover:border-[#513012] hover:text-[#513012]'
+                      ? 'bg-secondary text-white border-secondary'
+                      : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary'
                   }`}
                 >
                   {city}
@@ -446,7 +446,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                     <button
                       key={city}
                       onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                      className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-[#513012] hover:text-[#513012] hover:bg-amber-50 transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-secondary hover:text-secondary hover:bg-amber-50 transition-colors flex items-center gap-1.5"
                     >
                       <MapPin size={12} />
                       {city}
@@ -491,7 +491,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                 </button>
               )}
               <button onClick={clearSearch}
-                className="px-4 py-2 rounded-xl bg-[#513012] text-white text-sm font-medium hover:bg-[#3d2209]">
+                className="px-4 py-2 rounded-xl bg-secondary text-white text-sm font-medium hover:bg-[#3d2209]">
                 Clear search
               </button>
               <Link href="/restaurants"
@@ -522,7 +522,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
               <button key={i} onClick={() => setCurrentPage(i + 1)}
                 className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                   currentPage === i + 1
-                    ? 'bg-[#513012] text-white border-[#513012]'
+                    ? 'bg-secondary text-white border-secondary'
                     : 'border-gray-200 bg-white hover:bg-gray-50'
                 }`}>
                 {i + 1}
@@ -544,7 +544,7 @@ export default function SearchPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-[#513012] border-t-transparent rounded-full mx-auto mb-3" />
+          <div className="animate-spin w-8 h-8 border-2 border-secondary border-t-transparent rounded-full mx-auto mb-3" />
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>

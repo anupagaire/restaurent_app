@@ -189,7 +189,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-[#513012]">
+          <DialogTitle className="text-secondary">
             {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
           </DialogTitle>
           <DialogDescription>
@@ -240,7 +240,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
                 <button
                   type="button"
                   onClick={() => setShowAddCategory(!showAddCategory)}
-                  className="text-xs text-[#513012] underline hover:opacity-80 flex items-center gap-1"
+                  className="text-xs text-secondary underline hover:opacity-80 flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> New Category
                 </button>
@@ -265,7 +265,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
           </div>
 
           {showAddCategory && (
-            <div className="p-4 bg-gray-50 border border-dashed border-[#513012]/30 rounded-xl space-y-3">
+            <div className="p-4 bg-gray-50 border border-dashed border-secondary/30 rounded-xl space-y-3">
               <Label>New Category Name</Label>
               <div className="flex gap-2">
                 <Input
@@ -277,7 +277,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
                   type="button"
                   onClick={handleCreateCategory}
                   disabled={isCreatingCategory || !newCategoryName.trim()}
-                  className="bg-[#513012]"
+                  className="bg-secondary"
                 >
                   {isCreatingCategory ? 'Creating...' : 'Create'}
                 </Button>
@@ -290,7 +290,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
             <Label>Menu Item Image</Label>
 
             <label className="cursor-pointer block">
-              <div className="border-2 border-dashed border-gray-300 hover:border-[#513012] rounded-xl p-8 text-center transition-all">
+              <div className="border-2 border-dashed border-gray-300 hover:border-secondary rounded-xl p-8 text-center transition-all">
                 <Upload className="w-10 h-10 mx-auto text-gray-400 mb-3" />
                 <p className="font-medium text-sm">Click to upload image</p>
                 <p className="text-sm text-gray-500 mt-1">JPG, PNG, JPEG • Max 5MB</p>
@@ -347,7 +347,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-[#513012]">
+            <Button type="submit" disabled={isSubmitting} className="bg-secondary">
               {isSubmitting ? 'Saving...' : editingItem ? 'Update Item' : 'Add Item'}
             </Button>
           </DialogFooter>

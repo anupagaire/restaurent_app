@@ -232,18 +232,18 @@ const handleEdit = (item: MenuItem) => {
     return (
       <div className="px-4 sm:px-6 lg:px-8 py-6">
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-[#513012]">Menu Management</h2>
+          <h2 className="text-3xl font-bold text-secondary">Menu Management</h2>
           <p className="text-gray-600 mt-1">Manage your restaurant menu items and categories</p>
         </div>
 
-        <Card className="max-w-lg mx-auto mt-16 border-2 border-dashed border-[#513012]/30">
+        <Card className="max-w-lg mx-auto mt-16 border-2 border-dashed border-secondary/30">
           <CardContent className="flex flex-col items-center text-center py-12 gap-6">
-            <div className="bg-[#513012]/10 rounded-full p-5">
-              <UtensilsCrossed className="w-10 h-10 text-[#513012]" />
+            <div className="bg-secondary/10 rounded-full p-5">
+              <UtensilsCrossed className="w-10 h-10 text-secondary" />
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-[#513012] mb-2">
+              <h3 className="text-xl font-bold text-secondary mb-2">
                 Set Up Tables First
               </h3>
               <p className="text-gray-500 text-sm leading-relaxed">
@@ -273,7 +273,7 @@ const handleEdit = (item: MenuItem) => {
                 <Button
                   onClick={handleSaveTableCount}
                   disabled={savingTableCount || !tableCountInput}
-                  className="bg-[#513012] hover:bg-[#3d2209] whitespace-nowrap"
+                  className="bg-secondary hover:bg-[#3d2209] whitespace-nowrap"
                 >
                   {savingTableCount ? 'Saving…' : 'Save & Continue'}
                 </Button>
@@ -299,7 +299,7 @@ const handleEdit = (item: MenuItem) => {
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-[#513012]">Menu Management</h2>
+          <h2 className="text-3xl font-bold text-secondary">Menu Management</h2>
           <p className="text-gray-600 mt-1">
             Manage your restaurant menu items and categories
             {restaurant?.table_count ? (
@@ -318,7 +318,7 @@ const handleEdit = (item: MenuItem) => {
           </Button>
           <Button
             onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
-            className="bg-[#513012] hover:bg-[#3d2209]"
+            className="bg-secondary hover:bg-[#3d2209]"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add New Item

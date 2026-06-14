@@ -117,7 +117,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
           <div className="text-6xl mb-4">🍽️</div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">About Page Not Available</h1>
           <p className="text-gray-600 mb-6">This restaurant hasn't created their about page yet.</p>
-          <Link href={`/restaurants/${slug}`} className="text-[#513012] hover:underline font-medium">
+          <Link href={`/restaurants/${slug}`} className="text-secondary hover:underline font-medium">
             ← Back to Restaurant
           </Link>
         </div>
@@ -132,7 +132,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Page Not Published</h1>
           <p className="text-gray-600 mb-6">This about page is currently unpublished.</p>
-          <Link href={`/restaurants/${slug}`} className="text-[#513012] hover:underline font-medium">
+          <Link href={`/restaurants/${slug}`} className="text-secondary hover:underline font-medium">
             ← Back to Restaurant
           </Link>
         </div>

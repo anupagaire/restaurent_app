@@ -132,7 +132,7 @@ function CuisineCard({
   return (
     <Link
       href={`/menusearch?q=${encodeURIComponent(cuisine.query)}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-amber-100 bg-white shadow-sm hover:shadow-lg hover:border-[#513012]/30 transition-all duration-300 hover:-translate-y-1"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-amber-100 bg-white shadow-sm hover:shadow-lg hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1"
     >
       {/* Top photo area */}
       <div className="relative h-36 w-full bg-gradient-to-br from-amber-50 to-orange-50 overflow-hidden">
@@ -156,7 +156,7 @@ function CuisineCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
         {/* Rank badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-[#513012] px-2.5 py-1 text-[10px] font-bold text-amber-200 shadow">
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-amber-200 shadow">
           🏆 #{1} {cuisine.label}
         </div>
       </div>
@@ -170,10 +170,10 @@ function CuisineCard({
           </div>
         ) : item ? (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#513012]/60">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-secondary/60">
               {cuisine.tagline}
             </p>
-            <p className="font-semibold text-[#1a0a00] text-sm leading-tight line-clamp-1 group-hover:text-[#513012] transition-colors">
+            <p className="font-semibold text-[#1a0a00] text-sm leading-tight line-clamp-1 group-hover:text-secondary transition-colors">
               {item.name}
             </p>
             <p className="text-xs text-gray-400 line-clamp-1">
@@ -187,14 +187,14 @@ function CuisineCard({
                   {item.rating.toFixed(1)} ({item.ratingCount})
                 </span>
               </div>
-              <span className="text-xs font-bold text-[#513012]">
+              <span className="text-xs font-bold text-secondary">
                 Rs. {item.price.toLocaleString()}
               </span>
             </div>
           </>
         ) : (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#513012]/60">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-secondary/60">
               {cuisine.tagline}
             </p>
             <p className="text-xs text-gray-400">Tap to explore {cuisine.label} options</p>
@@ -205,7 +205,7 @@ function CuisineCard({
       {/* Bottom CTA */}
       <div className="border-t border-amber-50 px-4 py-2.5 flex items-center justify-between">
         <span className="text-xs text-gray-400">See all {cuisine.label}</span>
-        <span className="text-xs font-semibold text-[#513012] group-hover:translate-x-1 transition-transform inline-block">
+        <span className="text-xs font-semibold text-secondary group-hover:translate-x-1 transition-transform inline-block">
           →
         </span>
       </div>

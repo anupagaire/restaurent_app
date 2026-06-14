@@ -42,20 +42,20 @@ export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderP
   }, [showProfileMenu]);
 
   return (
-    <header className="bg-white border-b border-[#513012]/10 h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-50">
+    <header className="bg-white border-b border-secondary/10 h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-50">
 
       {/* Left side */}
       <div className="flex items-center gap-4">
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="md:hidden p-2 -ml-2 text-[#513012] hover:bg-[#513012]/5 rounded-lg"
+            className="md:hidden p-2 -ml-2 text-secondary hover:bg-secondary/5 rounded-lg"
           >
             <Menu className="w-6 h-6" />
           </button>
         )}
 
-        <h1 className="text-xl md:text-2xl font-semibold text-[#513012] truncate">
+        <h1 className="text-xl md:text-2xl font-semibold text-secondary truncate">
           {title}
         </h1>
       </div>
@@ -68,20 +68,20 @@ export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderP
 
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex items-center gap-3 hover:bg-[#513012]/5 p-1.5 pr-3 rounded-xl transition-colors"
+            className="flex items-center gap-3 hover:bg-secondary/5 p-1.5 pr-3 rounded-xl transition-colors"
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-[#513012] to-[#47034E] rounded-full flex items-center justify-center text-white font-medium border-2 border-white shadow-sm">
+            <div className="w-9 h-9 bg-gradient-to-br from-secondary to-[#47034E] rounded-full flex items-center justify-center text-white font-medium border-2 border-white shadow-sm">
               SA
             </div>
           </button>
 
           {/* Dropdown */}
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-[#513012]/10 py-2 z-50">
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-secondary/10 py-2 z-50">
 
               {/* Header */}
               <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                <p className="font-medium text-[#513012]">Super Admin</p>
+                <p className="font-medium text-secondary">Super Admin</p>
 
                 {/* Close button */}
                 <button

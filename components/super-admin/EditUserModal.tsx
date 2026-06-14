@@ -260,7 +260,7 @@ if (selectedRoleId) {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-[#513012]">Edit Restaurant Admin</DialogTitle>
+          <DialogTitle className="text-secondary">Edit Restaurant Admin</DialogTitle>
           <DialogDescription>
             Update restaurant, admin account, and role.
           </DialogDescription>
@@ -270,10 +270,10 @@ if (selectedRoleId) {
         <div className="flex items-center gap-2 mb-2">
           {sections.map((label, i) => (
             <div key={label} className="flex items-center gap-1 flex-1">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 bg-[#513012] text-white">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 bg-secondary text-white">
                 {i + 1}
               </div>
-              <span className="text-xs font-semibold text-[#513012]">{label}</span>
+              <span className="text-xs font-semibold text-secondary">{label}</span>
               {i < sections.length - 1 && <div className="h-px flex-1 bg-gray-200 mx-1" />}
             </div>
           ))}
@@ -289,7 +289,7 @@ if (selectedRoleId) {
 
           {/* ── 1. Restaurant ── */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-[#513012]">
+            <p className="text-sm font-semibold text-secondary">
               🍽️ Restaurant Details
               {fetchingDetails && (
                 <span className="text-xs text-gray-400 ml-2 font-normal">
@@ -347,7 +347,7 @@ if (selectedRoleId) {
 
           {/* ── 2. Admin Account ── */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-[#513012]">👤 Admin Account</p>
+            <p className="text-sm font-semibold text-secondary">👤 Admin Account</p>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -379,7 +379,7 @@ if (selectedRoleId) {
 
           {/* ── 3. Role ── */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-[#513012]">🎭 Role</p>
+            <p className="text-sm font-semibold text-secondary">🎭 Role</p>
 
             {rolesLoading ? (
               <div className="flex items-center gap-2 text-sm text-gray-500 py-2">
@@ -393,13 +393,13 @@ if (selectedRoleId) {
                   <label key={role.id}
                     className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${
                       selectedRoleId === role.id
-                        ? 'border-[#513012] bg-[#513012]/5'
-                        : 'border-gray-200 hover:border-[#513012]/40'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-gray-200 hover:border-secondary/40'
                     }`}>
                     <input type="radio" name="role" value={role.id}
                       checked={selectedRoleId === role.id}
                       onChange={() => setSelectedRoleId(role.id)}
-                      className="accent-[#513012]" />
+                      className="accent-secondary" />
                     <p className="font-semibold text-sm text-gray-800">{role.name}</p>
                   </label>
                 ))}
@@ -412,7 +412,7 @@ if (selectedRoleId) {
               Cancel
             </Button>
             <Button type="submit" disabled={loading || fetchingDetails}
-              className="bg-[#513012] hover:bg-[#3f260f]">
+              className="bg-secondary hover:bg-[#3f260f]">
               {loading
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…</>
                 : '✓ Save Changes'}

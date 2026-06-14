@@ -131,7 +131,7 @@ const resolvedLogo = {
           <X size={14} />
         </button>
       )}
-      <button onClick={() => handleSearch()} disabled={!searchQuery.trim()} className="px-3 py-1 rounded-lg text-xs font-medium bg-[#513012] text-white hover:bg-[#3d2209] disabled:opacity-40 transition-colors">
+      <button onClick={() => handleSearch()} disabled={!searchQuery.trim()} className="px-3 py-1 rounded-lg text-xs font-medium bg-secondary text-white hover:bg-[#3d2209] disabled:opacity-40 transition-colors">
         Go
       </button>
       <AnimatePresence>
@@ -143,18 +143,18 @@ const resolvedLogo = {
           >
             {loadingSuggestions ? (
               <div className="px-4 py-3 text-xs text-gray-400 flex items-center gap-2">
-                <span className="animate-spin inline-block w-3 h-3 border border-gray-300 border-t-[#513012] rounded-full" />
+                <span className="animate-spin inline-block w-3 h-3 border border-gray-300 border-t-secondary rounded-full" />
                 Searching...
               </div>
             ) : (
               suggestions.map((name, i) => (
-                <button key={i} onClick={() => handleSearch(name)} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-[#513012] flex items-center gap-2 transition-colors border-b border-gray-50 last:border-0">
+                <button key={i} onClick={() => handleSearch(name)} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-secondary flex items-center gap-2 transition-colors border-b border-gray-50 last:border-0">
                   <Search size={12} className="text-gray-300 " />
                   {name}
                 </button>
               ))
             )}
-            <button onClick={() => handleSearch()} className="w-full text-left px-4 py-2.5 text-xs text-[#513012] font-medium hover:bg-amber-50 border-t border-gray-100 flex items-center gap-1">
+            <button onClick={() => handleSearch()} className="w-full text-left px-4 py-2.5 text-xs text-secondary font-medium hover:bg-amber-50 border-t border-gray-100 flex items-center gap-1">
               <Search size={11} /> Search all results for &ldquo;{searchQuery}&rdquo;
             </button>
           </motion.div>
@@ -280,7 +280,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                   <Link href={resolvedLoginBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium border border-white/20 hover:bg-white/10 transition">
                     {resolvedLoginBtn.text}
                   </Link>
-                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565] hover:opacity-90 transition">
+                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-[#47034E] to-[#5D0565] hover:opacity-90 transition">
                     {resolvedRegisterBtn.text}
                   </Link>
                 </div>

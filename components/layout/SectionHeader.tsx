@@ -60,15 +60,15 @@ export default function SectionHeader({
   
   // Custom Colors (defaults to theme colors)
   titleColor = 'text-[#271302]',
-  highlightColor = 'text-[#f6a93c]',
+  highlightColor = 'text-accent',
   subtitleColor = 'text-[#271302]/60',
-  badgeBgColor = 'bg-[#f6a93c]/30',
-  badgeTextColor = 'text-[#3B1C32]',
+  badgeBgColor = 'bg-accent/30',
+  badgeTextColor = 'text-primary',
   linkBgColor = 'bg-transparent',
-  linkTextColor = 'text-[#3B1C32]',
-  linkHoverBgColor = 'hover:bg-[#513012]',
+  linkTextColor = 'text-primary',
+  linkHoverBgColor = 'hover:bg-secondary',
   linkHoverTextColor = 'hover:text-white',
-  dividerColor = 'bg-[#3B1C32]/10',
+  dividerColor = 'bg-primary/10',
 }: SectionHeaderProps) {
   
   const content = (
@@ -103,7 +103,7 @@ export default function SectionHeader({
         {linkText && linkHref && (
           <Link
             href={linkHref}
-            className={`inline-flex items-center gap-2 text-sm font-semibold border border-[#513012]/30 rounded-xl px-4 py-2 transition-all ${linkBgColor} ${linkTextColor} ${linkHoverBgColor} ${linkHoverTextColor} ${linkClassName}`}
+            className={`inline-flex items-center gap-2 text-sm font-semibold border border-secondary/30 rounded-xl px-4 py-2 transition-all ${linkBgColor} ${linkTextColor} ${linkHoverBgColor} ${linkHoverTextColor} ${linkClassName}`}
           >
             {linkText}
             <svg 

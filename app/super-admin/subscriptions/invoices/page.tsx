@@ -544,7 +544,7 @@ export default function SuperAdminInvoicePage() {
 
           {loading ? (
             <div className="flex justify-center py-16">
-              <div className="w-8 h-8 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : payments.length === 0 ? (
             <div className="text-center py-16 text-gray-400">

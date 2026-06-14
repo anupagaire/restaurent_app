@@ -538,7 +538,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-      <div className="w-10 h-10 border-4 border-[#513012] border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
       <p className="text-gray-500 text-sm">Loading orders...</p>
     </div>
   );
@@ -550,7 +550,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Orders Management</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-secondary">Orders Management</h1>
             <p className="text-gray-500 text-sm mt-1">
               {lastRefreshed
                 ? `Last updated: ${lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 30s`

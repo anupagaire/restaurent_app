@@ -101,7 +101,7 @@ export default async function EnterpriseAboutPage() {
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">🍽️</div>
           <h1 className="text-2xl font-bold text-white mb-2">About Page Not Available</h1>
-          <p className="text-white/50 mb-6">This restaurant hasn't created their about page yet.</p>
+          <p className="text-white/50 mb-6">This restaurant hasn&apos;t created their about page yet.</p>
           <Link href="/" className="text-[#c8914a] hover:underline font-medium">← Back to Home</Link>
         </div>
       </div>

@@ -156,7 +156,7 @@ const Contact = () => {
 
           <div className="bg-white border border-[#d4b78f] rounded-2xl p-8 flex flex-col">
             <div className="mb-7">
-              <h2 className="text-2xl font-bold text-[#513012] mb-1">Send us a message</h2>
+              <h2 className="text-2xl font-bold text-secondary mb-1">Send us a message</h2>
               <p className="text-sm text-[#8c6d46]">
                 Have a suggestion, question, or want to collaborate? We read every message.
               </p>
@@ -169,13 +169,13 @@ const Contact = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-[#513012] mb-2">Message sent!</h3>
+                <h3 className="text-lg font-semibold text-secondary mb-2">Message sent!</h3>
                 <p className="text-sm text-[#776552] mb-6 max-w-xs">
                   Thanks for reaching out. We&apos;ll get back to you within 24 hours.
                 </p>
                 <button
                   onClick={() => setSuccess(false)}
-                  className="px-5 py-2 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] transition"
+                  className="px-5 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition"
                 >
                   Send another message
                 </button>
@@ -262,7 +262,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="mt-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#513012] text-white rounded-lg text-sm font-medium hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+                  className="mt-1 flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-lg text-sm font-medium hover:bg-[#7a4b2a] disabled:opacity-60 transition"
                 >
                   {loading ? (
                     "Sending…"
@@ -300,7 +300,7 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="bg-[#513012] rounded-2xl p-7 text-white flex items-center justify-between gap-4">
+            <div className="bg-secondary rounded-2xl p-7 text-white flex items-center justify-between gap-4">
               <div>
                 <h4 className="font-semibold text-base mb-1">Register your restaurant</h4>
                 <p className="text-sm text-white/70">
@@ -309,7 +309,7 @@ const Contact = () => {
               </div>
               <a
                 href="/register-restaurant"
-                className="shrink-0 px-5 py-2.5 bg-white text-[#513012] rounded-lg text-sm font-semibold hover:bg-[#fdf5ec] transition"
+                className="shrink-0 px-5 py-2.5 bg-white text-secondary rounded-lg text-sm font-semibold hover:bg-[#fdf5ec] transition"
               >
                 Get started →
               </a>

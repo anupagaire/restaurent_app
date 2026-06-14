@@ -2,7 +2,7 @@
 import Image from "/next/image";
 export default function MenuItemCard({ item }) {
   return (
-    <div className="group rounded-3xl overflow-hidden bg-white border border-[#513012]/20 hover:border-[#47034E] transition-all duration-500 shadow-lg hover:shadow-2xl">
+    <div className="group rounded-3xl overflow-hidden bg-white border border-secondary/20 hover:border-[#47034E] transition-all duration-500 shadow-lg hover:shadow-2xl">
       
       <div className="relative h-64 overflow-hidden">
         <Image 
@@ -27,7 +27,7 @@ export default function MenuItemCard({ item }) {
       </div>
 
       <div className="p-7 bg-white">
-        <h3 className="text-2xl font-semibold text-[#513012] tracking-tight mb-3">
+        <h3 className="text-2xl font-semibold text-secondary tracking-tight mb-3">
           {item.name}
         </h3>
         
@@ -36,8 +36,8 @@ export default function MenuItemCard({ item }) {
         </p>
 
         <button 
-          className="mt-8 w-full bg-gradient-to-r from-[#513012] via-[#47034E] to-[#5D0565] 
-                     hover:from-[#47034E] hover:via-[#5D0565] hover:to-[#513012]
+          className="mt-8 w-full bg-gradient-to-r from-secondary via-[#47034E] to-[#5D0565] 
+                     hover:from-[#47034E] hover:via-[#5D0565] hover:to-secondary
                      text-white py-4 rounded-2xl font-semibold text-lg tracking-wider 
                      transition-all duration-300 active:scale-[0.98] shadow-md hover:shadow-xl"
         >

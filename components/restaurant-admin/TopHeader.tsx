@@ -67,7 +67,7 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
     .slice(0, 2);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#513012]/10 px-3 sm:px-4 md:px-6 py-3">
+    <header className="sticky top-0 z-50 bg-white border-b border-secondary/10 px-3 sm:px-4 md:px-6 py-3">
       <div className="flex items-center justify-between gap-3">
 
         {/* LEFT */}
@@ -75,16 +75,16 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="md:hidden p-2 rounded-lg hover:bg-[#513012]/5 flex-shrink-0"
+              className="md:hidden p-2 rounded-lg hover:bg-secondary/5 flex-shrink-0"
             >
-              <Menu className="w-6 h-6 text-[#513012]" />
+              <Menu className="w-6 h-6 text-secondary" />
             </button>
           )}
           <div className="min-w-0">
             <p className="text-sm sm:text-lg md:text-2xl font-bold text-black truncate">
               {restaurantName}
             </p>
-            <h1 className="text-xs sm:text-sm md:text-base text-[#513012] truncate">
+            <h1 className="text-xs sm:text-sm md:text-base text-secondary truncate">
               {title}
             </h1>
           </div>
@@ -94,8 +94,8 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
 
           {/* Notification bell */}
-          <button className="relative p-2 rounded-full hover:bg-[#513012]/5 transition-colors">
-            <Bell className="w-5 h-5 text-[#513012]" />
+          <button className="relative p-2 rounded-full hover:bg-secondary/5 transition-colors">
+            <Bell className="w-5 h-5 text-secondary" />
             <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white" />
           </button>
 
@@ -103,13 +103,13 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(p => !p)}
-              className="flex items-center gap-2 rounded-xl p-1.5 sm:pr-3 hover:bg-[#513012]/5 transition-colors"
+              className="flex items-center gap-2 rounded-xl p-1.5 sm:pr-3 hover:bg-secondary/5 transition-colors"
             >
               <div className="hidden md:block text-right max-w-[140px]">
-                <p className="text-sm font-semibold text-[#513012] truncate">{displayName}</p>
+                <p className="text-sm font-semibold text-secondary truncate">{displayName}</p>
                 <p className="text-xs text-gray-400 truncate">{restaurantName}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#513012] to-[#47034E] flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-[#47034E] flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
                 {initials}
               </div>
               <ChevronDown className="hidden md:block w-4 h-4 text-gray-400" />
@@ -118,14 +118,14 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
             {showProfileMenu && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-[#513012]/10 py-2 z-50">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-secondary/10 py-2 z-50">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#513012] to-[#47034E] flex items-center justify-center text-white text-sm font-bold">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-[#47034E] flex items-center justify-center text-white text-sm font-bold">
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-[#513012] truncate">{displayName}</p>
+                        <p className="font-semibold text-secondary truncate">{displayName}</p>
                         <p className="text-xs text-gray-400 truncate">{user?.email}</p>
                         <p className="text-xs text-[#b8936a] truncate mt-0.5">{restaurantName}</p>
                       </div>

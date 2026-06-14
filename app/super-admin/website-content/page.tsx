@@ -13,7 +13,7 @@ const contentSections = [
 export default function WebsiteContentPage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2 text-[#513012]">Website Content</h1>
+      <h1 className="text-2xl font-bold mb-2 text-secondary">Website Content</h1>
       <p className="text-gray-500 mb-8">Manage your public website content from here.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -21,10 +21,10 @@ export default function WebsiteContentPage() {
           <Link
             key={section.href}
             href={section.href}
-            className="flex items-start gap-4 p-5 border border-[#513012]/15 rounded-xl hover:border-[#513012]/40 hover:bg-[#513012]/5 transition-all group"
+            className="flex items-start gap-4 p-5 border border-secondary/15 rounded-xl hover:border-secondary/40 hover:bg-secondary/5 transition-all group"
           >
-            <div className="w-10 h-10 bg-[#513012]/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-[#513012]/20 transition">
-              <section.icon className="w-5 h-5 text-[#513012]" />
+            <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition">
+              <section.icon className="w-5 h-5 text-secondary" />
             </div>
             <div>
               <h2 className="font-semibold text-gray-800">{section.title}</h2>

@@ -6,7 +6,7 @@ export default function UnauthorizedPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
       <div className="text-6xl mb-6">🚫</div>
-      <h1 className="text-2xl font-bold text-[#513012] mb-3">Access Denied</h1>
+      <h1 className="text-2xl font-bold text-secondary mb-3">Access Denied</h1>
       <p className="text-gray-500 mb-6">
         You don't have permission to access this page.
         Please contact your administrator.

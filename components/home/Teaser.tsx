@@ -15,7 +15,7 @@ export default function Teaser() {
             🔥 Trending Comparisons
           </div>
 
-          <h2 className="mt-5 text-3xl font-bold text-[#513012]">
+          <h2 className="mt-5 text-3xl font-bold text-secondary">
             <RotatingDish />
           </h2>
 
@@ -32,7 +32,7 @@ export default function Teaser() {
 
           <Link
             href="/menusearch"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#513012] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#6a3e17] hover:shadow-lg"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#6a3e17] hover:shadow-lg"
           >
             Compare Dishes →
           </Link>

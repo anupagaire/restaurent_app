@@ -80,7 +80,7 @@ export default function StaffModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-[#513012]">
+          <DialogTitle className="text-secondary">
             {editingStaff ? 'Edit Staff Member' : 'Add New Staff Member'}
           </DialogTitle>
           <DialogDescription>
@@ -144,13 +144,13 @@ export default function StaffModal({
                   <label key={role.id}
                     className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${
                       formData.role_id === role.id
-                        ? 'border-[#513012] bg-[#513012]/5'
-                        : 'border-gray-200 hover:border-[#513012]/40'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-gray-200 hover:border-secondary/40'
                     }`}>
                     <input type="radio" name="role" value={role.id}
                       checked={formData.role_id === role.id}
                       onChange={() => setFormData({ ...formData, role_id: role.id })}
-                      className="accent-[#513012]" />
+                      className="accent-secondary" />
                     <p className="font-semibold text-sm text-gray-800">{role.name}</p>
                   </label>
                 ))}
@@ -163,7 +163,7 @@ export default function StaffModal({
               Cancel
             </Button>
             <Button type="submit" disabled={submitting || !formData.role_id}
-              className="bg-[#513012] hover:bg-[#3f260f]">
+              className="bg-secondary hover:bg-[#3f260f]">
               {submitting
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…</>
                 : editingStaff ? '✓ Save Changes' : '✓ Create Staff'}

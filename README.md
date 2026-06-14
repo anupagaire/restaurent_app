@@ -1,8 +1,8 @@
 
-[#3B1C32]
-[#513012]
+[#3B1C32]primary
+secondaryprimary
 
-[#f6a93c]
+[#f6a93c]secondary
 
 
 
@@ -29,10 +29,10 @@ Custom Colors (Specific page)
   subtitleColor="text-white/70"
   badgeBgColor="bg-[#fde68a]/20"
   badgeTextColor="text-[#fde68a]"
-  linkBgColor="bg-[#3B1C32]"
+  linkBgColor="bg-primary"
   linkTextColor="text-[#fde68a]"
   linkHoverBgColor="hover:bg-[#fde68a]"
-  linkHoverTextColor="hover:text-[#3B1C32]"
+  linkHoverTextColor="hover:text-primary"
   dividerColor="bg-white/20"
 />
 
@@ -52,7 +52,7 @@ Custom Classes (Override entire styles)
 <SectionHeader
   title="Find the Right"
   highlight="Place"
-  titleClassName="bg-gradient-to-r from-[#3B1C32] to-[#f6a93c] bg-clip-text text-transparent font-bold"
+  titleClassName="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-bold"
   linkText="View all"
   linkHref="/restaurants"
 />

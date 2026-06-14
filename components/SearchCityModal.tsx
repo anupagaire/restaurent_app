@@ -67,7 +67,7 @@ function CityPickerModal({
         <button
           onClick={onDetect}
           disabled={detecting}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#513012] text-black text-sm font-medium hover:bg-[#513012] hover:text-white transition-all disabled:opacity-60"
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-secondary text-black text-sm font-medium hover:bg-secondary hover:text-white transition-all disabled:opacity-60"
         >
           <LocateFixed size={14} className={detecting ? 'animate-spin' : ''} />
           {detecting ? 'Detecting...' : 'Near Me'}
@@ -75,7 +75,7 @@ function CityPickerModal({
 
         <button
           onClick={onOpen}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-black text-sm font-medium hover:border-[#513012] hover:text-[#513012] transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-black text-sm font-medium hover:border-secondary hover:text-secondary transition-all"
         >
           <MapPin size={14} />
           {selectedCity ? selectedCity : 'Select City'}
@@ -104,7 +104,7 @@ function CityPickerModal({
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-[#513012]">Select a City</h3>
+              <h3 className="text-lg font-semibold text-secondary">Select a City</h3>
               <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
                 <X size={20} />
               </button>
@@ -119,7 +119,7 @@ function CityPickerModal({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 autoFocus
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
               />
             </div>
 
@@ -132,7 +132,7 @@ function CityPickerModal({
                 }}
                 className={`w-full text-left px-4 py-2.5 rounded-xl text-sm mb-2 transition-all
                   ${!selectedCity
-                    ? 'bg-[#513012] text-white font-medium'
+                    ? 'bg-secondary text-white font-medium'
                     : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 🌐 All Cities
@@ -152,8 +152,8 @@ function CityPickerModal({
                       }}
                       className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm border transition-all
                         ${selectedCity === city
-                          ? 'bg-[#513012] text-white border-[#513012] font-medium'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-[#513012] hover:text-[#513012]'}`}
+                          ? 'bg-secondary text-white border-secondary font-medium'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-secondary hover:text-secondary'}`}
                     >
                       <MapPin size={12} />
                       {city}
@@ -234,7 +234,7 @@ export default function SearchAndFilterBar({
           placeholder="Search venues..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full max-w-md px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#513012]"
+          className="w-full max-w-md px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
         />
       </div>
 
@@ -279,7 +279,7 @@ export default function SearchAndFilterBar({
       {/* Active filter tag */}
       {selectedCity && !locationBanner && (
         <div className="flex justify-center mb-6">
-          <span className="bg-[#513012]/10 text-[#513012] text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
+          <span className="bg-secondary/10 text-secondary text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
             <MapPin size={13} />
             Showing restaurants in <strong>{selectedCity}</strong>
             <button

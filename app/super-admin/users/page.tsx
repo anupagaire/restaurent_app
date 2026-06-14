@@ -123,7 +123,7 @@ export default function UsersPage() {
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#513012]">Restaurant Admins</h1>
+          <h1 className="text-3xl font-bold text-secondary">Restaurant Admins</h1>
           <p className="text-gray-600 mt-1">Manage all restaurant administrators</p>
         </div>
         <div className="flex gap-3">
@@ -133,7 +133,7 @@ export default function UsersPage() {
           </Button>
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-[#513012] hover:bg-[#3f260f]"
+            className="bg-secondary hover:bg-[#3f260f]"
           >
             <Plus className="mr-2 h-5 w-5" />
             Add New Admin
@@ -154,7 +154,7 @@ export default function UsersPage() {
               />
             </div>
             <div className="text-lg">
-              Total: <span className="font-semibold text-[#513012]">{users.length}</span>
+              Total: <span className="font-semibold text-secondary">{users.length}</span>
             </div>
           </div>
         </CardHeader>
@@ -186,7 +186,7 @@ export default function UsersPage() {
 
                     {/* Restaurant Details Column - More Informative */}
                     <TableCell>
-                      <div className="font-medium text-[#513012]">{user.restaurantName}</div>
+                      <div className="font-medium text-secondary">{user.restaurantName}</div>
                       {user.address && (
                         <div className="text-sm text-gray-600 mt-1">{user.address}</div>
                       )}
@@ -196,7 +196,7 @@ export default function UsersPage() {
                     </TableCell>
 
                     <TableCell>
-                      <span className="bg-[#513012]/10 text-[#513012] px-3 py-1 rounded-full text-xs font-medium">
+                      <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-medium">
                         {user.role}
                       </span>
                     </TableCell>

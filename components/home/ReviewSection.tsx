@@ -156,7 +156,7 @@ function ComposeBox({
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="Your name (optional)"
-            className="w-full text-sm px-0 py-1.5 border-b border-gray-200 outline-none focus:border-[#513012] mb-3 bg-transparent text-gray-700 placeholder:text-gray-400 transition-colors"
+            className="w-full text-sm px-0 py-1.5 border-b border-gray-200 outline-none focus:border-secondary mb-3 bg-transparent text-gray-700 placeholder:text-gray-400 transition-colors"
           />
         )}
 
@@ -182,7 +182,7 @@ function ComposeBox({
           onFocus={() => setFocused(true)}
           placeholder={placeholder}
           rows={focused ? 3 : 1}
-          className="w-full resize-none bg-transparent border-b border-gray-200 outline-none focus:border-[#513012] text-sm text-gray-800 placeholder:text-gray-400 py-1.5 transition-all"
+          className="w-full resize-none bg-transparent border-b border-gray-200 outline-none focus:border-secondary text-sm text-gray-800 placeholder:text-gray-400 py-1.5 transition-all"
           style={{ minHeight: focused ? 72 : 32 }}
         />
 
@@ -223,7 +223,7 @@ function ComposeBox({
                 </button>
               )}
               <button onClick={handleSubmit} disabled={submitting || !text.trim()}
-                className="px-5 py-1.5 rounded-full text-xs font-semibold bg-[#513012] text-white hover:bg-[#3d2209] disabled:opacity-40 transition-colors">
+                className="px-5 py-1.5 rounded-full text-xs font-semibold bg-secondary text-white hover:bg-[#3d2209] disabled:opacity-40 transition-colors">
                 {submitting ? 'Posting...' : 'Submit'}
               </button>
             </div>
@@ -302,13 +302,13 @@ function ReviewCard({
         <div className="flex items-center gap-4 mt-2">
           {depth < MAX_DEPTH && (
             <button onClick={() => setReplyOpen(!replyOpen)}
-              className="text-xs font-semibold text-gray-500 hover:text-[#513012] transition-colors">
+              className="text-xs font-semibold text-gray-500 hover:text-secondary transition-colors">
               ↩ Reply
             </button>
           )}
           {directReplies.length > 0 && (
             <button onClick={() => setShowReplies(!showReplies)}
-              className="text-xs font-semibold text-[#513012] hover:underline">
+              className="text-xs font-semibold text-secondary hover:underline">
               {showReplies ? `▲ Hide ${directReplies.length} repl${directReplies.length > 1 ? 'ies' : 'y'}` : `▼ ${directReplies.length} repl${directReplies.length > 1 ? 'ies' : 'y'}`}
             </button>
           )}
@@ -317,7 +317,7 @@ function ReviewCard({
         {/* Reply compose */}
         {replyOpen && (
           <div className="mt-3 flex gap-2">
-            <div className="w-6 h-6 rounded-full bg-[#F3E9DE] flex items-center justify-center text-[10px] font-bold text-[#513012] flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-[#F3E9DE] flex items-center justify-center text-[10px] font-bold text-secondary flex-shrink-0">
               Y
             </div>
             <ComposeBox
@@ -443,7 +443,7 @@ export default function ReviewSection({ restaurantId }: Props) {
             Comments
           </h2>
           {topLevel.length > 0 && (
-            <span className="bg-[#513012] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-secondary text-white text-xs font-bold px-2 py-0.5 rounded-full">
               {topLevel.length}
             </span>
           )}

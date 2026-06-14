@@ -99,7 +99,7 @@ const getReviewText = (reviewText: string): string => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-[#513012]">Customer Reviews</h1>
+          <h1 className="text-4xl font-bold text-secondary">Customer Reviews</h1>
         </div>
         <Badge variant="outline" className="text-sm px-4 py-2">
           {reviews.length} Reviews
@@ -114,7 +114,7 @@ const getReviewText = (reviewText: string): string => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-10 h-10 animate-spin text-[#513012]" />
+          <Loader2 className="w-10 h-10 animate-spin text-secondary" />
         </div>
       ) : reviews.length === 0 ? (
         <Card className="py-20 text-center">

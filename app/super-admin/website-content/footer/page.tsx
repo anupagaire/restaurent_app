@@ -175,10 +175,10 @@ export default function FooterContentPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
         ← Back
       </button>
-      <h1 className="text-2xl font-bold text-[#513012]">Footer Content</h1>
+      <h1 className="text-2xl font-bold text-secondary">Footer Content</h1>
 
       {/* BRAND */}
       <section className="border border-gray-200 rounded-xl p-5">
@@ -220,7 +220,7 @@ export default function FooterContentPage() {
                 
                 {/* Fallback URL input */}
                 <input
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                   placeholder="Or paste image URL here..."
                   value={data.brand.logo}
                   onChange={e => updateBrand('logo', e.target.value)}
@@ -233,7 +233,7 @@ export default function FooterContentPage() {
           <div>
             <label className="block text-sm font-medium capitalize mb-1">Name</label>
             <input
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
               value={data.brand.name ?? ''}
               onChange={e => updateBrand('name', e.target.value)}
             />
@@ -242,7 +242,7 @@ export default function FooterContentPage() {
           <div>
             <label className="block text-sm font-medium capitalize mb-1">Tagline</label>
             <input
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
               value={data.brand.tagline ?? ''}
               onChange={e => updateBrand('tagline', e.target.value)}
             />
@@ -271,13 +271,13 @@ export default function FooterContentPage() {
               {(col.items as LinkItem[]).map((item, itemIdx) => (
                 <div key={itemIdx} className="flex gap-2 items-center">
                   <input
-                    className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                    className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                     placeholder="Label"
                     value={item.label ?? ''}
                     onChange={e => updateLinkItem(colIdx, itemIdx, 'label', e.target.value)}
                   />
                   <input
-                    className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                    className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                     placeholder="URL (e.g. /about)"
                     value={item.href ?? ''}
                     onChange={e => updateLinkItem(colIdx, itemIdx, 'href', e.target.value)}
@@ -287,7 +287,7 @@ export default function FooterContentPage() {
                   </button>
                 </div>
               ))}
-              <button onClick={() => addLinkItem(colIdx)} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+              <button onClick={() => addLinkItem(colIdx)} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
                 <Plus className="w-4 h-4" /> Add Link
               </button>
             </div>
@@ -297,7 +297,7 @@ export default function FooterContentPage() {
                 <div key={field}>
                   <label className="block text-sm font-medium capitalize mb-1">{field.replace(/([A-Z])/g, ' $1')}</label>
                   <input
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                     value={(col.items as ContactItems)?.[field] ?? ''}
                     onChange={e => updateContact(colIdx, field, e.target.value)}
                   />
@@ -315,19 +315,19 @@ export default function FooterContentPage() {
           {data.socials.map((s, idx) => (
             <div key={idx} className="flex gap-2 items-center">
               <input
-                className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 placeholder="facebook"
                 value={s.icon ?? ''}
                 onChange={e => updateSocial(idx, 'icon', e.target.value)}
               />
               <input
-                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 placeholder="Name"
                 value={s.name ?? ''}
                 onChange={e => updateSocial(idx, 'name', e.target.value)}
               />
               <input
-                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 placeholder="URL"
                 value={s.href ?? ''}
                 onChange={e => updateSocial(idx, 'href', e.target.value)}
@@ -337,7 +337,7 @@ export default function FooterContentPage() {
               </button>
             </div>
           ))}
-          <button onClick={addSocial} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+          <button onClick={addSocial} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
             <Plus className="w-4 h-4" /> Add Social
             </button>
         </div>
@@ -348,7 +348,7 @@ export default function FooterContentPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#513012] text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium"
+          className="bg-secondary text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>

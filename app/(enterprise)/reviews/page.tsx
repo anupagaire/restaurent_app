@@ -89,7 +89,7 @@ const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
     <div className="min-h-screen bg-white">
       
       {/* ── HERO HEADER ── */}
-      <div className="relative w-full h-36 sm:h-32 bg-[#513012] overflow-hidden">
+      <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
         
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1e0f02]/80 via-transparent to-transparent" />
@@ -132,7 +132,7 @@ const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-[#513012] leading-none">
+              <h2 className="text-lg font-bold text-secondary leading-none">
                 Customer Reviews
               </h2>
 

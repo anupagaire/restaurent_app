@@ -270,7 +270,7 @@ function BigCard({
             </div>
           )}
 
-          <div className="inline-flex items-center gap-2 bg-white text-[#513012] text-sm font-bold px-5 py-2.5 rounded-xl group-hover:bg-amber-50 transition-colors">
+          <div className="inline-flex items-center gap-2 bg-white text-secondary text-sm font-bold px-5 py-2.5 rounded-xl group-hover:bg-amber-50 transition-colors">
             Browse collection
             <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
           </div>
@@ -307,11 +307,11 @@ export default function CuratedCollections() {
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <span className="inline-block bg-[#513012]/10 text-[#513012] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+            <span className="inline-block bg-secondary/10 text-secondary text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
               ✨ Curated For You
             </span>
             <h2 className="text-2xl md:text-3xl font-serif text-[#1a0a00] leading-tight">
-              Browse by <span className="text-[#513012] italic">Collection</span>
+              Browse by <span className="text-secondary italic">Collection</span>
             </h2>
             <p className="mt-1.5 text-sm text-gray-500">
               Handpicked restaurants for every mood and occasion.
@@ -319,7 +319,7 @@ export default function CuratedCollections() {
           </div>
           <Link
             href="/restaurants"
-            className="shrink-0 text-sm font-semibold text-[#513012] border border-[#513012]/30 rounded-xl px-4 py-2 hover:bg-[#513012] hover:text-white transition-all"
+            className="shrink-0 text-sm font-semibold text-secondary border border-secondary/30 rounded-xl px-4 py-2 hover:bg-secondary hover:text-white transition-all"
           >
             All restaurants →
           </Link>

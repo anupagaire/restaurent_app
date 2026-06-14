@@ -6,6 +6,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
 import Head from "next/head";
 import { motion, Variants } from "framer-motion";
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const fadeUp: Variants = {
   hidden: {
@@ -30,9 +31,7 @@ const stagger: Variants = {
     },
   },
 };
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-// ── Types ──────────────────────────────────────────────────
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
 interface HeroData {
   title: string;
   subtitle: string;
@@ -84,7 +83,7 @@ const responsiveVibes = {
 };
 
 function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse bg-[#e8ddd0] rounded ${className}`} />;
+  return <div className={`animate-pulse bg-accent/20 rounded ${className}`} />;
 }
 
 export default function About() {
@@ -148,7 +147,7 @@ export default function About() {
         <meta name="robots" content="index, follow" />
       </Head>
 
-      <main className="min-h-screen w-full bg-[#fdf9f4] text-[#1a1208] font-light overflow-x-hidden">
+      <main className="min-h-screen w-full bg-[#fdf9f4] text-[#271302] font-light overflow-x-hidden">
 
         {/* ═══════════════════════════════════════
             HERO — full-bleed cinematic
@@ -171,12 +170,12 @@ export default function About() {
 
           {/* Layered overlay: rich warm gradient */}
           {hero.overlay !== false && (
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1a0e05]/75 via-[#1a0e05]/35 to-[#fdf9f4]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/75 via-secondary/35 to-[#fdf9f4]" />
           )}
 
           {/* Gold corner accent lines */}
-          <div aria-hidden="true" className="absolute top-8 left-8 w-20 h-20 border-l border-t border-[#d4b78f]/60 pointer-events-none" />
-          <div aria-hidden="true" className="absolute bottom-0 right-8 w-20 h-20 border-r border-b border-[#d4b78f]/40 pointer-events-none" />
+          <div aria-hidden="true" className="absolute top-8 left-8 w-20 h-20 border-l border-t border-accent/60 pointer-events-none" />
+          <div aria-hidden="true" className="absolute bottom-0 right-8 w-20 h-20 border-r border-b border-accent/40 pointer-events-none" />
 
           {/* Content */}
           <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 pt-20 pb-16">
@@ -186,10 +185,10 @@ export default function About() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-[#d4b78f]/40 bg-[#d4b78f]/10 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-accent/40 bg-accent/10 backdrop-blur-sm"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4b78f]" />
-              <span className="text-[#d4b78f] text-xs tracking-[0.4em] uppercase font-light">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="text-accent text-xs tracking-[0.4em] uppercase font-light">
                 Our Story
               </span>
             </motion.div>
@@ -207,7 +206,7 @@ export default function About() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="w-16 h-px bg-[#d4b78f] my-6 origin-left"
+              className="w-16 h-px bg-accent my-6 origin-left"
             />
 
             <motion.p
@@ -224,12 +223,11 @@ export default function About() {
    
         <section
           aria-labelledby="intro-heading"
-          className="relative py-2 md:py-8 bg-white overflow-hidden"
+          className="relative py-2  bg-white overflow-hidden"
         >
          
-          <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
+          <div className="relative z-10 max-w-8xl mx-auto px-6 ">
             <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-
              
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -243,9 +241,9 @@ export default function About() {
                   {/* Offset box behind image */}
                   <div
                     aria-hidden="true"
-                    className="absolute -bottom-4 -right-4 w-full h-full rounded-[2rem] border border-[#d4b78f]/30 pointer-events-none"
+                    className="absolute -bottom-4 -right-4 w-full h-full rounded-[2rem] border border-accent/30 pointer-events-none"
                   />
-                  <div className="relative h-[420px] md:h-[560px] rounded-[2rem] overflow-hidden shadow-[0_30px_80px_rgba(26,18,8,0.12)]">
+                  <div className="relative h-[420px] md:h-[560px] rounded-[3rem] overflow-hidden shadow-[0_30px_80px_rgba(59,28,50,0.12)]">
                     <Image
                       src={introSection.image}
                       fill
@@ -268,36 +266,22 @@ export default function About() {
                 viewport={{ once: true }}
                 className="lg:col-span-6 order-1 lg:order-2 space-y-8"
               >
-                {/* Section label */}
-                
+                <SectionHeader
+                  title={introSection.heading.split("Restaurant Platform")[0]}
+                  highlight={introSection.heading.includes("Restaurant Platform") ? "Restaurant Platform" : undefined}
+                  subtitle={introSection.subHeading}
+                  withDivider={false}
+            
+                />
 
-                <motion.h2
-                  id="intro-heading"
-                  variants={fadeUp}
-                  className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1a1208] leading-[1.1] tracking-tight"
-                >
-                  {introSection.heading.split("Restaurant Platform")[0]}
-                  {introSection.heading.includes("Restaurant Platform") && (
-                    <>
-                      <br />
-                      <span className="italic text-[#d4b78f]">Restaurant Platform</span>
-                    </>
-                  )}
-                </motion.h2>
-
-                <div className="w-12 h-px bg-[#d4b78f]/60" />
+                <div className="w-12 h-px bg-accent/60" />
 
                 <motion.div variants={fadeUp} className="space-y-5">
                   {introSection.paragraphs.map((p, i) => (
-                    <p key={i} className="text-lg text-[#1a1208]/65 font-light leading-relaxed">
+                    <p key={i} className="text-lg text-[#271302]/65 font-light leading-relaxed">
                       {p}
                     </p>
                   ))}
-                  {introSection.subHeading && (
-                    <p className="text-xl font-medium text-[#1a1208] pt-2">
-                      {introSection.subHeading}
-                    </p>
-                  )}
                 </motion.div>
               </motion.div>
             </div>
@@ -311,8 +295,6 @@ export default function About() {
           aria-labelledby="vision-heading"
           className="relative py-2 md:py-8 bg-[#fdf9f4] overflow-hidden"
         >
-          
-
           <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
 
@@ -322,17 +304,15 @@ export default function About() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="pr-0 lg:pr-16 pb-12 lg:pb-0 border-b lg:border-b-0 lg:border-r border-[#d4b78f]/25"
+                className="pr-0 lg:pr-16 pb-2 lg:pb-0 border-b lg:border-b-0 lg:border-r border-accent/25"
               >
-                <h2
-                  id="vision-heading"
-                  className="text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1208] leading-tight mb-8"
-                >
-                  {visionSection.left.title}
-                </h2>
+                {/* ✅ SectionHeader for vision left */}
+                <SectionHeader
+                  title={visionSection.left.title}
+                />
                 <div className="space-y-4">
                   {visionSection.left.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-[#1a1208]/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg text-[#271302]/60 font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -347,12 +327,15 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
                 className="pt-12 lg:pt-0 lg:pl-16"
               >
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1208] leading-tight mb-8">
-                  {visionSection.right.title}
-                </h3>
+                {/* ✅ SectionHeader for vision right */}
+                <SectionHeader
+                  title={visionSection.right.title}
+                  // withAnimation={false}
+                  // withDivider={false}
+                />
                 <div className="space-y-4">
                   {visionSection.right.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-[#1a1208]/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg text-[#271302]/60 font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -368,27 +351,19 @@ export default function About() {
         {vibes.images && vibes.images.length > 0 && (
           <section
             aria-labelledby="vibes-heading"
-            className="py-2 md:py-8 bg-white overflow-hidden"
+            className="py-2 bg-white overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 mb-14">
-              
-
-              <motion.h2
-                id="vibes-heading"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-light text-[#1a1208] leading-tight tracking-tight"
-              >
-                {vibes.title.includes("Restaurant") ? (
-                  <>
-                    {vibes.title.split("Restaurant")[0]}
-                    <span className="italic text-[#d4b78f]">Restaurant</span>
-                    {vibes.title.split("Restaurant")[1]}
-                  </>
-                ) : vibes.title}
-              </motion.h2>
+              {/* ✅ SectionHeader for vibes */}
+              <SectionHeader
+                title={vibes.title.includes("Restaurant") ? vibes.title.split("Restaurant")[0] : vibes.title}
+                highlight={vibes.title.includes("Restaurant") ? "Restaurant" : undefined}
+                withAnimation={false}
+                withDivider={false}
+                titleColor="text-[#271302]"
+                highlightColor="text-accent"
+                titleClassName="text-4xl md:text-5xl lg:text-6xl font-light leading-tight tracking-tight"
+              />
             </div>
 
             {/* Full-width carousel */}
@@ -417,9 +392,9 @@ export default function About() {
                       loading="lazy"
                     />
                     {/* Warm vignette on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0e05]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
                     {/* Bottom gold line reveal */}
-                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#d4b78f] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                   </div>
                 ))}
               </Carousel>
@@ -438,17 +413,16 @@ export default function About() {
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 
-              <motion.h2
-                id="features-heading"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="text-4xl md:text-5xl font-light text-[#1a1208] leading-tight mb-14 max-w-xl"
-              >
-                Everything you need,{" "}
-                <span className="italic text-[#d4b78f]">in one place</span>
-              </motion.h2>
+              {/* ✅ SectionHeader for features */}
+              <SectionHeader
+                title="Everything you need,"
+                highlight="in one place"
+                withAnimation={false}
+                withDivider={false}
+                titleColor="text-[#271302]"
+                highlightColor="text-accent"
+                titleClassName="text-4xl md:text-5xl font-light leading-tight mb-14 max-w-xl"
+              />
 
               {/* Feature cards grid */}
               <motion.div
@@ -462,24 +436,24 @@ export default function About() {
                   <motion.article
                     key={index}
                     variants={fadeUp}
-                    className="group relative flex flex-col rounded-[1.75rem] bg-white border border-[#d4b78f]/15 hover:border-[#d4b78f]/40 p-8 md:p-10 transition-all duration-500 overflow-hidden"
+                    className="group relative flex flex-col rounded-[1.75rem] bg-white border border-accent/15 hover:border-accent/40 p-8 md:p-10 transition-all duration-500 overflow-hidden"
                   >
                     {/* Corner accent */}
                     <div
                       aria-hidden="true"
-                      className="absolute top-0 right-0 w-20 h-20 rounded-bl-[4rem] bg-[#d4b78f]/5 group-hover:bg-[#d4b78f]/12 transition-colors duration-500"
+                      className="absolute top-0 right-0 w-20 h-20 rounded-bl-[4rem] bg-accent/5 group-hover:bg-accent/12 transition-colors duration-500"
                     />
 
                     {/* Index number */}
                     <span
                       aria-hidden="true"
-                      className="absolute top-7 right-8 text-5xl font-black text-[#1a1208]/5 group-hover:text-[#d4b78f]/12 transition-colors duration-500 select-none leading-none"
+                      className="absolute top-7 right-8 text-5xl font-black text-[#271302]/5 group-hover:text-accent/12 transition-colors duration-500 select-none leading-none"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>
 
                     {/* Feature image / icon */}
-                    <div className="mb-6 w-16 h-16 rounded-2xl bg-[#d4b78f]/10 border border-[#d4b78f]/20 flex items-center justify-center overflow-hidden group-hover:bg-[#d4b78f]/18 transition-colors duration-400">
+                    <div className="mb-6 w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center overflow-hidden group-hover:bg-accent/18 transition-colors duration-400">
                       {feature.image ? (
                         <Image
                           src={feature.image}
@@ -494,17 +468,17 @@ export default function About() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-medium text-[#1a1208] mb-3 leading-snug">
+                    <h3 className="text-xl font-medium text-[#271302] mb-3 leading-snug">
                       {feature.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-[#1a1208]/55 text-base font-light leading-relaxed flex-1">
+                    <p className="text-[#271302]/55 text-base font-light leading-relaxed flex-1">
                       {feature.description}
                     </p>
 
                     {/* Bottom animated line */}
-                    <div className="mt-6 h-px w-0 group-hover:w-full bg-[#d4b78f]/50 transition-all duration-500 ease-out" />
+                    <div className="mt-6 h-px w-0 group-hover:w-full bg-accent/50 transition-all duration-500 ease-out" />
                   </motion.article>
                 ))}
               </motion.div>

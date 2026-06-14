@@ -1,29 +1,46 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+ 
 const MAIN_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
-// export function middleware(request: NextRequest) {
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+
+  if (pathname.startsWith('/not-found')) {
+    return NextResponse.next();
+  }
+
   const host = request.headers.get('host') ?? '';
 
-  // ── Custom domain check (enterprise) ──────────────────────────────────────
-  const isMainDomain = host === MAIN_DOMAIN || host.includes('localhost');
+ const isMainDomain =
+    host === MAIN_DOMAIN ||
+    host.endsWith(`.${MAIN_DOMAIN}`) ||
+    host.includes('localhost') ||
+    host.includes('127.0.0.1') ||
+    host.includes('vercel.app') // staging domain 
+
 
   if (!isMainDomain) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/lookup/?host=${host}`
+        `${API_URL}/api/v1/restaurant/lookup/?host=${host}`,
+         { next: { revalidate: 60 } } 
       );
 
       if (res.ok) {
         const restaurant = await res.json();
         // Rewrite to enterprise route, pass restaurant id via header
         const url = request.nextUrl.clone();
-        url.pathname = `/enterprise${pathname}`;
+        url.pathname = pathname === '/' ? '/' : pathname
         const response = NextResponse.rewrite(url);
-        response.headers.set('x-restaurant-id', String(restaurant.id));
-        response.headers.set('x-is-enterprise', 'true');
+
+        response.headers.set('x-restaurant-id', String(restaurant.id))
+        response.headers.set('x-is-enterprise', 'true')
+        response.headers.set('x-restaurant-name', restaurant.name ?? '')
+
         return response;
         }
     } catch (e) {
@@ -55,17 +72,13 @@ export async function middleware(request: NextRequest) {
 
   const role = request.cookies.get("role")?.value?.toLowerCase();
 
-  // ── Customer route guard ────────────────────────────────────────────────────
-  // Only "customer" role can access /customer
   if (isCustomerRoute && role !== "customer") {
-    // Admins/staff who somehow hit /customer → send to their dashboard
     if (role === "super_admin") return NextResponse.redirect(new URL("/super-admin", request.url));
     if (role === "admin" || role === "staff") return NextResponse.redirect(new URL("/restaurant-admin", request.url));
     // Unknown role → login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // ── Admin route guards (existing logic) ────────────────────────────────────
   if (isAdminRoute) {
     if (pathname.startsWith("/super-admin") && role !== "super_admin") {
       return NextResponse.redirect(new URL("/restaurant-admin", request.url));
@@ -84,6 +97,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ["/super-admin/:path*", "/restaurant-admin/:path*", "/customer/:path*",
-    "/((?!_next|favicon.ico|api).*)",
+     "/((?!_next|favicon\\.ico|api|not-found).*)",
+  
   ],
 };

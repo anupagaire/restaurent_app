@@ -93,7 +93,7 @@ const menuItems: {
     <div className="min-h-screen bg-white">
 
       {/* ── HERO HEADER ── */}
-      <div className="relative w-full h-36 sm:h-32 bg-[#513012] overflow-hidden">
+      <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
         
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1e0f02]/80 via-transparent to-transparent" />
@@ -135,7 +135,7 @@ const menuItems: {
                   ⭐
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#513012] leading-none">
+                  <h2 className="text-lg font-bold text-secondary leading-none">
                     Top Rated
                   </h2>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -192,7 +192,7 @@ const menuItems: {
                         )}
                       </div>
                       <div className="mt-2 flex items-center justify-between">
-                        <span className="text-sm font-bold text-[#513012]">
+                        <span className="text-sm font-bold text-secondary">
                           Rs. {item.price.toLocaleString()}
                         </span>
                         <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">

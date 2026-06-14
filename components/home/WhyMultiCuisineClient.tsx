@@ -100,7 +100,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
           {c.experience_points.map((item, i) => (
             <div
               key={i}
-              className="group flex items-start sm:items-center gap-4 sm:gap-6 py-4 border-b border-white/10 hover:border-[#3B1C32]/40 transition-colors duration-300"
+              className="group flex items-start sm:items-center gap-4 sm:gap-6 py-4 border-b border-white/10 hover:border-primary/40 transition-colors duration-300"
             >
               <span className="text-[#d4b78f]/40 text-xs font-light w-6 shrink-0 group-hover:text-[#d4b78f] transition-colors duration-300 mt-0.5 sm:mt-0">
                 {String(i + 1).padStart(2, '0')}
@@ -160,7 +160,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="relative w-32 h-24 overflow-hidden rounded-sm border border-white/20 hover:border-[#3B1C32]/60 transition-all duration-500 hover:scale-105"
+              className="relative w-32 h-24 overflow-hidden rounded-sm border border-white/20 hover:border-primary/60 transition-all duration-500 hover:scale-105"
             >
               <Image
                 src={c.images[idx]?.image || FALLBACK_IMAGES[idx]}

@@ -101,14 +101,14 @@ export default function AboutSectionsAdminPage() {
   const c = data.commitment_section;
   const w = data.why_choose_us_section;
 
-  const inputCls = 'w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30';
+  const inputCls = 'w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30';
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
         ← Back
       </button>
-      <h1 className="text-2xl font-bold text-[#513012]">About Sections Content</h1>
+      <h1 className="text-2xl font-bold text-secondary">About Sections Content</h1>
 
       {/* ── COMMITMENT ── */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
@@ -151,7 +151,7 @@ export default function AboutSectionsAdminPage() {
                 </button>
               </div>
             ))}
-            <button onClick={() => update(['commitment_section', 'experience_points'], [...c.experience_points, ''])} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+            <button onClick={() => update(['commitment_section', 'experience_points'], [...c.experience_points, ''])} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
               <Plus className="w-4 h-4" /> Add Point
             </button>
           </div>
@@ -248,7 +248,7 @@ export default function AboutSectionsAdminPage() {
             {w.benefits.map((b: any, idx: number) => (
               <div key={b.id} className="flex gap-2 items-center">
                 <select
-                  className="w-36 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                  className="w-36 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                   value={b.icon}
                   onChange={e => { const benefits = [...w.benefits]; benefits[idx] = { ...benefits[idx], icon: e.target.value }; update(['why_choose_us_section', 'benefits'], benefits); }}
                 >
@@ -262,7 +262,7 @@ export default function AboutSectionsAdminPage() {
                 </button>
               </div>
             ))}
-            <button onClick={() => update(['why_choose_us_section', 'benefits'], [...w.benefits, { id: Date.now(), icon: 'star', text: '' }])} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+            <button onClick={() => update(['why_choose_us_section', 'benefits'], [...w.benefits, { id: Date.now(), icon: 'star', text: '' }])} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
               <Plus className="w-4 h-4" /> Add Benefit
             </button>
           </div>
@@ -271,7 +271,7 @@ export default function AboutSectionsAdminPage() {
 
       {/* Save */}
       <div className="flex items-center gap-4">
-        <button onClick={handleSave} disabled={saving} className="bg-[#513012] text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
+        <button onClick={handleSave} disabled={saving} className="bg-secondary text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
         {message && <span className={`text-sm font-medium ${message.startsWith('✓') ? 'text-green-600' : 'text-red-500'}`}>{message}</span>}

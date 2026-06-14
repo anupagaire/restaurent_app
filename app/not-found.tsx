@@ -7,7 +7,7 @@ export default function NotFound() {
     <div className="min-h-screen  flex items-center justify-center px-6">
       <div className="text-center max-w-lg">
         <div className="flex justify-center mb-6">
-          <ChefHat className="h-24 w-24 text-[#513012]" />
+          <ChefHat className="h-24 w-24 text-secondary" />
         </div>
 
         <h1 className="text-8xl font-bold text-gray-300 mb-2">404</h1>
@@ -16,7 +16,7 @@ export default function NotFound() {
           Oops! Table Not Found
         </h2>
 
-        <p className="text-[#3B1C32] text-lg mb-8">
+        <p className="text-primary text-lg mb-8">
           Looks like this page got lost in the kitchen. 
           Don&apos;t worry, our chef is working on it!
         </p>

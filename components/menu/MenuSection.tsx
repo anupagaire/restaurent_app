@@ -195,24 +195,24 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
                   {c.item.category && <p className="text-xs text-gray-400">{c.item.category}</p>}
                 </div>
                 <div className="flex items-center gap-2 mx-3">
-                  <button onClick={() => onUpdateQty(c.item.id, -1)} className="w-7 h-7 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-[#513012]"><Minus size={11} /></button>
+                  <button onClick={() => onUpdateQty(c.item.id, -1)} className="w-7 h-7 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-secondary"><Minus size={11} /></button>
                   <span className="text-sm font-bold text-gray-900 w-4 text-center">{c.quantity}</span>
-                  <button onClick={() => onUpdateQty(c.item.id, 1)} className="w-7 h-7 rounded-full bg-[#513012] flex items-center justify-center text-white"><Plus size={11} /></button>
+                  <button onClick={() => onUpdateQty(c.item.id, 1)} className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white"><Plus size={11} /></button>
                 </div>
-                <span className="text-sm font-bold text-[#513012] w-16 text-right">Rs. {(c.item.price * c.quantity).toFixed(0)}</span>
+                <span className="text-sm font-bold text-secondary w-16 text-right">Rs. {(c.item.price * c.quantity).toFixed(0)}</span>
               </div>
             ))}
           </div>
 
           <div className="flex justify-between items-center py-4 border-t border-dashed border-gray-200 mt-2">
             <span className="font-bold text-gray-900">Total</span>
-            <span className="font-bold text-xl text-[#513012]">Rs. {totalPrice.toFixed(0)}</span>
+            <span className="font-bold text-xl text-secondary">Rs. {totalPrice.toFixed(0)}</span>
           </div>
 
           {/* Auth section */}
           {!isLoggedIn && (
             <div className="mb-5 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-              <p className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-3"><LogIn size={15} className="text-[#513012]" /> Sign in to order</p>
+              <p className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-3"><LogIn size={15} className="text-secondary" /> Sign in to order</p>
               <div className="flex gap-2 mb-4">
                 {(['login', 'register'] as const).map((m) => (
                   <button key={m} onClick={() => { setAuthMode(m); setError(''); }}
@@ -291,7 +291,7 @@ function OrderSuccess({ onBack }: { onBack: () => void }) {
       <h2 className="font-bold text-2xl text-gray-900 mb-1">Order Placed!</h2>
       <p className="text-sm text-green-600 font-semibold flex items-center gap-1 mb-4"><Truck size={14} /> On its way to you</p>
       <p className="text-sm text-gray-500 mb-8 max-w-xs">Your order has been received. We&apos;ll contact you shortly to confirm delivery.</p>
-      <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold bg-[#513012] text-white">Back to Menu</button>
+      <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold bg-secondary text-white">Back to Menu</button>
     </div>
   );
 }
@@ -369,12 +369,12 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
             </div>
             {qty === 0 ? (
               <button onClick={onAdd}
-                className="px-4 py-1.5 rounded-xl text-xs font-bold border-2 border-[#513012] text-[#513012] hover:bg-[#513012] hover:text-white transition-all">
+                className="px-4 py-1.5 rounded-xl text-xs font-bold border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all">
                 ADD
               </button>
             ) : (
               <div 
-              className="flex items-center gap-1.5 bg-[#513012] rounded-xl px-2 py-1">
+              className="flex items-center gap-1.5 bg-secondary rounded-xl px-2 py-1">
                 <button
                  onClick={() => onUpdate(-1)} className="w-5 h-5 flex items-center justify-center text-white"><Minus size={11} /></button>
                 <span

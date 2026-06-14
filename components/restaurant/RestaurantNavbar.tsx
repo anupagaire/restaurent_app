@@ -29,17 +29,17 @@ export default function RestaurantNavbar({
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-[#3B1C32]/10 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white border-b border-primary/10 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Logo + Name */}
         <Link href={base} className="flex items-center gap-3">
           {logo ? (
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#3B1C32]/20">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
               <Image src={logo} alt={restaurant.name} fill className="object-cover" />
             </div>
           ) : (
-            <div className="w-10 h-10 rounded-full bg-[#3B1C32] flex items-center justify-center text-[#fde68a] font-bold text-lg">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[#fde68a] font-bold text-lg">
               {restaurant.name?.[0]}
             </div>
           )}
@@ -53,42 +53,42 @@ export default function RestaurantNavbar({
           {/* Normal nav links */}
           <Link
             href={base}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             Home
           </Link>
 
           <Link
             href={`${base}/menu`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             Menu
           </Link>
 
           <Link
             href={`${base}/reviews`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             Reviews
           </Link>
 
           <Link
             href={`${base}/about-us`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             About Us
           </Link>
 
           <Link
             href={`${base}/services`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             Services
           </Link>
 
           <Link
             href={`${base}/gallery`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] transition-colors"
+            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
           >
             Gallery
           </Link>
@@ -98,14 +98,14 @@ export default function RestaurantNavbar({
             
             <Link
               href="/register-restaurant"
-              className="px-4 py-2 rounded-full border-2 border-[#3B1C32] text-[#3B1C32] text-sm font-semibold hover:bg-[#3B1C32] hover:text-[#fde68a] transition-all"
+              className="px-4 py-2 rounded-full border-2 border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-[#fde68a] transition-all"
             >
               List Your Venue
             </Link>
 
             <Link
               href="/login"
-              className="px-4 py-2 rounded-full bg-[#3B1C32] text-[#fde68a] text-sm font-semibold hover:bg-[#271302] transition-all shadow-sm"
+              className="px-4 py-2 rounded-full bg-primary text-[#fde68a] text-sm font-semibold hover:bg-[#271302] transition-all shadow-sm"
             >
               Login
             </Link>
@@ -115,22 +115,22 @@ export default function RestaurantNavbar({
 
         {/* Mobile hamburger */}
         <button 
-          className="md:hidden p-2 rounded-lg hover:bg-[#3B1C32]/5 transition-colors" 
+          className="md:hidden p-2 rounded-lg hover:bg-primary/5 transition-colors" 
           onClick={() => setOpen(p => !p)}
         >
-          {open ? <X className="w-6 h-6 text-[#3B1C32]" /> : <Menu className="w-6 h-6 text-[#3B1C32]" />}
+          {open ? <X className="w-6 h-6 text-primary" /> : <Menu className="w-6 h-6 text-primary" />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-[#3B1C32]/10 px-4 py-3 space-y-2">
+        <div className="md:hidden bg-white border-t border-primary/10 px-4 py-3 space-y-2">
           {links.map(l => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block py-2 text-sm font-medium text-[#271302]/70 hover:text-[#3B1C32] hover:bg-[#fde68a]/20 px-3 rounded-lg transition-colors"
+              className="block py-2 text-sm font-medium text-[#271302]/70 hover:text-primary hover:bg-[#fde68a]/20 px-3 rounded-lg transition-colors"
             >
               {l.label}
             </Link>

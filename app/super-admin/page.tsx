@@ -80,7 +80,7 @@ export default function SuperAdminDashboard() {
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-bold text-[#513012] cinzel">
+        <h2 className="text-3xl font-bold text-secondary cinzel">
           Welcome back, Super Admin
         </h2>
         <p className="text-gray-600 mt-2">
@@ -93,17 +93,17 @@ export default function SuperAdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">Total Restaurants</CardTitle>
-            <Building2 className="h-5 w-5 text-[#513012]" />
+            <Building2 className="h-5 w-5 text-secondary" />
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-[#513012]">{totalRestaurants}</p>
+            <p className="text-4xl font-bold text-secondary">{totalRestaurants}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">Total Admins</CardTitle>
-            <Users className="h-5 w-5 text-[#513012]" />
+            <Users className="h-5 w-5 text-secondary" />
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold">{recentAdmins.length}</p>

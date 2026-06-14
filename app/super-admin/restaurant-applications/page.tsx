@@ -87,12 +87,12 @@ const DetailModal = ({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#d4b78f] sticky top-0 bg-[#faf8f5] z-10">
           <div>
-            <h2 className="text-lg font-semibold text-[#513012]">{app.restaurant_name}</h2>
+            <h2 className="text-lg font-semibold text-secondary">{app.restaurant_name}</h2>
             <p className="text-xs text-[#8c6d46]">Application #{app.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-[#776552] hover:text-[#513012] transition text-xl leading-none"
+            className="text-[#776552] hover:text-secondary transition text-xl leading-none"
           >
             ✕
           </button>
@@ -156,7 +156,7 @@ const DetailModal = ({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-5 py-2 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+                className="px-5 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
               >
                 {saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}
               </button>
@@ -250,7 +250,7 @@ const RestaurantApplications = () => {
       <div className="max-w-screen-xl mx-auto px-4 py-10">
        
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[#513012]">Restaurant Applications</h1>
+          <h1 className="text-3xl font-bold text-secondary">Restaurant Applications</h1>
           <p className="text-[#776552] mt-1">
             {count} total application{count !== 1 ? "s" : ""}
           </p>
@@ -269,7 +269,7 @@ const RestaurantApplications = () => {
               />
               <button
                 type="submit"
-                className="px-4 py-2 text-sm bg-[#513012] text-white rounded-lg hover:bg-[#7a4b2a] transition"
+                className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition"
               >
                 Search
               </button>
@@ -394,7 +394,7 @@ const RestaurantApplications = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelectedApp(app)}
-                            className="px-3 py-1.5 text-xs text-[#513012] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
+                            className="px-3 py-1.5 text-xs text-secondary border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
                           >
                             View
                           </button>

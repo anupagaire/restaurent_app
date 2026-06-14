@@ -129,17 +129,17 @@ export default function NavbarHeroAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
         ← Back
       </button>
-      <h1 className="text-2xl font-bold text-[#513012]">Navbar & Hero Content</h1>
+      <h1 className="text-2xl font-bold text-secondary">Navbar & Hero Content</h1>
 
       {/* Site Settings */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
         <h2 className="font-semibold text-lg">Site Settings</h2>
         <div>
           <label className="block text-sm font-medium mb-1">Site Name</label>
-          <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+          <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             value={data.site_settings?.site_name ?? ''}
             onChange={e => updatePath(['site_settings', 'site_name'], e.target.value)} />
         </div>
@@ -177,7 +177,7 @@ export default function NavbarHeroAdminPage() {
 
         <div>
           <label className="block text-sm font-medium mb-1">Logo Alt Text</label>
-          <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+          <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             value={data.site_settings?.logo?.alt ?? ''}
             onChange={e => updatePath(['site_settings', 'logo', 'alt'], e.target.value)} />
         </div>
@@ -188,10 +188,10 @@ export default function NavbarHeroAdminPage() {
         <h2 className="font-semibold text-lg">Navbar Links</h2>
         {data.navbar?.links?.map((link: any, idx: number) => (
           <div key={idx} className="flex gap-2 items-center">
-            <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+            <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
               placeholder="Name" value={link.name}
               onChange={e => { const links = [...data.navbar.links]; links[idx] = { ...links[idx], name: e.target.value }; updatePath(['navbar', 'links'], links); }} />
-            <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+            <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
               placeholder="URL" value={link.url}
               onChange={e => { const links = [...data.navbar.links]; links[idx] = { ...links[idx], url: e.target.value }; updatePath(['navbar', 'links'], links); }} />
             <button onClick={() => removeNavLink(idx)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
@@ -199,7 +199,7 @@ export default function NavbarHeroAdminPage() {
             </button>
           </div>
         ))}
-        <button onClick={addNavLink} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+        <button onClick={addNavLink} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
           <Plus className="w-4 h-4" /> Add Link
         </button>
       </section>
@@ -211,10 +211,10 @@ export default function NavbarHeroAdminPage() {
           <div key={key}>
             <p className="text-sm font-medium capitalize mb-2">{key.replace('_', ' ')}</p>
             <div className="flex gap-2">
-              <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+              <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 placeholder="Text" value={data.navbar?.buttons?.[key]?.text ?? ''}
                 onChange={e => updatePath(['navbar', 'buttons', key, 'text'], e.target.value)} />
-              <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+              <input className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 placeholder="URL" value={data.navbar?.buttons?.[key]?.url ?? ''}
                 onChange={e => updatePath(['navbar', 'buttons', key, 'url'], e.target.value)} />
             </div>
@@ -230,7 +230,7 @@ export default function NavbarHeroAdminPage() {
           <input type="checkbox" checked={data.hero_section?.autoplay ?? true}
             onChange={e => updatePath(['hero_section', 'autoplay'], e.target.checked)} />
           <label className="text-sm font-medium ml-4">Delay (ms)</label>
-          <input type="number" className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+          <input type="number" className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             value={data.hero_section?.autoplay_delay ?? 4000}
             onChange={e => updatePath(['hero_section', 'autoplay_delay'], parseInt(e.target.value))} />
         </div>
@@ -281,7 +281,7 @@ export default function NavbarHeroAdminPage() {
             ].map(({ field, label }) => (
               <div key={field}>
                 <label className="block text-sm font-medium mb-1">{label}</label>
-                <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                <input className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                   value={slide[field] ?? ''}
                   onChange={e => {
                     const slides = [...data.hero_section.slides];
@@ -292,14 +292,14 @@ export default function NavbarHeroAdminPage() {
             ))}
           </div>
         ))}
-        <button onClick={addSlide} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+        <button onClick={addSlide} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
           <Plus className="w-4 h-4" /> Add Slide
         </button>
       </section>
 
       {/* Save */}
       <div className="flex items-center gap-4">
-        <button onClick={handleSave} disabled={saving} className="bg-[#513012] text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
+        <button onClick={handleSave} disabled={saving} className="bg-secondary text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
         {message && <span className={`text-sm font-medium ${message.startsWith('✓') ? 'text-green-600' : 'text-red-500'}`}>{message}</span>}

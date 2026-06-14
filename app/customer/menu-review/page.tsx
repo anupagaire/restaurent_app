@@ -99,7 +99,7 @@ function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onC
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[#513012]">Edit Review</h2>
+          <h2 className="text-lg font-semibold text-secondary">Edit Review</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
         </div>
         {error && <Alert type="error" msg={error} />}
@@ -114,7 +114,7 @@ function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onC
           </div>
           <div className="flex gap-3">
             <Button type="button" variant="outline" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
-            <Button type="submit" disabled={saving} className="flex-1 bg-[#513012] hover:bg-[#3f260f]">
+            <Button type="submit" disabled={saving} className="flex-1 bg-secondary hover:bg-[#3f260f]">
               {saving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</> : 'Save Changes'}
             </Button>
           </div>
@@ -142,7 +142,7 @@ function DeleteConfirmModal({ reviewId, onClose, onDeleted }: { reviewId: number
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-[#513012]">Delete Review?</h2>
+        <h2 className="text-lg font-semibold text-secondary">Delete Review?</h2>
         <p className="text-sm text-gray-500">This action cannot be undone.</p>
         {error && <Alert type="error" msg={error} />}
         <div className="flex gap-3">
@@ -186,7 +186,7 @@ function ReviewCard({
               {menu?.name ?? `Menu #${review.menu}`}
             </h3>
             {menu?.price && (
-              <span className="text-xs font-medium text-[#513012] shrink-0 bg-amber-50 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-secondary shrink-0 bg-amber-50 px-1.5 py-0.5 rounded">
                 Rs. {parseFloat(menu.price).toLocaleString()}
               </span>
             )}
@@ -203,7 +203,7 @@ function ReviewCard({
           </div>
         </div>
         <div className="flex flex-col gap-1 p-2 shrink-0">
-          <button onClick={() => onEdit(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-[#513012] hover:bg-amber-50 transition-colors"><Pencil className="w-4 h-4" /></button>
+          <button onClick={() => onEdit(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-secondary hover:bg-amber-50 transition-colors"><Pencil className="w-4 h-4" /></button>
           <button onClick={() => onDelete(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
         </div>
       </div>
@@ -225,7 +225,7 @@ function ReviewCard({
       <div className="px-4 pb-3 flex flex-wrap items-center gap-2 border-t border-gray-50 pt-2">
         {!review.is_published && <span className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full">Pending approval</span>}
         {review.is_published  && <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Published</span>}
-        <a href="/restaurants" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center gap-1 text-xs text-[#513012] hover:underline font-medium">
+        <a href="/restaurants" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center gap-1 text-xs text-secondary hover:underline font-medium">
           <ExternalLink className="w-3 h-3" /> View Restaurant
         </a>
       </div>
@@ -328,7 +328,7 @@ export default function CustomerReviewsPage() {
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">My Reviews</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary">My Reviews</h1>
           <p className="text-gray-500 mt-1 text-sm">
             {count > 0 ? `${count} review${count !== 1 ? 's' : ''} posted` : 'Manage your menu reviews'}
           </p>
@@ -338,12 +338,12 @@ export default function CustomerReviewsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[#513012] text-lg">
+            <CardTitle className="flex items-center gap-2 text-secondary text-lg">
               <MessageSquare className="w-5 h-5" /> Posted Reviews
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading && <div className="flex justify-center items-center py-16"><Loader2 className="w-8 h-8 animate-spin text-[#513012]" /></div>}
+            {loading && <div className="flex justify-center items-center py-16"><Loader2 className="w-8 h-8 animate-spin text-secondary" /></div>}
             {!loading && pageError && <Alert type="error" msg={pageError} />}
             {!loading && !pageError && reviews.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
@@ -351,7 +351,7 @@ export default function CustomerReviewsPage() {
                 <p className="text-gray-500 font-medium">No reviews yet</p>
                 <p className="text-gray-400 text-sm">Your menu reviews will appear here once you post them.</p>
                 <a href="/restaurants" target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm text-[#513012] hover:underline font-medium mt-1">
+                  className="inline-flex items-center gap-1.5 text-sm text-secondary hover:underline font-medium mt-1">
                   <ExternalLink className="w-4 h-4" /> Browse Restaurants
                 </a>
               </div>

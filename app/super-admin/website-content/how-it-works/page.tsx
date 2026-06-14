@@ -98,10 +98,10 @@ const router = useRouter();
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
   ← Back
 </button>
-      <h1 className="text-2xl font-bold text-[#513012]">How It Works Content</h1>
+      <h1 className="text-2xl font-bold text-secondary">How It Works Content</h1>
 
       {/* Section Header */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
@@ -109,7 +109,7 @@ const router = useRouter();
         <div>
           <label className="block text-sm font-medium mb-1">Title</label>
           <input
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             value={title}
             onChange={e => updateSection('title', e.target.value)}
           />
@@ -118,7 +118,7 @@ const router = useRouter();
           <label className="block text-sm font-medium mb-1">Description</label>
           {/* <textarea
             rows={2}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30 resize-none"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30 resize-none"
             value={description}
             onChange={e => updateSection('description', e.target.value)}
           /> */}
@@ -145,7 +145,7 @@ const router = useRouter();
             <div>
               <label className="block text-sm font-medium mb-1">Icon</label>
               <select
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 value={step.icon}
                 onChange={e => updateStep(idx, 'icon', e.target.value)}
               >
@@ -158,7 +158,7 @@ const router = useRouter();
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
               <input
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 value={step.title}
                 onChange={e => updateStep(idx, 'title', e.target.value)}
               />
@@ -175,14 +175,14 @@ const router = useRouter();
           </div>
         ))}
 
-        <button onClick={addStep} className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition">
+        <button onClick={addStep} className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition">
           <Plus className="w-4 h-4" /> Add Step
         </button>
       </section>
 
       {/* Save */}
       <div className="flex items-center gap-4">
-        <button onClick={handleSave} disabled={saving} className="bg-[#513012] text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
+        <button onClick={handleSave} disabled={saving} className="bg-secondary text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium">
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
         {message && <span className={`text-sm font-medium ${message.startsWith('✓') ? 'text-green-600' : 'text-red-500'}`}>{message}</span>}

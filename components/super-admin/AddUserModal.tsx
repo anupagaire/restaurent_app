@@ -187,7 +187,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-[#513012]">Add Restaurant Admin</DialogTitle>
+          <DialogTitle className="text-secondary">Add Restaurant Admin</DialogTitle>
           <DialogDescription>
             Creates a restaurant and links an admin account to it.
           </DialogDescription>
@@ -202,10 +202,10 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
             return (
               <div key={label} className="flex items-center gap-1 flex-1">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0
-                  ${done ? 'bg-green-500 text-white' : current ? 'bg-[#513012] text-white' : 'bg-gray-200 text-gray-400'}`}>
+                  ${done ? 'bg-green-500 text-white' : current ? 'bg-secondary text-white' : 'bg-gray-200 text-gray-400'}`}>
                   {done ? '✓' : n}
                 </div>
-                <span className={`text-xs ${current ? 'font-semibold text-[#513012]' : 'text-gray-400'}`}>{label}</span>
+                <span className={`text-xs ${current ? 'font-semibold text-secondary' : 'text-gray-400'}`}>{label}</span>
                 {i < steps.length - 1 && <div className="h-px flex-1 bg-gray-200 mx-1" />}
               </div>
             );
@@ -221,7 +221,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
         {/* ── Step 1: Restaurant ── */}
         {step === 1 && (
           <form onSubmit={handleCreateRestaurant} className="space-y-3">
-            <p className="text-sm font-semibold text-[#513012]">🍽️ Restaurant Details</p>
+            <p className="text-sm font-semibold text-secondary">🍽️ Restaurant Details</p>
 
             <div className="space-y-1">
               <Label>Restaurant Name <span className="text-red-500">*</span></Label>
@@ -256,7 +256,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
 
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Cancel</Button>
-              <Button type="submit" disabled={loading} className="bg-[#513012] hover:bg-[#3f260f]">
+              <Button type="submit" disabled={loading} className="bg-secondary hover:bg-[#3f260f]">
                 {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…</> : 'Next: Admin Account →'}
               </Button>
             </DialogFooter>
@@ -266,7 +266,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
         {/* ── Step 2: User ── */}
         {step === 2 && (
           <form onSubmit={handleCreateUser} className="space-y-3">
-            <p className="text-sm font-semibold text-[#513012]">👤 Admin Account</p>
+            <p className="text-sm font-semibold text-secondary">👤 Admin Account</p>
             <p className="text-xs text-gray-400">
               Restaurant: <strong>{restaurantForm.name}</strong> (ID: {restaurantId})
             </p>
@@ -307,7 +307,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
               <Button type="button" variant="outline" onClick={() => { setStep(1); setError(''); }} disabled={loading}>
                 ← Back
               </Button>
-              <Button type="submit" disabled={loading} className="bg-[#513012] hover:bg-[#3f260f]">
+              <Button type="submit" disabled={loading} className="bg-secondary hover:bg-[#3f260f]">
                 {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…</> : 'Next: Assign Role →'}
               </Button>
             </DialogFooter>
@@ -317,7 +317,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
         {/* ── Step 3: Assign Role ── */}
         {step === 3 && (
           <form onSubmit={handleAssignRole} className="space-y-4">
-            <p className="text-sm font-semibold text-[#513012]">🎭 Assign Role</p>
+            <p className="text-sm font-semibold text-secondary">🎭 Assign Role</p>
             <p className="text-xs text-gray-400">
               User <strong>{userForm.email}</strong> created. Now assign a role.
             </p>
@@ -334,13 +334,13 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
                   <label key={role.id}
                     className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${
                       selectedRoleId === role.id
-                        ? 'border-[#513012] bg-[#513012]/5'
-                        : 'border-gray-200 hover:border-[#513012]/40'
+                        ? 'border-secondary bg-secondary/5'
+                        : 'border-gray-200 hover:border-secondary/40'
                     }`}>
                     <input type="radio" name="role" value={role.id}
                       checked={selectedRoleId === role.id}
                       onChange={() => setSelectedRoleId(role.id)}
-                      className="accent-[#513012]" />
+                      className="accent-secondary" />
                     <div>
                       <p className="font-semibold text-sm text-gray-800">{role.name}</p>
                     </div>
@@ -353,7 +353,7 @@ if (!res.ok || data.success === false) { setError(formatError(data.errors ?? dat
               <Button type="button" variant="outline" onClick={() => { setStep(2); setError(''); }} disabled={loading}>
                 ← Back
               </Button>
-              <Button type="submit" disabled={loading || !selectedRoleId} className="bg-[#513012] hover:bg-[#3f260f]">
+              <Button type="submit" disabled={loading || !selectedRoleId} className="bg-secondary hover:bg-[#3f260f]">
                 {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Assigning…</> : '✓ Create Admin'}
               </Button>
             </DialogFooter>

@@ -143,19 +143,19 @@ export default function SettingsPage() {
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-[400px]">
-      <Loader2 className="w-8 h-8 animate-spin text-[#513012]" />
+      <Loader2 className="w-8 h-8 animate-spin text-secondary" />
     </div>
   );
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#513012]">Account Settings</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-secondary">Account Settings</h1>
         <p className="text-gray-500 mt-1 text-sm">Update your profile and password</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#513012]">
+          <CardTitle className="flex items-center gap-2 text-secondary">
             <User className="w-5 h-5" /> Profile Information
           </CardTitle>
         </CardHeader>
@@ -201,7 +201,7 @@ export default function SettingsPage() {
             </div>
 
             <Button type="submit" disabled={profileSaving}
-              className="w-full bg-[#513012] hover:bg-[#3f260f]">
+              className="w-full bg-secondary hover:bg-[#3f260f]">
               {profileSaving
                 ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</>
                 : 'Save Profile'}
@@ -213,7 +213,7 @@ export default function SettingsPage() {
       {/* ── Password Card ── */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-[#513012]">
+          <CardTitle className="flex items-center gap-2 text-secondary">
             <Lock className="w-5 h-5" /> Change Password
           </CardTitle>
         </CardHeader>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
 
             <Button type="submit"
               disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
-              className="w-full bg-[#513012] hover:bg-[#3f260f]">
+              className="w-full bg-secondary hover:bg-[#3f260f]">
               {pwSaving
                 ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating…</>
                 : 'Update Password'}

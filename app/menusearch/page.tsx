@@ -29,7 +29,7 @@ export default function MenuSearchPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-[#fdf8f3] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-[#513012] border-t-transparent rounded-full mx-auto mb-3" />
+          <div className="animate-spin w-8 h-8 border-2 border-secondary border-t-transparent rounded-full mx-auto mb-3" />
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>

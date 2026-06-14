@@ -158,17 +158,17 @@ export default function TestimonialsAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#513012] mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
         ← Back
       </button>
-      <h1 className="text-2xl font-bold text-[#513012]">Testimonials Content</h1>
+      <h1 className="text-2xl font-bold text-secondary">Testimonials Content</h1>
 
       <section className="border border-gray-200 rounded-xl p-5 space-y-3">
         <h2 className="font-semibold text-lg mb-2">Section Header</h2>
         <div>
           <label className="block text-sm font-medium mb-1">Title</label>
           <input
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
             value={title}
             onChange={e => updateSection('title', e.target.value)}
           />
@@ -229,7 +229,7 @@ export default function TestimonialsAdminPage() {
             <div>
               <label className="block text-sm font-medium mb-1">Name</label>
               <input
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 value={r.name}
                 onChange={e => updateRestaurant(idx, 'name', e.target.value)}
               />
@@ -239,7 +239,7 @@ export default function TestimonialsAdminPage() {
             <div>
               <label className="block text-sm font-medium mb-1">Status</label>
               <input
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 value={r.status}
                 onChange={e => updateRestaurant(idx, 'status', e.target.value)}
               />
@@ -265,7 +265,7 @@ export default function TestimonialsAdminPage() {
                 min={0}
                 max={5}
                 step={0.1}
-                className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#513012]/30"
+                className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
                 value={r.rating}
                 onChange={e => updateRestaurant(idx, 'rating', parseFloat(e.target.value))}
               />
@@ -274,7 +274,7 @@ export default function TestimonialsAdminPage() {
         ))}
         <button
           onClick={addRestaurant}
-          className="flex items-center gap-2 text-sm text-[#513012] hover:bg-[#513012]/5 px-3 py-2 rounded-lg transition"
+          className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition"
         >
           <Plus className="w-4 h-4" /> Add Testimonial
         </button>
@@ -284,7 +284,7 @@ export default function TestimonialsAdminPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#513012] text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium"
+          className="bg-secondary text-white px-8 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
