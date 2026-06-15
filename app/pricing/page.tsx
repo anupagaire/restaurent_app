@@ -68,7 +68,7 @@
 //     <div className="max-w-md mx-auto mb-10">
 //       <div className="flex gap-2">
 //         <div className="relative flex-1">
-//           <Tag size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+//           <Tag size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
 //           <input
 //             type="text"
 //             value={code}
@@ -82,7 +82,7 @@
 //             className="w-full pl-9 pr-4 py-3 rounded-xl text-sm border outline-none"
 //             style={{
 //               borderColor:
-//                 status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : '#e5e7eb',
+//                 status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : 'secondary',
 //               background: '#fff',
 //             }}
 //           />
@@ -145,11 +145,11 @@
 //         </div>
 //         <h3
 //           className="font-bold text-xl mb-1"
-//           style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}
+//           style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
 //         >
 //           {plan.name}
 //         </h3>
-//         <p className="text-sm text-gray-500 mb-4">{plan.description}</p>
+//         <p className="text-sm text-secondary mb-4">{plan.description}</p>
 
 //         {/* Price */}
 //         <div className="flex items-end gap-2 mb-1">
@@ -159,18 +159,18 @@
 //             </span>
 //           ) : (
 //             <>
-//               <span className="text-4xl font-bold" style={{ color: '#1e0f02' }}>
+//               <span className="text-4xl font-bold" style={{ color: 'secondary' }}>
 //                 Rs. {(hasDiscount ? finalPrice : price).toLocaleString()}
 //               </span>
 //               {hasDiscount && (
-//                 <span className="text-lg text-gray-400 line-through mb-1">
+//                 <span className="text-lg text-secondary line-through mb-1">
 //                   Rs. {price.toLocaleString()}
 //                 </span>
 //               )}
 //             </>
 //           )}
 //         </div>
-//         <p className="text-xs text-gray-400 mb-5">
+//         <p className="text-xs text-secondary mb-5">
 //           {isFree ? 'No credit card required' : `for ${durationLabel(plan.duration_days)}`}
 //           {hasDiscount && (
 //             <span className="ml-2 font-bold" style={{ color: accent }}>
@@ -195,9 +195,9 @@
 
 //       {features.length > 0 && (
 //         <>
-//           <div className="mx-6" style={{ borderTop: '1px dashed #e5e7eb' }} />
+//           <div className="mx-6" style={{ borderTop: '1px dashed secondary' }} />
 //           <div className="p-6 pt-4 flex-1">
-//             <p className="text-xs font-bold uppercase tracking-widest mb-3 text-gray-400">
+//             <p className="text-xs font-bold uppercase tracking-widest mb-3 text-secondary">
 //               What&apos;s included
 //             </p>
 //             <ul className="space-y-2.5">
@@ -265,17 +265,17 @@
 //           {/* Text */}
 //           <h2
 //             className="font-bold text-xl mb-2"
-//             style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}
+//             style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
 //           >
 //             Register First!
 //           </h2>
-//           <p className="text-sm text-gray-500 mb-2">
+//           <p className="text-sm text-secondary mb-2">
 //             You selected{' '}
 //             <span className="font-semibold" style={{ color: '#513012' }}>
 //               {plan.name}
 //             </span>
 //           </p>
-//           <p className="text-sm text-gray-400 mb-7">
+//           <p className="text-sm text-secondary mb-7">
 //             Create your restaurant account first. You can choose and activate this plan
 //             from your dashboard after registration.
 //           </p>
@@ -333,11 +333,11 @@
 //           </div>
 //           <h1
 //             className="text-4xl sm:text-5xl font-bold mb-4"
-//             style={{ color: '#1e0f02', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
+//             style={{ color: 'secondary', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
 //           >
 //             Simple, Honest Pricing
 //           </h1>
-//           <p className="text-gray-500 max-w-xl mx-auto text-lg">
+//           <p className="text-secondary max-w-xl mx-auto text-lg">
 //             Start free for 1 month. Upgrade when you&apos;re ready. Cancel anytime.
 //           </p>
 //         </div>
@@ -385,7 +385,7 @@
 //           )}
 
 //           <div className="mt-12 text-center">
-//             <p className="text-sm text-gray-400">
+//             <p className="text-sm text-secondary">
 //               All plans include QR menu, online orders, and customer dashboard.{' '}
 //               <a href="tel:+977-98XXXXXXXX" className="underline" style={{ color: '#513012' }}>
 //                 Call us
@@ -413,7 +413,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, Zap, Crown, Gift, Tag, ArrowRight, X, Loader2 } from 'lucide-react';
-import Footer from '@/components/layout/Footer';
 
 // ─── Types (same as before) ──────────────────────────────────────────────────
 interface Plan {
@@ -541,7 +540,7 @@ function PromoInput({
     <div className="max-w-md mx-auto mb-10">
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Tag size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Tag size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
           <input
             type="text"
             value={code}
@@ -555,7 +554,7 @@ function PromoInput({
             className="w-full pl-9 pr-4 py-3 rounded-xl text-sm border outline-none"
             style={{
               borderColor:
-                status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : '#e5e7eb',
+                status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : 'secondary',
               background: '#fff',
             }}
           />
@@ -617,11 +616,11 @@ function PlanCard({
         </div>
         <h3
           className="font-bold text-xl mb-1"
-          style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}
+          style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
         >
           {plan.name}
         </h3>
-        <p className="text-sm text-gray-500 mb-4">{plan.description}</p>
+        <p className="text-sm text-secondary mb-4">{plan.description}</p>
 
         {/* Price */}
         <div className="flex items-end gap-2 mb-1">
@@ -631,18 +630,18 @@ function PlanCard({
             </span>
           ) : (
             <>
-              <span className="text-4xl font-bold" style={{ color: '#1e0f02' }}>
+              <span className="text-4xl font-bold" style={{ color: 'secondary' }}>
                 Rs. {(hasDiscount ? finalPrice : price).toLocaleString()}
               </span>
               {hasDiscount && (
-                <span className="text-lg text-gray-400 line-through mb-1">
+                <span className="text-lg text-secondary line-through mb-1">
                   Rs. {price.toLocaleString()}
                 </span>
               )}
             </>
           )}
         </div>
-        <p className="text-xs text-gray-400 mb-5">
+        <p className="text-xs text-secondary mb-5">
           {isFree ? 'No credit card required' : `for ${durationLabel(plan.duration_days)}`}
           {hasDiscount && (
             <span className="ml-2 font-bold" style={{ color: accent }}>
@@ -667,9 +666,9 @@ function PlanCard({
 
       {features.length > 0 && (
         <>
-          <div className="mx-6" style={{ borderTop: '1px dashed #e5e7eb' }} />
+          <div className="mx-6" style={{ borderTop: '1px dashed secondary' }} />
           <div className="p-6 pt-4 flex-1">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3 text-gray-400">
+            <p className="text-xs font-bold uppercase tracking-widest mb-3 text-secondary">
               WHAT&apos;S INCLUDED
             </p>
             <ul className="space-y-2.5">
@@ -702,7 +701,7 @@ function RegisterModal({
   return (
     <>
       <div
-        className="fixed inset-0 z-50"
+        className="fixed inset-0 z-50 py-12"
         style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
         onClick={onClose}
       />
@@ -735,14 +734,14 @@ function RegisterModal({
 
           <h2
             className="font-bold text-xl mb-2"
-            style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}
+            style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
           >
             Register First!
           </h2>
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-secondary mb-2">
             You selected <span className="font-semibold" style={{ color: '#513012' }}>{plan.name}</span>
           </p>
-          <p className="text-sm text-gray-400 mb-7">
+          <p className="text-sm text-secondary mb-7">
             Create your restaurant account first. You can choose and activate this plan from your dashboard after registration.
           </p>
 
@@ -790,11 +789,11 @@ export default function PricingPage() {
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold mb-4"
-            style={{ color: '#1e0f02', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
+            style={{ color: 'secondary', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
           >
             Simple, Honest Pricing
           </h1>
-          <p className="text-gray-500 max-w-xl mx-auto text-lg">
+          <p className="text-secondary max-w-xl mx-auto text-lg">
             Start free for 1 month. Upgrade when you&apos;re ready. Cancel anytime.
           </p>
         </div>
@@ -825,7 +824,7 @@ export default function PricingPage() {
           </div>
 
           <div className="mt-12 text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-secondary">
               All plans include QR menu, online orders, and customer dashboard.{' '}
               <a href="tel:+977-98XXXXXXXX" className="underline" style={{ color: '#513012' }}>
                 Call us

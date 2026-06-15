@@ -370,7 +370,7 @@ if (res.ok) {
         )}
 
         {data.photos.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No photos yet. Click &quot;Add Photo&quot; to get started.</p>
+          <p className="text-secondary text-center py-8">No photos yet. Click &quot;Add Photo&quot; to get started.</p>
         ) : (
           <div className="space-y-4">
             {data.photos.map((photo, index) => (
@@ -425,7 +425,7 @@ if (res.ok) {
                 </div>
 
                 {photo.photo_url && (
-                  <p className="text-xs text-gray-400 truncate">{photo.photo_url}</p>
+                  <p className="text-xs text-secondary truncate">{photo.photo_url}</p>
                 )}
               </div>
             ))}

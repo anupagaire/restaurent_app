@@ -60,7 +60,7 @@ export default function CategorySlider({ categories, activeCategory, onSelect }:
           aria-label="Scroll left"
         >
           <div className="w-6 h-6 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center">
-            <ChevronLeft size={14} className="text-gray-500" />
+            <ChevronLeft size={14} className="text-secondary" />
           </div>
         </button>
 
@@ -100,7 +100,7 @@ export default function CategorySlider({ categories, activeCategory, onSelect }:
           aria-label="Scroll right"
         >
           <div className="w-6 h-6 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center">
-            <ChevronRight size={14} className="text-gray-500" />
+            <ChevronRight size={14} className="text-secondary" />
           </div>
         </button>
 

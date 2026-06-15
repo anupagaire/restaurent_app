@@ -60,7 +60,7 @@ function StarRating({ value, onChange, readonly = false }: { value: number; onCh
           onMouseEnter={() => !readonly && setHovered(n)}
           onMouseLeave={() => !readonly && setHovered(0)}
           className={readonly ? 'cursor-default' : 'cursor-pointer'}>
-          <Star className={`w-4 h-4 transition-colors ${n <= (hovered || value) ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'}`} />
+          <Star className={`w-4 h-4 transition-colors ${n <= (hovered || value) ? 'fill-accent text-accent' : 'fill-gray-200 text-gray-200'}`} />
         </button>
       ))}
     </div>
@@ -96,11 +96,11 @@ function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-secondary">Edit Review</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-secondary hover:text-gray-600"><X className="w-5 h-5" /></button>
         </div>
         {error && <Alert type="error" msg={error} />}
         <form onSubmit={handleSave} className="space-y-4">
@@ -114,7 +114,7 @@ function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onC
           </div>
           <div className="flex gap-3">
             <Button type="button" variant="outline" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
-            <Button type="submit" disabled={saving} className="flex-1 bg-secondary hover:bg-[#3f260f]">
+            <Button type="submit" disabled={saving} className="flex-1 bg-secondary hover:bg-secondary">
               {saving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</> : 'Save Changes'}
             </Button>
           </div>
@@ -140,10 +140,10 @@ function DeleteConfirmModal({ reviewId, onClose, onDeleted }: { reviewId: number
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/50 px-4" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
         <h2 className="text-lg font-semibold text-secondary">Delete Review?</h2>
-        <p className="text-sm text-gray-500">This action cannot be undone.</p>
+        <p className="text-sm text-secondary">This action cannot be undone.</p>
         {error && <Alert type="error" msg={error} />}
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={onClose} disabled={deleting}>Cancel</Button>
@@ -175,8 +175,8 @@ function ReviewCard({
           {menuPhoto ? (
             <img src={menuPhoto} alt={menu?.name ?? 'Menu item'} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-amber-50">
-              <UtensilsCrossed className="w-8 h-8 text-amber-200" />
+            <div className="w-full h-full flex items-center justify-center bg-accent">
+              <UtensilsCrossed className="w-8 h-8 text-accent" />
             </div>
           )}
         </div>
@@ -186,32 +186,32 @@ function ReviewCard({
               {menu?.name ?? `Menu #${review.menu}`}
             </h3>
             {menu?.price && (
-              <span className="text-xs font-medium text-secondary shrink-0 bg-amber-50 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-medium text-secondary shrink-0 bg-accent px-1.5 py-0.5 rounded">
                 Rs. {parseFloat(menu.price).toLocaleString()}
               </span>
             )}
           </div>
           {restaurant && (
-            <div className="flex items-center gap-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1 text-xs text-secondary">
               <MapPin className="w-3 h-3 shrink-0" />
               <span className="truncate">{restaurant.name}{restaurant.city ? ` • ${restaurant.city}` : ''}</span>
             </div>
           )}
           <div className="flex items-center gap-2 pt-0.5">
             <StarRating value={review.rating} readonly />
-            <span className="text-xs text-gray-400">{formatDate(review.created_on)}</span>
+            <span className="text-xs text-secondary">{formatDate(review.created_on)}</span>
           </div>
         </div>
         <div className="flex flex-col gap-1 p-2 shrink-0">
-          <button onClick={() => onEdit(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-secondary hover:bg-amber-50 transition-colors"><Pencil className="w-4 h-4" /></button>
-          <button onClick={() => onDelete(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
+          <button onClick={() => onEdit(review)} className="p-1.5 rounded-lg text-secondary hover:text-secondary hover:bg-accent transition-colors"><Pencil className="w-4 h-4" /></button>
+          <button onClick={() => onDelete(review.id)} className="p-1.5 rounded-lg text-secondary hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 className="w-4 h-4" /></button>
         </div>
       </div>
 
       {review.review ? (
         <div className="px-4 pb-3 pt-0"><p className="text-sm text-gray-700 leading-relaxed">{review.review}</p></div>
       ) : (
-        <div className="px-4 pb-3 pt-0"><p className="text-xs text-gray-400 italic">No written review.</p></div>
+        <div className="px-4 pb-3 pt-0"><p className="text-xs text-secondary italic">No written review.</p></div>
       )}
 
       {review.photos?.filter(p => p.photo_url).length > 0 && (
@@ -223,7 +223,7 @@ function ReviewCard({
       )}
 
       <div className="px-4 pb-3 flex flex-wrap items-center gap-2 border-t border-gray-50 pt-2">
-        {!review.is_published && <span className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full">Pending approval</span>}
+        {!review.is_published && <span className="inline-flex items-center gap-1 text-xs bg-accent text-accent px-2 py-0.5 rounded-full">Pending approval</span>}
         {review.is_published  && <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Published</span>}
         <a href="/restaurants" target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center gap-1 text-xs text-secondary hover:underline font-medium">
           <ExternalLink className="w-3 h-3" /> View Restaurant
@@ -329,7 +329,7 @@ export default function CustomerReviewsPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-secondary">My Reviews</h1>
-          <p className="text-gray-500 mt-1 text-sm">
+          <p className="text-secondary mt-1 text-sm">
             {count > 0 ? `${count} review${count !== 1 ? 's' : ''} posted` : 'Manage your menu reviews'}
           </p>
         </div>
@@ -348,8 +348,8 @@ export default function CustomerReviewsPage() {
             {!loading && !pageError && reviews.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
                 <Star className="w-12 h-12 text-gray-200" />
-                <p className="text-gray-500 font-medium">No reviews yet</p>
-                <p className="text-gray-400 text-sm">Your menu reviews will appear here once you post them.</p>
+                <p className="text-secondary font-medium">No reviews yet</p>
+                <p className="text-secondary text-sm">Your menu reviews will appear here once you post them.</p>
                 <a href="/restaurants" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm text-secondary hover:underline font-medium mt-1">
                   <ExternalLink className="w-4 h-4" /> Browse Restaurants
@@ -375,7 +375,7 @@ export default function CustomerReviewsPage() {
                 <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)} className="flex items-center gap-1">
                   <ChevronLeft className="w-4 h-4" /> Previous
                 </Button>
-                <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
+                <span className="text-sm text-secondary">Page {page} of {totalPages}</span>
                 <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="flex items-center gap-1">
                   Next <ChevronRight className="w-4 h-4" />
                 </Button>

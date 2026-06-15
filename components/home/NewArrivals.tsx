@@ -42,12 +42,12 @@ function daysAgo(dateStr: string): string {
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 function Skeleton() {
   return (
-    <div className="flex-shrink-0 w-52 rounded-2xl overflow-hidden bg-black/[0.04] border border-black/8 animate-pulse">
-      <div className="h-36 bg-black/10" />
+    <div className="flex-shrink-0 w-52 rounded-2xl overflow-hidden bg-secondary/[0.04] border border-secondary/8 animate-pulse">
+      <div className="h-36 bg-secondary/10" />
       <div className="p-4 space-y-2">
-        <div className="h-3.5 bg-black/10 rounded-full w-3/4" />
-        <div className="h-3 bg-black/8 rounded-full w-1/2" />
-        <div className="h-3 bg-black/6 rounded-full w-2/3" />
+        <div className="h-3.5 bg-secondary/10 rounded-full w-3/4" />
+        <div className="h-3 bg-secondary/8 rounded-full w-1/2" />
+        <div className="h-3 bg-secondary/6 rounded-full w-2/3" />
       </div>
     </div>
   );
@@ -67,10 +67,10 @@ const slug = toSlug(r.name);
     >
       <Link
         href={`/restaurants/${slug}`}
-        className="group flex flex-col rounded-2xl overflow-hidden border border-black/8 hover:border-[#d4b78f]/50 bg-black/[0.03] hover:bg-black/[0.06] transition-all duration-300 h-full"
+        className="group flex flex-col rounded-2xl overflow-hidden border border-secondary/8 hover:border-accent/50 bg-secondary/[0.03] hover:bg-secondary/[0.06] transition-all duration-300 h-full"
       >
         {/* Image */}
-        <div className="relative h-36 overflow-hidden bg-black/5 shrink-0">
+        <div className="relative h-36 overflow-hidden bg-secondary/5 shrink-0">
           {photo ? (
             <Image
               src={photo}
@@ -105,18 +105,18 @@ const slug = toSlug(r.name);
 
         {/* Body */}
         <div className="flex flex-col flex-1 p-4 gap-1.5">
-          <h3 className="font-medium text-black text-sm leading-snug line-clamp-1 group-hover:text-[#d4b78f] transition-colors">
+          <h3 className="font-medium text-secondary text-sm leading-snug line-clamp-1 group-hover:text-accent transition-colors">
             {r.name}
           </h3>
-          <div className="flex items-center gap-1 text-black/40">
+          <div className="flex items-center gap-1 text-secondary/40">
             <MapPin size={10} className="shrink-0" />
             <p className="text-xs truncate">{r.city}</p>
           </div>
 
           {/* Menu/category count */}
-          <div className="mt-auto pt-2 flex items-center gap-2 border-t border-black/6">
+          <div className="mt-auto pt-2 flex items-center gap-2 border-t border-secondary/6">
             {r.menus_count > 0 ? (
-              <span className="text-[10px] text-black/40">
+              <span className="text-[10px] text-secondary/40">
                 {r.menus_count} menu item{r.menus_count !== 1 ? 's' : ''}
               </span>
             ) : (
@@ -168,7 +168,7 @@ export default function NewArrivals() {
   return (
     <section className="relative py-10 overflow-hidden">
       {/* Top rule */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4b78f]/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
 <SectionHeader
@@ -197,14 +197,14 @@ export default function NewArrivals() {
         <div className="mt-4 sm:hidden text-center">
           <Link
             href="/restaurants"
-            className="text-xs text-black/35 hover:text-[#d4b78f] transition-colors"
+            className="text-xs text-secondary/35 hover:text-accent transition-colors"
           >
             View all restaurants →
           </Link>
         </div>
 
         {/* Bottom rule */}
-        <div className="mt-8 w-full h-px bg-[#d4b78f]/12" />
+        <div className="mt-8 w-full h-px bg-accent/12" />
       </div>
     </section>
   );

@@ -143,7 +143,7 @@ export default function SuperAdminDashboard() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-center py-8 text-gray-500">Loading...</p>
+              <p className="text-center py-8 text-secondary">Loading...</p>
             ) : restaurants.length > 0 ? (
               <Table>
                 <TableHeader>
@@ -165,7 +165,7 @@ export default function SuperAdminDashboard() {
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-gray-500 py-8 text-center">No restaurants found.</p>
+              <p className="text-secondary py-8 text-center">No restaurants found.</p>
             )}
           </CardContent>
         </Card>

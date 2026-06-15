@@ -84,7 +84,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
             <h2 className="text-4xl font-bold  mt-2">
               A Glimpse Inside
             </h2>
-            <p className="text-gray-400 mt-2 text-sm">
+            <p className="text-secondary mt-2 text-sm">
               {totalCount ?? photos.length} photos from {restaurantName}
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
                   sizes="380px"
                 />
                 {/* Dark overlay */}
-                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 bg-secondary/30" />
 
                 {/* Active ring */}
                 {i === current && (
@@ -134,7 +134,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
                 )}
 
                 {/* Label */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-secondary/70 to-transparent">
                   <p className=" text-sm font-medium">
                     {restaurantName}
                   </p>

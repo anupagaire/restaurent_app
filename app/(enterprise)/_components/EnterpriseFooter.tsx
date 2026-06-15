@@ -42,19 +42,19 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               <div>
                 <h2 className="text-xl font-bold text-white">{restaurant.name}</h2>
                 {restaurant.city && (
-                  <p className="text-xs text-gray-400">{restaurant.city}, Nepal</p>
+                  <p className="text-xs text-secondary">{restaurant.city}, Nepal</p>
                 )}
               </div>
             </div>
 
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">
+            <p className="text-secondary text-sm leading-relaxed mb-4">
               {restaurant.amenities ?? 'Bringing the best flavors to your table. Fresh • Delicious • Authentic'}
             </p>
 
             {/* Stars */}
             <div className="flex gap-1 mb-5">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} size={14} className="fill-amber-400 text-amber-400" />
+                <Star key={s} size={14} className="fill-accent text-accent" />
               ))}
             </div>
 
@@ -80,7 +80,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-2"
+                    className="text-sm text-secondary hover:text-orange-400 transition-colors flex items-center gap-2"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
                     {link.label}
@@ -98,7 +98,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               {restaurant.address && (
                 <div className="flex items-start gap-3">
                   <MapPin size={16} className="text-orange-400 mt-0.5 shrink-0" />
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-secondary">
                     {restaurant.address}
                     {restaurant.city ? `, ${restaurant.city}` : ''}
                     {restaurant.zip ? ` - ${restaurant.zip}` : ''}
@@ -108,12 +108,12 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
 
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-orange-400 shrink-0" />
-                <p className="text-sm text-gray-400">Contact us for reservations</p>
+                <p className="text-sm text-secondary">Contact us for reservations</p>
               </div>
 
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-orange-400 shrink-0" />
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-secondary">
                   info@{restaurant.name?.toLowerCase().replace(/\s+/g, '')}.com
                 </p>
               </div>
@@ -121,7 +121,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               {restaurant.table_count && restaurant.table_count > 0 ? (
                 <div className="flex items-center gap-3">
                   <span className="text-base shrink-0">🪑</span>
-                  <p className="text-sm text-gray-400">{restaurant.table_count} tables available</p>
+                  <p className="text-sm text-secondary">{restaurant.table_count} tables available</p>
                 </div>
               ) : null}
             </div>
@@ -137,7 +137,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-secondary">
             © {year} {restaurant.name}. All rights reserved.
           </p>
           <p className="text-xs text-gray-600">

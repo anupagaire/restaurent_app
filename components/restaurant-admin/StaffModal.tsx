@@ -137,7 +137,7 @@ export default function StaffModal({
           <div className="space-y-2">
             <Label>Role <span className="text-red-500">*</span></Label>
             {roles.length === 0 ? (
-              <p className="text-sm text-gray-400">Loading roles...</p>
+              <p className="text-sm text-secondary">Loading roles...</p>
             ) : (
               <div className="space-y-2">
                 {roles.map(role => (
@@ -163,7 +163,7 @@ export default function StaffModal({
               Cancel
             </Button>
             <Button type="submit" disabled={submitting || !formData.role_id}
-              className="bg-secondary hover:bg-[#3f260f]">
+              className="bg-secondary hover:bg-secondary">
               {submitting
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…</>
                 : editingStaff ? '✓ Save Changes' : '✓ Create Staff'}

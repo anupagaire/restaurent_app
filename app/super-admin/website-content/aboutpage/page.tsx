@@ -104,11 +104,11 @@ export default function AboutAdminPage() {
     });
   };
 
-  if (!data) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data) return <div className="p-6 text-secondary">Loading...</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
         ← Back
       </button>
       <h1 className="text-2xl font-bold text-secondary">About Page Content</h1>
@@ -156,7 +156,7 @@ export default function AboutAdminPage() {
               />
             </label>
           </div>
-          {data.hero?.image && <p className="text-xs text-gray-400 mt-1 truncate">{data.hero.image}</p>}
+          {data.hero?.image && <p className="text-xs text-secondary mt-1 truncate">{data.hero.image}</p>}
         </div>
 
         <div className="flex items-center gap-3">
@@ -215,7 +215,7 @@ export default function AboutAdminPage() {
               />
             </label>
           </div>
-          {data.introSection?.image && <p className="text-xs text-gray-400 mt-1 truncate">{data.introSection.image}</p>}
+          {data.introSection?.image && <p className="text-xs text-secondary mt-1 truncate">{data.introSection.image}</p>}
         </div>
 
         {/* ✅ Paragraphs with React Quill */}
@@ -225,7 +225,7 @@ export default function AboutAdminPage() {
             {(data.introSection?.paragraphs ?? []).map((p: string, i: number) => (
               <div key={i} className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-gray-500">Paragraph #{i + 1}</span>
+                  <span className="text-xs font-semibold text-secondary">Paragraph #{i + 1}</span>
                   <button
                     onClick={() => updatePath(['introSection', 'paragraphs'], data.introSection.paragraphs.filter((_: any, j: number) => j !== i))}
                     className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
@@ -278,7 +278,7 @@ export default function AboutAdminPage() {
                 {(data.visionSection?.[side]?.content ?? []).map((line: string, i: number) => (
                   <div key={i} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-gray-500">Line #{i + 1}</span>
+                      <span className="text-xs font-semibold text-secondary">Line #{i + 1}</span>
                       <button
                         onClick={() => updatePath(['visionSection', side, 'content'], data.visionSection[side].content.filter((_: any, j: number) => j !== i))}
                         className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
@@ -423,7 +423,7 @@ export default function AboutAdminPage() {
                   />
                 </label>
               </div>
-              {feature.image && <p className="text-xs text-gray-400 mt-1 truncate">{feature.image}</p>}
+              {feature.image && <p className="text-xs text-secondary mt-1 truncate">{feature.image}</p>}
             </div>
           </div>
         ))}

@@ -11,7 +11,7 @@ import {
   X,
   Menu as MenuIcon,
   QrCode,
-  History,
+  History,Globe,
   Star, 
 
 } from 'lucide-react';
@@ -37,7 +37,12 @@ const menuItems: MenuItem[] = [
     icon: Store,
     permissionKey: null,
   },
-
+ { 
+    title: 'Hero Slider', 
+    href: '/restaurant-admin/heroslider', 
+    icon: Store,
+    permissionKey: null,
+  },
   { 
     title: 'Menu', 
     href: '/restaurant-admin/menu', 
@@ -86,6 +91,16 @@ const menuItems: MenuItem[] = [
     icon: MenuIcon,
     permissionKey: null, 
   },
+ { 
+    title: 'Custom Domain', 
+    href: '/restaurant-admin/custom-domain', 
+    icon: Globe,
+    permissionKey: null, 
+  },
+
+
+
+
   { 
     title: 'Settings', 
     href: '/restaurant-admin/settings', 
@@ -126,7 +141,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          className="fixed inset-0 bg-secondary/60 z-40 md:hidden"
           onClick={onClose}
         />
       )}
@@ -145,7 +160,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             </div>
             <div>
               <h1 className="font-bold text-2xl tracking-tight text-secondary">ABC</h1>
-              <p className="text-xs text-gray-500 -mt-1">
+              <p className="text-xs text-secondary -mt-1">
                 {currentUser?.role || 'Restaurant Admin'}
               </p>
             </div>
@@ -183,7 +198,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 );
               })
             ) : (
-              <li className="px-4 py-8 text-center text-gray-400 text-sm">
+              <li className="px-4 py-8 text-center text-secondary text-sm">
                 No accessible menu items
               </li>
             )}

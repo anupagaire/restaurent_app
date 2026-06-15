@@ -92,13 +92,13 @@ const router = useRouter();
       return { ...prev, how_it_works_section: { ...prev.how_it_works_section, steps } };
     });
 
-  if (!data?.how_it_works_section) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data?.how_it_works_section) return <div className="p-6 text-secondary">Loading...</div>;
 
   const { title, description, steps } = data.how_it_works_section;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
   ← Back
 </button>
       <h1 className="text-2xl font-bold text-secondary">How It Works Content</h1>

@@ -152,13 +152,13 @@ export default function TestimonialsAdminPage() {
       return { ...prev, testimonials_section: { ...prev.testimonials_section, restaurants } };
     });
 
-  if (!data || !data.testimonials_section) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data || !data.testimonials_section) return <div className="p-6 text-secondary">Loading...</div>;
 
   const { title, description, restaurants } = data.testimonials_section;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
         ← Back
       </button>
       <h1 className="text-2xl font-bold text-secondary">Testimonials Content</h1>
@@ -222,7 +222,7 @@ export default function TestimonialsAdminPage() {
                   />
                 </label>
               </div>
-              {r.image && <p className="text-xs text-gray-400 mt-1 truncate max-w-xs">{r.image}</p>}
+              {r.image && <p className="text-xs text-secondary mt-1 truncate max-w-xs">{r.image}</p>}
             </div>
 
             {/* Name Field */}

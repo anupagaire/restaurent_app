@@ -98,34 +98,34 @@ function InvoicePreview({ payment, restaurant }: {
         {/* Bill To + Invoice Details */}
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Bill To</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-3">Bill To</p>
             <p className="font-bold text-gray-800 text-base">
               {restaurant?.name ?? payment.restaurant_name ?? `Restaurant #${payment.restaurant}`}
             </p>
             {restaurant?.owner_name && <p className="text-gray-600 text-sm mt-0.5">{restaurant.owner_name}</p>}
-            {restaurant?.email     && <p className="text-gray-500 text-sm">{restaurant.email}</p>}
-            {restaurant?.phone     && <p className="text-gray-500 text-sm">{restaurant.phone}</p>}
-            {restaurant?.address   && <p className="text-gray-500 text-sm mt-1">{restaurant.address}</p>}
+            {restaurant?.email     && <p className="text-secondary text-sm">{restaurant.email}</p>}
+            {restaurant?.phone     && <p className="text-secondary text-sm">{restaurant.phone}</p>}
+            {restaurant?.address   && <p className="text-secondary text-sm mt-1">{restaurant.address}</p>}
           </div>
           <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Invoice Details</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-3">Invoice Details</p>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between gap-8">
-                <span className="text-gray-500">Invoice No</span>
+                <span className="text-secondary">Invoice No</span>
                 <span className="font-semibold text-gray-800">{invoiceNo}</span>
               </div>
               <div className="flex justify-between gap-8">
-                <span className="text-gray-500">Date Issued</span>
+                <span className="text-secondary">Date Issued</span>
                 <span className="font-semibold text-gray-800">{fmtDate(payment.created_on)}</span>
               </div>
               {payment.verified_at && (
                 <div className="flex justify-between gap-8">
-                  <span className="text-gray-500">Date Approved</span>
+                  <span className="text-secondary">Date Approved</span>
                   <span className="font-semibold text-gray-800">{fmtDate(payment.verified_at)}</span>
                 </div>
               )}
               <div className="flex justify-between gap-8">
-                <span className="text-gray-500">Status</span>
+                <span className="text-secondary">Status</span>
                 <span className="font-bold" style={{
                   color: payment.status === 'approved' ? '#16a34a' : payment.status === 'pending' ? '#b45309' : '#dc2626'
                 }}>
@@ -140,10 +140,10 @@ function InvoicePreview({ payment, restaurant }: {
         <div className="mb-8">
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                <th className="py-3 text-left text-xs font-bold uppercase tracking-widest text-gray-400">Description</th>
-                <th className="py-3 text-center text-xs font-bold uppercase tracking-widest text-gray-400">Duration</th>
-                <th className="py-3 text-right text-xs font-bold uppercase tracking-widest text-gray-400">Amount</th>
+              <tr style={{ borderBottom: '2px solid secondary' }}>
+                <th className="py-3 text-left text-xs font-bold uppercase tracking-widest text-secondary">Description</th>
+                <th className="py-3 text-center text-xs font-bold uppercase tracking-widest text-secondary">Duration</th>
+                <th className="py-3 text-right text-xs font-bold uppercase tracking-widest text-secondary">Amount</th>
               </tr>
             </thead>
             <tbody>
@@ -152,7 +152,7 @@ function InvoicePreview({ payment, restaurant }: {
                   <p className="font-semibold text-gray-800">
                     {payment.plan_detail?.name ?? 'Subscription Plan'} — Subscription
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5">Restaurant subscription service</p>
+                  <p className="text-xs text-secondary mt-0.5">Restaurant subscription service</p>
                 </td>
                 <td className="py-4 text-center text-sm text-gray-600">
                   {payment.plan_detail ? durationLabel(payment.plan_detail.duration_days) : '—'}
@@ -169,7 +169,7 @@ function InvoicePreview({ payment, restaurant }: {
         <div className="flex justify-end mb-8">
           <div className="w-64 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Subtotal</span>
+              <span className="text-secondary">Subtotal</span>
               <span className="font-semibold">NPR {fmtMoney(payment.amount)}</span>
             </div>
             {discount > 0 && (
@@ -188,7 +188,7 @@ function InvoicePreview({ payment, restaurant }: {
         {/* TXN ref */}
         {payment.transaction_reference && (
           <div className="mb-6 p-4 rounded-xl" style={{ background: '#f8f4f0', border: '1px solid rgba(184,147,106,0.25)' }}>
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Transaction Reference</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-1">Transaction Reference</p>
             <p className="font-mono text-sm text-gray-700">{payment.transaction_reference}</p>
           </div>
         )}
@@ -203,7 +203,7 @@ function InvoicePreview({ payment, restaurant }: {
 
         {/* Footer */}
         <div className="border-t border-gray-100 pt-6 text-center">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-secondary">
             This is a computer-generated invoice. For queries, contact support.
           </p>
           <p className="text-xs text-gray-300 mt-1">Payment processed manually and verified by superadmin.</p>
@@ -242,14 +242,14 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
   <meta charset="utf-8">
   <title>${invoiceNo}</title>
   <style>
-    body { font-family: Georgia, serif; margin: 0; padding: 40px; color: #1e0f02; }
+    body { font-family: Georgia, serif; margin: 0; padding: 40px; color: secondary; }
     * { box-sizing: border-box; }
     .header { background: #513012; color: white; padding: 40px; border-radius: 12px 12px 0 0; }
     .header h1 { margin: 0; font-size: 2rem; letter-spacing: 4px; }
     .header-sub { color: #fbbf89; font-size: 0.85rem; margin-top: 4px; }
     .header-right { text-align: right; }
     .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
-    .body { padding: 40px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; }
+    .body { padding: 40px; border: 1px solid secondary; border-top: none; border-radius: 0 0 12px 12px; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
     .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #9ca3af; font-weight: bold; margin-bottom: 8px; }
     .bill-name { font-weight: bold; font-size: 1rem; }
@@ -258,7 +258,7 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
     .detail-row span:first-child { color: #6b7280; }
     .detail-row span:last-child { font-weight: 600; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
-    thead th { border-bottom: 2px solid #e5e7eb; padding: 12px 0; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #9ca3af; }
+    thead th { border-bottom: 2px solid secondary; padding: 12px 0; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #9ca3af; }
     thead th:last-child { text-align: right; }
     thead th:nth-child(2) { text-align: center; }
     tbody td { padding: 16px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.875rem; vertical-align: top; }
@@ -268,7 +268,7 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
     .totals-inner { width: 260px; }
     .total-row { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 8px; }
     .total-row span:first-child { color: #6b7280; }
-    .total-final { border-top: 2px solid #e5e7eb; padding-top: 8px; display: flex; justify-content: space-between; }
+    .total-final { border-top: 2px solid secondary; padding-top: 8px; display: flex; justify-content: space-between; }
     .total-final span:first-child { font-weight: bold; }
     .total-final span:last-child { font-weight: bold; font-size: 1.1rem; color: #513012; }
     .discount { color: #16a34a !important; }
@@ -369,7 +369,7 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/50 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed z-50 rounded-3xl w-full max-w-sm bg-white p-6"
         style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
           boxShadow: '0 24px 64px rgba(0,0,0,0.15)' }}>
@@ -377,7 +377,7 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
           <div className="text-center py-4">
             <CheckCircle2 size={48} className="mx-auto mb-3" style={{ color: '#16a34a' }} />
             <p className="font-bold text-lg" style={{ color: '#166534' }}>Invoice Downloaded!</p>
-            <p className="text-sm text-gray-500 mt-2 mb-5">
+            <p className="text-sm text-secondary mt-2 mb-5">
               Open the downloaded HTML file and print/share it with the restaurant admin.
             </p>
             <button onClick={onClose}
@@ -388,10 +388,10 @@ function SendInvoiceModal({ payment, restaurant, onClose }: {
           </div>
         ) : (
           <>
-            <h2 className="font-bold text-xl mb-2" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl mb-2" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               Download Invoice
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-secondary mb-6">
               Download invoice <strong>INV-{String(payment.id).padStart(5, '0')}</strong> for{' '}
               <strong>{restaurant?.name ?? `Restaurant #${payment.restaurant}`}</strong>.
               Open and print it or send via email.
@@ -485,7 +485,7 @@ export default function SuperAdminInvoicePage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Invoices
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Generate and send invoices to restaurant admins</p>
+          <p className="text-secondary text-sm mt-1">Generate and send invoices to restaurant admins</p>
         </div>
         <button onClick={() => load(true)} disabled={refreshing}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border border-gray-200 hover:bg-gray-50">
@@ -495,7 +495,7 @@ export default function SuperAdminInvoicePage() {
 
       {/* Search */}
       <div className="relative max-w-md">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
         <input type="text" value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search by restaurant or plan…"
@@ -520,7 +520,7 @@ export default function SuperAdminInvoicePage() {
                 <Download size={14} /> Download Invoice
               </button>
               <button onClick={() => setPreviewPayment(null)}
-                className="px-4 py-2 rounded-xl text-sm border border-gray-200 text-gray-500">
+                className="px-4 py-2 rounded-xl text-sm border border-gray-200 text-secondary">
                 Close Preview
               </button>
             </div>
@@ -538,7 +538,7 @@ export default function SuperAdminInvoicePage() {
           <div className="px-5 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-800">
               All Payments
-              <span className="text-sm font-normal text-gray-400 ml-2">({total})</span>
+              <span className="text-sm font-normal text-secondary ml-2">({total})</span>
             </h2>
           </div>
 
@@ -547,7 +547,7 @@ export default function SuperAdminInvoicePage() {
               <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : payments.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
+            <div className="text-center py-16 text-secondary">
               <p className="font-medium">No payments found</p>
             </div>
           ) : (
@@ -557,7 +557,7 @@ export default function SuperAdminInvoicePage() {
                   <thead>
                     <tr style={{ borderBottom: '2px solid #f3f4f6' }}>
                       {['Invoice', 'Restaurant', 'Plan', 'Amount', 'Status', 'Date', 'Actions'].map(h => (
-                        <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">{h}</th>
+                        <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -574,12 +574,12 @@ export default function SuperAdminInvoicePage() {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <Building2 size={13} className="text-gray-400" />
+                              <Building2 size={13} className="text-secondary" />
                               <p className="font-semibold text-sm text-gray-800">
                                 {rest?.name ?? p.restaurant_name ?? `Restaurant #${p.restaurant}`}
                               </p>
                             </div>
-                            {rest?.email && <p className="text-xs text-gray-400 mt-0.5 ml-5">{rest.email}</p>}
+                            {rest?.email && <p className="text-xs text-secondary mt-0.5 ml-5">{rest.email}</p>}
                           </td>
                           <td className="py-4 px-4">
                             <p className="text-sm text-gray-700">{p.plan_detail?.name ?? `Plan #${p.plan}`}</p>
@@ -596,7 +596,7 @@ export default function SuperAdminInvoicePage() {
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <p className="text-xs text-gray-500">{fmtDate(p.created_on)}</p>
+                            <p className="text-xs text-secondary">{fmtDate(p.created_on)}</p>
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex gap-2">
@@ -620,7 +620,7 @@ export default function SuperAdminInvoicePage() {
 
               {total > PAGE_SIZE && (
                 <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100">
-                  <p className="text-xs text-gray-400">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
+                  <p className="text-xs text-secondary">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
                   <div className="flex gap-2">
                     <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
                       className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40">Previous</button>

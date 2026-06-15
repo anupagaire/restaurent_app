@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 
-const POPULAR_SEARCHES = ["Momo", "Chowmein", "Sekuwa", "Coffee", "Newari Khaja", "Pizza"];
+const POPULAR_SEARCHES = ["Momo", "Chowmein", "Pasta", "Coffee", "Newari Khaja", "Pizza"];
 
 const STATS = [
   { value: "500+", label: "Restaurants" },
@@ -353,18 +353,8 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         .hero__btn-primary svg { width: 14px; height: 14px; }
 
         .hero__btn-secondary {
-          font-family: 'Outfit', sans-serif;
-          font-size: 12px;
-          font-weight: 400;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: var(--cream);
-          background: transparent;
-          border: 1px solid rgba(242,232,213,0.3);
-          padding: 15px 38px;
-          border-radius: 2px;
-          cursor: pointer;
-          text-decoration: none;
+          
+          
           display: inline-flex;
           align-items: center;
           gap: 10px;
@@ -473,6 +463,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           .hero__ctas { flex-direction: column; align-items: center; }
           .hero__btn-primary, .hero__btn-secondary { width: 100%; justify-content: center; }
         }
+          
       `}</style>
 
       <section
@@ -483,13 +474,12 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     
         <div className="hero__bg">
           <Image
-            src="/bg1.jpg"
-            alt="Best Restaurants in Nepal"
-            fill
-            priority
-            quality={90}
-            style={{ objectFit: "cover" }}
-          />
+  src="/bg1.jpg"
+  alt="Best Restaurants in Nepal"
+  fill
+  priority
+  style={{ objectFit: "cover" }}
+/>
         </div>
 
         {/* ── Overlays ── */}
@@ -571,7 +561,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
                 <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
-            <Link href="/menusearch" className="hero__btn-secondary">
+            <Link href="/menusearch" className="hero__btn-secondary border border-[rgba(242,232,213,0.3)] px-[18px] py-[2px] rounded-sm cursor-pointer no-underline text-xs font-normal tracking-[0.22em] uppercase text-[var(--cream)] bg-transparent">
               Compare Menus
             </Link>
           </div>

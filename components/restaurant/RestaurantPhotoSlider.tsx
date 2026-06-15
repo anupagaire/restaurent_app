@@ -95,13 +95,13 @@ export default function RestaurantPhotoSlider({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white p-4 rounded-full transition-all z-10"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 bg-secondary/70 hover:bg-secondary/90 text-white p-4 rounded-full transition-all z-10"
           >
             ←
           </button>
           <button
             onClick={goToNext}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white p-4 rounded-full transition-all z-10"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 bg-secondary/70 hover:bg-secondary/90 text-white p-4 rounded-full transition-all z-10"
           >
             →
           </button>
@@ -116,7 +116,7 @@ export default function RestaurantPhotoSlider({
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-3 h-3 rounded-full transition-all ${
-                index === currentIndex ? 'bg-black scale-110' : 'bg-gray-300'
+                index === currentIndex ? 'bg-secondary scale-110' : 'bg-gray-300'
               }`}
             />
           ))}

@@ -98,7 +98,7 @@ export default async function EnterpriseHomePage() {
             <div className="flex items-center gap-3 py-2 md:py-0">
               <MapPin size={18} className="text-orange-400 shrink-0" />
               <div>
-                <p className="text-xs text-gray-400">Location</p>
+                <p className="text-xs text-secondary">Location</p>
                 <p className="text-sm font-medium">{restaurant.address}, {restaurant.city}</p>
               </div>
             </div>
@@ -106,14 +106,14 @@ export default async function EnterpriseHomePage() {
           <div className="flex items-center gap-3 py-2 md:py-0 md:px-6">
             <Clock size={18} className="text-orange-400 shrink-0" />
             <div>
-              <p className="text-xs text-gray-400">Hours</p>
+              <p className="text-xs text-secondary">Hours</p>
               <p className="text-sm font-medium">{restaurant?.availability ?? 'Open Daily'}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 py-2 md:py-0 md:px-6">
             <Phone size={18} className="text-orange-400 shrink-0" />
             <div>
-              <p className="text-xs text-gray-400">Reservations</p>
+              <p className="text-xs text-secondary">Reservations</p>
               <p className="text-sm font-medium">Book online or call us</p>
             </div>
           </div>
@@ -128,7 +128,7 @@ export default async function EnterpriseHomePage() {
             <h2 className="text-4xl font-bold text-gray-900 mt-2 mb-6 leading-tight">
               Welcome to<br />{restaurant?.name}
             </h2>
-            <p className="text-gray-500 leading-relaxed mb-6">
+            <p className="text-secondary leading-relaxed mb-6">
               {restaurant?.amenities ?? 'We bring you an exceptional dining experience with carefully crafted dishes and warm hospitality.'}
             </p>
             <div className="grid grid-cols-2 gap-4 mt-8">
@@ -141,7 +141,7 @@ export default async function EnterpriseHomePage() {
                 <div key={stat.label} className="bg-orange-50 rounded-2xl p-4 text-center">
                   <div className="text-2xl mb-1">{stat.icon}</div>
                   <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                  <div className="text-xs text-gray-500">{stat.label}</div>
+                  <div className="text-xs text-secondary">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -152,10 +152,10 @@ export default async function EnterpriseHomePage() {
               <div className="flex items-center gap-2 mb-6">
                 <div className="flex">
                   {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={16} className="text-amber-400 fill-amber-400" />
+                    <Star key={s} size={16} className="text-accent fill-accent" />
                   ))}
                 </div>
-                <span className="text-gray-400 text-sm">5.0 Rating</span>
+                <span className="text-secondary text-sm">5.0 Rating</span>
               </div>
               <blockquote className="text-gray-300 text-lg leading-relaxed italic mb-6">
                 "An unforgettable dining experience. The food, ambiance, and service are all exceptional."
@@ -164,7 +164,7 @@ export default async function EnterpriseHomePage() {
                 <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold">G</div>
                 <div>
                   <p className="font-medium text-sm">Guest Review</p>
-                  <p className="text-gray-400 text-xs">Verified Customer</p>
+                  <p className="text-secondary text-xs">Verified Customer</p>
                 </div>
               </div>
             </div>
@@ -221,7 +221,7 @@ export default async function EnterpriseHomePage() {
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                       sizes="(max-width: 640px) 50vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
+                    <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/30 transition-all duration-300" />
                   </div>
                 )
               })}

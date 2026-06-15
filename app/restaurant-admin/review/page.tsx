@@ -118,7 +118,7 @@ const getReviewText = (reviewText: string): string => {
         </div>
       ) : reviews.length === 0 ? (
         <Card className="py-20 text-center">
-          <p className="text-gray-500 text-xl">No reviews yet.</p>
+          <p className="text-secondary text-xl">No reviews yet.</p>
         </Card>
       ) : (
         <>
@@ -129,12 +129,12 @@ const getReviewText = (reviewText: string): string => {
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="flex text-2xl text-amber-500">
+                      <div className="flex text-2xl text-accent0">
                         {Array.from({ length: review.rating }).map((_, i) => (
                           <Star key={i} className="fill-current" />
                         ))}
                       </div>
-                      <span className="text-xl font-bold text-amber-600">{review.rating}</span>
+                      <span className="text-xl font-bold text-accent">{review.rating}</span>
                     </div>
 
                     <Badge variant={review.is_published ? "default" : "secondary"}>
@@ -154,7 +154,7 @@ const getReviewText = (reviewText: string): string => {
    Review: {getReviewText(review.review)}
   </p>
 </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-secondary">
                     {formatDate(review.created_on)}
                   </div>
 
@@ -169,7 +169,7 @@ const getReviewText = (reviewText: string): string => {
                         />
                       ))}
                       {review.photos.length > 3 && (
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-500">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-secondary">
                           +{review.photos.length - 3}
                         </div>
                       )}
@@ -225,20 +225,20 @@ const getReviewText = (reviewText: string): string => {
 
       {/* Full Review Modal */}
       {selectedReview && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-secondary/70 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-auto">
             <div className="p-8">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="flex text-3xl text-amber-500">
+                    <div className="flex text-3xl text-accent0">
                       {Array.from({ length: selectedReview.rating }).map((_, i) => (
                         <Star key={i} className="fill-current" />
                       ))}
                     </div>
                     <span className="text-3xl font-bold">{selectedReview.rating}/5</span>
                   </div>
-                  <p className="text-gray-500 mt-1">
+                  <p className="text-secondary mt-1">
                     {formatDate(selectedReview.created_on)}
                   </p>
                 </div>

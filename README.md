@@ -25,13 +25,13 @@ Custom Colors (Specific page)
   linkHref="/menusearch"
   // Custom colors
   titleColor="text-white"
-  highlightColor="text-[#fde68a]"
+  highlightColor="text-accent"
   subtitleColor="text-white/70"
-  badgeBgColor="bg-[#fde68a]/20"
-  badgeTextColor="text-[#fde68a]"
+  badgeBgColor="bg-accent/20"
+  badgeTextColor="text-accent"
   linkBgColor="bg-primary"
-  linkTextColor="text-[#fde68a]"
-  linkHoverBgColor="hover:bg-[#fde68a]"
+  linkTextColor="text-accent"
+  linkHoverBgColor="hover:bg-accent"
   linkHoverTextColor="hover:text-primary"
   dividerColor="bg-white/20"
 />

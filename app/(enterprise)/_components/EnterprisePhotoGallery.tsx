@@ -81,13 +81,13 @@ export default function EnterprisePhotoGallery({
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+              <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/40 transition-all duration-300 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/20 backdrop-blur-sm rounded-full p-3">
                   <ZoomIn size={20} className="text-white" />
                 </div>
               </div>
               {/* Photo number */}
-              <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all">
+              <div className="absolute top-2 right-2 bg-secondary/50 text-white text-xs px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all">
                 {start + idx + 1} / {photos.length}
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function EnterprisePhotoGallery({
       </div>
 
       {/* ── Count ── */}
-      <p className="text-center text-sm text-gray-400 mt-6">
+      <p className="text-center text-sm text-secondary mt-6">
         Showing {start + 1}–{Math.min(start + perPage, photos.length)} of {photos.length} photos
       </p>
 
@@ -136,7 +136,7 @@ export default function EnterprisePhotoGallery({
       {/* ── Lightbox ── */}
       {lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-secondary/95 flex items-center justify-center"
           onClick={closeLightbox}
         >
           {/* Close */}

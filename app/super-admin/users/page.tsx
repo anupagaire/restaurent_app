@@ -133,7 +133,7 @@ export default function UsersPage() {
           </Button>
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-secondary hover:bg-[#3f260f]"
+            className="bg-secondary hover:bg-secondary"
           >
             <Plus className="mr-2 h-5 w-5" />
             Add New Admin
@@ -145,7 +145,7 @@ export default function UsersPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary h-5 w-5" />
               <Input
                 placeholder="Search by name, email or restaurant..."
                 value={searchTerm}
@@ -161,9 +161,9 @@ export default function UsersPage() {
 
         <CardContent>
           {loading ? (
-            <p className="text-center py-12 text-gray-500">Loading admins...</p>
+            <p className="text-center py-12 text-secondary">Loading admins...</p>
           ) : filteredUsers.length === 0 ? (
-            <p className="text-center text-gray-400 py-12">No admins found.</p>
+            <p className="text-center text-secondary py-12">No admins found.</p>
           ) : (
             <Table>
               <TableHeader>
@@ -180,8 +180,8 @@ export default function UsersPage() {
                     {/* Admin Details Column */}
                     <TableCell>
                       <div className="font-medium">{user.fullName}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                      <div className="text-sm text-gray-500">{user.phone}</div>
+                      <div className="text-sm text-secondary">{user.email}</div>
+                      <div className="text-sm text-secondary">{user.phone}</div>
                     </TableCell>
 
                     {/* Restaurant Details Column - More Informative */}
@@ -191,7 +191,7 @@ export default function UsersPage() {
                         <div className="text-sm text-gray-600 mt-1">{user.address}</div>
                       )}
                       {user.city && (
-                        <div className="text-xs text-gray-500">{user.city}</div>
+                        <div className="text-xs text-secondary">{user.city}</div>
                       )}
                     </TableCell>
 

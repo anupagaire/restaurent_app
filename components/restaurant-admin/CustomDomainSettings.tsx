@@ -148,7 +148,7 @@ export default function CustomDomainSettings() {
         </div>
         <div>
           <h3 className="font-bold text-gray-900">Custom Domain</h3>
-          <p className="text-sm text-gray-500">Connect your own domain to your enterprise site</p>
+          <p className="text-sm text-secondary">Connect your own domain to your enterprise site</p>
         </div>
         {/* Status badge */}
         {hasDomain && (
@@ -209,7 +209,7 @@ export default function CustomDomainSettings() {
             </button>
           )}
         </div>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-secondary">
           Enter your domain without https:// — e.g. <code className="bg-gray-100 px-1 rounded">www.myrestaurant.com</code>
         </p>
       </div>
@@ -229,7 +229,7 @@ export default function CustomDomainSettings() {
 
           {/* TXT Name */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Record Name / Host</label>
+            <label className="text-xs font-semibold text-secondary uppercase tracking-wider">Record Name / Host</label>
             <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
               <code className="text-sm text-gray-800 flex-1 break-all">{data.verification_txt_name}</code>
               <button
@@ -243,7 +243,7 @@ export default function CustomDomainSettings() {
 
           {/* TXT Value */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Record Value</label>
+            <label className="text-xs font-semibold text-secondary uppercase tracking-wider">Record Value</label>
             <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
               <code className="text-xs text-gray-800 flex-1 break-all">{data.verification_txt_value}</code>
               <button

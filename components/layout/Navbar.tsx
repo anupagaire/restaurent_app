@@ -115,7 +115,7 @@ const resolvedLogo = {
 
   const renderSearchBox = (dark = false) => (
     <div className={`relative flex items-center gap-2 rounded-xl px-3 py-2 ${dark ? 'bg-white/10 border border-white/20' : 'bg-white border border-gray-200'}`}>
-      <Search size={15} className={dark ? 'text-white/60' : 'text-gray-400'} />
+      <Search size={15} className={dark ? 'text-white/60' : 'text-secondary'} />
       <input
         ref={inputRef}
         type="text"
@@ -124,10 +124,10 @@ const resolvedLogo = {
         onKeyDown={handleKeyDown}
         placeholder="Search restaurants, cities..."
         autoComplete="off"
-        className={`flex-1 bg-transparent text-sm outline-none ${dark ? 'text-white placeholder:text-white/40' : 'text-gray-800 placeholder:text-gray-400'}`}
+        className={`flex-1 bg-transparent text-sm outline-none ${dark ? 'text-white placeholder:text-white/40' : 'text-gray-800 placeholder:text-secondary'}`}
       />
       {searchQuery && (
-        <button onClick={() => { setSearchQuery(''); setSuggestions([]); inputRef.current?.focus(); }} className={`text-xs ${dark ? 'text-white/40 hover:text-white/70' : 'text-gray-300 hover:text-gray-500'}`}>
+        <button onClick={() => { setSearchQuery(''); setSuggestions([]); inputRef.current?.focus(); }} className={`text-xs ${dark ? 'text-white/40 hover:text-white/70' : 'text-gray-300 hover:text-secondary'}`}>
           <X size={14} />
         </button>
       )}
@@ -142,19 +142,19 @@ const resolvedLogo = {
             className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden"
           >
             {loadingSuggestions ? (
-              <div className="px-4 py-3 text-xs text-gray-400 flex items-center gap-2">
+              <div className="px-4 py-3 text-xs text-secondary flex items-center gap-2">
                 <span className="animate-spin inline-block w-3 h-3 border border-gray-300 border-t-secondary rounded-full" />
                 Searching...
               </div>
             ) : (
               suggestions.map((name, i) => (
-                <button key={i} onClick={() => handleSearch(name)} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-secondary flex items-center gap-2 transition-colors border-b border-gray-50 last:border-0">
+                <button key={i} onClick={() => handleSearch(name)} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-accent hover:text-secondary flex items-center gap-2 transition-colors border-b border-gray-50 last:border-0">
                   <Search size={12} className="text-gray-300 " />
                   {name}
                 </button>
               ))
             )}
-            <button onClick={() => handleSearch()} className="w-full text-left px-4 py-2.5 text-xs text-secondary font-medium hover:bg-amber-50 border-t border-gray-100 flex items-center gap-1">
+            <button onClick={() => handleSearch()} className="w-full text-left px-4 py-2.5 text-xs text-secondary font-medium hover:bg-accent border-t border-gray-100 flex items-center gap-1">
               <Search size={11} /> Search all results for &ldquo;{searchQuery}&rdquo;
             </button>
           </motion.div>
@@ -167,7 +167,7 @@ const resolvedLogo = {
     <nav
 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
   scrolled || darkBg
-    ? 'bg-black/70 backdrop-blur-xl border-b border-white/10'
+    ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
     : 'bg-transparent'
 }`}
 
@@ -176,7 +176,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
 
   // className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
   //   scrolled
-  //     ? 'bg-black/70 backdrop-blur-xl border-b border-white/10'
+  //     ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
   //     : 'bg-transparent'
   // }`}
 >
@@ -217,7 +217,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                   <motion.div
                     initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-black/90 backdrop-blur-xl border border-white/15 rounded-2xl p-4 shadow-2xl"
+                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-secondary/90 backdrop-blur-xl border border-white/15 rounded-2xl p-4 shadow-2xl"
                   >
                     <p className="text-xs text-white/40 mb-2 font-medium tracking-wide uppercase">Search venues</p>
                     {renderSearchBox(true)}
@@ -261,7 +261,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
 
         <AnimatePresence>
           {isSearchMobile && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} className="md:hidden overflow-visible border-t border-white/10 px-4 py-4 bg-black/60">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} className="md:hidden overflow-visible border-t border-white/10 px-4 py-4 bg-secondary/60">
               {renderSearchBox(true)}
             </motion.div>
           )}
@@ -269,7 +269,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
 
         <AnimatePresence>
           {isOpen && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} className="md:hidden bg-black/90 backdrop-blur-xl border-t border-white/10 px-4 py-6">
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} className="md:hidden bg-secondary/90 backdrop-blur-xl border-t border-white/10 px-4 py-6">
               <div className="flex flex-col gap-5 text-white text-base">
                 {resolvedLinks.map((link) => (
                   <Link key={link.url} href={link.url} onClick={closeMenu} className="hover:text-[#c45cd1] transition font-medium">
@@ -280,7 +280,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                   <Link href={resolvedLoginBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium border border-white/20 hover:bg-white/10 transition">
                     {resolvedLoginBtn.text}
                   </Link>
-                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-[#47034E] to-[#5D0565] hover:opacity-90 transition">
+                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-primary to-[#5D0565] hover:opacity-90 transition">
                     {resolvedRegisterBtn.text}
                   </Link>
                 </div>

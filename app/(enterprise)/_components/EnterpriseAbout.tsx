@@ -62,7 +62,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
           <div className="space-y-3">
             <motion.h1
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
-              className="text-4xl sm:text-[52px] font-black tracking-tight leading-[1.05] text-gray-900"
+              className="text-4xl sm:text-[52px] font-secondary tracking-tight leading-[1.05] text-gray-900"
             >
               Welcome to{' '}
               <span className="text-orange-500">{restaurant.name}</span>
@@ -89,7 +89,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
             {/* Description */}
             <motion.p
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-              className="text-gray-500 font-medium text-[13.5px] leading-relaxed max-w-lg"
+              className="text-secondary font-medium text-[13.5px] leading-relaxed max-w-lg"
             >
               {restaurant.amenities ??
                 `${restaurant.name} offers an exceptional dining experience crafted with the finest ingredients, expert chefs, and warm hospitality. Come discover flavors that tell a story.`}
@@ -107,8 +107,8 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
                   <span className="text-lg">{stat.icon}</span>
                 </div>
                 <div>
-                  <div className="text-2xl font-black text-orange-500 leading-none">{stat.value}</div>
-                  <div className="text-[10.5px] font-bold text-gray-400 mt-0.5">{stat.label}</div>
+                  <div className="text-2xl font-secondary text-orange-500 leading-none">{stat.value}</div>
+                  <div className="text-[10.5px] font-bold text-secondary mt-0.5">{stat.label}</div>
                 </div>
                 {i < stats.length - 1 && <div className="h-10 w-px bg-gray-200 ml-3" />}
               </div>
@@ -194,10 +194,10 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
           <div className="absolute top-8 right-3 lg:right-8 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-white/70 p-2.5 flex items-center gap-2.5 w-44 z-20">
             <span className="text-lg bg-orange-50 p-1.5 rounded-xl shrink-0">📍</span>
             <div>
-              <span className="text-[11.5px] font-black text-gray-900 leading-tight block">
+              <span className="text-[11.5px] font-secondary text-gray-900 leading-tight block">
                 {restaurant.city ?? 'Our Location'}
               </span>
-              <span className="text-[9px] font-bold text-gray-400 mt-0.5 block">
+              <span className="text-[9px] font-bold text-secondary mt-0.5 block">
                 {restaurant.address ?? 'Visit Us Today'}
               </span>
             </div>
@@ -210,8 +210,8 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
               <span className="text-white text-[10px] font-extrabold">✓</span>
             </div>
             <div>
-              <div className="text-[9.5px] font-bold text-gray-400 leading-none">Est.</div>
-              <div className="text-[15px] font-black text-orange-500 leading-tight mt-0.5">
+              <div className="text-[9.5px] font-bold text-secondary leading-none">Est.</div>
+              <div className="text-[15px] font-secondary text-orange-500 leading-tight mt-0.5">
                 {restaurant.name}
               </div>
             </div>

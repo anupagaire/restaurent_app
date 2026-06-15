@@ -93,7 +93,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
         transition={{ duration: 0.8, delay: 0.35 }}
         className="mb-1"
       >
-        <p className="text-[#d4b78f] text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-6 font-light break-words">
+        <p className="text-accent text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-6 font-light break-words">
           {c.experience_title}
         </p>
         <div className="space-y-0 border-t border-white/10">
@@ -102,7 +102,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
               key={i}
               className="group flex items-start sm:items-center gap-4 sm:gap-6 py-4 border-b border-white/10 hover:border-primary/40 transition-colors duration-300"
             >
-              <span className="text-[#d4b78f]/40 text-xs font-light w-6 shrink-0 group-hover:text-[#d4b78f] transition-colors duration-300 mt-0.5 sm:mt-0">
+              <span className="text-accent/40 text-xs font-light w-6 shrink-0 group-hover:text-accent transition-colors duration-300 mt-0.5 sm:mt-0">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <span className="text-white/70 text-sm sm:text-base font-light group-hover:text-white transition-colors duration-300 break-words min-w-0">
@@ -175,7 +175,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
 
         <div className="absolute top-10 right-6 z-10 flex flex-col items-end gap-1">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className={`h-px transition-all duration-300 ${i === 0 ? 'w-8 bg-[#d4b78f]' : 'w-3 bg-white/20'}`} />
+            <div key={i} className={`h-px transition-all duration-300 ${i === 0 ? 'w-8 bg-accent' : 'w-3 bg-white/20'}`} />
           ))}
         </div>
       </div>
@@ -213,7 +213,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
             transition={{ duration: 0.6 }}
             className="flex items-center gap-4 mb-8 lg:mb-10"
           >
-            <div className="h-px w-12 bg-[#d4b78f]/50" />
+            <div className="h-px w-12 bg-accent/50" />
           </motion.div>
 
           {/* Title + description */}
@@ -223,7 +223,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-[#011659] leading-tight tracking-tight break-words"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-primaryleading-tight tracking-tight break-words"
             >
               {w.title}
             </motion.h2>
@@ -236,14 +236,14 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
               className="flex flex-col justify-end"
             >
               <div
-                className="text-sm sm:text-base lg:text-lg text-[#011659]/60 font-light leading-relaxed ql-content break-words"
+                className="text-sm sm:text-base lg:text-lg text-primary/60 font-light leading-relaxed ql-content break-words"
                 dangerouslySetInnerHTML={{ __html: w.description }}
               />
             </motion.div>
           </div>
 
-          <div className="w-full h-px bg-[#d4b78f]/30 mb-2 lg:mb-6" />
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#d4b78f]/20">
+          <div className="w-full h-px bg-accent/30 mb-2 lg:mb-6" />
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-accent/20">
             {w.benefits.map((benefit, index) => {
               const Icon = iconMap[benefit.icon] ?? Star;
               return (
@@ -253,18 +253,18 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group bg-[#faf7f0] hover:bg-[#011659] transition-all duration-500 p-6 sm:p-8 md:p-10 flex flex-col gap-5"
+                  className="group bg-[#faf7f0] hover:bg-primarytransition-all duration-500 p-6 sm:p-8 md:p-10 flex flex-col gap-5"
                 >
                   <div className="flex items-start justify-between">
-                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-[#d4b78f] transition-colors duration-300" />
-                    <span className="text-[#011659]/20 text-2xl sm:text-3xl font-black group-hover:text-white/10 transition-colors duration-300">
+                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-accent transition-colors duration-300" />
+                    <span className="text-primary/20 text-2xl sm:text-3xl font-secondary group-hover:text-white/10 transition-colors duration-300">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                   </div>
-                  <p className="text-[#011659] group-hover:text-white font-light text-sm sm:text-base leading-relaxed transition-colors duration-500 break-words">
+                  <p className="text-primarygroup-hover:text-white font-light text-sm sm:text-base leading-relaxed transition-colors duration-500 break-words">
                     {benefit.text}
                   </p>
-                  <div className="h-px w-0 group-hover:w-full bg-[#d4b78f] transition-all duration-500 ease-out mt-auto" />
+                  <div className="h-px w-0 group-hover:w-full bg-accent transition-all duration-500 ease-out mt-auto" />
                 </motion.div>
               );
             })}
@@ -276,7 +276,7 @@ export default function WhyMultiCuisineClient({ initialData }: Props) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-12 lg:mt-16 pt-8 border-t border-[#d4b78f]/20 text-xs tracking-[0.2em] sm:tracking-[0.35em] uppercase font-light text-[#011659]/40 ql-content break-words"
+            className="mt-12 lg:mt-16 pt-8 border-t border-accent/20 text-xs tracking-[0.2em] sm:tracking-[0.35em] uppercase font-light text-primary/40 ql-content break-words"
             dangerouslySetInnerHTML={{ __html: w.bottom_text }}
           />
         </div>

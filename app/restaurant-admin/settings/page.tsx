@@ -243,8 +243,8 @@ useEffect(() => {
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center border-2 border-dashed border-secondary/20 rounded-2xl p-8 text-center">
-      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-      <p className="text-gray-500 text-sm">No cover photo uploaded yet</p>
+      <Upload className="w-8 h-8 text-secondary mb-2" />
+      <p className="text-secondary text-sm">No cover photo uploaded yet</p>
     </div>
   )}
 

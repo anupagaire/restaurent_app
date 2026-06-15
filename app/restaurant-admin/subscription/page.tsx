@@ -230,33 +230,33 @@ function CurrentSubCard({ data, onRefresh }: { data: CurrentSub; onRefresh: () =
   if (!sub) return null;
 
   return (
-    <div className="rounded-2xl p-5 mb-6 bg-white" style={{ border: '1px solid #e5e7eb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+    <div className="rounded-2xl p-5 mb-6 bg-white" style={{ border: '1px solid secondary', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-bold text-lg" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+        <h2 className="font-bold text-lg" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
           Current Subscription
         </h2>
         <button onClick={onRefresh} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <RefreshCw size={14} className="text-gray-400" />
+          <RefreshCw size={14} className="text-secondary" />
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
-          <p className="text-xs text-gray-400 mb-1">Plan</p>
+          <p className="text-xs text-secondary mb-1">Plan</p>
           <p className="font-semibold text-sm text-gray-800">{sub.plan.name}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Status</p>
+          <p className="text-xs text-secondary mb-1">Status</p>
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
             style={{ background: cfg.bg, color: cfg.color }}>
             {cfg.icon} {cfg.label}
           </span>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Start Date</p>
+          <p className="text-xs text-secondary mb-1">Start Date</p>
           <p className="font-semibold text-sm text-gray-800">{fmtDate(sub.start_date)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Expires</p>
+          <p className="text-xs text-secondary mb-1">Expires</p>
           <p className="font-semibold text-sm text-gray-800">{fmtDate(sub.end_date)}</p>
         </div>
       </div>
@@ -300,17 +300,17 @@ function PromoInput({ planId, onApply, onClear }: {
       <label className="text-xs font-semibold mb-1 block" style={{ color: '#9a7458' }}>Promo Code (optional)</label>
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Tag size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Tag size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
           <input type="text" value={code}
             onChange={(e) => { setCode(e.target.value.toUpperCase()); setStatus('idle'); setMessage(''); }}
             onKeyDown={(e) => e.key === 'Enter' && handleApply()}
             placeholder="Enter promo code"
             className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm border outline-none"
-            style={{ borderColor: status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : '#e5e7eb', background: '#fdf6ec' }} />
+            style={{ borderColor: status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : 'secondary', background: '#fdf6ec' }} />
         </div>
         {status === 'valid'
           ? <button onClick={() => { setCode(''); setStatus('idle'); setMessage(''); onClear(); }}
-              className="px-4 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-500">Clear</button>
+              className="px-4 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-secondary">Clear</button>
           : <button onClick={handleApply} disabled={status === 'loading' || !code.trim()}
               className="px-4 py-2.5 rounded-xl text-sm font-bold"
               style={{ background: '#513012', color: '#fff', opacity: !code.trim() ? 0.6 : 1 }}>
@@ -406,12 +406,12 @@ function PaymentModal({ plan, onClose, onSuccess }: {
         <div className="p-6">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+              <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
                 {step === 'instructions' ? 'Payment Instructions' : step === 'upload' ? 'Upload Proof' : 'Activate Plan'}
               </h2>
-              <p className="text-xs text-gray-500 mt-0.5">{plan.name} · {durationLabel(plan.duration_days)}</p>
+              <p className="text-xs text-secondary mt-0.5">{plan.name} · {durationLabel(plan.duration_days)}</p>
             </div>
-            <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           {/* Plan pill */}
@@ -426,7 +426,7 @@ function PaymentModal({ plan, onClose, onSuccess }: {
                   {isFree ? 'Free' : `Rs. ${displayPrice.toLocaleString()}`}
                 </p>
                 {promo && parseFloat(promo.discount_amount) > 0 && (
-                  <p className="text-xs text-gray-400 line-through">Rs. {price.toLocaleString()}</p>
+                  <p className="text-xs text-secondary line-through">Rs. {price.toLocaleString()}</p>
                 )}
               </div>
             </div>
@@ -452,7 +452,7 @@ function PaymentModal({ plan, onClose, onSuccess }: {
                   <input type="text" value={txRef} onChange={(e) => setTxRef(e.target.value)}
                     placeholder="eSewa TXN ID / Bank ref"
                     className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
-                    style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02' }} />
+                    style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: 'secondary' }} />
                 </div>
               )}
               {error && <p className="mb-3 text-sm text-center text-red-600">{error}</p>}
@@ -511,7 +511,7 @@ function PaymentModal({ plan, onClose, onSuccess }: {
                     ? <img src={proofPreview} alt="proof" className="rounded-lg object-cover" style={{ maxHeight: 140, maxWidth: '100%' }} />
                     : <div className="flex flex-col items-center py-4 gap-2">
                         <Upload size={20} style={{ color: '#b8936a' }} />
-                        <p className="text-xs text-gray-400">Click to upload screenshot</p>
+                        <p className="text-xs text-secondary">Click to upload screenshot</p>
                         <p className="text-xs text-gray-300">JPG, PNG, WEBP — max 5MB</p>
                       </div>
                   }
@@ -523,14 +523,14 @@ function PaymentModal({ plan, onClose, onSuccess }: {
                 <input type="text" value={txRef} onChange={(e) => setTxRef(e.target.value)}
                   placeholder="Bank ref / eSewa TXN ID"
                   className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
-                  style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02' }} />
+                  style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: 'secondary' }} />
               </div>
               <div className="mb-5">
                 <label className="text-xs font-semibold mb-1 block" style={{ color: '#9a7458' }}>Note (optional)</label>
                 <textarea value={note} onChange={(e) => setNote(e.target.value)}
                   placeholder="Any info for our team…" rows={2}
                   className="w-full px-4 py-2.5 rounded-xl text-sm outline-none resize-none"
-                  style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: '#1e0f02' }} />
+                  style={{ background: '#fdf6ec', border: '1px solid rgba(184,147,106,0.35)', color: 'secondary' }} />
               </div>
               {error && <p className="mb-3 text-sm text-center text-red-600">{error}</p>}
               <button onClick={handleUploadProof} disabled={submitting || !proofFile}
@@ -603,7 +603,7 @@ export default function SubscriptionPage() {
         <h2 className="text-2xl font-bold mb-2" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
           {isFree ? 'Trial Activated!' : 'Payment Submitted!'}
         </h2>
-        <p className="text-gray-500 text-sm mb-6 max-w-sm">
+        <p className="text-secondary text-sm mb-6 max-w-sm">
           {isFree
             ? 'Your free trial is now active. Enjoy full access!'
             : 'Our team will verify your payment screenshot and activate your plan shortly. You will see the status update here.'}
@@ -632,7 +632,7 @@ export default function SubscriptionPage() {
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
           Subscription & Billing
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Manage your plan and payments</p>
+        <p className="text-secondary text-sm mt-1">Manage your plan and payments</p>
       </div>
 
       {loading ? (
@@ -663,10 +663,10 @@ export default function SubscriptionPage() {
 
           {/* Plans section */}
           <div className="mb-5">
-            <h2 className="font-bold text-lg" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-lg" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               {isRenewal ? 'Renew or Change Plan' : 'Choose a Plan'}
             </h2>
-            <p className="text-sm text-gray-400 mt-0.5">Select a plan to get started</p>
+            <p className="text-sm text-secondary mt-0.5">Select a plan to get started</p>
           </div>
 
           {/* Pending = block plan selection */}
@@ -675,7 +675,7 @@ export default function SubscriptionPage() {
               style={{ background: '#fef3e2', border: '1px solid rgba(180,83,9,0.2)' }}>
               <p className="text-4xl mb-3">⏳</p>
               <p className="font-bold text-lg" style={{ color: '#b45309' }}>Payment Under Review</p>
-              <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
+              <p className="text-sm text-secondary mt-2 max-w-sm mx-auto">
                 You cannot choose another plan while a payment is pending verification.
               </p>
               <button onClick={loadData}
@@ -702,14 +702,14 @@ export default function SubscriptionPage() {
                         {planIcon(plan)}
                       </div>
                       <p className="font-bold text-gray-800 mb-0.5">{plan.name}</p>
-                      <p className="text-xs text-gray-400 mb-3">{plan.description}</p>
+                      <p className="text-xs text-secondary mb-3">{plan.description}</p>
                       <div className="flex items-end gap-1.5 mb-1">
                         {isFree
                           ? <span className="text-3xl font-bold" style={{ color: accent }}>Free</span>
-                          : <span className="text-3xl font-bold" style={{ color: '#1e0f02' }}>Rs. {price.toLocaleString()}</span>
+                          : <span className="text-3xl font-bold" style={{ color: 'secondary' }}>Rs. {price.toLocaleString()}</span>
                         }
                       </div>
-                      <p className="text-xs text-gray-400 mb-4">
+                      <p className="text-xs text-secondary mb-4">
                         {isFree ? 'No payment needed' : durationLabel(plan.duration_days)}
                       </p>
                       <button onClick={() => setSelectedPlan(plan)}
@@ -722,15 +722,15 @@ export default function SubscriptionPage() {
                     </div>
                     {features.length > 0 && (
                       <>
-                        <div style={{ borderTop: '1px dashed #e5e7eb', margin: '0 16px' }} />
+                        <div style={{ borderTop: '1px dashed secondary', margin: '0 16px' }} />
                         <div className="p-5 pt-3 flex-1">
                           <ul className="space-y-1.5">
                             {features.slice(0, 5).map((f) => (
-                              <li key={f} className="flex items-start gap-1.5 text-xs text-gray-500">
+                              <li key={f} className="flex items-start gap-1.5 text-xs text-secondary">
                                 <Check size={11} className="mt-0.5 shrink-0" style={{ color: accent }} /> {f}
                               </li>
                             ))}
-                            {features.length > 5 && <li className="text-xs text-gray-400">+{features.length - 5} more…</li>}
+                            {features.length > 5 && <li className="text-xs text-secondary">+{features.length - 5} more…</li>}
                           </ul>
                         </div>
                       </>

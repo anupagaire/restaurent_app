@@ -326,7 +326,7 @@ function AuthGate({ restaurantId, onAuthenticated }: AuthGateProps) {
   const inputBase: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: 10,
     border: '1px solid rgba(184,147,106,0.35)', fontSize: 14,
-    fontFamily: 'inherit', outline: 'none', color: '#1e0f02', background: '#fdf6ec',
+    fontFamily: 'inherit', outline: 'none', color: 'secondary', background: '#fdf6ec',
   };
 
   const stepLabel =
@@ -472,7 +472,7 @@ function MenuReviewCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
           <Avatar review={review} size={depth === 0 ? 38 : 30} />
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#1e0f02', margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'secondary', margin: 0 }}>
               {getDisplayName(review)}
             </p>
             <p style={{ fontSize: 11, color: '#9a7458', margin: 0 }}>{formatDate(review.created_on)}</p>
@@ -514,7 +514,7 @@ function MenuReviewCard({
                 width: '100%', padding: '8px 12px', borderRadius: 8,
                 border: '1px solid rgba(184,147,106,0.35)',
                 fontSize: 13, resize: 'vertical', fontFamily: 'inherit',
-                outline: 'none', color: '#1e0f02', background: '#fdf6ec',
+                outline: 'none', color: 'secondary', background: '#fdf6ec',
               }} />
             <label style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -690,7 +690,7 @@ export default function MenuReviewSection({
   const inputBase: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: 10,
     border: '1px solid rgba(184,147,106,0.35)', fontSize: 14,
-    fontFamily: 'inherit', outline: 'none', color: '#1e0f02', background: '#fdf6ec',
+    fontFamily: 'inherit', outline: 'none', color: 'secondary', background: '#fdf6ec',
   };
 
   const content = (
@@ -710,7 +710,7 @@ export default function MenuReviewSection({
               }}>
                 <ChevronLeft size={14} /> Back to menu
               </button>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1e0f02', fontFamily: 'Georgia, serif', margin: 0 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: 'secondary', fontFamily: 'Georgia, serif', margin: 0 }}>
                 {menuName}
               </h2>
             </div>
@@ -789,7 +789,7 @@ export default function MenuReviewSection({
             </button>
           </div>
 
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e0f02', marginBottom: 4, marginTop: 0 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: 'secondary', marginBottom: 4, marginTop: 0 }}>
             ✍️ Write a review
           </h3>
 

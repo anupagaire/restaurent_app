@@ -163,10 +163,10 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                     <span className="text-lg">{stat.icon}</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-[#c8914a] leading-none">{stat.value}</div>
+                    <div className="text-2xl font-secondary text-[#c8914a] leading-none">{stat.value}</div>
                     <div className="text-[10.5px] font-bold  mt-0.5">{stat.label}</div>
                   </div>
-                  {i < stats.length - 1 && <div className="h-10 w-px bg-black/10 ml-3" />}
+                  {i < stats.length - 1 && <div className="h-10 w-px bg-secondary/10 ml-3" />}
                 </div>
               ))}
             </motion.div>
@@ -257,10 +257,10 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             <div className="absolute top-8 right-3 lg:right-8  backdrop-blur-md rounded-2xl shadow-lg border  p-2.5 flex items-center gap-2.5 w-44 z-20">
               <span className="text-lg p-1.5 rounded-xl shrink-0" style={{ background: 'rgba(200,145,74,0.1)' }}>📍</span>
               <div>
-                <span className="text-[11.5px] font-black text-gray-900 leading-tight block">
+                <span className="text-[11.5px] font-secondary text-gray-900 leading-tight block">
                   {restaurant.city ?? 'Our Location'}
                 </span>
-                <span className="text-[9px] font-bold text-gray-400 mt-0.5 block">
+                <span className="text-[9px] font-bold text-secondary mt-0.5 block">
                   {restaurant.address ?? 'Visit Us Today'}
                 </span>
               </div>
@@ -269,13 +269,13 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             
 
             {/* Bottom badge */}
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 bg-black/95 backdrop-blur-md rounded-2xl shadow-lg border border-black/70 px-4 py-2.5 flex items-center gap-3 z-20 blackspace-nowrap">
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 bg-secondary/95 backdrop-blur-md rounded-2xl shadow-lg border border-secondary/70 px-4 py-2.5 flex items-center gap-3 z-20 secondaryspace-nowrap">
               <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: '#c8914a' }}>
-                <span className="text-black text-[10px] font-extrabold">✓</span>
+                <span className="text-secondary text-[10px] font-extrabold">✓</span>
               </div>
               <div>
-                <div className="text-[9.5px] font-bold text-gray-400 leading-none">Fine Dining</div>
-                <div className="text-[14px] font-black leading-tight mt-0.5" style={{ color: '#c8914a' }}>
+                <div className="text-[9.5px] font-bold text-secondary leading-none">Fine Dining</div>
+                <div className="text-[14px] font-secondary leading-tight mt-0.5" style={{ color: '#c8914a' }}>
                   {restaurant.name}
                 </div>
               </div>
@@ -284,7 +284,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             {/* Three dots */}
             <div className="absolute bottom-5 right-8 flex items-center gap-1.5 z-20">
               <span className="w-2 h-2 rounded-full bg-[#c8914a]" />
-              <span className="w-2 h-2 rounded-full bg-black/30" />
+              <span className="w-2 h-2 rounded-full bg-secondary/30" />
               <span className="w-2 h-2 rounded-full bg-[#c8914a]/50" />
             </div>
           </motion.div>
@@ -308,7 +308,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                 <span className="text-[#c8914a] text-[10px] tracking-[0.45em] uppercase font-light">Gallery</span>
               </div>
               <h2
-                className="text-3xl sm:text-4xl font-light text-black leading-tight"
+                className="text-3xl sm:text-4xl font-light text-secondary leading-tight"
                 style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
               >
                 Inside Our World
@@ -359,11 +359,11 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               backgroundSize: '150px',
             }}
           />
-          <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-black/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-black/20 blur-3xl pointer-events-none" />
+          <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-secondary/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
 
           <div className="relative px-8 sm:px-14 py-14 text-center">
-            <p className="text-black/45 text-[10px] tracking-[0.45em] uppercase font-light mb-5">
+            <p className="text-secondary/45 text-[10px] tracking-[0.45em] uppercase font-light mb-5">
               Reserve Your Experience
             </p>
             <h3
@@ -372,9 +372,9 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             >
               Ready to Dine With Us?
             </h3>
-            <p className="text-black/55 mb-10 max-w-lg mx-auto font-light text-base sm:text-lg leading-relaxed">
+            <p className="text-secondary/55 mb-10 max-w-lg mx-auto font-light text-base sm:text-lg leading-relaxed">
               Book your table now and experience the best of{' '}
-              <span className="text-black/85 font-medium">{restaurant.city}</span>'s culinary scene.
+              <span className="text-secondary/85 font-medium">{restaurant.city}</span>'s culinary scene.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -385,7 +385,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               </Link>
               <Link
                 href={`/restaurants/${slug}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-[#0e0b07] rounded-full font-medium text-sm hover:bg-black/10 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-[#0e0b07] rounded-full font-medium text-sm hover:bg-secondary/10 transition-all"
                 style={{ border: '2px solid rgba(14,11,7,0.22)' }}
               >
                 More Details

@@ -22,6 +22,7 @@ const menuItems = [
   { title: 'Subscriptions', href: '/super-admin/payments', icon: CreditCard },
   { title: 'Invoices', href: '/super-admin/subscriptions/invoices', icon: FileText },
   { title: 'Plans', href: '/super-admin/subscriptions/plans', icon: CreditCard },
+  { href: '/super-admin/custom-domains', title: 'Custom Domains', icon: Globe },
   { title: 'Promo Codes', href: '/super-admin/subscriptions/promo', icon: Tag },
   { title: 'Contact', href: '/super-admin/contact', icon: Contact },
     {
@@ -64,7 +65,7 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          className="fixed inset-0 bg-secondary/60 z-40 md:hidden"
           onClick={onClose}
         />
       )}
@@ -82,7 +83,7 @@ export default function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebar
               <span className="text-white font-bold text-xl">F</span>
             </div>
             <div>
-              <p className="text-xs text-gray-500 -mt-1">Super Admin Panel</p>
+              <p className="text-xs text-secondary -mt-1">Super Admin Panel</p>
             </div>
           </div>
 

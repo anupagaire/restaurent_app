@@ -291,9 +291,9 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
 
             <label className="cursor-pointer block">
               <div className="border-2 border-dashed border-gray-300 hover:border-secondary rounded-xl p-8 text-center transition-all">
-                <Upload className="w-10 h-10 mx-auto text-gray-400 mb-3" />
+                <Upload className="w-10 h-10 mx-auto text-secondary mb-3" />
                 <p className="font-medium text-sm">Click to upload image</p>
-                <p className="text-sm text-gray-500 mt-1">JPG, PNG, JPEG • Max 5MB</p>
+                <p className="text-sm text-secondary mt-1">JPG, PNG, JPEG • Max 5MB</p>
               </div>
               <input
                 type="file"
@@ -319,7 +319,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
               </div>
             )}
 
-            <p className="text-center text-xs text-gray-500">— OR —</p>
+            <p className="text-center text-xs text-secondary">— OR —</p>
 
             <Input
               value={formData.image}
@@ -333,7 +333,7 @@ const [previewImage, setPreviewImage] = useState<string | null>(null);
           <div className="flex items-center justify-between">
             <div>
               <Label>Available on Menu</Label>
-              <p className="text-xs text-gray-500">Show this item to customers</p>
+              <p className="text-xs text-secondary">Show this item to customers</p>
             </div>
             <Switch
               checked={formData.isAvailable}

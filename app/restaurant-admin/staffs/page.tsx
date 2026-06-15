@@ -235,7 +235,7 @@ setRoles(list.filter(r =>
               <TableBody>
                 {staffList.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-gray-400">
+                    <TableCell colSpan={5} className="text-center py-12 text-secondary">
                       No staff members yet. Add your first staff member!
                     </TableCell>
                   </TableRow>
@@ -251,11 +251,11 @@ setRoles(list.filter(r =>
                         <div className="flex flex-wrap gap-1">
                           {staff.roles?.length > 0 ? staff.roles.map(r => (
                             <Badge key={r.id} variant="secondary"
-                              className="bg-blue-100 text-blue-700">
+                              className="bg-primary text-blue-700">
                               {r.name}
                             </Badge>
                           )) : (
-                            <Badge variant="secondary" className="bg-gray-100 text-gray-500">
+                            <Badge variant="secondary" className="bg-gray-100 text-secondary">
                               No role
                             </Badge>
                           )}

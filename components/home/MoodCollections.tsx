@@ -196,7 +196,7 @@ useEffect(() => {
   className={`absolute inset-0 bg-gradient-to-br ${mood.fallbackGradient} opacity-60`}
 />
         {/* Bottom text gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-secondary/30 to-transparent" />
       </div>
 
       {/* Skeleton shimmer */}
@@ -286,13 +286,13 @@ subtitleClassName="text-white"
         <div className="hidden sm:flex gap-2">
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-amber-400/60 hover:text-amber-300 transition-all flex items-center justify-center text-sm"
+            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-accent/60 hover:text-accent transition-all flex items-center justify-center text-sm"
           >
             ←
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-amber-400/60 hover:text-amber-300 transition-all flex items-center justify-center text-sm"
+            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-accent/60 hover:text-accent transition-all flex items-center justify-center text-sm"
           >
             →
           </button>

@@ -114,17 +114,17 @@ function InlineStarRating({ restaurantId }: { restaurantId: number }) {
     <div onClick={(e) => e.preventDefault()}>
       {count > 0 && (
         <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
-          <span className="text-xs font-semibold text-amber-800">{avg.toFixed(1)}</span>
+          <span className="text-xs font-semibold text-accent">{avg.toFixed(1)}</span>
           <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((s) => (
               <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#f59e0b' : '#d1d5db' }}>★</span>
             ))}
           </div>
-          <span className="text-[10px] text-gray-400">({count})</span>
+          <span className="text-[10px] text-secondary">({count})</span>
         </div>
       )}
       <div className="mt-2 pt-2 border-t border-gray-100">
-        <p className="text-[10px] text-gray-400 mb-1">{submitted ? 'Your rating:' : 'Rate this place:'}</p>
+        <p className="text-[10px] text-secondary mb-1">{submitted ? 'Your rating:' : 'Rate this place:'}</p>
         <div className="flex gap-0.5">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -138,7 +138,7 @@ function InlineStarRating({ restaurantId }: { restaurantId: number }) {
             </button>
           ))}
         </div>
-        <p className="text-[10px] mt-0.5 text-gray-400">
+        <p className="text-[10px] mt-0.5 text-secondary">
           {submitting ? 'Saving...' : submitted ? `Saved ${myRating} ★` : 'Tap to rate'}
         </p>
       </div>
@@ -185,9 +185,9 @@ function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
         ⭐ Rate a Restaurant
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4" onClick={handleClose}>
+        <div className="fixed inset-0 z-50 bg-secondary/40 flex items-end sm:items-center justify-center p-4" onClick={handleClose}>
           <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative" onClick={(e) => e.stopPropagation()}>
-            <button onClick={handleClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+            <button onClick={handleClose} className="absolute top-4 right-4 text-secondary hover:text-gray-600 text-xl leading-none">✕</button>
             <h3 className="text-lg font-semibold text-secondary mb-4">Rate a Restaurant</h3>
             <select
               value={selectedId ?? ''}
@@ -199,7 +199,7 @@ function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
             </select>
             {selectedRestaurant && (
               <>
-                <p className="text-sm text-gray-500 mb-3">📍 {selectedRestaurant.city}</p>
+                <p className="text-sm text-secondary mb-3">📍 {selectedRestaurant.city}</p>
                 {submitted ? (
                   <div className="text-center py-4">
                     <div className="text-4xl mb-2">🎉</div>
@@ -207,7 +207,7 @@ function FloatingRateWidget({ restaurants }: { restaurants: Restaurant[] }) {
                     <div className="flex justify-center gap-1 mt-2 text-2xl">
                       {[1, 2, 3, 4, 5].map((s) => <span key={s} style={{ color: s <= rating ? '#f59e0b' : '#d1d5db' }}>★</span>)}
                     </div>
-                    <button onClick={() => { setSubmitted(false); setRating(0); }} className="mt-3 text-xs text-gray-400 underline">Rate again</button>
+                    <button onClick={() => { setSubmitted(false); setRating(0); }} className="mt-3 text-xs text-secondary underline">Rate again</button>
                   </div>
                 ) : (
                   <>
@@ -383,7 +383,7 @@ const sortedRestaurants = [...restaurants].sort((a, b) => {
     <p className="text-sm text-gray-600">
       Showing <span className="font-semibold text-secondary">{totalCount}</span> venues in Nepal
     </p>
-    <p className="text-xs text-gray-400 mt-0.5">
+    <p className="text-xs text-secondary mt-0.5">
       {sortBy === 'default' && 'Default order'}
       {sortBy === 'most_viewed' && 'Sorted by most viewed'}
       {sortBy === 'most_rated' && 'Sorted by top rated'}
@@ -402,7 +402,7 @@ const sortedRestaurants = [...restaurants].sort((a, b) => {
         className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
           sortBy === opt.key
             ? 'bg-secondary text-white'
-            : 'text-gray-500 hover:text-secondary hover:bg-orange-50'
+            : 'text-secondary hover:text-secondary hover:bg-orange-50'
         }`}
       >
         <span>{opt.icon}</span>
@@ -427,8 +427,8 @@ const sortedRestaurants = [...restaurants].sort((a, b) => {
           </div>
         ) : restaurants.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-400 text-5xl mb-4">🍽️</p>
-            <p className="text-gray-500">
+            <p className="text-secondary text-5xl mb-4">🍽️</p>
+            <p className="text-secondary">
               {selectedCity
                 ? `No restaurants found in ${selectedCity}.`
                 : 'No restaurants found.'}
@@ -465,7 +465,7 @@ const photo = resolvePhoto(restaurant.coverPhotoUrl);
   <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200">🍽️</div>
 )}
                     {restaurant.view_count > 0 && (
-                      <span className="absolute top-2 right-2 bg-black/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="absolute top-2 right-2 bg-secondary/50 text-white text-base font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
                         👀 {restaurant.view_count >= 1000
                           ? `${(restaurant.view_count / 1000).toFixed(1)}k`
                           : restaurant.view_count}
@@ -474,7 +474,7 @@ const photo = resolvePhoto(restaurant.coverPhotoUrl);
                   </div>
                   <div className="p-3">
                     <h3 className="text-sm font-bold text-secondary line-clamp-1">{restaurant.name}</h3>
-                    <p className="text-gray-500 text-xs mt-1">📍 {restaurant.city}</p>
+                    <p className="text-secondary text-xs mt-1">📍 {restaurant.city}</p>
                     <InlineStarRating restaurantId={restaurant.id} />
                   </div>
                 </Link>

@@ -90,10 +90,10 @@ await emailjs.send(
     return (
       <div className="min-h-screen w-full">
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-          <div className="bg-white border border-[#d4b78f] rounded-2xl p-10 max-w-md w-full">
+          <div className="bg-white border border-accent rounded-2xl p-10 max-w-md w-full">
             <div className="text-4xl mb-4">🎉</div>
             <h2 className="text-2xl font-semibold text-secondary mb-2">Application Submitted!</h2>
-            <p className="text-[#776552] mb-6">
+            <p className="text-secondary mb-6">
               We&apos;ve received your venue details. Our team will review your application and get
               back to you within 2–3 business days.
             </p>
@@ -114,7 +114,7 @@ await emailjs.send(
       <div className="max-w-screen-md mx-auto px-4 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-secondary mb-2">Register Your Venue</h1>
-          <p className="text-[#776552]">
+          <p className="text-secondary">
             Fill in the details below and our team will set up your digital menu and QR ordering system.
           </p>
         </div>
@@ -251,7 +251,7 @@ await emailjs.send(
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-5 py-2.5 text-sm text-[#776552] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
+              className="px-5 py-2.5 text-sm text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
             >
               Cancel
             </button>
@@ -270,11 +270,11 @@ await emailjs.send(
 };
 
 const inputClass =
-  "w-full px-3 py-2.5 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-[#8c6d46] transition";
+  "w-full px-3 py-2.5 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="bg-white border border-[#d4b78f] rounded-xl p-6">
-    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8c6d46] mb-4 pb-3 border-b border-[#ead9c5]">
+  <div className="bg-white border border-accent rounded-xl p-6">
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-4 pb-3 border-b border-[#ead9c5]">
       {title}
     </h3>
     <div className="space-y-4">{children}</div>
@@ -291,8 +291,8 @@ const Field = ({
   children: React.ReactNode;
 }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-xs font-medium text-[#776552]">
-      {label} {required && <span className="text-[#8c6d46]">*</span>}
+    <label className="text-xs font-medium text-secondary">
+      {label} {required && <span className="text-secondary">*</span>}
     </label>
     {children}
   </div>

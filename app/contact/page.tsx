@@ -23,7 +23,7 @@ const INITIAL_FORM: ContactForm = {
 };
 
 const inputClass =
-  "w-full px-4 py-3 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#c4aa90] focus:outline-none focus:border-[#8c6d46] focus:ring-2 focus:ring-[#8c6d46]/10 transition";
+  "w-full px-4 py-3 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#c4aa90] focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition";
 
 const Contact = () => {
   const [form, setForm] = useState<ContactForm>(INITIAL_FORM);
@@ -91,10 +91,10 @@ const Contact = () => {
             className="object-cover"
             alt="Contact us"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black/75" />
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/75 via-secondary/60 to-secondary/75" />
         </div>
         <div className="relative mx-auto max-w-screen-md w-full min-h-[38vh] flex flex-col justify-center items-center text-white text-center px-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b78f] mb-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-3">
             We&apos;d love to hear from you
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
@@ -136,16 +136,16 @@ const Contact = () => {
           ].map((item) => (
             <div
               key={item.label}
-              className="bg-white border border-[#d4b78f] rounded-xl px-4 py-4 flex flex-col gap-1 shadow-sm"
+              className="bg-white border border-accent rounded-xl px-4 py-4 flex flex-col gap-1 shadow-sm"
             >
-              <div className="flex items-center gap-2 text-[#8c6d46] mb-1">
+              <div className="flex items-center gap-2 text-secondary mb-1">
                 {item.icon}
                 <span className="text-[10px] font-semibold uppercase tracking-wider">
                   {item.label}
                 </span>
               </div>
               <p className="text-sm font-semibold text-[#3a2a1a] leading-snug">{item.value}</p>
-              <p className="text-xs text-[#8c6d46]">{item.sub}</p>
+              <p className="text-xs text-secondary">{item.sub}</p>
             </div>
           ))}
         </div>
@@ -154,10 +154,10 @@ const Contact = () => {
       <section className="w-full max-w-screen-xl mx-auto px-4 py-14">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 
-          <div className="bg-white border border-[#d4b78f] rounded-2xl p-8 flex flex-col">
+          <div className="bg-white border border-accent rounded-2xl p-8 flex flex-col">
             <div className="mb-7">
               <h2 className="text-2xl font-bold text-secondary mb-1">Send us a message</h2>
-              <p className="text-sm text-[#8c6d46]">
+              <p className="text-sm text-secondary">
                 Have a suggestion, question, or want to collaborate? We read every message.
               </p>
             </div>
@@ -170,7 +170,7 @@ const Contact = () => {
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-secondary mb-2">Message sent!</h3>
-                <p className="text-sm text-[#776552] mb-6 max-w-xs">
+                <p className="text-sm text-secondary mb-6 max-w-xs">
                   Thanks for reaching out. We&apos;ll get back to you within 24 hours.
                 </p>
                 <button
@@ -184,8 +184,8 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#776552]">
-                      Full name <span className="text-[#8c6d46]">*</span>
+                    <label className="text-xs font-medium text-secondary">
+                      Full name <span className="text-secondary">*</span>
                     </label>
                     <input
                       name="name"
@@ -197,8 +197,8 @@ const Contact = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#776552]">
-                      Email address <span className="text-[#8c6d46]">*</span>
+                    <label className="text-xs font-medium text-secondary">
+                      Email address <span className="text-secondary">*</span>
                     </label>
                     <input
                       name="email"
@@ -214,7 +214,7 @@ const Contact = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#776552]">Phone number</label>
+                    <label className="text-xs font-medium text-secondary">Phone number</label>
                     <input
                       name="phone"
                       value={form.phone}
@@ -224,8 +224,8 @@ const Contact = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-medium text-[#776552]">
-                      Subject <span className="text-[#8c6d46]">*</span>
+                    <label className="text-xs font-medium text-secondary">
+                      Subject <span className="text-secondary">*</span>
                     </label>
                     <input
                       name="subject"
@@ -239,8 +239,8 @@ const Contact = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5 flex-1">
-                  <label className="text-xs font-medium text-[#776552]">
-                    Message <span className="text-[#8c6d46]">*</span>
+                  <label className="text-xs font-medium text-">
+                    Message <span className="text-secondary">*</span>
                   </label>
                   <textarea
                     name="message"
@@ -286,9 +286,9 @@ const Contact = () => {
                 className="object-cover"
                 alt="Restaurant"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/20 to-transparent" />
               <div className="absolute bottom-0 left-0 p-7 text-white">
-                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#d4b78f] mb-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-accent mb-2">
                   Restaurant owners
                 </p>
                 <h3 className="text-2xl font-bold leading-tight mb-2">

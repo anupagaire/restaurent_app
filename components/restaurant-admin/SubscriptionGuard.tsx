@@ -33,10 +33,10 @@ export default function SubscriptionGuard({ children, showBlockedUI = true }: Pr
         >
           <AlertTriangle size={28} style={{ color: '#dc2626' }} />
         </div>
-        <h2 className="text-xl font-bold mb-2" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-xl font-bold mb-2" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
           Subscription Required
         </h2>
-        <p className="text-sm text-gray-500 mb-6 max-w-sm">
+        <p className="text-sm text-secondary mb-6 max-w-sm">
           {message ?? 'Your subscription is inactive. Please activate or renew your plan to access this feature.'}
         </p>
         <button

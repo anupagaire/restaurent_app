@@ -163,11 +163,11 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
   };
 
   const stepLabel = step === 'registering' ? 'Creating account…' : step === 'logging_in' ? 'Logging in…' : step === 'placing' ? 'Placing order…' : '';
-  const inp = (val: string, req = false): React.CSSProperties => ({ background: '#f9f9f9', border: `1.5px solid ${val.trim() && req ? '#22c55e' : '#e5e7eb'}`, borderRadius: 12, color: '#111', padding: '12px 14px', width: '100%', fontSize: 14, outline: 'none' });
+  const inp = (val: string, req = false): React.CSSProperties => ({ background: '#f9f9f9', border: `1.5px solid ${val.trim() && req ? '#22c55e' : 'secondary'}`, borderRadius: 12, color: '#111', padding: '12px 14px', width: '100%', fontSize: 14, outline: 'none' });
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/50" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl overflow-y-auto bg-white" style={{ maxHeight: '92vh' }}>
         <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full bg-gray-200" /></div>
         <div className="px-5 pb-12 max-w-2xl mx-auto">
@@ -176,13 +176,13 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
               <h2 className="font-bold text-lg text-gray-900">Your Order</h2>
               <p className="text-xs text-green-600 font-medium flex items-center gap-1 mt-0.5"><Truck size={11} /> Online Delivery</p>
             </div>
-            <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500"><X size={16} /></button>
+            <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-secondary"><X size={16} /></button>
           </div>
 
           {isLoggedIn && (
             <div className="flex items-center justify-between px-3 py-2.5 rounded-xl mt-3 bg-green-50 border border-green-100">
               <span className="text-xs font-semibold text-green-700 flex items-center gap-1.5"><CheckCircle2 size={13} /> {auth!.email}</span>
-              <button onClick={handleLogout} className="text-xs text-gray-400 underline">Switch</button>
+              <button onClick={handleLogout} className="text-xs text-secondary underline">Switch</button>
             </div>
           )}
 
@@ -192,7 +192,7 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
               <div key={c.item.id} className="flex items-center justify-between py-3 border-b border-gray-50">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-800 truncate">{c.item.name}</p>
-                  {c.item.category && <p className="text-xs text-gray-400">{c.item.category}</p>}
+                  {c.item.category && <p className="text-xs text-secondary">{c.item.category}</p>}
                 </div>
                 <div className="flex items-center gap-2 mx-3">
                   <button onClick={() => onUpdateQty(c.item.id, -1)} className="w-7 h-7 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-secondary"><Minus size={11} /></button>
@@ -238,7 +238,7 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
 
           {/* Delivery details */}
           <div className="space-y-3 mb-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Delivery Details</p>
+            <p className="text-xs font-bold text-secondary uppercase tracking-widest">Delivery Details</p>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" style={inp(name)} />
         
 <input
@@ -290,7 +290,7 @@ function OrderSuccess({ onBack }: { onBack: () => void }) {
       <div className="text-6xl mb-4">🎉</div>
       <h2 className="font-bold text-2xl text-gray-900 mb-1">Order Placed!</h2>
       <p className="text-sm text-green-600 font-semibold flex items-center gap-1 mb-4"><Truck size={14} /> On its way to you</p>
-      <p className="text-sm text-gray-500 mb-8 max-w-xs">Your order has been received. We&apos;ll contact you shortly to confirm delivery.</p>
+      <p className="text-sm text-secondary mb-8 max-w-xs">Your order has been received. We&apos;ll contact you shortly to confirm delivery.</p>
       <button onClick={onBack} className="px-8 py-3 rounded-2xl font-bold bg-secondary text-white">Back to Menu</button>
     </div>
   );
@@ -359,7 +359,7 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
           </button>
 
           {item.description && (
-            <p className="text-xs text-gray-400 mt-1.5 line-clamp-2 leading-relaxed flex-1">{item.description}</p>
+            <p className="text-xs text-secondary mt-1.5 line-clamp-2 leading-relaxed flex-1">{item.description}</p>
           )}
 
           {/* Price + Add button */}
@@ -457,7 +457,7 @@ export default function MenuSection({ menuItems, restaurantId, acceptsOnlineOrde
   activeCategory={activeCategory}
   onSelect={setActiveCategory}
 />
-        <p className="text-xs text-gray-400 font-medium mb-4 uppercase tracking-wide">
+        <p className="text-xs text-secondary font-medium mb-4 uppercase tracking-wide">
           {filtered.length} items
         </p>
 

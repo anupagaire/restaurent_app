@@ -116,10 +116,10 @@ export default function LegalPage() {
 
   return (
     <>
-    <div className="min-h-screen   text-black font-sans">
+    <div className="min-h-screen   text-secondary font-sans">
       {/* Header */}
       <div className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-[#47034E]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-primary/20 to-transparent" />
         <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
         
          
@@ -127,7 +127,7 @@ export default function LegalPage() {
             Please read these documents carefully before using our restaurant
             management platform.
           </h1>
-          <p className="text-gray-500 text-sm mt-3">
+          <p className="text-secondary text-sm mt-3">
             Last updated: {new Date().toLocaleDateString("en-NP", { year: "numeric", month: "long", day: "numeric" })}
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function LegalPage() {
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 activeTab === tab
                   ? "bg-gradient-to-r from-secondary to-[#5D0565] text-white shadow-lg"
-                  : "text-gray-400 hover:text-black"
+                  : "text-secondary hover:text-secondary"
               }`}
             >
               {tab === "terms" ? "Terms & Conditions" : "Privacy Policy"}
@@ -156,7 +156,7 @@ export default function LegalPage() {
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-3 pb-20">
         {/* Intro box */}
         <div className="bg-[#8c52ff]/30 border border-secondary/40 rounded-xl p-5 mb-6">
-          <p className="text-black text-sm leading-relaxed">
+          <p className="text-secondary text-sm leading-relaxed">
             {activeTab === "terms"
               ? "These Terms & Conditions govern your use of FoodHub as a registered restaurant partner, including access to your dashboard, QR menu generation, and all platform features."
               : "This Privacy Policy explains how FoodHub collects, uses, and protects information from restaurant partners and their customers across our platform."}
@@ -182,12 +182,12 @@ export default function LegalPage() {
                   <span className="text-xs font-bold text-[#c97b3a] bg-secondary/30 px-2 py-1 rounded-md min-w-[2rem] text-center">
                     {section.id.padStart(2, "0")}
                   </span>
-                  <span className="font-semibold text-black text-base">
+                  <span className="font-semibold text-secondary text-base">
                     {section.title}
                   </span>
                 </div>
                 <span
-                  className={`text-gray-400 text-xl transition-transform duration-200 ${
+                  className={`text-secondary text-xl transition-transform duration-200 ${
                     isOpen ? "rotate-45" : ""
                   }`}
                 >
@@ -216,7 +216,7 @@ export default function LegalPage() {
           </p>
           <a
             href="mailto:legal@foodhub.com.np"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-[#47034E] to-[#5D0565] text-white hover:opacity-90 transition"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-primary to-[#5D0565] text-white hover:opacity-90 transition"
           >
             legal@foodhub.com.np
           </a>

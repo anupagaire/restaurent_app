@@ -150,7 +150,7 @@ return (
       <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500">Total Menu Items</CardTitle>
+            <CardTitle className="text-sm text-secondary">Total Menu Items</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{menuItems.length}</p>
@@ -158,7 +158,7 @@ return (
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500">Active Items</CardTitle>
+            <CardTitle className="text-sm text-secondary">Active Items</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-green-600">{activeMenuItems}</p>
@@ -166,7 +166,7 @@ return (
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500">Categories</CardTitle>
+            <CardTitle className="text-sm text-secondary">Categories</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{categories.length}</p>
@@ -174,7 +174,7 @@ return (
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500">Restaurant</CardTitle>
+            <CardTitle className="text-sm text-secondary">Restaurant</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xl font-semibold truncate">{restaurant?.name || '-'}</p>
@@ -184,11 +184,11 @@ return (
 
 <Card>
   <CardHeader className="pb-2">
-    <CardTitle className="text-sm text-gray-500">Monthly Revenue</CardTitle>
+    <CardTitle className="text-sm text-secondary">Monthly Revenue</CardTitle>
   </CardHeader>
   <CardContent>
     <p className="text-3xl font-bold text-purple-600">Rs. {monthlyRevenue.toFixed(0)}</p>
-    <p className="text-xs text-gray-400 mt-1">{monthlyOrders.length} orders</p>
+    <p className="text-xs text-secondary mt-1">{monthlyOrders.length} orders</p>
   </CardContent>
 </Card>
       </div>
@@ -237,7 +237,7 @@ return (
         </div>
 
         {!canManageMenu && !canViewSettings && !canViewOrders && (
-          <p className="text-gray-400 text-sm py-4">No quick actions available for your role.</p>
+          <p className="text-secondary text-sm py-4">No quick actions available for your role.</p>
         )}
       </div>
 
@@ -276,7 +276,7 @@ return (
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-gray-500 py-8 text-center">No menu items yet.</p>
+              <p className="text-secondary py-8 text-center">No menu items yet.</p>
             )}
           </CardContent>
         </Card>

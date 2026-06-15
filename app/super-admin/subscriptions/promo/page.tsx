@@ -140,7 +140,7 @@ function PromoFormModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className="fixed z-50 rounded-3xl overflow-y-auto w-full max-w-lg bg-white"
         style={{
@@ -152,10 +152,10 @@ function PromoFormModal({
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               {initial ? 'Edit Promo Code' : 'Create Promo Code'}
             </h2>
-            <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           <div className="space-y-4">
@@ -256,7 +256,7 @@ function PromoFormModal({
                         style={
                           selected
                             ? { background: '#513012', color: '#fff', borderColor: '#513012' }
-                            : { background: '#fff', color: '#6b7280', borderColor: '#e5e7eb' }
+                            : { background: '#fff', color: '#6b7280', borderColor: 'secondary' }
                         }
                       >
                         {p.name}
@@ -318,7 +318,7 @@ function PromoCard({
     <div
       className="rounded-2xl border bg-white p-5 flex flex-col gap-3"
       style={{
-        borderColor: promo.active && !expired ? '#51301244' : '#e5e7eb',
+        borderColor: promo.active && !expired ? '#51301244' : 'secondary',
         opacity: expired ? 0.75 : 1,
       }}
     >
@@ -328,7 +328,7 @@ function PromoCard({
             {promo.code}
           </p>
           {promo.description && (
-            <p className="text-xs text-gray-500 mt-0.5">{promo.description}</p>
+            <p className="text-xs text-secondary mt-0.5">{promo.description}</p>
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
@@ -337,11 +337,11 @@ function PromoCard({
               <CheckCircle2 size={11} /> Active
             </span>
           ) : expired ? (
-            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400">
+            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
               <XCircle size={11} /> Expired
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400">
+            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
               <XCircle size={11} /> Inactive
             </span>
           )}
@@ -357,7 +357,7 @@ function PromoCard({
       </div>
 
       {/* Meta */}
-      <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
+      <div className="grid grid-cols-2 gap-2 text-xs text-secondary">
         <div className="flex items-center gap-1">
           <Calendar size={11} /> {fmtDate(promo.valid_from)}
         </div>
@@ -370,10 +370,10 @@ function PromoCard({
         </div>
         <div className="flex items-center gap-1 flex-wrap">
           {promo.one_time_per_user && (
-            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-500">1x/user</span>
+            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary">1x/user</span>
           )}
           {promo.stackable && (
-            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-500">stackable</span>
+            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary">stackable</span>
           )}
         </div>
       </div>
@@ -404,7 +404,7 @@ function PromoCard({
           </button>
         )}
         <button onClick={() => onEdit(promo)} className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50">
-          <Pencil size={13} className="text-gray-500" />
+          <Pencil size={13} className="text-secondary" />
         </button>
         <button onClick={() => onDelete(promo)} className="p-2 rounded-xl border border-red-100 hover:bg-red-50">
           <Trash2 size={13} className="text-red-400" />
@@ -485,7 +485,7 @@ export default function SuperAdminPromosPage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Promo Codes
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Create and manage discount codes</p>
+          <p className="text-secondary text-sm mt-1">Create and manage discount codes</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -514,7 +514,7 @@ export default function SuperAdminPromosPage() {
           { label: 'Total Uses', value: stats.used,  color: '#7e22ce' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{label}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-1">{label}</p>
             <p className="text-2xl font-bold" style={{ color }}>{value}</p>
           </div>
         ))}
@@ -526,12 +526,12 @@ export default function SuperAdminPromosPage() {
 
       {/* Show expired toggle */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-secondary">
           Showing <strong>{visible.length}</strong> {showExpired ? 'total' : 'active/upcoming'} promo codes
         </p>
         <button
           onClick={() => setShowExpired(x => !x)}
-          className="text-xs font-semibold underline text-gray-400 hover:text-gray-600"
+          className="text-xs font-semibold underline text-secondary hover:text-gray-600"
         >
           {showExpired ? 'Hide expired' : `Show expired (${stats.expired})`}
         </button>
@@ -543,7 +543,7 @@ export default function SuperAdminPromosPage() {
           <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : visible.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-secondary">
           <Tag size={40} className="mx-auto mb-3 opacity-20" />
           <p className="font-medium mb-4">No promo codes yet</p>
           <button

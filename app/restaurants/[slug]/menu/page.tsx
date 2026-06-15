@@ -96,7 +96,7 @@ const menuItems: {
       <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1e0f02]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[secondary]/80 via-transparent to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-6">
           <div className="max-w-7xl mx-auto">
@@ -131,19 +131,19 @@ const menuItems: {
             {/* Section header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-base">
+                <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-base">
                   ⭐
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-secondary leading-none">
                     Top Rated
                   </h2>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-secondary mt-0.5">
                     Loved by customers
                   </p>
                 </div>
               </div>
-              <span className="text-xs bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1 rounded-full font-medium">
+              <span className="text-xs bg-accent border border-accent text-accent px-3 py-1 rounded-full font-medium">
                 Customer picks
               </span>
             </div>
@@ -156,10 +156,10 @@ const menuItems: {
                 return (
                   <div
                     key={item.id}
-                    className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-amber-200 hover:shadow-md transition-all duration-200 flex gap-0"
+                    className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-accent hover:shadow-md transition-all duration-200 flex gap-0"
                   >
                     {/* Left: image */}
-                    <div className="relative w-28 shrink-0 bg-amber-50">
+                    <div className="relative w-28 shrink-0 bg-accent">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -186,7 +186,7 @@ const menuItems: {
                           {item.name}
                         </p>
                         {item.description && (
-                          <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-secondary mt-0.5 line-clamp-2 leading-relaxed">
                             {item.description}
                           </p>
                         )}
@@ -195,12 +195,12 @@ const menuItems: {
                         <span className="text-sm font-bold text-secondary">
                           Rs. {item.price.toLocaleString()}
                         </span>
-                        <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">
-                          <span className="text-amber-400 text-xs">★</span>
-                          <span className="text-xs font-bold text-amber-800">
+                        <div className="flex items-center gap-1 bg-accent px-2 py-0.5 rounded-full">
+                          <span className="text-accent text-xs">★</span>
+                          <span className="text-xs font-bold text-accent">
                             {rating.avg.toFixed(1)}
                           </span>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-secondary">
                             ({rating.count})
                           </span>
                         </div>
@@ -214,7 +214,7 @@ const menuItems: {
             {/* Divider into menu */}
             <div className="flex items-center gap-3 mt-8 mb-2">
               <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-xs text-gray-400 font-medium px-2">Full Menu</span>
+              <span className="text-xs text-secondary font-medium px-2">Full Menu</span>
               <div className="flex-1 h-px bg-gray-100" />
             </div>
           </div>

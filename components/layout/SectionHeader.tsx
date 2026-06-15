@@ -59,9 +59,9 @@ export default function SectionHeader({
   dividerClassName = '',
   
   // Custom Colors (defaults to theme colors)
-  titleColor = 'text-[#271302]',
+  titleColor = 'text-secondary',
   highlightColor = 'text-accent',
-  subtitleColor = 'text-[#271302]/60',
+  subtitleColor = 'text-secondary/60',
   badgeBgColor = 'bg-accent/30',
   badgeTextColor = 'text-primary',
   linkBgColor = 'bg-transparent',

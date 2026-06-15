@@ -70,7 +70,7 @@ export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderP
             onClick={() => setShowProfileMenu(!showProfileMenu)}
             className="flex items-center gap-3 hover:bg-secondary/5 p-1.5 pr-3 rounded-xl transition-colors"
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-secondary to-[#47034E] rounded-full flex items-center justify-center text-white font-medium border-2 border-white shadow-sm">
+            <div className="w-9 h-9 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center text-white font-medium border-2 border-white shadow-sm">
               SA
             </div>
           </button>
@@ -99,9 +99,9 @@ export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderP
                 <Link
                   href="/settings"
                   onClick={() => setShowProfileMenu(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 text-black"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 text-secondary"
                 >
-                  <User className="w-4 h-4 text-black" />
+                  <User className="w-4 h-4 text-secondary" />
                   Profile Settings
                 </Link>
 

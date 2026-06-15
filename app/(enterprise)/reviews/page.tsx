@@ -92,7 +92,7 @@ const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
       <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1e0f02]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[secondary]/80 via-transparent to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-6">
           <div className="max-w-7xl mx-auto">
@@ -127,7 +127,7 @@ const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
         <div className="mb-6">
           <div className="flex items-center gap-2.5">
             
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-base">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-base">
               ⭐
             </div>
 
@@ -136,7 +136,7 @@ const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
                 Customer Reviews
               </h2>
 
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-secondary mt-0.5">
                 What people are saying
               </p>
             </div>

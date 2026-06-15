@@ -133,7 +133,7 @@ export default function GalleryAdminPage() {
           ) : (
             <>
               <Upload className="w-8 h-8 text-gray-300" />
-              <p className="text-sm text-gray-400">Click to select a photo</p>
+              <p className="text-sm text-secondary">Click to select a photo</p>
             </>
           )}
         </div>
@@ -179,9 +179,9 @@ export default function GalleryAdminPage() {
         <h2 className="font-semibold text-lg">Gallery Photos ({photos.length})</h2>
 
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading...</p>
+          <p className="text-secondary text-sm">Loading...</p>
         ) : photos.length === 0 ? (
-          <div className="border border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center gap-3 text-gray-400">
+          <div className="border border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center gap-3 text-secondary">
             <ImageIcon className="w-10 h-10" />
             <p className="text-sm">No gallery photos yet. Upload one above.</p>
           </div>
@@ -203,7 +203,7 @@ export default function GalleryAdminPage() {
                 </button>
                 {/* Alt label */}
                 {photo.alt && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-2 py-1">
+                  <div className="absolute bottom-0 left-0 right-0 bg-secondary/40 px-2 py-1">
                     <p className="text-white text-xs truncate">{photo.alt}</p>
                   </div>
                 )}

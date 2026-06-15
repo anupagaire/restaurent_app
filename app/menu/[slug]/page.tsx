@@ -224,7 +224,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
         <div className="px-5 pb-10 max-w-2xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between py-4">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Playfair Display, serif' }}>
               Your Order
             </h2>
             <button onClick={onClose} style={{ color: '#9a7458', fontSize: 22 }}>✕</button>
@@ -239,7 +239,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
                 style={{ borderBottom: '1px dashed rgba(184,147,106,0.28)' }}
               >
                 <div className="flex-1">
-                  <p className="font-semibold text-sm" style={{ color: '#1e0f02' }}>{c.menuItem.name}</p>
+                  <p className="font-semibold text-sm" style={{ color: 'secondary' }}>{c.menuItem.name}</p>
                   <p className="text-xs" style={{ color: '#9a7458' }}>{c.categoryName}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -248,7 +248,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
                     className="w-7 h-7 rounded-full flex items-center justify-center font-bold"
                     style={{ background: '#f0e6d3', color: '#513012', border: 'none', cursor: 'pointer' }}
                   >−</button>
-                  <span className="w-5 text-center font-bold text-sm" style={{ color: '#1e0f02' }}>{c.quantity}</span>
+                  <span className="w-5 text-center font-bold text-sm" style={{ color: 'secondary' }}>{c.quantity}</span>
                   <button
                     onClick={() => onUpdateQty(c.menuItem.id, 1)}
                     className="w-7 h-7 rounded-full flex items-center justify-center font-bold"
@@ -263,7 +263,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
           </div>
 
           <div className="flex justify-between items-center py-4 mt-2">
-            <span className="font-bold" style={{ color: '#1e0f02', fontFamily: 'Playfair Display, serif' }}>Total</span>
+            <span className="font-bold" style={{ color: 'secondary', fontFamily: 'Playfair Display, serif' }}>Total</span>
             <span className="font-bold text-xl" style={{ color: '#513012' }}>Rs. {totalPrice.toFixed(0)}</span>
           </div>
           <OrnamentDivider />
@@ -318,7 +318,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
                   style={{
                     background: '#fdf6ec',
                     border: '1px solid rgba(184,147,106,0.35)',
-                    color: '#1e0f02',
+                    color: 'secondary',
                     fontFamily: 'Lato, sans-serif',
                   }}
                 />
@@ -335,7 +335,7 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
                 style={{
                   background: '#fdf6ec',
                   border: '1px solid rgba(184,147,106,0.35)',
-                  color: '#1e0f02',
+                  color: 'secondary',
                   fontFamily: 'Lato, sans-serif',
                 }}
               />
@@ -442,7 +442,7 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-3">
-        <h4 className="menu-serif font-semibold leading-tight" style={{ fontSize: 14, color: '#1e0f02', marginBottom: 4 }}>
+        <h4 className="menu-serif font-semibold leading-tight" style={{ fontSize: 14, color: 'secondary', marginBottom: 4 }}>
           {item.name}
         </h4>
         {item.description && (
@@ -465,7 +465,7 @@ function MenuItemCard({ item, categoryName, qty, onAdd, onUpdate }: {
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <button onClick={() => onUpdate(-1)} className="qty-btn sub-btn">−</button>
-              <span style={{ width: 20, textAlign: 'center', fontWeight: 700, fontSize: 13, color: '#1e0f02' }}>{qty}</span>
+              <span style={{ width: 20, textAlign: 'center', fontWeight: 700, fontSize: 13, color: 'secondary' }}>{qty}</span>
               <button onClick={() => onUpdate(1)} className="qty-btn add-btn">+</button>
             </div>
           )}
@@ -578,7 +578,7 @@ export default function PublicMenuPage() {
         <div className="text-6xl mb-6">😕</div>
         <h1 className="font-bold text-3xl mb-3" style={{ color: '#513012', fontFamily: 'Playfair Display, serif' }}>Menu Unavailable</h1>
         <p style={{ color: '#a0856b' }}>{error || 'Something went wrong.'}</p>
-        <p className="text-xs text-gray-500 mt-10">Please ask the restaurant staff for a new QR code.</p>
+        <p className="text-xs text-secondary mt-10">Please ask the restaurant staff for a new QR code.</p>
       </div>
     </>
   );
@@ -660,7 +660,7 @@ export default function PublicMenuPage() {
             >
               <span className="text-4xl font-bold text-white menu-serif">{restaurant.name?.[0] || '?'}</span>
             </div>
-            <h1 className="menu-serif font-bold leading-tight" style={{ fontSize: 'clamp(26px, 7vw, 38px)', color: '#1e0f02' }}>
+            <h1 className="menu-serif font-bold leading-tight" style={{ fontSize: 'clamp(26px, 7vw, 38px)', color: 'secondary' }}>
               {restaurant.name}
             </h1>
             <div className="mt-3 mb-2 max-w-xs mx-auto"><OrnamentDivider /></div>
@@ -710,7 +710,7 @@ export default function PublicMenuPage() {
               <div key={category.id} id={`cat-${category.id}`} style={{ scrollMarginTop: 60 }}>
                 <div className="text-center mb-4">
                   <OrnamentDivider />
-                  <h2 className="menu-serif font-bold mt-3 mb-1" style={{ fontSize: 22, color: '#1e0f02' }}>
+                  <h2 className="menu-serif font-bold mt-3 mb-1" style={{ fontSize: 22, color: 'secondary' }}>
                     {category.name}
                   </h2>
                   <OrnamentDivider />

@@ -14,7 +14,7 @@ export default function WebsiteContentPage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-2 text-secondary">Website Content</h1>
-      <p className="text-gray-500 mb-8">Manage your public website content from here.</p>
+      <p className="text-secondary mb-8">Manage your public website content from here.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {contentSections.map((section) => (
@@ -28,7 +28,7 @@ export default function WebsiteContentPage() {
             </div>
             <div>
               <h2 className="font-semibold text-gray-800">{section.title}</h2>
-              <p className="text-sm text-gray-500 mt-0.5">{section.description}</p>
+              <p className="text-sm text-secondary mt-0.5">{section.description}</p>
             </div>
           </Link>
         ))}

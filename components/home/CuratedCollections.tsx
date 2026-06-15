@@ -49,7 +49,7 @@ const COLLECTIONS: Collection[] = [
     tagline: "Work & dine",
     description: "Your laptop is welcome here.",
     emoji: "📶",
-    gradient: "from-blue-600 via-indigo-500 to-violet-600",
+    gradient: "from-primary via-indigo-500 to-violet-600",
     accentColor: "#6366f1",
     filter: (r) =>
       r.filter(
@@ -103,7 +103,7 @@ const COLLECTIONS: Collection[] = [
     tagline: "Capital's finest",
     description: "The best of Nepal's food capital, all in one place.",
     emoji: "📍",
-    gradient: "from-amber-600 via-yellow-500 to-orange-400",
+    gradient: "from-accent via-yellow-500 to-orange-400",
     accentColor: "#f59e0b",
     filter: (r) =>
       r.filter((x) => x.city?.toLowerCase() === "kathmandu"),
@@ -231,7 +231,7 @@ function BigCard({
           style={{ opacity: top3.length > 0 ? 0.75 : 1 }}
         />
         {/* Bottom dark fade for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/10 to-transparent" />
       </div>
 
       {/* Content */}
@@ -270,7 +270,7 @@ function BigCard({
             </div>
           )}
 
-          <div className="inline-flex items-center gap-2 bg-white text-secondary text-sm font-bold px-5 py-2.5 rounded-xl group-hover:bg-amber-50 transition-colors">
+          <div className="inline-flex items-center gap-2 bg-white text-secondary text-sm font-bold px-5 py-2.5 rounded-xl group-hover:bg-accent transition-colors">
             Browse collection
             <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
           </div>
@@ -313,7 +313,7 @@ export default function CuratedCollections() {
             <h2 className="text-2xl md:text-3xl font-serif text-[#1a0a00] leading-tight">
               Browse by <span className="text-secondary italic">Collection</span>
             </h2>
-            <p className="mt-1.5 text-sm text-gray-500">
+            <p className="mt-1.5 text-sm text-secondary">
               Handpicked restaurants for every mood and occasion.
             </p>
           </div>

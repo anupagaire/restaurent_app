@@ -39,11 +39,11 @@ export default function RestaurantNavbar({
               <Image src={logo} alt={restaurant.name} fill className="object-cover" />
             </div>
           ) : (
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[#fde68a] font-bold text-lg">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-accent font-bold text-lg">
               {restaurant.name?.[0]}
             </div>
           )}
-          <span className="font-bold text-[#271302] text-lg hidden sm:block">
+          <span className="font-bold text-secondary text-lg hidden sm:block">
             {restaurant.name}
           </span>
         </Link>
@@ -53,42 +53,42 @@ export default function RestaurantNavbar({
           {/* Normal nav links */}
           <Link
             href={base}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             Home
           </Link>
 
           <Link
             href={`${base}/menu`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             Menu
           </Link>
 
           <Link
             href={`${base}/reviews`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             Reviews
           </Link>
 
           <Link
             href={`${base}/about-us`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             About Us
           </Link>
 
           <Link
             href={`${base}/services`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             Services
           </Link>
 
           <Link
             href={`${base}/gallery`}
-            className="text-sm font-medium text-[#271302]/70 hover:text-primary transition-colors"
+            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
             Gallery
           </Link>
@@ -98,14 +98,14 @@ export default function RestaurantNavbar({
             
             <Link
               href="/register-restaurant"
-              className="px-4 py-2 rounded-full border-2 border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-[#fde68a] transition-all"
+              className="px-4 py-2 rounded-full border-2 border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-accent transition-all"
             >
               List Your Venue
             </Link>
 
             <Link
               href="/login"
-              className="px-4 py-2 rounded-full bg-primary text-[#fde68a] text-sm font-semibold hover:bg-[#271302] transition-all shadow-sm"
+              className="px-4 py-2 rounded-full bg-primary text-accent text-sm font-semibold hover:bg-secondary transition-all shadow-sm"
             >
               Login
             </Link>
@@ -130,7 +130,7 @@ export default function RestaurantNavbar({
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block py-2 text-sm font-medium text-[#271302]/70 hover:text-primary hover:bg-[#fde68a]/20 px-3 rounded-lg transition-colors"
+              className="block py-2 text-sm font-medium text-secondary/70 hover:text-primary hover:bg-accent/20 px-3 rounded-lg transition-colors"
             >
               {l.label}
             </Link>

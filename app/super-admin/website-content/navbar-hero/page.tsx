@@ -125,11 +125,11 @@ export default function NavbarHeroAdminPage() {
     }));
   };
 
-  if (!data) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data) return <div className="p-6 text-secondary">Loading...</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
         ← Back
       </button>
       <h1 className="text-2xl font-bold text-secondary">Navbar & Hero Content</h1>
@@ -171,7 +171,7 @@ export default function NavbarHeroAdminPage() {
             </label>
           </div>
           {data.site_settings?.logo?.image && (
-            <p className="text-xs text-gray-400 mt-1 truncate">{data.site_settings.logo.image}</p>
+            <p className="text-xs text-secondary mt-1 truncate">{data.site_settings.logo.image}</p>
           )}
         </div>
 
@@ -270,7 +270,7 @@ export default function NavbarHeroAdminPage() {
                   />
                 </label>
               </div>
-              {slide.image && <p className="text-xs text-gray-400 mt-1 truncate">{slide.image}</p>}
+              {slide.image && <p className="text-xs text-secondary mt-1 truncate">{slide.image}</p>}
             </div>
 
             {[

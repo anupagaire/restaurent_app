@@ -43,7 +43,7 @@ export default function CustomerSidebar() {
       {/* ── Desktop sidebar ── */}
       <aside
         className="hidden md:flex flex-col w-64 shrink-0 min-h-screen sticky top-0"
-        style={{ background: '#1e0f02', borderRight: '1px solid rgba(184,147,106,0.15)' }}
+        style={{ background: 'secondary', borderRight: '1px solid rgba(184,147,106,0.15)' }}
       >
         {/* Brand */}
         <div className="flex items-center gap-3 px-6 py-5" style={{ borderBottom: '1px solid rgba(184,147,106,0.15)' }}>
@@ -127,7 +127,7 @@ export default function CustomerSidebar() {
       {/* ── Mobile bottom nav ── */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center"
-        style={{ background: '#1e0f02', borderTop: '1px solid rgba(184,147,106,0.2)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        style={{ background: 'secondary', borderTop: '1px solid rgba(184,147,106,0.2)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         {NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href);

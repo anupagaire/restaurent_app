@@ -151,7 +151,7 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-secondary">Account Settings</h1>
-        <p className="text-gray-500 mt-1 text-sm">Update your profile and password</p>
+        <p className="text-secondary mt-1 text-sm">Update your profile and password</p>
       </div>
       <Card>
         <CardHeader>
@@ -201,7 +201,7 @@ export default function SettingsPage() {
             </div>
 
             <Button type="submit" disabled={profileSaving}
-              className="w-full bg-secondary hover:bg-[#3f260f]">
+              className="w-full bg-secondary hover:bg-secondary">
               {profileSaving
                 ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</>
                 : 'Save Profile'}
@@ -230,7 +230,7 @@ export default function SettingsPage() {
                   onChange={e => setPw({ ...pw, password1: e.target.value })}
                   className="pr-10" />
                 <button type="button" onClick={() => setShowPw1(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600">
                   {showPw1 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                   onChange={e => setPw({ ...pw, confirm: e.target.value })}
                   className="pr-10" />
                 <button type="button" onClick={() => setShowPw2(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600">
                   {showPw2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
 
             <Button type="submit"
               disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
-              className="w-full bg-secondary hover:bg-[#3f260f]">
+              className="w-full bg-secondary hover:bg-secondary">
               {pwSaving
                 ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating…</>
                 : 'Update Password'}

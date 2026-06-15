@@ -119,7 +119,7 @@ export default function CustomerProfilePage() {
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-secondary">My Profile</h1>
-        <p className="text-gray-500 mt-1 text-sm">Manage your account details</p>
+        <p className="text-secondary mt-1 text-sm">Manage your account details</p>
       </div>
 
       <Card>
@@ -154,7 +154,7 @@ export default function CustomerProfilePage() {
               <Label>Address</Label>
               <Input value={profile.address} onChange={e => setProfile({ ...profile, address: e.target.value })} placeholder="Your address" />
             </div>
-            <Button type="submit" disabled={profileSaving} className="w-full bg-secondary hover:bg-[#3f260f]">
+            <Button type="submit" disabled={profileSaving} className="w-full bg-secondary hover:bg-secondary">
               {profileSaving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Saving…</> : 'Save Profile'}
             </Button>
           </form>
@@ -176,7 +176,7 @@ export default function CustomerProfilePage() {
               <div className="relative">
                 <Input type={showPw1 ? 'text' : 'password'} required value={pw.password1} placeholder="Min 8 characters"
                   onChange={e => setPw({ ...pw, password1: e.target.value })} className="pr-10" />
-                <button type="button" onClick={() => setShowPw1(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <button type="button" onClick={() => setShowPw1(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600">
                   {showPw1 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -186,7 +186,7 @@ export default function CustomerProfilePage() {
               <div className="relative">
                 <Input type={showPw2 ? 'text' : 'password'} required value={pw.confirm} placeholder="Repeat new password"
                   onChange={e => setPw({ ...pw, confirm: e.target.value })} className="pr-10" />
-                <button type="button" onClick={() => setShowPw2(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <button type="button" onClick={() => setShowPw2(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600">
                   {showPw2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -194,7 +194,7 @@ export default function CustomerProfilePage() {
               {pw.confirm && pw.confirm === pw.password1 && pw.password1.length >= 8 && <p className="text-xs text-green-600 mt-1">✓ Passwords match</p>}
             </div>
             <Button type="submit" disabled={pwSaving || pw.password1 !== pw.confirm || pw.password1.length < 8}
-              className="w-full bg-secondary hover:bg-[#3f260f]">
+              className="w-full bg-secondary hover:bg-secondary">
               {pwSaving ? <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Updating…</> : 'Update Password'}
             </Button>
           </form>

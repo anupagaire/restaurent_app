@@ -112,7 +112,7 @@ export default function CustomerDashboard() {
       {/* Hero */}
       <div
         className="rounded-3xl px-6 py-8 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1e0f02 0%, #513012 60%, #7a4a20 100%)' }}
+        style={{ background: 'linear-gradient(135deg, secondary 0%, #513012 60%, #7a4a20 100%)' }}
       >
         <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-10" style={{ background: '#b8936a' }} />
         <div className="absolute -bottom-6 right-4 w-24 h-24 rounded-full opacity-10" style={{ background: '#fdf6ec' }} />
@@ -135,9 +135,9 @@ export default function CustomerDashboard() {
           { label: 'Restaurants',  value: restaurants.length,             sub: 'Visited',  color: '#1d4ed8' },
         ].map(stat => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">{stat.label}</p>
+            <p className="text-xs text-secondary font-medium uppercase tracking-wider">{stat.label}</p>
             <p className="text-2xl font-bold mt-1" style={{ color: stat.color }}>{stat.value}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{stat.sub}</p>
+            <p className="text-xs text-secondary mt-0.5">{stat.sub}</p>
           </div>
         ))}
       </div>
@@ -153,8 +153,8 @@ export default function CustomerDashboard() {
             <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: bg }}>
               <Icon size={18} color={color} />
             </div>
-            <p className="font-bold text-sm" style={{ color: '#1e0f02' }}>{label}</p>
-            <p className="text-xs mt-0.5 text-gray-400">{sub}</p>
+            <p className="font-bold text-sm" style={{ color: 'secondary' }}>{label}</p>
+            <p className="text-xs mt-0.5 text-secondary">{sub}</p>
             <ChevronRight size={13} className="mt-2 transition-transform group-hover:translate-x-1" style={{ color: '#b8936a' }} />
           </button>
         ))}
@@ -163,7 +163,7 @@ export default function CustomerDashboard() {
       {/* Restaurants visited */}
       {restaurants.length > 0 && (
         <div>
-          <h2 className="font-bold text-base mb-3" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+          <h2 className="font-bold text-base mb-3" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
             Restaurants You&apos;ve Visited
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -173,12 +173,12 @@ export default function CustomerDashboard() {
                   <UtensilsCrossed size={18} color="#b8936a" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate" style={{ color: '#1e0f02' }}>{r.name}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="font-semibold text-sm truncate" style={{ color: 'secondary' }}>{r.name}</p>
+                  <p className="text-xs text-secondary mt-0.5">
                     {r.orderCount} order{r.orderCount !== 1 ? 's' : ''} · Rs. {r.totalSpent.toFixed(0)} total
                   </p>
                 </div>
-                <p className="text-xs text-gray-400 shrink-0">{formatTime(r.lastOrder)}</p>
+                <p className="text-xs text-secondary shrink-0">{formatTime(r.lastOrder)}</p>
               </div>
             ))}
           </div>
@@ -188,7 +188,7 @@ export default function CustomerDashboard() {
       {/* Recent orders */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-bold text-base" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>Recent Orders</h2>
+          <h2 className="font-bold text-base" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>Recent Orders</h2>
           {allOrders.length > 4 && (
             <button onClick={() => router.push('/customer/orders')}
               className="text-xs font-semibold flex items-center gap-1" style={{ color: '#513012' }}>
@@ -201,7 +201,7 @@ export default function CustomerDashboard() {
             style={{ borderColor: 'rgba(184,147,106,0.3)', background: '#fffdf8' }}>
             <ShoppingBag size={32} className="mb-3 opacity-30" style={{ color: '#513012' }} />
             <p className="text-sm font-medium" style={{ color: '#9a7458' }}>No orders yet</p>
-            <p className="text-xs mt-1 text-gray-400">Your orders will appear here</p>
+            <p className="text-xs mt-1 text-secondary">Your orders will appear here</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -215,10 +215,10 @@ export default function CustomerDashboard() {
                     <Truck size={16} color="#b8936a" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate" style={{ color: '#1e0f02' }}>
+                    <p className="font-semibold text-sm truncate" style={{ color: 'secondary' }}>
                       {order.restaurant_name || `Order #${order.id}`}
                     </p>
-                    <div className="flex items-center gap-1 text-xs mt-0.5 text-gray-400">
+                    <div className="flex items-center gap-1 text-xs mt-0.5 text-secondary">
                       <Clock size={10} />
                       {formatTime(order.created_on)}
                     </div>

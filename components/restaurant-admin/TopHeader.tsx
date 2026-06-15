@@ -81,7 +81,7 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
             </button>
           )}
           <div className="min-w-0">
-            <p className="text-sm sm:text-lg md:text-2xl font-bold text-black truncate">
+            <p className="text-sm sm:text-lg md:text-2xl font-bold text-secondary truncate">
               {restaurantName}
             </p>
             <h1 className="text-xs sm:text-sm md:text-base text-secondary truncate">
@@ -107,12 +107,12 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
             >
               <div className="hidden md:block text-right max-w-[140px]">
                 <p className="text-sm font-semibold text-secondary truncate">{displayName}</p>
-                <p className="text-xs text-gray-400 truncate">{restaurantName}</p>
+                <p className="text-xs text-secondary truncate">{restaurantName}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-[#47034E] flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
                 {initials}
               </div>
-              <ChevronDown className="hidden md:block w-4 h-4 text-gray-400" />
+              <ChevronDown className="hidden md:block w-4 h-4 text-secondary" />
             </button>
 
             {showProfileMenu && (
@@ -121,12 +121,12 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-secondary/10 py-2 z-50">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-[#47034E] flex items-center justify-center text-white text-sm font-bold">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-sm font-bold">
                         {initials}
                       </div>
                       <div className="min-w-0">
                         <p className="font-semibold text-secondary truncate">{displayName}</p>
-                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                        <p className="text-xs text-secondary truncate">{user?.email}</p>
                         <p className="text-xs text-[#b8936a] truncate mt-0.5">{restaurantName}</p>
                       </div>
                     </div>

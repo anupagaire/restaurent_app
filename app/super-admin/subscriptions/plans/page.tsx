@@ -124,7 +124,7 @@ function PlanFormModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className="fixed z-50 rounded-3xl overflow-y-auto w-full max-w-lg bg-white"
         style={{
@@ -137,10 +137,10 @@ function PlanFormModal({
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               {initial ? 'Edit Plan' : 'Create New Plan'}
             </h2>
-            <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           <div className="space-y-4">
@@ -300,14 +300,14 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
   return (
     <div
       className="rounded-2xl border bg-white p-5 flex flex-col gap-4"
-      style={{ borderColor: plan.is_active ? `${accent}44` : '#e5e7eb' }}
+      style={{ borderColor: plan.is_active ? `${accent}44` : 'secondary' }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <PlanIcon plan={plan} />
           <div>
             <p className="font-bold text-gray-800">{plan.name}</p>
-            <p className="text-xs text-gray-400 font-mono">{plan.code}</p>
+            <p className="text-xs text-secondary font-mono">{plan.code}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -316,7 +316,7 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
               <CheckCircle2 size={12} /> Active
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400">
+            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
               <XCircle size={12} /> Inactive
             </span>
           )}
@@ -324,22 +324,22 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
       </div>
 
       <div>
-        <p className="text-2xl font-bold" style={{ color: '#1e0f02' }}>
+        <p className="text-2xl font-bold" style={{ color: 'secondary' }}>
           {parseFloat(plan.price) === 0 ? 'Free' : `Rs. ${parseFloat(plan.price).toLocaleString()}`}
         </p>
-        <p className="text-xs text-gray-400">{plan.duration_days} days · Order {plan.ordering}</p>
-        {plan.description && <p className="text-xs text-gray-500 mt-1">{plan.description}</p>}
+        <p className="text-xs text-secondary">{plan.duration_days} days · Order {plan.ordering}</p>
+        {plan.description && <p className="text-xs text-secondary mt-1">{plan.description}</p>}
       </div>
 
       {features.length > 0 && (
         <ul className="space-y-1">
           {features.slice(0, 4).map(f => (
-            <li key={f} className="text-xs text-gray-500 flex items-center gap-1.5">
+            <li key={f} className="text-xs text-secondary flex items-center gap-1.5">
               <CheckCircle2 size={10} color={accent} className="shrink-0" /> {f}
             </li>
           ))}
           {features.length > 4 && (
-            <li className="text-xs text-gray-400">+{features.length - 4} more…</li>
+            <li className="text-xs text-secondary">+{features.length - 4} more…</li>
           )}
         </ul>
       )}
@@ -356,7 +356,7 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
           onClick={() => onEdit(plan)}
           className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50"
         >
-          <Pencil size={13} className="text-gray-500" />
+          <Pencil size={13} className="text-secondary" />
         </button>
         <button
           onClick={() => onDelete(plan)}
@@ -423,7 +423,7 @@ export default function SuperAdminPlansPage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Subscription Plans
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Create and manage pricing plans</p>
+          <p className="text-secondary text-sm mt-1">Create and manage pricing plans</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -453,7 +453,7 @@ export default function SuperAdminPlansPage() {
           <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : plans.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-secondary">
           <Crown size={40} className="mx-auto mb-3 opacity-20" />
           <p className="font-medium mb-4">No plans yet</p>
           <button

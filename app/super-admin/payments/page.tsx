@@ -148,16 +148,16 @@ const handleSubmit = async () => {
 };
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/50 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed z-50 rounded-3xl w-full max-w-md bg-white overflow-y-auto"
         style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
           maxHeight: '90vh', boxShadow: '0 24px 64px rgba(0,0,0,0.15)' }}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               {isApprove ? '✅ Approve Payment' : '❌ Reject Payment'}
             </h2>
-            <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           {/* Payment summary */}
@@ -165,31 +165,31 @@ const handleSubmit = async () => {
             style={{ background: '#f8f4f0', border: '1px solid rgba(184,147,106,0.25)' }}>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs text-gray-400">Payment #</p>
+                <p className="text-xs text-secondary">Payment #</p>
                 <p className="font-semibold">#{payment.id}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-400">Restaurant</p>
+                <p className="text-xs text-secondary">Restaurant</p>
                 <p className="font-semibold">{payment.restaurant_name ?? `#${payment.restaurant}`}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-400">Plan</p>
+                <p className="text-xs text-secondary">Plan</p>
                 <p className="font-semibold">{payment.plan_detail?.name ?? `Plan #${payment.plan}`}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-400">Amount</p>
+                <p className="text-xs text-secondary">Amount</p>
                 <p className="font-bold" style={{ color: '#513012' }}>{fmtMoney(payment.final_amount)}</p>
               </div>
             </div>
             {payment.transaction_reference && (
               <div className="mt-2 pt-2 border-t border-gray-100">
-                <p className="text-xs text-gray-400">TXN Reference</p>
+                <p className="text-xs text-secondary">TXN Reference</p>
                 <p className="font-mono text-xs">{payment.transaction_reference}</p>
               </div>
             )}
             {payment.payment_note && (
               <div className="mt-2">
-                <p className="text-xs text-gray-400">Customer Note</p>
+                <p className="text-xs text-secondary">Customer Note</p>
                 <p className="text-xs">{payment.payment_note}</p>
               </div>
             )}
@@ -203,7 +203,7 @@ const handleSubmit = async () => {
                 className="w-full rounded-xl object-contain border border-gray-100 cursor-pointer"
                 style={{ maxHeight: 200 }}
                 onClick={() => window.open(payment.proof_image_url!, '_blank')} />
-              <p className="text-xs text-gray-400 mt-1">Click to open full size</p>
+              <p className="text-xs text-secondary mt-1">Click to open full size</p>
             </div>
           ) : (
             <div className="mb-4 p-3 rounded-xl text-xs flex items-center gap-2"
@@ -303,16 +303,16 @@ function ManualActivateModal({ plans, restaurants, onClose, onDone }: {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-secondary/50 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed z-50 rounded-3xl w-full max-w-md bg-white overflow-y-auto"
         style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
           maxHeight: '90vh', boxShadow: '0 24px 64px rgba(0,0,0,0.15)' }}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-xl" style={{ color: '#1e0f02', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
               Manual Activation
             </h2>
-            <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           <div className="space-y-4">
@@ -391,7 +391,7 @@ function PaymentRow({ payment, onAction }: {
         onClick={() => setExpanded(p => !p)}>
         <td className="py-4 px-4">
           <p className="font-mono font-bold text-sm text-gray-700">#{payment.id}</p>
-          <p className="text-xs text-gray-400">{fmtDate(payment.created_on)}</p>
+          <p className="text-xs text-secondary">{fmtDate(payment.created_on)}</p>
         </td>
         <td className="py-4 px-4">
           <p className="font-semibold text-sm text-gray-800">
@@ -400,7 +400,7 @@ function PaymentRow({ payment, onAction }: {
         </td>
         <td className="py-4 px-4">
           <p className="text-sm text-gray-700">{payment.plan_detail?.name ?? `Plan #${payment.plan}`}</p>
-          <p className="text-xs text-gray-400">{payment.plan_detail?.duration_days ?? '—'} days</p>
+          <p className="text-xs text-secondary">{payment.plan_detail?.duration_days ?? '—'} days</p>
         </td>
         <td className="py-4 px-4">
           <p className="font-bold text-sm" style={{ color: '#513012' }}>{fmtMoney(payment.final_amount)}</p>
@@ -436,13 +436,13 @@ function PaymentRow({ payment, onAction }: {
             </div>
           )}
           {payment.admin_notes && payment.status !== 'pending' && (
-            <p className="text-xs text-gray-400 italic max-w-[160px] truncate" title={payment.admin_notes}>
+            <p className="text-xs text-secondary italic max-w-[160px] truncate" title={payment.admin_notes}>
               "{payment.admin_notes}"
             </p>
           )}
         </td>
         <td className="py-4 px-4">
-          {expanded ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
+          {expanded ? <ChevronUp size={14} className="text-secondary" /> : <ChevronDown size={14} className="text-secondary" />}
         </td>
       </tr>
 
@@ -451,24 +451,24 @@ function PaymentRow({ payment, onAction }: {
           <td colSpan={8} className="px-6 py-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">TXN Reference</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">TXN Reference</p>
                 <p className="text-gray-600 font-mono text-xs">{payment.transaction_reference || '—'}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Customer Note</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Customer Note</p>
                 <p className="text-gray-600 text-xs">{payment.payment_note || '—'}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Uploaded At</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Uploaded At</p>
                 <p className="text-gray-600 text-xs">{fmtDate(payment.uploaded_at)}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Admin Notes</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Admin Notes</p>
                 <p className="text-gray-600 text-xs italic">{payment.admin_notes || '—'}</p>
               </div>
               {payment.verified_at && (
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Verified At</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Verified At</p>
                   <p className="text-gray-600 text-xs">{fmtDate(payment.verified_at)}</p>
                 </div>
               )}
@@ -554,7 +554,7 @@ export default function SuperAdminPaymentsPage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Payment Requests
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Review and approve restaurant subscription payments</p>
+          <p className="text-secondary text-sm mt-1">Review and approve restaurant subscription payments</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => loadPayments(true)} disabled={refreshing}
@@ -578,7 +578,7 @@ export default function SuperAdminPaymentsPage() {
           { label: 'Revenue',  value: `Rs. ${approvedRevenue.toLocaleString()}`, color: '#7e22ce' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{label}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-1">{label}</p>
             <p className="text-2xl font-bold" style={{ color }}>{value}</p>
           </div>
         ))}
@@ -591,7 +591,7 @@ export default function SuperAdminPaymentsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
           <input type="text" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search payments…"
@@ -616,9 +616,9 @@ export default function SuperAdminPaymentsPage() {
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-semibold text-gray-800">
             {filter === 'all' ? 'All Payments' : `${filter.charAt(0).toUpperCase() + filter.slice(1)} Payments`}
-            <span className="text-sm font-normal text-gray-400 ml-2">({total})</span>
+            <span className="text-sm font-normal text-secondary ml-2">({total})</span>
           </h2>
-          <p className="text-xs text-gray-400">Click row to expand · View proof before approving</p>
+          <p className="text-xs text-secondary">Click row to expand · View proof before approving</p>
         </div>
 
         {loading ? (
@@ -626,7 +626,7 @@ export default function SuperAdminPaymentsPage() {
             <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : payments.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-secondary">
             <DollarSign size={40} className="mx-auto mb-3 opacity-20" />
             <p className="font-medium">No {filter === 'all' ? '' : filter} payments found</p>
           </div>
@@ -637,7 +637,7 @@ export default function SuperAdminPaymentsPage() {
                 <thead>
                   <tr style={{ borderBottom: '2px solid #f3f4f6' }}>
                     {['ID / Date', 'Restaurant', 'Plan', 'Amount', 'Status', 'Proof', 'Actions', ''].map(h => (
-                      <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">{h}</th>
+                      <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -652,7 +652,7 @@ export default function SuperAdminPaymentsPage() {
 
             {total > PAGE_SIZE && (
               <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100">
-                <p className="text-xs text-gray-400">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
+                <p className="text-xs text-secondary">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
                 <div className="flex gap-2">
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
                     className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40">Previous</button>

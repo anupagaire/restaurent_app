@@ -39,7 +39,7 @@ const STATUS_OPTIONS: Status[] = ["pending", "approved", "rejected"];
 
 const STATUS_STYLES: Record<Status, { badge: string; label: string }> = {
   pending: {
-    badge: "bg-amber-50 text-amber-800 border border-amber-200",
+    badge: "bg-accent text-accent border border-accent",
     label: "Pending",
   },
   approved: {
@@ -76,23 +76,23 @@ const DetailModal = ({
   };
 
   const inputClass =
-    "w-full px-3 py-2 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-[#8c6d46] transition";
+    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 px-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-[#faf8f5] rounded-2xl border border-[#d4b78f] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl">
+      <div className="bg-[#faf8f5] rounded-2xl border border-accent w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#d4b78f] sticky top-0 bg-[#faf8f5] z-10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-accent sticky top-0 bg-[#faf8f5] z-10">
           <div>
             <h2 className="text-lg font-semibold text-secondary">{app.restaurant_name}</h2>
-            <p className="text-xs text-[#8c6d46]">Application #{app.id}</p>
+            <p className="text-xs text-secondary">Application #{app.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-[#776552] hover:text-secondary transition text-xl leading-none"
+            className="text-secondary hover:text-secondary transition text-xl leading-none"
           >
             ✕
           </button>
@@ -128,7 +128,7 @@ const DetailModal = ({
           <Section title="Admin action">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-[#776552]">Status</label>
+                <label className="text-xs font-medium text-secondary">Status</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as Status)}
@@ -142,7 +142,7 @@ const DetailModal = ({
                 </select>
               </div>
               <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label className="text-xs font-medium text-[#776552]">Admin note</label>
+                <label className="text-xs font-medium text-secondary">Admin note</label>
                 <textarea
                   value={adminNote}
                   onChange={(e) => setAdminNote(e.target.value)}
@@ -251,13 +251,13 @@ const RestaurantApplications = () => {
        
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-secondary">Restaurant Applications</h1>
-          <p className="text-[#776552] mt-1">
+          <p className="text-secondary mt-1">
             {count} total application{count !== 1 ? "s" : ""}
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-[#d4b78f] rounded-xl p-4 mb-6">
+        <div className="bg-white border border-accent rounded-xl p-4 mb-6">
           <div className="flex flex-wrap gap-3 items-end">
             {/* Search */}
             <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[220px]">
@@ -265,7 +265,7 @@ const RestaurantApplications = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by name, city, owner…"
-                className="flex-1 px-3 py-2 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-[#8c6d46] transition"
+                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition"
               />
               <button
                 type="submit"
@@ -277,7 +277,7 @@ const RestaurantApplications = () => {
                 <button
                   type="button"
                   onClick={() => { setSearch(""); setSearchInput(""); setPage(1); }}
-                  className="px-3 py-2 text-sm text-[#776552] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
+                  className="px-3 py-2 text-sm text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                 >
                   Clear
                 </button>
@@ -286,11 +286,11 @@ const RestaurantApplications = () => {
 
             {/* Status filter */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-[#776552]">Status</label>
+              <label className="text-xs font-medium text-secondary">Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value as Status | ""); setPage(1); }}
-                className="px-3 py-2 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-[#8c6d46] transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
               >
                 <option value="">All statuses</option>
                 {STATUS_OPTIONS.map((s) => (
@@ -301,11 +301,11 @@ const RestaurantApplications = () => {
 
             {/* Ordering */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-[#776552]">Sort by</label>
+              <label className="text-xs font-medium text-secondary">Sort by</label>
               <select
                 value={ordering}
                 onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm border border-[#d4b78f] rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-[#8c6d46] transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
               >
                 <option value="-created_on">Newest first</option>
                 <option value="created_on">Oldest first</option>
@@ -318,9 +318,9 @@ const RestaurantApplications = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-[#d4b78f] rounded-xl overflow-hidden">
+        <div className="bg-white border border-accent rounded-xl overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-20 text-[#8c6d46] text-sm">
+            <div className="flex items-center justify-center py-20 text-secondary text-sm">
               Loading applications…
             </div>
           ) : error ? (
@@ -328,7 +328,7 @@ const RestaurantApplications = () => {
               {error}
             </div>
           ) : applications.length === 0 ? (
-            <div className="flex items-center justify-center py-20 text-[#8c6d46] text-sm">
+            <div className="flex items-center justify-center py-20 text-secondary text-sm">
               No applications found.
             </div>
           ) : (
@@ -336,22 +336,22 @@ const RestaurantApplications = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#ead9c5] bg-[#fdf5ec]">
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46]">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
                       #
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46]">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
                       Restaurant
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46] hidden md:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">
                       Owner
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46] hidden lg:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden lg:table-cell">
                       Location
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46]">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
                       Status
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#8c6d46] hidden md:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">
                       Submitted
                     </th>
                     <th className="px-4 py-3" />
@@ -364,14 +364,14 @@ const RestaurantApplications = () => {
                       className="hover:bg-[#fdf5ec] transition cursor-pointer"
                       onClick={() => setSelectedApp(app)}
                     >
-                      <td className="px-4 py-3 text-[#8c6d46] font-mono text-xs">{app.id}</td>
+                      <td className="px-4 py-3 text-secondary font-mono text-xs">{app.id}</td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-[#3a2a1a]">{app.restaurant_name}</p>
-                        <p className="text-xs text-[#8c6d46]">{app.cuisine_type}</p>
+                        <p className="text-xs text-secondary">{app.cuisine_type}</p>
                       </td>
                       <td className="px-4 py-3 text-[#3a2a1a] hidden md:table-cell">
                         <p>{app.owner_name}</p>
-                        <p className="text-xs text-[#8c6d46]">{app.phone}</p>
+                        <p className="text-xs text-secondary">{app.phone}</p>
                       </td>
                       <td className="px-4 py-3 text-[#3a2a1a] hidden lg:table-cell">
                         {app.city}{app.area ? `, ${app.area}` : ""}
@@ -384,7 +384,7 @@ const RestaurantApplications = () => {
                           {STATUS_STYLES[app.status]?.label ?? app.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-[#8c6d46] hidden md:table-cell">
+                      <td className="px-4 py-3 text-xs text-secondary hidden md:table-cell">
                         {new Date(app.created_on).toLocaleDateString()}
                       </td>
                       <td
@@ -394,7 +394,7 @@ const RestaurantApplications = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelectedApp(app)}
-                            className="px-3 py-1.5 text-xs text-secondary border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] transition"
+                            className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                           >
                             View
                           </button>
@@ -417,21 +417,21 @@ const RestaurantApplications = () => {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4 text-sm">
-            <p className="text-[#8c6d46] text-xs">
+            <p className="text-secondary text-xs">
               Page {page} of {totalPages} · {count} results
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs text-[#776552] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
               >
                 ← Previous
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs text-[#776552] border border-[#d4b78f] rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
               >
                 Next →
               </button>
@@ -453,8 +453,8 @@ const RestaurantApplications = () => {
 };
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="bg-white border border-[#d4b78f] rounded-xl p-5">
-    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8c6d46] mb-3 pb-3 border-b border-[#ead9c5]">
+  <div className="bg-white border border-accent rounded-xl p-5">
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-[#ead9c5]">
       {title}
     </h3>
     <div className="space-y-3">{children}</div>
@@ -467,7 +467,7 @@ const InfoGrid = ({ children }: { children: React.ReactNode }) => (
 
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div>
-    <p className="text-xs text-[#8c6d46]">{label}</p>
+    <p className="text-xs text-secondary">{label}</p>
     <p className="text-sm text-[#3a2a1a] font-medium">{value}</p>
   </div>
 );

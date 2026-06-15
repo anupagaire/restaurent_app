@@ -58,11 +58,11 @@ export default function HowItWorks() {
           className="mb-12 md:mb-16 lg:mb-2"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-light text-[#011659] leading-tight tracking-tight">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-light text-primaryleading-tight tracking-tight">
               {title || 'How It Works'}
             </h2>
             <div
-              className="text-base sm:text-lg text-[#011659]/55 font-light leading-relaxed self-end ql-content"
+              className="text-base sm:text-lg text-primary/55 font-light leading-relaxed self-end ql-content"
               dangerouslySetInnerHTML={{ __html: description }}
             />
           </div>
@@ -74,13 +74,13 @@ export default function HowItWorks() {
           {/* Vertical connector line (desktop) */}
           <div
             aria-hidden="true"
-            className="hidden lg:block absolute left-[2.35rem] top-10 bottom-10 w-px bg-[#d4b78f]/20"
+            className="hidden lg:block absolute left-[2.35rem] top-10 bottom-10 w-px bg-accent/20"
           />
 
           {/* Animated fill line */}
           <motion.div
             aria-hidden="true"
-            className="hidden lg:block absolute left-[2.35rem] top-10 w-px bg-[#d4b78f]/50 origin-top"
+            className="hidden lg:block absolute left-[2.35rem] top-10 w-px bg-accent/50 origin-top"
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true }}
@@ -106,11 +106,11 @@ export default function HowItWorks() {
                   <div className="flex lg:flex-col items-center lg:items-center gap-4 lg:gap-0 shrink-0">
 
                     {/* Step number badge */}
-                    <div className="relative z-10 w-16 h-16  rounded-2xl bg-[#011659] flex flex-col items-center justify-center shrink-0 group-hover:bg-[#d4b78f] transition-colors duration-500">
-                      <span className="text-[10px] tracking-[0.25em] text-white/40 uppercase font-light group-hover:text-[#011659]/60 transition-colors duration-500">
+                    <div className="relative z-10 w-16 h-16  rounded-2xl bg-primaryflex flex-col items-center justify-center shrink-0 group-hover:bg-accent transition-colors duration-500">
+                      <span className="text-[10px] tracking-[0.25em] text-white/40 uppercase font-light group-hover:text-primary/60 transition-colors duration-500">
                         Step
                       </span>
-                      <span className="text-2xl sm:text-[28px] font-black text-white group-hover:text-[#011659] transition-colors duration-500 leading-none">
+                      <span className="text-2xl sm:text-[28px] font-secondary text-white group-hover:text-primarytransition-colors duration-500 leading-none">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                     </div>
@@ -119,39 +119,39 @@ export default function HowItWorks() {
                     {!isLast && (
                       <div
                         aria-hidden="true"
-                        className="lg:hidden w-px h-8 sm:h-10 bg-[#d4b78f]/30 ml-[2.1rem]"
+                        className="lg:hidden w-px h-8 sm:h-10 bg-accent/30 ml-[2.1rem]"
                       />
                     )}
                   </div>
 
                   {/* ── RIGHT: Card ── */}
-                  <div className="flex-1 bg-white rounded-2xl border border-[#d4b78f]/15 p-6 sm:p-7 md:p-9 hover:border-[#d4b78f]/40 transition-all duration-400 group-hover:shadow-[0_0_0_1px_rgba(212,183,143,0.25)] relative overflow-hidden">
+                  <div className="flex-1 bg-white rounded-2xl border border-accent/15 p-6 sm:p-7 md:p-9 hover:border-accent/40 transition-all duration-400 group-hover:shadow-[0_0_0_1px_rgba(212,183,143,0.25)] relative overflow-hidden">
 
                     {/* Subtle corner accent */}
                     <div
                       aria-hidden="true"
-                      className="absolute top-0 right-0 w-24 h-24 rounded-bl-[4rem]  group-hover:bg-[#d4b78f]/10 transition-colors duration-500"
+                      className="absolute top-0 right-0 w-24 h-24 rounded-bl-[4rem]  group-hover:bg-accent/10 transition-colors duration-500"
                     />
 
                     <div className="flex items-start gap-5 relative z-10">
                       {/* Icon circle */}
-                      <div className="shrink-0 w-11 h-11 rounded-xl bg-[#d4b78f]/12 border border-[#d4b78f]/20 flex items-center justify-center group-hover:bg-[#d4b78f]/20 transition-colors duration-400">
-                        <Icon className="w-5 h-5 text-[#d4b78f]" />
+                      <div className="shrink-0 w-11 h-11 rounded-xl bg-accent/12 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-400">
+                        <Icon className="w-5 h-5 text-accent" />
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-xl sm:text-2xl font-medium text-[#011659] mb-3 leading-snug">
+                        <h3 className="text-xl sm:text-2xl font-medium text-primarymb-3 leading-snug">
                           {step.title}
                         </h3>
                         <div
-                          className="text-base text-[#011659]/55 font-light leading-relaxed ql-content"
+                          className="text-base text-primary/55 font-light leading-relaxed ql-content"
                           dangerouslySetInnerHTML={{ __html: step.description }}
                         />
                       </div>
                     </div>
 
                     {/* Bottom animated underline */}
-                    <div className="mt-6 h-px w-0 group-hover:w-full bg-[#d4b78f]/40 transition-all duration-500 ease-out" />
+                    <div className="mt-6 h-px w-0 group-hover:w-full bg-accent/40 transition-all duration-500 ease-out" />
                   </div>
                 </motion.div>
               );

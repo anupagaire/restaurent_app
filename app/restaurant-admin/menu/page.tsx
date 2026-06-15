@@ -246,7 +246,7 @@ const handleEdit = (item: MenuItem) => {
               <h3 className="text-xl font-bold text-secondary mb-2">
                 Set Up Tables First
               </h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
+              <p className="text-secondary text-sm leading-relaxed">
                 You need to add tables to your restaurant before managing menu items.
                 Tables let customers choose their seat while ordering.
               </p>
@@ -380,7 +380,7 @@ const handleEdit = (item: MenuItem) => {
       onClick={() => setPreviewImage(imageUrl)}
     />
   ) : (
-    <ImageIcon className="w-8 h-8 text-gray-400" />
+    <ImageIcon className="w-8 h-8 text-secondary" />
   )}
 </TableCell>
                       <TableCell className="font-medium">{item.name}</TableCell>
@@ -424,7 +424,7 @@ const handleEdit = (item: MenuItem) => {
     </div>
     {previewImage && (
   <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/70 backdrop-blur-sm"
     onClick={() => setPreviewImage(null)}
   >
     <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>

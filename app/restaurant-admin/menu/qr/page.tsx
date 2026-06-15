@@ -262,7 +262,7 @@ useEffect(() => {
           value={menuUrl}
           size={CANVAS_SIZE}
           bgColor="#ffffff"
-          fgColor="#1e0f02"
+          fgColor="secondary"
         />
       );
 
@@ -422,12 +422,12 @@ formData.append('alt', `QR Token #${token.id}`);
           <h1 className="text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             QR Menu Codes
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-secondary mt-1">
             Generate QR codes for your tables. Customers scan to view your menu instantly.
           </p>
         </div>
 
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-accent bg-accent">
           <CardHeader>
             <CardTitle className="text-lg" style={{ color: '#513012' }}>Generate New QR Code</CardTitle>
           </CardHeader>
@@ -466,7 +466,7 @@ formData.append('alt', `QR Token #${token.id}`);
             )}
 
             {!loading && tokens.length === 0 && (
-              <div className="text-center py-12 text-gray-400">
+              <div className="text-center py-12 text-secondary">
                 <QrCode className="mx-auto mb-3 h-12 w-12 opacity-30" />
                 <p>No QR codes yet. Generate your first one above.</p>
               </div>
@@ -520,13 +520,13 @@ formData.append('alt', `QR Token #${token.id}`);
                 value={menuUrl}
                 size={180}
                 bgColor="#ffffff"
-                fgColor="#1e0f02"
+                fgColor="secondary"
               />
             </div>
           </div>
 
           <div className="px-4 pb-2">
-            <p className="text-xs text-center text-gray-400 italic">
+            <p className="text-xs text-center text-secondary italic">
               Secure QR — scan to open menu
             </p>
 

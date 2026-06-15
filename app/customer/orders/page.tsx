@@ -114,10 +114,10 @@ function OrderCard({ order }: { order: Order }) {
               <span className="font-bold text-sm text-gray-800 truncate">
                 {order.restaurant_name || `Order #${order.id}`}
               </span>
-              <span className="text-xs text-gray-400 font-mono shrink-0">#{order.id}</span>
+              <span className="text-xs text-secondary font-mono shrink-0">#{order.id}</span>
             </div>
             <div className="flex items-center gap-3 mt-0.5">
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 text-xs text-secondary">
                 <Clock size={10} />
                 {formatTime(order.created_on)}
               </div>
@@ -147,7 +147,7 @@ function OrderCard({ order }: { order: Order }) {
               Rs. {parseFloat(order.total_price || '0').toFixed(0)}
             </p>
           </div>
-          <span className="text-gray-400 ml-1">
+          <span className="text-secondary ml-1">
             {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
           </span>
         </div>
@@ -174,7 +174,7 @@ function OrderCard({ order }: { order: Order }) {
                       <div className="min-w-0">
                         <p className="text-sm text-gray-700 truncate">{getItemName(item)}</p>
                         {item.notes && (
-                          <p className="text-xs text-gray-400 italic truncate">{item.notes}</p>
+                          <p className="text-xs text-secondary italic truncate">{item.notes}</p>
                         )}
                       </div>
                     </div>
@@ -201,19 +201,19 @@ function OrderCard({ order }: { order: Order }) {
               <div className="space-y-2.5">
                 {order.customer_name && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <User size={13} className="text-gray-400 shrink-0" />
+                    <User size={13} className="text-secondary shrink-0" />
                     {order.customer_name}
                   </div>
                 )}
                 {order.customer_phone && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone size={13} className="text-gray-400 shrink-0" />
+                    <Phone size={13} className="text-secondary shrink-0" />
                     {order.customer_phone}
                   </div>
                 )}
                 {order.customer_email && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Mail size={13} className="text-gray-400 shrink-0" />
+                    <Mail size={13} className="text-secondary shrink-0" />
                     {order.customer_email}
                   </div>
                 )}
@@ -232,8 +232,8 @@ function OrderCard({ order }: { order: Order }) {
                   </div>
                 )}
                 {otherNotes && (
-                  <div className="flex items-start gap-2 text-sm text-gray-500">
-                    <FileText size={13} className="text-gray-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2 text-sm text-secondary">
+                    <FileText size={13} className="text-secondary shrink-0 mt-0.5" />
                     <span className="italic">{otherNotes}</span>
                   </div>
                 )}
@@ -249,7 +249,7 @@ function OrderCard({ order }: { order: Order }) {
                   <span className="text-base">{s.icon}</span>
                   <span className="text-sm font-semibold" style={{ color: s.color }}>{s.label}</span>
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5">
+                <p className="text-xs text-secondary mt-1.5">
                   Last updated: {formatTime(order.updated_on)}
                 </p>
               </div>
@@ -316,7 +316,7 @@ export default function CustomerOrdersPage() {
     <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
       <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"
         style={{ borderColor: '#513012', borderTopColor: 'transparent' }} />
-      <p className="text-sm text-gray-400">Loading your orders…</p>
+      <p className="text-sm text-secondary">Loading your orders…</p>
     </div>
   );
 
@@ -329,7 +329,7 @@ export default function CustomerOrdersPage() {
           <h1 className="text-2xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             My Orders
           </h1>
-          <p className="text-sm text-gray-400 mt-0.5">Your complete order history</p>
+          <p className="text-sm text-secondary mt-0.5">Your complete order history</p>
         </div>
         <button
           onClick={() => fetchMyOrders(true)}
@@ -357,7 +357,7 @@ export default function CustomerOrdersPage() {
           { label: 'Spent',   value: `Rs. ${totalSpent.toFixed(0)}`,   color: '#7e22ce' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm text-center">
-            <p className="text-xs text-gray-400 uppercase tracking-widest">{label}</p>
+            <p className="text-xs text-secondary uppercase tracking-widest">{label}</p>
             <p className="text-lg sm:text-xl font-bold mt-1 truncate" style={{ color }}>{value}</p>
           </div>
         ))}
@@ -389,7 +389,7 @@ export default function CustomerOrdersPage() {
           <p className="font-medium" style={{ color: '#9a7458' }}>
             {statusFilter ? `No ${statusFilter} orders` : 'No orders yet'}
           </p>
-          <p className="text-sm mt-1 text-gray-400">
+          <p className="text-sm mt-1 text-secondary">
             {statusFilter ? 'Try a different filter' : 'Your orders will appear here'}
           </p>
           {statusFilter && (

@@ -34,18 +34,18 @@ function resolvePhoto(url: string | null | undefined): string | null {
 }
 
 function StarDisplay({ avg, count }: { avg: number; count: number }) {
-  if (count === 0) return <span className="text-xs text-gray-400">No ratings yet</span>;
+  if (count === 0) return <span className="text-xs text-secondary">No ratings yet</span>;
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-xs font-semibold text-amber-700">{avg.toFixed(1)}</span>
+      <span className="text-xs font-semibold text-accent">{avg.toFixed(1)}</span>
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((s) => (
           <Star key={s} size={11}
-            className={s <= Math.round(avg) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}
+            className={s <= Math.round(avg) ? 'text-accent fill-accent' : 'text-gray-200 fill-gray-200'}
           />
         ))}
       </div>
-      <span className="text-[10px] text-gray-400">({count})</span>
+      <span className="text-[10px] text-secondary">({count})</span>
     </div>
   );
 }
@@ -64,12 +64,12 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200 bg-gradient-to-br from-amber-50 to-orange-50">
+          <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200 bg-gradient-to-br from-accent to-orange-50">
             🍽️
           </div>
         )}
         {restaurant.view_count > 0 && (
-          <span className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+          <span className="absolute top-2 right-2 bg-secondary/50 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
             <Eye size={10} />
             {restaurant.view_count >= 1000 ? `${(restaurant.view_count / 1000).toFixed(1)}k` : restaurant.view_count}
           </span>
@@ -79,8 +79,8 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
         <h3 className="text-sm font-bold text-secondary line-clamp-1 group-hover:text-[#7a4a1e] transition-colors">
           {restaurant.name}
         </h3>
-        <div className="flex items-center gap-1 text-gray-500">
-          <MapPin size={11} className="flex-shrink-0 text-gray-400" />
+        <div className="flex items-center gap-1 text-secondary">
+          <MapPin size={11} className="flex-shrink-0 text-secondary" />
           <p className="text-xs line-clamp-1">{restaurant.city}</p>
         </div>
         {rating && <StarDisplay avg={rating.avg} count={rating.count} />}
@@ -236,17 +236,17 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 py-12">
 
       {/* ── HERO ── */}
-      <div className="bg-gradient-to-br from-[#2a1505] via-[#3d1a08] to-[#1a0b02] py-14 px-4">
+      <div className="bg-gradient-to-br from-secondary via-[#3d1a08] to-[#1a0b02] py-14 px-4">
         <div className="max-w-2xl mx-auto">
-          <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3 text-center">
+          <p className="text-accent text-xs font-semibold uppercase tracking-widest mb-3 text-center">
             🍽️ Discover Nepal&apos;s Best
           </p>
           <h1 className="text-white text-3xl sm:text-4xl font-bold text-center mb-2 leading-tight">
             Find Your Next<br />
-            <span className="text-amber-400">Favourite Restaurant</span>
+            <span className="text-accent">Favourite Restaurant</span>
           </h1>
           <p className="text-white/40 text-sm text-center mb-8">
             Search across hundreds of venues in Nepal
@@ -254,7 +254,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
 
           {/* Search bar */}
           <div className="flex items-center bg-white rounded-2xl shadow-2xl p-2 gap-2">
-            <Search size={18} className="ml-2 text-gray-400 flex-shrink-0" />
+            <Search size={18} className="ml-2 text-secondary flex-shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -262,11 +262,11 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Restaurant name, cuisine, city..."
-              className="flex-1 px-2 py-2.5 text-sm text-gray-800 outline-none placeholder:text-gray-400 bg-transparent"
+              className="flex-1 px-2 py-2.5 text-sm text-gray-800 outline-none placeholder:text-secondary bg-transparent"
               autoFocus
             />
             {inputValue && (
-              <button onClick={clearSearch} className="text-gray-300 hover:text-gray-500 p-1 transition-colors">
+              <button onClick={clearSearch} className="text-gray-300 hover:text-secondary p-1 transition-colors">
                 <X size={16} />
               </button>
             )}
@@ -284,7 +284,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
 {allCities.length > 0 && (
   <div className="relative mt-4">
     {/* Left fade */}
-    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#2a1505] to-transparent z-10 pointer-events-none" />
+    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-secondary to-transparent z-10 pointer-events-none" />
     {/* Right fade */}
     <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#1a0b02] to-transparent z-10 pointer-events-none" />
 
@@ -307,7 +307,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
       <button
         onClick={handleNearMe}
         disabled={nearMeLoading}
-        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-400/30 transition-all disabled:opacity-60"
+        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-accent0/20 text-accent border border-accent/30 hover:bg-accent/30 transition-all disabled:opacity-60"
       >
         <MapPin size={11} className={nearMeLoading ? 'animate-pulse' : ''} />
         {nearMeLoading ? 'Detecting...' : 'Near Me'}
@@ -320,7 +320,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
           className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
             selectedCity === city
-              ? 'bg-amber-400 text-white'
+              ? 'bg-accent text-white'
               : 'bg-white/10 text-white/70 hover:bg-white/20'
           }`}
         >
@@ -334,7 +334,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           {/* Active city badge */}
           {selectedCity && (
             <div className="flex justify-center mt-3">
-              <span className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-2 bg-accent/20 border border-accent/30 text-accent text-xs px-3 py-1.5 rounded-full">
                 <MapPin size={11} />
                 Showing in <strong>{selectedCity}</strong>
                 <button onClick={() => setSelectedCity('')} className="hover:text-white transition-colors">
@@ -354,7 +354,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
             <div>
               {loading ? (
-                <p className="text-gray-500 text-sm">Searching...</p>
+                <p className="text-secondary text-sm">Searching...</p>
               ) : (
                 <p className="text-gray-700 text-sm">
                   {totalCount > 0 ? (
@@ -362,7 +362,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                       <span className="font-semibold text-secondary">{totalCount}</span>{' '}
                       result{totalCount !== 1 ? 's' : ''}
                       {query && <> for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>}
-                      {selectedCity && <span className="text-gray-400"> in {selectedCity}</span>}
+                      {selectedCity && <span className="text-secondary"> in {selectedCity}</span>}
                     </>
                   ) : (
                     <>No results{query && <> for <span className="font-semibold">&ldquo;{query}&rdquo;</span></>}</>
@@ -382,7 +382,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
                   <option value="views">Most viewed</option>
                   <option value="name">A – Z</option>
                 </select>
-                <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
               </div>
 
               <button
@@ -435,18 +435,18 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           <div className="text-center py-20">
             <div className="text-7xl mb-4">🔍</div>
             <h2 className="text-xl font-bold text-gray-700 mb-2">Search for a restaurant</h2>
-            <p className="text-gray-400 text-sm max-w-sm mx-auto mb-8">
+            <p className="text-secondary text-sm max-w-sm mx-auto mb-8">
               Type a restaurant name, cuisine type, or city name above to get started.
             </p>
             {allCities.length > 0 && (
               <>
-                <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">Or browse by city</p>
+                <p className="text-xs text-secondary uppercase tracking-widest mb-4">Or browse by city</p>
                 <div className="flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
                   {allCities.map((city) => (
                     <button
                       key={city}
                       onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                      className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-secondary hover:text-secondary hover:bg-amber-50 transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-secondary hover:text-secondary hover:bg-accent transition-colors flex items-center gap-1.5"
                     >
                       <MapPin size={12} />
                       {city}
@@ -479,7 +479,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           <div className="text-center py-20">
             <div className="text-6xl mb-4">😕</div>
             <h2 className="text-lg font-bold text-gray-700 mb-2">No results found</h2>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-secondary text-sm mb-6">
               {query && <>No restaurants matching &ldquo;{query}&rdquo;</>}
               {selectedCity && <> in {selectedCity}</>}.
             </p>
@@ -545,7 +545,7 @@ export default function SearchPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-2 border-secondary border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Loading...</p>
+          <p className="text-secondary text-sm">Loading...</p>
         </div>
       </div>
     }>

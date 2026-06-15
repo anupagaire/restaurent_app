@@ -96,7 +96,7 @@ export default function AboutSectionsAdminPage() {
     });
   };
 
-  if (!data) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data) return <div className="p-6 text-secondary">Loading...</div>;
 
   const c = data.commitment_section;
   const w = data.why_choose_us_section;
@@ -105,7 +105,7 @@ export default function AboutSectionsAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
         ← Back
       </button>
       <h1 className="text-2xl font-bold text-secondary">About Sections Content</h1>
@@ -163,7 +163,7 @@ export default function AboutSectionsAdminPage() {
           <div className="space-y-3">
             {c.images.map((img: any, idx: number) => (
               <div key={img.id} className="flex gap-3 items-start p-3 border border-gray-200 rounded-lg">
-                <span className="text-xs font-semibold text-gray-500 w-6 pt-2">#{idx + 1}</span>
+                <span className="text-xs font-semibold text-secondary w-6 pt-2">#{idx + 1}</span>
                 
                 {/* Image Preview */}
                 {img.image && (
@@ -192,7 +192,7 @@ export default function AboutSectionsAdminPage() {
                       />
                     </label>
                     {img.image && (
-                      <span className="text-xs text-gray-400 truncate flex-1">{img.image}</span>
+                      <span className="text-xs text-secondary truncate flex-1">{img.image}</span>
                     )}
                   </div>
                   

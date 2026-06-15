@@ -89,13 +89,13 @@ function StarRow({ rating, count }: { rating: number; count: number }) {
     <div className="flex items-center gap-1">
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((s) => (
-          <span key={s} className="text-sm" style={{ color: s <= Math.round(rating) ? '#f59e0b' : '#e5e7eb' }}>
+          <span key={s} className="text-sm" style={{ color: s <= Math.round(rating) ? '#f59e0b' : 'secondary' }}>
             ★
           </span>
         ))}
       </div>
       {count > 0 && (
-        <span className="text-[10px] text-gray-400">
+        <span className="text-[10px] text-secondary">
           {rating.toFixed(1)} ({count})
         </span>
       )}
@@ -145,12 +145,12 @@ function MenuCard({
       <div
         className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
           rank === 0
-            ? 'bg-amber-400 text-white'
+            ? 'bg-accent text-white'
             : rank === 1
             ? 'bg-gray-300 text-gray-700'
             : rank === 2
-            ? 'bg-amber-700 text-white'
-            : 'bg-gray-100 text-gray-500'
+            ? 'bg-accent text-white'
+            : 'bg-gray-100 text-secondary'
         }`}
       >
         {rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `#${rank + 1}`}
@@ -166,40 +166,21 @@ function MenuCard({
 
       <Link href={`/restaurants/${r.restaurantSlug}`} className="flex-1 min-w-0">
         <p className="font-semibold text-secondary text-sm group-hover:underline truncate">{r.restaurantName}</p>
-        <p className="text-xs text-gray-400 mb-1">
+        <p className="text-xs text-secondary mb-1">
           📍 {r.restaurantCity} · <span className="text-secondary font-medium">{r.name}</span>
         </p>
-        {r.description && <p className="text-xs text-gray-400 truncate">{r.description}</p>}
+        {r.description && <p className="text-xs text-secondary truncate">{r.description}</p>}
         <div className="mt-1">
           {r.rating_count > 0 ? (
             <StarRow rating={r.ratingNum} count={r.rating_count} />
           ) : (
-            <span className="text-[10px] text-gray-400">No ratings yet</span>
+            <span className="text-[10px] text-secondary">No ratings yet</span>
           )}
         </div>
       </Link>
 
       <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
         <p className="text-sm font-bold text-gray-800">Rs. {r.priceNum.toLocaleString()}</p>
-
-        {qty === 0 ? (
-          <button
-            onClick={onAdd}
-            className="px-4 py-1.5 rounded-xl text-xs font-bold border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all"
-          >
-            ADD
-          </button>
-        ) : (
-          <div className="flex items-center gap-1.5 bg-secondary rounded-xl px-2 py-1">
-            <button onClick={() => onUpdateQty(-1)} className="w-5 h-5 flex items-center justify-center text-white">
-              <Minus size={11} />
-            </button>
-            <span className="text-white font-bold text-sm w-4 text-center">{qty}</span>
-            <button onClick={() => onUpdateQty(1)} className="w-5 h-5 flex items-center justify-center text-white">
-              <Plus size={11} />
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -361,7 +342,7 @@ useEffect(() => {
             <h2 className="text-3xl md:text-4xl font-serif text-[#1a0a00] mb-3">
               Find the Best <span className="text-secondary italic">Dish</span> Near You
             </h2>
-            <p className="text-gray-500 text-sm max-w-md mx-auto">
+            <p className="text-secondary text-sm max-w-md mx-auto">
               Search any dish and compare it across restaurants — ranked by rating or price.
             </p>
           </div>
@@ -399,7 +380,7 @@ useEffect(() => {
         {/* Search bar */}
         <div className="flex gap-2 mb-4">
           <div className="flex-1 relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary text-lg">🔍</span>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -433,7 +414,7 @@ useEffect(() => {
         {/* Sort controls */}
         {allResults.length > 0 && (
           <div className="flex items-center gap-2 mb-5 flex-wrap">
-            <span className="text-xs text-gray-500 font-medium">Sort by:</span>
+            <span className="text-xs text-secondary font-medium">Sort by:</span>
             <SortButton active={sortBy === 'rating'} onClick={() => { setSortBy('rating'); setPage(1); }}>
               ⭐ Top Rated
             </SortButton>
@@ -452,7 +433,7 @@ useEffect(() => {
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-24 bg-white rounded-2xl animate-pulse border border-gray-100" />
             ))}
-            <p className="text-center text-xs text-gray-400 mt-2">Searching across all restaurants...</p>
+            <p className="text-center text-xs text-secondary mt-2">Searching across all restaurants...</p>
           </div>
         )}
 
@@ -463,7 +444,7 @@ useEffect(() => {
         {!loading && searched && allResults.length === 0 && !error && (
           <div className="text-center py-12">
             <p className="text-4xl mb-3">🍽️</p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-secondary text-sm">
               {selectedCity 
                 ? `No restaurants in ${selectedCity} serve `
                 : `No restaurants serve `}
@@ -483,7 +464,7 @@ useEffect(() => {
         {/* Results */}
         {!loading && paginated.length > 0 && (
           <div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-secondary mb-4">
               {isHomePage ? (
                 <>
                   Showing top{' '}

@@ -171,11 +171,11 @@ export default function FooterContentPage() {
     }
   };
 
-  if (!data || !data.brand) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (!data || !data.brand) return <div className="p-6 text-secondary">Loading...</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary mb-2">
+      <button onClick={() => router.back()} className="flex items-center gap-1 text-sm text-secondary hover:text-secondary mb-2">
         ← Back
       </button>
       <h1 className="text-2xl font-bold text-secondary">Footer Content</h1>
@@ -216,7 +216,7 @@ export default function FooterContentPage() {
                     disabled={uploading}
                   />
                 </label>
-                <p className="text-xs text-gray-400">Supports: JPG, PNG, SVG, WebP</p>
+                <p className="text-xs text-secondary">Supports: JPG, PNG, SVG, WebP</p>
                 
                 {/* Fallback URL input */}
                 <input

@@ -125,7 +125,7 @@ function StatusChanger({
     return (
       <div className="mt-3 flex items-center gap-2">
         <StatusBadge status={order.status} />
-        <span className="text-xs text-gray-400 italic">No further actions</span>
+        <span className="text-xs text-secondary italic">No further actions</span>
       </div>
     );
   }
@@ -247,7 +247,7 @@ function OrderRow({
       >
         <td className="py-4 px-4">
           <div className="flex flex-col gap-1.5">
-            <span className="font-mono text-sm text-gray-500">#{order.id}</span>
+            <span className="font-mono text-sm text-secondary">#{order.id}</span>
             <OrderTypeBadge order={order} />
           </div>
         </td>
@@ -263,7 +263,7 @@ function OrderRow({
             <div>
               <p className="font-semibold text-sm text-gray-800">{order.customer_name || "Guest"}</p>
               {order.customer_phone && (
-                <p className="text-xs text-gray-400 flex items-center gap-1">
+                <p className="text-xs text-secondary flex items-center gap-1">
                   <Phone size={9} /> {order.customer_phone}
                 </p>
               )}
@@ -276,7 +276,7 @@ function OrderRow({
             <div className="text-sm" style={{ color: "#16a34a" }}>
               <p className="font-medium">🚚 Delivery</p>
               {deliveryAddress && (
-                <p className="text-xs text-gray-400 truncate max-w-[160px]">{deliveryAddress}</p>
+                <p className="text-xs text-secondary truncate max-w-[160px]">{deliveryAddress}</p>
               )}
             </div>
           ) : (
@@ -296,7 +296,7 @@ function OrderRow({
         </td>
 
         <td className="py-4 px-4">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-sm text-secondary">
             <Clock size={12} />
             {formatTime(order.created_on)}
           </div>
@@ -307,7 +307,7 @@ function OrderRow({
             {order.items.length} item{order.items.length !== 1 ? "s" : ""}
           </p>
           {order.items.length > 0 && (
-            <p className="text-xs text-gray-400 truncate max-w-[180px]">
+            <p className="text-xs text-secondary truncate max-w-[180px]">
               {order.items[0].menu_name}
               {order.items.length > 1 && ` +${order.items.length - 1} more`}
             </p>
@@ -319,7 +319,7 @@ function OrderRow({
             <span className="font-bold text-base" style={{ color: "#513012" }}>
               Rs. {parseFloat(order.total_price || "0").toFixed(0)}
             </span>
-            <span className="text-gray-400">
+            <span className="text-secondary">
               {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
             </span>
           </div>
@@ -374,19 +374,19 @@ function OrderRow({
                 </p>
                 {order.customer_name && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <User size={13} className="shrink-0 text-gray-400" />
+                    <User size={13} className="shrink-0 text-secondary" />
                     {order.customer_name}
                   </div>
                 )}
                 {order.customer_phone && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone size={13} className="shrink-0 text-gray-400" />
+                    <Phone size={13} className="shrink-0 text-secondary" />
                     {order.customer_phone}
                   </div>
                 )}
                 {order.customer_email && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Mail size={13} className="shrink-0 text-gray-400" />
+                    <Mail size={13} className="shrink-0 text-secondary" />
                     {order.customer_email}
                   </div>
                 )}
@@ -409,8 +409,8 @@ function OrderRow({
                   </div>
                 )}
                 {otherNotes && (
-                  <div className="flex items-start gap-2 text-sm text-gray-500">
-                    <FileText size={13} className="shrink-0 mt-0.5 text-gray-400" />
+                  <div className="flex items-start gap-2 text-sm text-secondary">
+                    <FileText size={13} className="shrink-0 mt-0.5 text-secondary" />
                     <span className="italic">{otherNotes}</span>
                   </div>
                 )}
@@ -539,7 +539,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
-      <p className="text-gray-500 text-sm">Loading orders...</p>
+      <p className="text-secondary text-sm">Loading orders...</p>
     </div>
   );
 
@@ -551,7 +551,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-secondary">Orders Management</h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-secondary text-sm mt-1">
               {lastRefreshed
                 ? `Last updated: ${lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 30s`
                 : "Loading..."}
@@ -596,7 +596,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
         )}
 
         {!token && (
-          <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
+          <div className="flex items-center gap-3 p-4 bg-accent border border-accent rounded-xl text-accent text-sm">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>QR token not found — table orders won't appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
           </div>
@@ -638,7 +638,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
               <span
                 className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
                 style={{
-                  background: activeTab === key ? "rgba(255,255,255,0.2)" : "#e5e7eb",
+                  background: activeTab === key ? "rgba(255,255,255,0.2)" : "secondary",
                   color: activeTab === key ? "#fff" : "#374151",
                 }}
               >
@@ -654,14 +654,14 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-800">
                 {activeTab === "all" ? "All Orders" : activeTab === "online" ? "🚚 Online Orders" : "🍽️ Table Orders"}
-                <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length})</span>
+                <span className="text-sm font-normal text-secondary ml-2">({filteredOrders.length})</span>
               </h2>
-              <p className="text-xs text-gray-400">Click a row to expand · Change status in expanded view</p>
+              <p className="text-xs text-secondary">Click a row to expand · Change status in expanded view</p>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {filteredOrders.length === 0 ? (
-              <div className="text-center py-20 text-gray-400">
+              <div className="text-center py-20 text-secondary">
                 <div className="text-5xl mb-4">
                   {activeTab === "online" ? "🚚" : activeTab === "table" ? "🍽️" : "📋"}
                 </div>
@@ -675,13 +675,13 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
                 <table className="w-full text-sm">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #f3f4f6" }}>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Order</th>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Customer</th>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Location</th>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Status</th>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Time</th>
-                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">Items</th>
-                      <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider text-gray-400">Total</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Order</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Customer</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Location</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Status</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Time</th>
+                      <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">Items</th>
+                      <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider text-secondary">Total</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">

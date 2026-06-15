@@ -165,7 +165,7 @@ const router = useRouter();
       >
         <div className="text-center mb-2">
           <h2 className="text-2xl font-bold text-secondary">Welcome Back</h2>
-          <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
+          <p className="text-secondary text-sm mt-1">Sign in to your account</p>
         </div>
 
         {/* Email */}
@@ -196,7 +196,7 @@ const router = useRouter();
             <button
               type="button"
               onClick={() => setShowPw(p => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600 transition-colors"
             >
               {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -212,7 +212,7 @@ const router = useRouter();
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-[#3f260f] transition-colors disabled:opacity-60 mt-2"
+          className="w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-secondary transition-colors disabled:opacity-60 mt-2"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

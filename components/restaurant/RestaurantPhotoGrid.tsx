@@ -58,7 +58,7 @@ export default function RestaurantPhotoGrid({
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all" />
+              <div className="absolute inset-0 bg-secondary/20 opacity-0 group-hover:opacity-100 transition-all" />
             </div>
           );
         })}
@@ -82,7 +82,7 @@ export default function RestaurantPhotoGrid({
                 onClick={() => goToPage(page)}
                 className={`w-10 h-10 rounded-lg font-medium transition ${
                   page === currentPage 
-                    ? 'bg-black text-white' 
+                    ? 'bg-secondary text-white' 
                     : 'border hover:bg-gray-100'
                 }`}
               >
@@ -101,7 +101,7 @@ export default function RestaurantPhotoGrid({
         </div>
       )}
 
-      <div className="text-center text-sm text-gray-500 mt-6">
+      <div className="text-center text-sm text-secondary mt-6">
         Showing {startIndex + 1} - {Math.min(startIndex + perPage, photos.length)} of {photos.length} photos
       </div>
     </div>

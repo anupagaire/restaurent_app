@@ -22,7 +22,7 @@ export default function RotatingDish() {
   }, []);
 
   return (
-    <span className="text-amber-700 font-bold">
+    <span className="text-accent font-bold">
       {dishes[index]}
     </span>
   );

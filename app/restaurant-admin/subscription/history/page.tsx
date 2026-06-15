@@ -73,11 +73,11 @@ function PaymentRow({ record }: { record: PaymentRecord }) {
         onClick={() => setExpanded(p => !p)}>
         <td className="py-4 px-4">
           <p className="font-mono text-sm font-bold text-gray-700">#{record.id}</p>
-          <p className="text-xs text-gray-400">{fmtDate(record.created_on)}</p>
+          <p className="text-xs text-secondary">{fmtDate(record.created_on)}</p>
         </td>
         <td className="py-4 px-4">
           <p className="font-semibold text-sm text-gray-800">{record.plan_detail?.name ?? `Plan #${record.plan}`}</p>
-          <p className="text-xs text-gray-400">{record.plan_detail ? durationLabel(record.plan_detail.duration_days) : '—'}</p>
+          <p className="text-xs text-secondary">{record.plan_detail ? durationLabel(record.plan_detail.duration_days) : '—'}</p>
         </td>
         <td className="py-4 px-4">
           <p className="font-bold text-sm" style={{ color: '#513012' }}>{fmtMoney(record.final_amount)}</p>
@@ -91,11 +91,11 @@ function PaymentRow({ record }: { record: PaymentRecord }) {
             {s.icon} {s.label}
           </span>
         </td>
-        <td className="py-4 px-4 text-xs text-gray-500">
+        <td className="py-4 px-4 text-xs text-secondary">
           {record.verified_at ? fmtDate(record.verified_at) : '—'}
         </td>
         <td className="py-4 px-4">
-          {expanded ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
+          {expanded ? <ChevronUp size={14} className="text-secondary" /> : <ChevronDown size={14} className="text-secondary" />}
         </td>
       </tr>
 
@@ -104,20 +104,20 @@ function PaymentRow({ record }: { record: PaymentRecord }) {
           <td colSpan={6} className="px-6 py-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">TXN Reference</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">TXN Reference</p>
                 <p className="font-mono text-xs text-gray-600">{record.transaction_reference || '—'}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Uploaded At</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Uploaded At</p>
                 <p className="text-xs text-gray-600">{fmtDate(record.uploaded_at)}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Note</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Note</p>
                 <p className="text-xs text-gray-600">{record.payment_note || '—'}</p>
               </div>
               {record.admin_notes && (
                 <div className="col-span-2 sm:col-span-3">
-                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Admin Note</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Admin Note</p>
                   <p className="text-xs font-medium px-3 py-2 rounded-lg"
                     style={{ background: record.status === 'rejected' ? '#fef2f2' : '#f0faf4',
                       color: record.status === 'rejected' ? '#dc2626' : '#16a34a' }}>
@@ -127,7 +127,7 @@ function PaymentRow({ record }: { record: PaymentRecord }) {
               )}
               {record.proof_image_url && (
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-gray-400">Proof</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-1 text-secondary">Proof</p>
                   <a href={record.proof_image_url} target="_blank" rel="noopener noreferrer"
                     className="text-xs font-semibold underline" style={{ color: '#1d4ed8' }}>
                     View Screenshot
@@ -181,7 +181,7 @@ export default function PaymentHistoryPage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Payment History
           </h1>
-          <p className="text-gray-500 text-sm mt-1">All your subscription payment requests</p>
+          <p className="text-secondary text-sm mt-1">All your subscription payment requests</p>
         </div>
         <button onClick={() => load(true)} disabled={refreshing}
           className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50">
@@ -197,7 +197,7 @@ export default function PaymentHistoryPage() {
           { label: 'Total Paid',     value: `Rs. ${totalPaid.toLocaleString()}`,      color: '#7e22ce' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm text-center">
-            <p className="text-xs text-gray-400 mb-1">{label}</p>
+            <p className="text-xs text-secondary mb-1">{label}</p>
             <p className="text-xl font-bold" style={{ color }}>{value}</p>
           </div>
         ))}
@@ -211,7 +211,7 @@ export default function PaymentHistoryPage() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-800">
             All Payments
-            <span className="text-sm font-normal text-gray-400 ml-2">({total})</span>
+            <span className="text-sm font-normal text-secondary ml-2">({total})</span>
           </h2>
         </div>
 
@@ -220,7 +220,7 @@ export default function PaymentHistoryPage() {
             <Loader2 size={28} className="animate-spin" style={{ color: '#513012' }} />
           </div>
         ) : records.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-secondary">
             <p className="font-medium">No payment history yet</p>
             <p className="text-xs mt-1">Your payment requests will appear here</p>
           </div>
@@ -231,7 +231,7 @@ export default function PaymentHistoryPage() {
                 <thead>
                   <tr style={{ borderBottom: '2px solid #f3f4f6' }}>
                     {['ID / Date', 'Plan', 'Amount', 'Status', 'Verified On', ''].map(h => (
-                      <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">{h}</th>
+                      <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -243,7 +243,7 @@ export default function PaymentHistoryPage() {
 
             {total > PAGE_SIZE && (
               <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100">
-                <p className="text-xs text-gray-400">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
+                <p className="text-xs text-secondary">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
                 <div className="flex gap-2">
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
                     className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40">Previous</button>

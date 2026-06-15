@@ -68,7 +68,7 @@ function Stars({ count, size = 14 }: { count: number; size?: number }) {
   return (
     <span className="inline-flex gap-0.5">
       {[1,2,3,4,5].map(i => (
-        <span key={i} style={{ fontSize: size, color: i <= count ? '#f59e0b' : '#e5e7eb' }}>★</span>
+        <span key={i} style={{ fontSize: size, color: i <= count ? '#f59e0b' : 'secondary' }}>★</span>
       ))}
     </span>
   );
@@ -156,7 +156,7 @@ function ComposeBox({
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="Your name (optional)"
-            className="w-full text-sm px-0 py-1.5 border-b border-gray-200 outline-none focus:border-secondary mb-3 bg-transparent text-gray-700 placeholder:text-gray-400 transition-colors"
+            className="w-full text-sm px-0 py-1.5 border-b border-gray-200 outline-none focus:border-secondary mb-3 bg-transparent text-gray-700 placeholder:text-secondary transition-colors"
           />
         )}
 
@@ -169,7 +169,7 @@ function ComposeBox({
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(0)}
                 className="text-3xl leading-none transition-transform hover:scale-110 focus:outline-none"
-                style={{ color: i <= (hovered || rating) ? '#f59e0b' : '#e5e7eb' }}
+                style={{ color: i <= (hovered || rating) ? '#f59e0b' : 'secondary' }}
               >★</button>
             ))}
           </div>
@@ -182,7 +182,7 @@ function ComposeBox({
           onFocus={() => setFocused(true)}
           placeholder={placeholder}
           rows={focused ? 3 : 1}
-          className="w-full resize-none bg-transparent border-b border-gray-200 outline-none focus:border-secondary text-sm text-gray-800 placeholder:text-gray-400 py-1.5 transition-all"
+          className="w-full resize-none bg-transparent border-b border-gray-200 outline-none focus:border-secondary text-sm text-gray-800 placeholder:text-secondary py-1.5 transition-all"
           style={{ minHeight: focused ? 72 : 32 }}
         />
 
@@ -206,7 +206,7 @@ function ComposeBox({
         {/* Actions */}
         {focused && (
           <div className="flex items-center justify-between mt-3">
-            <label className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+            <label className="flex items-center gap-1.5 text-xs text-secondary hover:text-gray-600 cursor-pointer transition-colors">
               <span>📎</span> Photo
               <input type="file" accept="image/*" multiple className="hidden"
                 onChange={e => {
@@ -278,7 +278,7 @@ function ReviewCard({
         {/* Header */}
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-sm font-semibold text-gray-800">{getDisplayName(review)}</span>
-          <span className="text-xs text-gray-400">{timeAgo(review.created_on)}</span>
+          <span className="text-xs text-secondary">{timeAgo(review.created_on)}</span>
           {depth === 0 && review.rating > 0 && <Stars count={review.rating} size={12} />}
         </div>
 
@@ -302,7 +302,7 @@ function ReviewCard({
         <div className="flex items-center gap-4 mt-2">
           {depth < MAX_DEPTH && (
             <button onClick={() => setReplyOpen(!replyOpen)}
-              className="text-xs font-semibold text-gray-500 hover:text-secondary transition-colors">
+              className="text-xs font-semibold text-secondary hover:text-secondary transition-colors">
               ↩ Reply
             </button>
           )}
@@ -450,13 +450,13 @@ export default function ReviewSection({ restaurantId }: Props) {
           {avgRating && (
             <div className="flex items-center gap-1.5 ml-2">
               <Stars count={Math.round(avgRating)} size={14} />
-              <span className="text-sm font-semibold text-amber-600">{avgRating.toFixed(1)}</span>
+              <span className="text-sm font-semibold text-accent">{avgRating.toFixed(1)}</span>
             </div>
           )}
         </div>
 
         {/* Sort */}
-        <div className="flex items-center gap-1 text-sm text-gray-500">
+        <div className="flex items-center gap-1 text-sm text-secondary">
           <span className="text-xs">↑↓</span>
           <select
             value={sortBy}
@@ -486,7 +486,7 @@ export default function ReviewSection({ restaurantId }: Props) {
       ) : topLevel.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-4xl mb-3">💬</p>
-          <p className="text-gray-400 text-sm">No reviews yet. Be the first!</p>
+          <p className="text-secondary text-sm">No reviews yet. Be the first!</p>
         </div>
       ) : (
         <div>

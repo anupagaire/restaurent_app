@@ -39,7 +39,6 @@ const containerVariants = {
 
 const Testimonials = ({ data }: Props) => {
   React.useEffect(() => {
-    console.log("📦 FULL DATA:", data);
   }, [data]);
 
   if (!data) return null;
@@ -58,19 +57,19 @@ const Testimonials = ({ data }: Props) => {
   }
 
   return (
-    <section className="relative text-black py-2 md:py-8 overflow-hidden">
+    <section className="relative text-secondary py-2 md:py-8 overflow-hidden">
 
   {/* Giant ghost quote mark watermark */}
   <div
     aria-hidden="true"
-    className="absolute -top-8 -left-4 text-[28vw] font-black leading-none select-none pointer-events-none"
+    className="absolute -top-8 -left-4 text-[28vw] font-secondary leading-none select-none pointer-events-none"
     style={{ color: "rgba(212,183,143,0.06)", fontFamily: "Georgia, serif", lineHeight: 1 }}
   >
     &quot;
   </div>
   <div
     aria-hidden="true"
-    className="absolute -bottom-8 -right-4 text-[28vw] font-black leading-none select-none pointer-events-none rotate-180"
+    className="absolute -bottom-8 -right-4 text-[28vw] font-secondary leading-none select-none pointer-events-none rotate-180"
     style={{ color: "rgba(212,183,143,0.06)", fontFamily: "Georgia, serif", lineHeight: 1 }}
   >
     &quot;
@@ -94,12 +93,12 @@ const Testimonials = ({ data }: Props) => {
         withAnimation={false}
         withDivider={true}
         // ✅ Light background को लागि colors
-        titleColor="text-black"
-        highlightColor="text-[#d4b78f]"
-        subtitleColor="text-black/45"
-        badgeBgColor="bg-[#d4b78f]/20"
-        badgeTextColor="text-black/70"
-        dividerColor="bg-[#d4b78f]/15"
+        titleColor="text-secondary"
+        highlightColor="text-accent"
+        subtitleColor="text-secondary/45"
+        badgeBgColor="bg-accent/20"
+        badgeTextColor="text-secondary/70"
+        dividerColor="bg-accent/15"
         // ✅ Custom sizing
         titleClassName="text-4xl md:text-5xl lg:text-6xl font-light leading-tight tracking-tight"
         subtitleClassName="text-lg font-light leading-relaxed"
@@ -119,12 +118,12 @@ const Testimonials = ({ data }: Props) => {
           <motion.div
             key={item.id || index}
             variants={cardVariants}
-            className="group relative flex flex-col rounded-[1.75rem] border border-black/8 bg-black/[0.04] hover:bg-black/[0.08] hover:border-[#d4b78f]/30 transition-all duration-500 overflow-hidden p-8"
+            className="group relative flex flex-col rounded-[1.75rem] border border-secondary/8 bg-secondary/[0.04] hover:bg-secondary/[0.08] hover:border-accent/30 transition-all duration-500 overflow-hidden p-8"
           >
             {/* Decorative index number */}
             <span
               aria-hidden="true"
-              className="absolute top-6 right-8 text-6xl font-black leading-none text-black/[0.04] group-hover:text-black/10 transition-colors duration-500 select-none"
+              className="absolute top-6 right-8 text-6xl font-secondary leading-none text-secondary/[0.04] group-hover:text-secondary/10 transition-colors duration-500 select-none"
             >
               {String(index + 1).padStart(2, "0")}
             </span>
@@ -153,18 +152,18 @@ const Testimonials = ({ data }: Props) => {
                   fill={i < Math.round(item.rating || 5) ? "currentColor" : "none"}
                   className={
                     i < Math.round(item.rating || 5)
-                      ? "text-black"
-                      : "text-black/15"
+                      ? "text-secondary"
+                      : "text-secondary/15"
                   }
                 />
               ))}
-              <span className="text-xs text-black/30 ml-2 font-light">
+              <span className="text-xs text-secondary/30 ml-2 font-light">
                 {(item.rating || 5).toFixed(1)}
               </span>
             </div>
 
             {/* Thin separator */}
-            <div className="w-full h-px bg-black/8 mb-6" />
+            <div className="w-full h-px bg-secondary/8 mb-6" />
 
             {/* Author row */}
             <div className="flex items-center gap-4">
@@ -173,7 +172,7 @@ const Testimonials = ({ data }: Props) => {
                   src={item.image || "/placeholder.png"}
                   alt={item.name || "Guest"}
                   fill
-                  className="rounded-full object-cover ring-1 ring-[#d4b78f]/30 group-hover:ring-[#d4b78f]/60 transition-all duration-500"
+                  className="rounded-full object-cover ring-1 ring-accent/30 group-hover:ring-accent/60 transition-all duration-500"
                 />
               </div>
               <div>
@@ -189,7 +188,7 @@ const Testimonials = ({ data }: Props) => {
             </div>
 
             {/* Bottom animated gold line */}
-            <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full bg-[#d4b78f]/50 transition-all duration-500 ease-out rounded-b-[1.75rem]" />
+            <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full bg-accent/50 transition-all duration-500 ease-out rounded-b-[1.75rem]" />
           </motion.div>
         ))}
       </motion.div>

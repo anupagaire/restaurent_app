@@ -105,7 +105,7 @@ function Stars({ rating }: { rating: number }) {
         <span
           key={s}
           className="text-xs"
-          style={{ color: s <= Math.round(rating) ? "#f59e0b" : "#e5e7eb" }}
+          style={{ color: s <= Math.round(rating) ? "#f59e0b" : "secondary" }}
         >
           ★
         </span>
@@ -132,12 +132,12 @@ function CuisineCard({
   return (
     <Link
       href={`/menusearch?q=${encodeURIComponent(cuisine.query)}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-amber-100 bg-white shadow-sm hover:shadow-lg hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-accent bg-white shadow-sm hover:shadow-lg hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1"
     >
       {/* Top photo area */}
-      <div className="relative h-36 w-full bg-gradient-to-br from-amber-50 to-orange-50 overflow-hidden">
+      <div className="relative h-36 w-full bg-gradient-to-br from-accent to-orange-50 overflow-hidden">
         {loading ? (
-          <div className="h-full w-full animate-pulse bg-amber-100/60" />
+          <div className="h-full w-full animate-pulse bg-accent/60" />
         ) : item?.photo ? (
           <Image
             src={item.photo}
@@ -153,10 +153,10 @@ function CuisineCard({
         )}
 
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 via-transparent to-transparent" />
 
         {/* Rank badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-amber-200 shadow">
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-accent shadow">
           🏆 #{1} {cuisine.label}
         </div>
       </div>
@@ -165,8 +165,8 @@ function CuisineCard({
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         {loading ? (
           <div className="space-y-2">
-            <div className="h-3 w-3/4 animate-pulse rounded bg-amber-100" />
-            <div className="h-3 w-1/2 animate-pulse rounded bg-amber-100" />
+            <div className="h-3 w-3/4 animate-pulse rounded bg-accent" />
+            <div className="h-3 w-1/2 animate-pulse rounded bg-accent" />
           </div>
         ) : item ? (
           <>
@@ -176,14 +176,14 @@ function CuisineCard({
             <p className="font-semibold text-[#1a0a00] text-sm leading-tight line-clamp-1 group-hover:text-secondary transition-colors">
               {item.name}
             </p>
-            <p className="text-xs text-gray-400 line-clamp-1">
+            <p className="text-xs text-secondary line-clamp-1">
               📍 {item.restaurantName}
               {item.restaurantCity ? `, ${item.restaurantCity}` : ""}
             </p>
             <div className="mt-auto flex items-center justify-between pt-2">
               <div className="flex items-center gap-1">
                 <Stars rating={item.rating} />
-                <span className="text-[10px] text-gray-400">
+                <span className="text-[10px] text-secondary">
                   {item.rating.toFixed(1)} ({item.ratingCount})
                 </span>
               </div>
@@ -197,14 +197,14 @@ function CuisineCard({
             <p className="text-[11px] font-bold uppercase tracking-widest text-secondary/60">
               {cuisine.tagline}
             </p>
-            <p className="text-xs text-gray-400">Tap to explore {cuisine.label} options</p>
+            <p className="text-xs text-secondary">Tap to explore {cuisine.label} options</p>
           </>
         )}
       </div>
 
       {/* Bottom CTA */}
-      <div className="border-t border-amber-50 px-4 py-2.5 flex items-center justify-between">
-        <span className="text-xs text-gray-400">See all {cuisine.label}</span>
+      <div className="border-t border-accent px-4 py-2.5 flex items-center justify-between">
+        <span className="text-xs text-secondary">See all {cuisine.label}</span>
         <span className="text-xs font-semibold text-secondary group-hover:translate-x-1 transition-transform inline-block">
           →
         </span>

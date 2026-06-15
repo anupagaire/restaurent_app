@@ -292,7 +292,7 @@ if (selectedRoleId) {
             <p className="text-sm font-semibold text-secondary">
               🍽️ Restaurant Details
               {fetchingDetails && (
-                <span className="text-xs text-gray-400 ml-2 font-normal">
+                <span className="text-xs text-secondary ml-2 font-normal">
                   <Loader2 className="inline h-3 w-3 animate-spin mr-1" />Loading…
                 </span>
               )}
@@ -382,7 +382,7 @@ if (selectedRoleId) {
             <p className="text-sm font-semibold text-secondary">🎭 Role</p>
 
             {rolesLoading ? (
-              <div className="flex items-center gap-2 text-sm text-gray-500 py-2">
+              <div className="flex items-center gap-2 text-sm text-secondary py-2">
                 <Loader2 className="h-4 w-4 animate-spin" /> Loading roles…
               </div>
             ) : roles.length === 0 ? (
@@ -412,7 +412,7 @@ if (selectedRoleId) {
               Cancel
             </Button>
             <Button type="submit" disabled={loading || fetchingDetails}
-              className="bg-secondary hover:bg-[#3f260f]">
+              className="bg-secondary hover:bg-secondary">
               {loading
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…</>
                 : '✓ Save Changes'}

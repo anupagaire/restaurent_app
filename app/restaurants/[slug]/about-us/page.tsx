@@ -236,7 +236,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
             {about.content ? (
               <div dangerouslySetInnerHTML={{ __html: about.content }} />
             ) : (
-              <p className="text-gray-500">No content available.</p>
+              <p className="text-secondary">No content available.</p>
             )}
           </div>
         </div>
@@ -275,7 +275,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       unoptimized
                     />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-secondary/85 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white text-sm font-normal">
                         {photo.alt || `Photo ${index + 2}`}
                       </p>

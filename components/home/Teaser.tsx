@@ -4,14 +4,14 @@ import Link from "next/link";
 export default function Teaser() {
   return (
     <div className="max-w-xl mx-auto mt-8">
-      <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50 to-white p-6 text-center shadow-lg">
+      <div className="relative overflow-hidden rounded-3xl border border-accent bg-gradient-to-br from-accent via-orange-50 to-white p-6 text-center shadow-lg">
 
         {/* Background decoration */}
-        <div className="absolute -top-12 -right-12 h-28 w-28 rounded-full bg-amber-200/30 blur-3xl" />
+        <div className="absolute -top-12 -right-12 h-28 w-28 rounded-full bg-accent/30 blur-3xl" />
         <div className="absolute -bottom-12 -left-12 h-28 w-28 rounded-full bg-orange-200/30 blur-3xl" />
 
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+          <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent">
             🔥 Trending Comparisons
           </div>
 
@@ -25,8 +25,8 @@ export default function Teaser() {
           </p>
 
           {/* Search-style preview */}
-          <div className="mx-auto mt-5 max-w-sm rounded-xl border border-amber-100 bg-white px-4 py-3 shadow-sm">
-            <span className="text-gray-400">🔍 </span>
+          <div className="mx-auto mt-5 max-w-sm rounded-xl border border-accent bg-white px-4 py-3 shadow-sm">
+            <span className="text-secondary">🔍 </span>
             <RotatingDish />
           </div>
 
@@ -37,7 +37,7 @@ export default function Teaser() {
             Compare Dishes →
           </Link>
 
-          <p className="mt-4 text-xs text-amber-700">
+          <p className="mt-4 text-xs text-accent">
             🏆 Rankings based on real customer ratings
           </p>
         </div>

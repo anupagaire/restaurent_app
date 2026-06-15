@@ -231,7 +231,7 @@ export default async function EnterpriseAboutPage() {
                 <div key={photo.id} className="flex-shrink-0 w-80">
                   <div className="relative w-80 h-[420px] rounded-3xl overflow-hidden group" style={{ border: '1px solid rgba(200,145,74,0.12)' }}>
                     <Image src={photo.photo_url} alt={photo.alt || `Photo ${index + 2}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                    <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
                       <p className="text-white text-sm font-light">{photo.alt || `Photo ${index + 2}`}</p>
                     </div>
                   </div>
@@ -246,9 +246,9 @@ export default async function EnterpriseAboutPage() {
       {/* CTA */}
       <div className="relative py-20 overflow-hidden" style={{ background: 'linear-gradient(135deg, #c8914a 0%, #a8722e 50%, #6b3d12 100%)' }}>
         <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-white/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-black/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
         <div className="max-w-[600px] mx-auto px-6 text-center relative z-10">
-          <p className="text-2xl md:text-3xl italic text-black/70 mb-8 font-light" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+          <p className="text-2xl md:text-3xl italic text-secondary/70 mb-8 font-light" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
             Ready to experience it yourself?
           </p>
           <Link
@@ -261,7 +261,7 @@ export default async function EnterpriseAboutPage() {
             </svg>
           </Link>
           <div>
-            <Link href="/" className="text-black/40 hover:text-black/70 text-sm transition-colors">← Back to Home</Link>
+            <Link href="/" className="text-secondary/40 hover:text-secondary/70 text-sm transition-colors">← Back to Home</Link>
           </div>
         </div>
       </div>

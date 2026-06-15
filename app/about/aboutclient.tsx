@@ -147,7 +147,7 @@ export default function About() {
         <meta name="robots" content="index, follow" />
       </Head>
 
-      <main className="min-h-screen w-full bg-[#fdf9f4] text-[#271302] font-light overflow-x-hidden">
+      <main className="min-h-screen w-full bg-[#fdf9f4] text-secondary font-light overflow-x-hidden">
 
         {/* ═══════════════════════════════════════
             HERO — full-bleed cinematic
@@ -278,7 +278,7 @@ export default function About() {
 
                 <motion.div variants={fadeUp} className="space-y-5">
                   {introSection.paragraphs.map((p, i) => (
-                    <p key={i} className="text-lg text-[#271302]/65 font-light leading-relaxed">
+                    <p key={i} className="text-lg text-secondary/65 font-light leading-relaxed">
                       {p}
                     </p>
                   ))}
@@ -312,7 +312,7 @@ export default function About() {
                 />
                 <div className="space-y-4">
                   {visionSection.left.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-[#271302]/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg text-secondary/60 font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -335,7 +335,7 @@ export default function About() {
                 />
                 <div className="space-y-4">
                   {visionSection.right.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-[#271302]/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg text-secondary/60 font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -360,7 +360,7 @@ export default function About() {
                 highlight={vibes.title.includes("Restaurant") ? "Restaurant" : undefined}
                 withAnimation={false}
                 withDivider={false}
-                titleColor="text-[#271302]"
+                titleColor="text-secondary"
                 highlightColor="text-accent"
                 titleClassName="text-4xl md:text-5xl lg:text-6xl font-light leading-tight tracking-tight"
               />
@@ -419,7 +419,7 @@ export default function About() {
                 highlight="in one place"
                 withAnimation={false}
                 withDivider={false}
-                titleColor="text-[#271302]"
+                titleColor="text-secondary"
                 highlightColor="text-accent"
                 titleClassName="text-4xl md:text-5xl font-light leading-tight mb-14 max-w-xl"
               />
@@ -447,7 +447,7 @@ export default function About() {
                     {/* Index number */}
                     <span
                       aria-hidden="true"
-                      className="absolute top-7 right-8 text-5xl font-black text-[#271302]/5 group-hover:text-accent/12 transition-colors duration-500 select-none leading-none"
+                      className="absolute top-7 right-8 text-5xl font-secondary text-secondary/5 group-hover:text-accent/12 transition-colors duration-500 select-none leading-none"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>
@@ -468,12 +468,12 @@ export default function About() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-medium text-[#271302] mb-3 leading-snug">
+                    <h3 className="text-xl font-medium text-secondary mb-3 leading-snug">
                       {feature.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-[#271302]/55 text-base font-light leading-relaxed flex-1">
+                    <p className="text-secondary/55 text-base font-light leading-relaxed flex-1">
                       {feature.description}
                     </p>
 
