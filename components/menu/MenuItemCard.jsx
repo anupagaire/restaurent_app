@@ -16,7 +16,7 @@ export default function MenuItemCard({ item }) {
         <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/20 to-transparent" />
 
         {item.isPopular && (
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-[#5D0565] to-primary text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-md">
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-primary to-primary text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-md">
             ★ POPULAR
           </div>
         )}
@@ -36,8 +36,8 @@ export default function MenuItemCard({ item }) {
         </p>
 
         <button 
-          className="mt-8 w-full bg-gradient-to-r from-secondary via-primary to-[#5D0565] 
-                     hover:from-primary hover:via-[#5D0565] hover:to-secondary
+          className="mt-8 w-full bg-gradient-to-r from-secondary via-primary to-primary 
+                     hover:from-primary hover:via-primary hover:to-secondary
                      text-white py-4 rounded-2xl font-semibold text-lg tracking-wider 
                      transition-all duration-300 active:scale-[0.98] shadow-md hover:shadow-xl"
         >

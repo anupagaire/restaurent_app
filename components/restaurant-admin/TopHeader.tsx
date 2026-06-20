@@ -127,7 +127,7 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
                       <div className="min-w-0">
                         <p className="font-semibold text-secondary truncate">{displayName}</p>
                         <p className="text-xs text-secondary truncate">{user?.email}</p>
-                        <p className="text-xs text-[#b8936a] truncate mt-0.5">{restaurantName}</p>
+                        <p className="text-xs text-accent truncate mt-0.5">{restaurantName}</p>
                       </div>
                     </div>
                   </div>

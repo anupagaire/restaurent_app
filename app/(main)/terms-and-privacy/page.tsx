@@ -142,7 +142,7 @@ export default function LegalPage() {
               onClick={() => { setActiveTab(tab); setOpenSection("1"); }}
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 activeTab === tab
-                  ? "bg-gradient-to-r from-secondary to-[#5D0565] text-white shadow-lg"
+                  ? "bg-gradient-to-r from-secondary to-primary text-white shadow-lg"
                   : "text-secondary hover:text-secondary"
               }`}
             >
@@ -170,7 +170,7 @@ export default function LegalPage() {
               key={section.id}
               className={`border rounded-xl overflow-hidden transition-all duration-200 ${
                 isOpen
-                  ? "border-[#5D0565]/60 bg-white/5"
+                  ? "border-primary/60 bg-white/5"
                   : "border-white/10 bg-white/[0.02] hover:border-white/20"
               }`}
             >
@@ -216,7 +216,7 @@ export default function LegalPage() {
           </p>
           <a
             href="mailto:legal@foodhub.com.np"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-primary to-[#5D0565] text-white hover:opacity-90 transition"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-primary to-primary text-white hover:opacity-90 transition"
           >
             legal@foodhub.com.np
           </a>

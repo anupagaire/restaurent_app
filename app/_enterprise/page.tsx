@@ -2,11 +2,11 @@ import { headers } from 'next/headers'
 import { fetchRestaurantById } from '@/lib/restaurant'
 import { MapPin, Clock, Phone, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import EnterpriseGalleryCarousel from "../_enterprise/_components/EnterpriseGalleryCarousel";
-import EnterpriseAbout from "../_enterprise/_components/EnterpriseAbout";
-import Navbar from "../_enterprise/_components/EnterpriseNavbar"
-import Footer from "../_enterprise/_components/EnterpriseFooter";
-import EnterpriseHeroSlider from "../_enterprise/_components/EnterpriseHeroSlider";
+import Navbar from "./_components/EnterpriseNavbar";
+import Footer from "./_components/EnterpriseFooter";
+import EnterpriseGalleryCarousel from "./_components/EnterpriseGalleryCarousel";
+import EnterpriseAbout from "./_components/EnterpriseAbout";
+import EnterpriseHeroSlider from "./_components/EnterpriseHeroSlider";
 function resolveUrl(url: string, base: string): string {
   if (!url) return ''
   if (url.startsWith('http')) return url

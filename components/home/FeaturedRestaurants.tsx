@@ -108,7 +108,7 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
       {/* Avg stars row */}
       {count > 0 && (
         <div className="flex items-center gap-1.5 mb-2">
-          <span className="text-[#cf8319] text-xs font-medium">{avg.toFixed(1)}</span>
+          <span className="text-accent text-xs font-medium">{avg.toFixed(1)}</span>
           <div className="flex gap-0.5">
             {[1,2,3,4,5].map((s) => (
               <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#cf8319' : 'rgba(255,255,255,0.19)' }}>★</span>

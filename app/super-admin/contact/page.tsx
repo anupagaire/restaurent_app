@@ -52,7 +52,7 @@ const DetailModal = ({
   const [error, setError] = useState<string | null>(null);
 
   const inputClass =
-    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition";
+    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition";
 
   const handleSave = async () => {
     setSaving(true);
@@ -95,13 +95,13 @@ const DetailModal = ({
         <div className="p-6 space-y-5">
           {/* Sender Info */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-[#ead9c5]">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
               Sender details
             </h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               <div>
                 <p className="text-xs text-secondary">Name</p>
-                <p className="text-sm font-medium text-[#3a2a1a]">{msg.name}</p>
+                <p className="text-sm font-medium text-secondary">{msg.name}</p>
               </div>
               <div>
                 <p className="text-xs text-secondary">Email</p>
@@ -111,13 +111,13 @@ const DetailModal = ({
               </div>
               <div>
                 <p className="text-xs text-secondary">Phone</p>
-                <a href={`tel:${msg.phone}`} className="text-sm font-medium text-[#3a2a1a] hover:underline">
+                <a href={`tel:${msg.phone}`} className="text-sm font-medium text-secondary hover:underline">
                   {msg.phone || "—"}
                 </a>
               </div>
               <div>
                 <p className="text-xs text-secondary">Received</p>
-                <p className="text-sm font-medium text-[#3a2a1a]">
+                <p className="text-sm font-medium text-secondary">
                   {new Date(msg.created_on).toLocaleDateString("en-US", {
                     day: "numeric", month: "short", year: "numeric",
                   })}
@@ -128,15 +128,15 @@ const DetailModal = ({
 
           {/* Message */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-[#ead9c5]">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
               Message
             </h3>
-            <p className="text-sm text-[#3a2a1a] leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+            <p className="text-sm text-secondary leading-relaxed whitespace-pre-wrap">{msg.message}</p>
           </div>
 
           {/* Admin Controls */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-[#ead9c5]">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
               Admin action
             </h3>
             <div className="space-y-3">
@@ -175,7 +175,7 @@ const DetailModal = ({
             </div>
           </div>
 
-          <p className="text-xs text-[#b8a898]">
+          <p className="text-xs text-primary">
             Submitted {new Date(msg.created_on).toLocaleString()} · Updated {new Date(msg.updated_on).toLocaleString()}
           </p>
         </div>
@@ -271,7 +271,7 @@ export default function ContactMessagesPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by name, email, subject…"
-                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition"
+                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition"
               />
               <button type="submit" className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition">
                 Search
@@ -292,7 +292,7 @@ export default function ContactMessagesPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value as Status | ""); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
               >
                 <option value="">All statuses</option>
                 {STATUS_OPTIONS.map((s) => (
@@ -306,7 +306,7 @@ export default function ContactMessagesPage() {
               <select
                 value={ordering}
                 onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
               >
                 <option value="-created_on">Newest first</option>
                 <option value="created_on">Oldest first</option>
@@ -333,7 +333,7 @@ export default function ContactMessagesPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#ead9c5] bg-[#fdf5ec]">
+                  <tr className="border-b border-accent bg-[#fdf5ec]">
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">#</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">From</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">Subject</th>
@@ -342,7 +342,7 @@ export default function ContactMessagesPage() {
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#ead9c5]">
+                <tbody className="divide-y divide-accent">
                   {messages.map((msg) => (
                     <tr
                       key={msg.id}
@@ -356,12 +356,12 @@ export default function ContactMessagesPage() {
                             <span className="w-1.5 h-1.5 rounded-full bg-accent0 shrink-0" />
                           )}
                           <div>
-                            <p className="font-medium text-[#3a2a1a]">{msg.name}</p>
+                            <p className="font-medium text-secondary">{msg.name}</p>
                             <p className="text-xs text-secondary">{msg.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-[#3a2a1a] hidden md:table-cell max-w-[200px]">
+                      <td className="px-4 py-3 text-secondary hidden md:table-cell max-w-[200px]">
                         <p className="truncate">{msg.subject}</p>
                         <p className="text-xs text-secondary truncate">{msg.message}</p>
                       </td>

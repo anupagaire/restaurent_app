@@ -270,11 +270,11 @@ await emailjs.send(
 };
 
 const inputClass =
-  "w-full px-3 py-2.5 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition";
+  "w-full px-3 py-2.5 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white border border-accent rounded-xl p-6">
-    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-4 pb-3 border-b border-[#ead9c5]">
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-4 pb-3 border-b border-accent">
       {title}
     </h3>
     <div className="space-y-4">{children}</div>

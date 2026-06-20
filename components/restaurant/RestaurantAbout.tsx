@@ -68,7 +68,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
   return (
     <div className=" overflow-hidden">
       <div className="relative px-6 sm:px-10 lg:px-20 pt-24 pb-10 overflow-hidden">
-        <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 max-w-6xl rounded-full bg-[#c8914a]/10 blur-[120px]" />
+        <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 max-w-6xl rounded-full bg-accent/10 blur-[120px]" />
        
 
         <div className="relative max-w-7xl mx-auto">
@@ -76,8 +76,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
             className="flex items-center gap-3 mb-8"
           >
-            <div className="h-px w-12 bg-[#c8914a]" />
-            <span className="text-[#c8914a] text-[11px] tracking-[0.45em] uppercase font-light">Our Story</span>
+            <div className="h-px w-12 bg-accent" />
+            <span className="text-accent text-[11px] tracking-[0.45em] uppercase font-light">Our Story</span>
           </motion.div>
 
           <div className="mb-5">
@@ -106,7 +106,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             className=" text-base sm:text-lg font-light max-w-xl leading-relaxed"
           >
             Experience authentic flavors and warm hospitality in the heart of{' '}
-            <span className="text-[#c8914a]">{restaurant.city}</span>
+            <span className="text-accent">{restaurant.city}</span>
           </motion.p>
         </div>
       </div>
@@ -126,11 +126,11 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               className="relative rounded-3xl p-8 overflow-hidden"
               style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(200,145,74,0.12)' }}
             >
-              <div className="absolute top-0 left-0 w-16 h-16 border-t border-l border-[#c8914a]/25 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-[#c8914a]/25 rounded-br-3xl pointer-events-none" />
+              <div className="absolute top-0 left-0 w-16 h-16 border-t border-l border-accent/25 rounded-tl-3xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-accent/25 rounded-br-3xl pointer-events-none" />
               <div className="flex items-center gap-3 mb-5">
-                <Sparkles className="w-4 h-4 text-[#c8914a]" />
-                <span className="text-[#c8914a] text-[10px] tracking-[0.35em] uppercase font-light">About Us</span>
+                <Sparkles className="w-4 h-4 text-accent" />
+                <span className="text-accent text-[10px] tracking-[0.35em] uppercase font-light">About Us</span>
               </div>
               <p
                 className=" leading-[1.9] text-base font-light mb-6"
@@ -143,7 +143,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                   className="inline-flex items-center gap-3 px-5 py-3 rounded-full"
                   style={{ background: 'rgba(200,145,74,0.08)', border: '1px solid rgba(200,145,74,0.18)' }}
                 >
-                  <MapPin className="w-4 h-4 text-[#c8914a]" />
+                  <MapPin className="w-4 h-4 text-accent" />
                   <span className=" text-sm font-light">{locationParts.join(', ')}</span>
                 </div>
               )}
@@ -163,7 +163,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                     <span className="text-lg">{stat.icon}</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-secondary text-[#c8914a] leading-none">{stat.value}</div>
+                    <div className="text-2xl font-secondary text-accent leading-none">{stat.value}</div>
                     <div className="text-[10.5px] font-bold  mt-0.5">{stat.label}</div>
                   </div>
                   {i < stats.length - 1 && <div className="h-10 w-px bg-secondary/10 ml-3" />}
@@ -206,7 +206,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               </Link>
               <Link
                 href={`/restaurants/${slug}/menu`}
-                className="inline-flex items-center gap-2 text-[#c8914a] font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:bg-[#c8914a]/10"
+                className="inline-flex items-center gap-2 text-accent font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:bg-accent/10"
                 style={{ border: '1px solid rgba(200,145,74,0.4)' }}
               >
                 View Menu
@@ -220,16 +220,16 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             className="w-full lg:w-[44%] relative min-h-[400px] lg:min-h-full flex items-stretch"
           >
             {/* Curved container */}
-            <div className="relative w-full h-full min-h-[400px] rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] overflow-hidden border-t-[10px] lg:border-t-0 lg:border-l-[10px] border-[#c8914a] shadow-2xl bg-gray-900">
+            <div className="relative w-full h-full min-h-[400px] rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] overflow-hidden border-t-[10px] lg:border-t-0 lg:border-l-[10px] border-accent shadow-2xl bg-gray-900">
 
               {/* Inner accent line */}
-              <div className="absolute inset-0 z-10 border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-[#c8914a]/40 rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] pointer-events-none" />
+              <div className="absolute inset-0 z-10 border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-accent/40 rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] pointer-events-none" />
 
               {/* Dot grid */}
               <div className="absolute inset-0 z-10 opacity-20 mix-blend-screen bg-[radial-gradient(#c8914a_1px,transparent_1px)] [background-size:18px_18px] pointer-events-none" />
 
               {/* Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#c8914a]/20 blur-[90px] z-10 pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-accent/20 blur-[90px] z-10 pointer-events-none" />
 
               {/* Image */}
               {imageUrl ? (
@@ -241,14 +241,14 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                   priority
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#c8914a]/20 to-[#0e0b07] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-[#0e0b07] flex items-center justify-center">
                   <span className="text-8xl opacity-20">🍽️</span>
                 </div>
               )}
 
               {/* Gold wave bottom */}
               <div
-                className="absolute bottom-0 left-0 right-0 h-[72px] bg-[#c8914a] z-10 pointer-events-none"
+                className="absolute bottom-0 left-0 right-0 h-[72px] bg-accent z-10 pointer-events-none"
                 style={{ clipPath: 'ellipse(110% 100% at 50% 100%)' }}
               />
             </div>
@@ -283,9 +283,9 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
 
             {/* Three dots */}
             <div className="absolute bottom-5 right-8 flex items-center gap-1.5 z-20">
-              <span className="w-2 h-2 rounded-full bg-[#c8914a]" />
+              <span className="w-2 h-2 rounded-full bg-accent" />
               <span className="w-2 h-2 rounded-full bg-secondary/30" />
-              <span className="w-2 h-2 rounded-full bg-[#c8914a]/50" />
+              <span className="w-2 h-2 rounded-full bg-accent/50" />
             </div>
           </motion.div>
         </div>
@@ -304,8 +304,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
           >
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <div className="h-px w-8 bg-[#c8914a]" />
-                <span className="text-[#c8914a] text-[10px] tracking-[0.45em] uppercase font-light">Gallery</span>
+                <div className="h-px w-8 bg-accent" />
+                <span className="text-accent text-[10px] tracking-[0.45em] uppercase font-light">Gallery</span>
               </div>
               <h2
                 className="text-3xl sm:text-4xl font-light text-secondary leading-tight"
@@ -316,7 +316,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             </div>
             <Link
               href={`/restaurants/${slug}/gallery`}
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-light text-[#c8914a] transition-all duration-300 group hover:bg-[#c8914a] hover:text-[#0e0b07]"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-light text-accent transition-all duration-300 group hover:bg-accent hover:text-[#0e0b07]"
               style={{ border: '1px solid rgba(200,145,74,0.4)' }}
             >
               View All ({restaurant.photos.length})
@@ -334,7 +334,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
 
           <Link
             href={`/restaurants/${slug}/gallery`}
-            className="sm:hidden mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full text-sm font-light text-[#c8914a] transition-all hover:bg-[#c8914a] hover:text-[#0e0b07]"
+            className="sm:hidden mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full text-sm font-light text-accent transition-all hover:bg-accent hover:text-[#0e0b07]"
             style={{ border: '1px solid rgba(200,145,74,0.4)' }}
           >
             View All Photos ({restaurant.photos.length})
@@ -343,15 +343,13 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
         </div>
       )}
 
-      {/* ══════════════════════════════
-          CTA
-      ══════════════════════════════ */}
+     
       <div className="px-6 sm:px-10 lg:px-20 pb-24 max-w-6xl mx-auto">
         <motion.div
           variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
           className="relative rounded-3xl overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#c8914a] via-[#a8722e] to-[#6b3d12]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-accent via-[#a8722e] to-secondary" />
           <div
             className="absolute inset-0 opacity-[0.07] pointer-events-none"
             style={{
@@ -379,7 +377,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href={`/restaurants/${slug}/menu`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#0e0b07] text-[#c8914a] rounded-full font-medium text-sm hover:bg-[#1c1208] transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#0e0b07] text-accent rounded-full font-medium text-sm hover:bg-[#1c1208] transition-all"
               >
                 <Utensils className="w-4 h-4" /> View Menu
               </Link>

@@ -15,12 +15,22 @@ export async function middleware(request: NextRequest) {
 
   const host = request.headers.get('host') ?? '';
 
- const isMainDomain =
-    host === MAIN_DOMAIN ||
-    host.endsWith(`.${MAIN_DOMAIN}`) ||
-    host.includes('localhost') ||
-    host.includes('127.0.0.1') ||
-    host.includes('vercel.app') // staging domain 
+//  const isMainDomain =
+//     host === MAIN_DOMAIN ||
+//     host.endsWith(`.${MAIN_DOMAIN}`) ||
+//     host.includes('localhost') ||
+//     host.includes('127.0.0.1') ||
+//     host.includes('vercel.app') // staging domain 
+
+
+
+const isMainDomain =
+  host === MAIN_DOMAIN ||           // exact match मात्र
+  host.includes('localhost') ||
+  host.includes('127.0.0.1') ||
+  host.endsWith('.vercel.app')  
+
+
 
 
   if (!isMainDomain) {
@@ -31,10 +41,15 @@ export async function middleware(request: NextRequest) {
       );
 
       if (res.ok) {
+          
         const restaurant = await res.json();
         // Rewrite to enterprise route, pass restaurant id via header
         const url = request.nextUrl.clone();
-        url.pathname = pathname === '/' ? '/' : pathname
+
+  // same pathname राख्नु
+  
+url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
+        // url.pathname = pathname === '/' ? '/' : pathname
         const response = NextResponse.rewrite(url);
 
         response.headers.set('x-restaurant-id', String(restaurant.id))

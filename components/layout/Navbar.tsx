@@ -280,7 +280,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                   <Link href={resolvedLoginBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium border border-white/20 hover:bg-white/10 transition">
                     {resolvedLoginBtn.text}
                   </Link>
-                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-primary to-[#5D0565] hover:opacity-90 transition">
+                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-primary to-primary hover:opacity-90 transition">
                     {resolvedRegisterBtn.text}
                   </Link>
                 </div>

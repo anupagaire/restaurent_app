@@ -23,7 +23,7 @@ const INITIAL_FORM: ContactForm = {
 };
 
 const inputClass =
-  "w-full px-4 py-3 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#c4aa90] focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition";
+  "w-full px-4 py-3 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-[#c4aa90] focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition";
 
 const Contact = () => {
   const [form, setForm] = useState<ContactForm>(INITIAL_FORM);
@@ -144,7 +144,7 @@ const Contact = () => {
                   {item.label}
                 </span>
               </div>
-              <p className="text-sm font-semibold text-[#3a2a1a] leading-snug">{item.value}</p>
+              <p className="text-sm font-semibold text-secondary leading-snug">{item.value}</p>
               <p className="text-xs text-secondary">{item.sub}</p>
             </div>
           ))}

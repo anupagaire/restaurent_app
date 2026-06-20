@@ -155,7 +155,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         {/* Logo */}
         <div className="p-6 border-b border-secondary/10 flex items-center justify-between">
           <Link href="/restaurant-admin" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-secondary to-[#5D0565] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-secondary to-primary rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">R</span>
             </div>
             <div>

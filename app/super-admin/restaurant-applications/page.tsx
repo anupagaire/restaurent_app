@@ -76,7 +76,7 @@ const DetailModal = ({
   };
 
   const inputClass =
-    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition";
+    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition";
 
   return (
     <div
@@ -108,7 +108,7 @@ const DetailModal = ({
               <InfoItem label="Full address" value={app.full_address || "—"} />
             </InfoGrid>
             {app.description && (
-              <p className="text-sm text-[#3a2a1a] mt-2 pt-2 border-t border-[#ead9c5]">
+              <p className="text-sm text-secondary mt-2 pt-2 border-t border-accent">
                 {app.description}
               </p>
             )}
@@ -164,7 +164,7 @@ const DetailModal = ({
           </Section>
 
           {/* Meta */}
-          <div className="text-xs text-[#b8a898] pt-1 border-t border-[#ead9c5]">
+          <div className="text-xs text-primary pt-1 border-t border-accent">
             Submitted {new Date(app.created_on).toLocaleString()} · Last updated{" "}
             {new Date(app.updated_on).toLocaleString()}
           </div>
@@ -265,7 +265,7 @@ const RestaurantApplications = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by name, city, owner…"
-                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] placeholder:text-[#b8a898] focus:outline-none focus:border-secondary transition"
+                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition"
               />
               <button
                 type="submit"
@@ -290,7 +290,7 @@ const RestaurantApplications = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value as Status | ""); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
               >
                 <option value="">All statuses</option>
                 {STATUS_OPTIONS.map((s) => (
@@ -305,7 +305,7 @@ const RestaurantApplications = () => {
               <select
                 value={ordering}
                 onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-[#3a2a1a] focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
               >
                 <option value="-created_on">Newest first</option>
                 <option value="created_on">Oldest first</option>
@@ -335,7 +335,7 @@ const RestaurantApplications = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#ead9c5] bg-[#fdf5ec]">
+                  <tr className="border-b border-accent bg-[#fdf5ec]">
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
                       #
                     </th>
@@ -357,7 +357,7 @@ const RestaurantApplications = () => {
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#ead9c5]">
+                <tbody className="divide-y divide-accent">
                   {applications.map((app) => (
                     <tr
                       key={app.id}
@@ -366,14 +366,14 @@ const RestaurantApplications = () => {
                     >
                       <td className="px-4 py-3 text-secondary font-mono text-xs">{app.id}</td>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-[#3a2a1a]">{app.restaurant_name}</p>
+                        <p className="font-medium text-secondary">{app.restaurant_name}</p>
                         <p className="text-xs text-secondary">{app.cuisine_type}</p>
                       </td>
-                      <td className="px-4 py-3 text-[#3a2a1a] hidden md:table-cell">
+                      <td className="px-4 py-3 text-secondary hidden md:table-cell">
                         <p>{app.owner_name}</p>
                         <p className="text-xs text-secondary">{app.phone}</p>
                       </td>
-                      <td className="px-4 py-3 text-[#3a2a1a] hidden lg:table-cell">
+                      <td className="px-4 py-3 text-secondary hidden lg:table-cell">
                         {app.city}{app.area ? `, ${app.area}` : ""}
                       </td>
                       <td className="px-4 py-3">
@@ -454,7 +454,7 @@ const RestaurantApplications = () => {
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white border border-accent rounded-xl p-5">
-    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-[#ead9c5]">
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
       {title}
     </h3>
     <div className="space-y-3">{children}</div>
@@ -468,7 +468,7 @@ const InfoGrid = ({ children }: { children: React.ReactNode }) => (
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div>
     <p className="text-xs text-secondary">{label}</p>
-    <p className="text-sm text-[#3a2a1a] font-medium">{value}</p>
+    <p className="text-sm text-secondary font-medium">{value}</p>
   </div>
 );
 

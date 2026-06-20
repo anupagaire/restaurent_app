@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -47,22 +48,26 @@ export default function CustomDomainPage() {
   const [success, setSuccess] = useState('')
   const [copied, setCopied] = useState<'name' | 'value' | null>(null)
   const [step, setStep] = useState<Step>('idle')
+  const [changingDomain, setChangingDomain] = useState(false)
+
+  // Modals
+  const [showVerifyConfirm, setShowVerifyConfirm] = useState(false)
+  const [showChangeWarning, setShowChangeWarning] = useState(false)
 
   const showMsg = (type: 'error' | 'success', msg: string) => {
     if (type === 'error') { setError(msg); setSuccess('') }
     else { setSuccess(msg); setError('') }
-    setTimeout(() => { setError(''); setSuccess('') }, 5000)
+    setTimeout(() => { setError(''); setSuccess('') }, 6000)
   }
 
   const load = async () => {
     try {
       const res = await apiFetch('/api/v1/restaurant/custom-domain/')
-      if (res.ok && res.data) {
+      if (res.ok && res.data?.custom_domain) {
         setDomain(res.data)
-        if (res.data.custom_domain) setInput(res.data.custom_domain)
+        setInput(res.data.custom_domain)
         if (res.data.custom_domain_verified) setStep('done')
-        else if (res.data.custom_domain) setStep('dns')
-        else setStep('idle')
+        else setStep('dns')
       } else {
         setDomain(null)
         setStep('idle')
@@ -76,10 +81,12 @@ export default function CustomDomainPage() {
 
   useEffect(() => { load() }, [])
 
+  // ── Connect new domain (generates NEW token — warn if already has domain)
   const handleConnect = async () => {
     if (!input.trim()) return
     setSaving(true)
     setError('')
+    setShowChangeWarning(false)
     try {
       const res = await apiFetch('/api/v1/restaurant/custom-domain/verify/', {
         method: 'POST',
@@ -87,10 +94,12 @@ export default function CustomDomainPage() {
       })
       if (res.ok) {
         setDomain(res.data)
+        setInput(res.data.custom_domain)
         setStep('dns')
-        showMsg('success', 'Domain saved! Now add the TXT record to your DNS.')
+        setChangingDomain(false)
+        showMsg('success', 'Domain connected! Add the TXT record below to your DNS.')
       } else {
-        showMsg('error', res.data?.custom_domain?.[0] ?? res.data?.detail ?? 'Failed to save domain')
+        showMsg('error', res.data?.custom_domain?.[0] ?? res.data?.detail ?? 'Failed to connect domain')
       }
     } catch {
       showMsg('error', 'Network error')
@@ -99,8 +108,10 @@ export default function CustomDomainPage() {
     }
   }
 
+  // ── Verify DNS (does NOT change token — safe to call multiple times)
   const handleVerify = async () => {
     if (!domain?.custom_domain) return
+    setShowVerifyConfirm(false)
     setVerifying(true)
     setError('')
     try {
@@ -113,8 +124,8 @@ export default function CustomDomainPage() {
         setStep('done')
         showMsg('success', '✅ Domain verified! Your enterprise site is now live.')
       } else {
-        const err = res.data?.errors?.txt_record ?? res.data?.message ?? 'TXT record not found yet'
-        showMsg('error', err)
+        const err = res.data?.errors?.txt_record ?? res.data?.message ?? 'TXT record not found yet.'
+        showMsg('error', `${err} — Wait a few minutes and try again.`)
       }
     } catch {
       showMsg('error', 'Network error')
@@ -123,6 +134,7 @@ export default function CustomDomainPage() {
     }
   }
 
+  // ── Remove domain
   const handleRemove = async () => {
     if (!confirm('Remove your custom domain? Your enterprise site will go offline.')) return
     setRemoving(true)
@@ -132,7 +144,8 @@ export default function CustomDomainPage() {
         setDomain(null)
         setInput('')
         setStep('idle')
-        showMsg('success', 'Domain removed successfully.')
+        setChangingDomain(false)
+        showMsg('success', 'Domain removed.')
       } else {
         showMsg('error', 'Failed to remove domain')
       }
@@ -161,18 +174,23 @@ export default function CustomDomainPage() {
     <div className="p-6 max-w-2xl mx-auto space-y-6">
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Globe size={22} className="text-orange-500" />
-          Custom Domain
-        </h1>
-        <p className="text-secondary text-sm mt-1">
-          Connect your own domain to launch your enterprise website
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Globe size={22} className="text-orange-500" />
+            Custom Domain
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Connect your own domain to launch your enterprise website
+          </p>
+        </div>
+        <button onClick={load} className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors" title="Refresh">
+          <RefreshCw size={14} className="text-gray-400" />
+        </button>
       </div>
 
       {/* Progress Steps */}
-      <div className="flex items-center gap-0">
+      <div className="flex items-center">
         {[
           { label: 'Connect Domain', key: 'idle' },
           { label: 'Add DNS Record', key: 'dns' },
@@ -182,21 +200,18 @@ export default function CustomDomainPage() {
           const isDone =
             (s.key === 'idle' && (step === 'dns' || step === 'done')) ||
             (s.key === 'dns' && step === 'done')
-
           return (
             <div key={s.key} className="flex items-center flex-1">
               <div className={`flex items-center gap-2 flex-1 ${i > 0 ? 'pl-3' : ''}`}>
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                   isDone ? 'bg-green-500 text-white' :
                   isActive ? 'bg-orange-500 text-white' :
-                  'bg-gray-100 text-secondary'
+                  'bg-gray-100 text-gray-400'
                 }`}>
                   {isDone ? <CheckCircle2 size={14} /> : i + 1}
                 </div>
                 <span className={`text-xs font-medium ${
-                  isActive ? 'text-orange-600' :
-                  isDone ? 'text-green-600' :
-                  'text-secondary'
+                  isActive ? 'text-orange-600' : isDone ? 'text-green-600' : 'text-gray-400'
                 }`}>
                   {s.label}
                 </span>
@@ -219,191 +234,348 @@ export default function CustomDomainPage() {
         </div>
       )}
 
-      {/* ── STEP 1: Domain Input ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-800">Your Domain</h2>
-          {domain?.custom_domain && (
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-              domain.custom_domain_verified
-                ? 'bg-green-50 text-green-700'
-                : 'bg-yellow-50 text-yellow-700'
-            }`}>
-              {domain.custom_domain_verified ? '✅ Verified' : '⏳ Pending DNS'}
-            </span>
-          )}
-        </div>
-
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="www.yourrestaurant.com"
-            disabled={step === 'done'}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 disabled:bg-gray-50 disabled:text-secondary"
-          />
-          {step !== 'done' && (
+      {/* ── STEP 1 — idle or changing ── */}
+      {(step === 'idle' || changingDomain) && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+          <h2 className="font-semibold text-gray-800">
+            {changingDomain ? 'Change Domain' : 'Connect Your Domain'}
+          </h2>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && !saving && input.trim() && handleConnect()}
+              placeholder="www.yourrestaurant.com"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              autoFocus={changingDomain}
+            />
             <button
               onClick={handleConnect}
               disabled={saving || !input.trim()}
               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors whitespace-nowrap"
             >
-              {saving ? 'Saving...' : step === 'dns' ? 'Update' : 'Connect'}
+              {saving ? 'Connecting...' : 'Connect'}
             </button>
-          )}
-          {domain?.custom_domain && (
-            <button
-              onClick={handleRemove}
-              disabled={removing}
-              className="border border-red-200 text-red-400 hover:bg-red-50 px-3 py-2.5 rounded-xl transition-colors"
-              title="Remove domain"
-            >
-              {removing ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
-            </button>
-          )}
-        </div>
-        <p className="text-xs text-secondary">
-          Enter without https:// — e.g. <code className="bg-gray-100 px-1 py-0.5 rounded">www.myrestaurant.com</code>
-        </p>
-      </div>
-
-      {/* ── STEP 2: DNS TXT Record ── */}
-      {step === 'dns' && domain?.verification_txt_name && (
-        <div className="bg-orange-50 rounded-2xl border border-orange-100 p-5 space-y-4">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} className="text-orange-500 shrink-0" />
-            <h2 className="font-semibold text-gray-800">Add DNS TXT Record</h2>
+            {changingDomain && (
+              <button
+                onClick={() => { setChangingDomain(false); setInput(domain?.custom_domain ?? '') }}
+                className="border border-gray-200 text-gray-500 px-3 py-2.5 rounded-xl text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            )}
           </div>
-
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Go to your domain provider (Namecheap, GoDaddy, Cloudflare, etc.) and add this TXT record.
-            DNS can take <strong>5 min – 48 hours</strong> to propagate.
-          </p>
-
-          {/* DNS Table */}
-          <div className="bg-white rounded-xl border border-orange-100 overflow-hidden text-sm">
-            <div className="grid grid-cols-3 bg-orange-50/80 px-4 py-2.5 text-xs font-bold text-secondary uppercase tracking-wider">
-              <span>Type</span><span>Name / Host</span><span>Value</span>
-            </div>
-            <div className="grid grid-cols-3 px-4 py-3 border-t border-orange-50 gap-2">
-              <span className="font-mono font-bold text-orange-600">TXT</span>
-              <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_name}</span>
-              <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_value}</span>
-            </div>
-          </div>
-
-          {/* Copy fields */}
-          <div className="space-y-3">
-            <div>
-              <label className="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">
-                Name / Host
-              </label>
-              <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
-                <code className="text-sm text-gray-800 flex-1 break-all">{domain.verification_txt_name}</code>
-                <button onClick={() => copy(domain.verification_txt_name!, 'name')} className="text-orange-400 hover:text-orange-600 shrink-0">
-                  {copied === 'name' ? <CheckCircle2 size={15} /> : <Copy size={15} />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[11px] font-bold text-secondary uppercase tracking-wider block mb-1.5">
-                Value
-              </label>
-              <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
-                <code className="text-xs text-gray-800 flex-1 break-all">{domain.verification_txt_value}</code>
-                <button onClick={() => copy(domain.verification_txt_value!, 'value')} className="text-orange-400 hover:text-orange-600 shrink-0">
-                  {copied === 'value' ? <CheckCircle2 size={15} /> : <Copy size={15} />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Verify button */}
-          <button
-            onClick={handleVerify}
-            disabled={verifying}
-            className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
-          >
-            {verifying
-              ? <><RefreshCw size={14} className="animate-spin" /> Checking DNS...</>
-              : <><Shield size={14} /> I've Added the Record — Verify Now</>
-            }
-          </button>
-
-          <p className="text-xs text-center text-secondary">
-            DNS not propagated? Wait a few minutes and try again.
+          <p className="text-xs text-gray-400">
+            Without https:// · e.g. <code className="bg-gray-100 px-1 rounded">www.myrestaurant.com</code>
           </p>
         </div>
       )}
 
-      {/* ── STEP 3: Verified ── */}
-      {step === 'done' && domain?.custom_domain && (
-        <div className="bg-green-50 rounded-2xl border border-green-100 p-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-              <CheckCircle2 size={20} className="text-white" />
-            </div>
+      {/* ── STEP 2 — dns ── */}
+      {step === 'dns' && !changingDomain && domain && (
+        <div className="space-y-4">
+
+          {/* Current domain */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-green-800">Your Enterprise Site is Live!</h2>
-              <p className="text-sm text-green-600">Domain verified and connected successfully</p>
+              <p className="text-xs text-gray-400 mb-1">Connected Domain</p>
+              <p className="font-mono font-semibold text-gray-800">{domain.custom_domain}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-700 flex items-center gap-1">
+                <Clock size={11} /> Pending DNS
+              </span>
+              {/* Change → warn user token will change */}
+              <button
+                onClick={() => setShowChangeWarning(true)}
+                className="text-xs text-gray-400 hover:text-orange-500 underline transition-colors"
+              >
+                Change
+              </button>
+              <button
+                onClick={handleRemove}
+                disabled={removing}
+                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Remove domain"
+              >
+                {removing ? <RefreshCw size={13} className="animate-spin" /> : <Trash2 size={13} />}
+              </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-green-100 p-4 flex items-center justify-between">
+          {/* TXT record */}
+          <div className="bg-orange-50 rounded-2xl border border-orange-100 p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={16} className="text-orange-500 shrink-0" />
+              <h2 className="font-semibold text-gray-800">Add This TXT Record to Your DNS</h2>
+            </div>
+
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Go to your DNS provider and add this record. DNS can take <strong>5 min – 48 hours</strong> to propagate.
+            </p>
+
+            {/* Table */}
+            <div className="bg-white rounded-xl border border-orange-100 overflow-hidden">
+              <div className="grid grid-cols-3 bg-orange-50/80 px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <span>Type</span><span>Name / Host</span><span>Value</span>
+              </div>
+              <div className="grid grid-cols-3 px-4 py-3 border-t border-orange-50 gap-2 items-center">
+                <span className="font-mono font-bold text-orange-600 text-sm">TXT</span>
+                <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_name}</span>
+                <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_value}</span>
+              </div>
+            </div>
+
+            {/* Vercel hint */}
+            <div className="bg-white rounded-xl border border-orange-100 p-3 text-xs text-gray-600 space-y-1.5">
+              <p className="font-semibold text-gray-700">🔷 If using Vercel DNS:</p>
+              <div className="font-mono bg-gray-50 rounded p-2 text-[11px] space-y-0.5">
+                <p>Name: <strong>{domain.verification_txt_name?.split('.')[0] ?? '@'}</strong></p>
+                <p>Type: <strong>TXT</strong></p>
+                <p>Value: <strong>{domain.verification_txt_value}</strong></p>
+                <p>TTL: <strong>60</strong></p>
+              </div>
+            </div>
+
+            {/* Copy fields */}
+            <div className="space-y-2.5">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Name / Host</label>
+                <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2.5">
+                  <code className="text-sm text-gray-800 flex-1 break-all">{domain.verification_txt_name}</code>
+                  <button onClick={() => copy(domain.verification_txt_name!, 'name')} className="text-orange-400 hover:text-orange-600 shrink-0 p-1">
+                    {copied === 'name' ? <CheckCircle2 size={14} className="text-green-500" /> : <Copy size={14} />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Value</label>
+                <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2.5">
+                  <code className="text-xs text-gray-800 flex-1 break-all">{domain.verification_txt_value}</code>
+                  <button onClick={() => copy(domain.verification_txt_value!, 'value')} className="text-orange-400 hover:text-orange-600 shrink-0 p-1">
+                    {copied === 'value' ? <CheckCircle2 size={14} className="text-green-500" /> : <Copy size={14} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Verify button — opens confirm popup */}
+            <button
+              onClick={() => setShowVerifyConfirm(true)}
+              disabled={verifying}
+              className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
+            >
+              {verifying
+                ? <><RefreshCw size={14} className="animate-spin" /> Checking DNS...</>
+                : <><Shield size={14} /> I&apos;ve Added the Record — Verify Now</>
+              }
+            </button>
+
+            <p className="text-xs text-center text-gray-400">
+              Verification does NOT change your token. Safe to retry anytime.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── STEP 3 — done ── */}
+      {step === 'done' && domain?.custom_domain && !changingDomain && (
+        <div className="bg-green-50 rounded-2xl border border-green-100 p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+              <CheckCircle2 size={20} className="text-white" />
+            </div>
             <div>
-              <p className="text-xs text-secondary mb-0.5">Live URL</p>
-              <p className="font-semibold text-gray-800">{domain.custom_domain}</p>
+              <h2 className="font-bold text-green-800">Enterprise Site is Live! 🎉</h2>
+              <p className="text-sm text-green-600">Domain verified and connected</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-green-100 p-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs text-gray-400 mb-0.5">Live URL</p>
+              <p className="font-semibold text-gray-800 font-mono truncate">{domain.custom_domain}</p>
             </div>
             <a
               href={`https://${domain.custom_domain}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors"
+              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors shrink-0"
             >
-              Visit Site <ExternalLink size={13} />
+              Visit <ExternalLink size={13} />
             </a>
           </div>
 
           {domain.custom_domain_verified_at && (
             <p className="text-xs text-green-600">
-              Verified on {new Date(domain.custom_domain_verified_at).toLocaleDateString('en-NP', {
+              ✅ Verified on {new Date(domain.custom_domain_verified_at).toLocaleDateString('en-NP', {
                 year: 'numeric', month: 'long', day: 'numeric'
               })}
             </p>
           )}
 
-          <button
-            onClick={() => setStep('idle')}
-            className="text-sm text-green-600 underline"
-          >
-            Change domain
-          </button>
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              onClick={() => setShowChangeWarning(true)}
+              className="text-sm text-gray-500 hover:text-orange-500 underline transition-colors"
+            >
+              Change domain
+            </button>
+            <span className="text-gray-200">·</span>
+            <button
+              onClick={handleRemove}
+              disabled={removing}
+              className="text-sm text-red-400 hover:text-red-600 underline transition-colors"
+            >
+              {removing ? 'Removing...' : 'Remove domain'}
+            </button>
+          </div>
         </div>
       )}
 
-      {/* How it works — only on idle */}
-      {step === 'idle' && (
+      {/* How it works */}
+      {step === 'idle' && !changingDomain && (
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <h3 className="font-semibold text-gray-700 text-sm mb-4">How it works</h3>
           <ol className="space-y-3">
             {[
-              { step: '1', text: 'Enter your domain and click Connect', icon: Globe },
-              { step: '2', text: 'Add the TXT record to your DNS provider', icon: AlertCircle },
-              { step: '3', text: 'Click Verify — we check your DNS', icon: Shield },
-              { step: '4', text: 'Your enterprise site goes live!', icon: CheckCircle2 },
-            ].map((item) => (
-              <li key={item.step} className="flex items-center gap-3 text-sm text-gray-600">
+              'Enter your domain and click Connect',
+              'Add the TXT record shown to your DNS provider',
+              'Click "Verify" — we check your DNS automatically',
+              'Your enterprise website goes live on your domain!',
+            ].map((text, i) => (
+              <li key={i} className="flex items-center gap-3 text-sm text-gray-600">
                 <span className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold shrink-0">
-                  {item.step}
+                  {i + 1}
                 </span>
-                {item.text}
+                {text}
               </li>
             ))}
           </ol>
         </div>
       )}
+
+      {/* ══════════════════════════════════════════
+          MODAL 1 — Verify Confirm
+          (confirm/ endpoint — token change हुँदैन, safe)
+      ══════════════════════════════════════════ */}
+      {showVerifyConfirm && domain && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowVerifyConfirm(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto">
+              <Shield size={22} className="text-orange-500" />
+            </div>
+
+            <div className="text-center">
+              <h3 className="font-bold text-gray-900 text-lg">Confirm DNS Verification</h3>
+              <p className="text-gray-500 text-sm mt-1">
+                Make sure you&apos;ve added this TXT record to your DNS provider:
+              </p>
+            </div>
+
+            <div className="bg-orange-50 rounded-xl border border-orange-100 p-3 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-400 font-medium">Type</span>
+                <span className="font-mono font-bold text-orange-600">TXT</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-gray-400 font-medium shrink-0">Name</span>
+                <span className="font-mono text-gray-700 text-right break-all">{domain.verification_txt_name}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-gray-400 font-medium shrink-0">Value</span>
+                <span className="font-mono text-gray-700 text-right break-all">{domain.verification_txt_value}</span>
+              </div>
+            </div>
+
+            <div className="bg-green-50 border border-green-100 rounded-xl p-3 text-xs text-green-700">
+              ✅ Verifying is <strong>safe to retry</strong> — it does NOT change your TXT token.
+            </div>
+
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
+              ⚡ DNS changes can take <strong>5 min – 48 hours</strong> to propagate. If it fails, wait and try again.
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowVerifyConfirm(false)}
+                className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                Not yet
+              </button>
+              <button
+                onClick={handleVerify}
+                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
+              >
+                Yes, Verify!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════
+          MODAL 2 — Change Domain Warning
+          (verify/ endpoint — NEW token generate हुन्छ ⚠️)
+      ══════════════════════════════════════════ */}
+      {showChangeWarning && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowChangeWarning(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-yellow-50 flex items-center justify-center mx-auto">
+              <AlertCircle size={22} className="text-yellow-500" />
+            </div>
+
+            <div className="text-center">
+              <h3 className="font-bold text-gray-900 text-lg">⚠️ Warning</h3>
+              <p className="text-gray-500 text-sm mt-1">
+                Changing your domain will generate a <strong>NEW verification token</strong>.
+              </p>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4 text-sm text-yellow-800 space-y-2">
+              <p className="font-semibold">What will happen:</p>
+              <ul className="space-y-1.5 text-xs">
+                <li>• Your current TXT record value will become <strong>invalid</strong></li>
+                <li>• You must <strong>update your DNS</strong> with the new token</li>
+                <li>• Your enterprise site will go <strong>offline</strong> until re-verified</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowChangeWarning(false)}
+                className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowChangeWarning(false)
+                  setChangingDomain(true)
+                  setInput(domain?.custom_domain ?? '')
+                }}
+                className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
+              >
+                I Understand, Change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

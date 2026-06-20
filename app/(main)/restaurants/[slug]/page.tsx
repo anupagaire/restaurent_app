@@ -15,13 +15,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return { title: 'Restaurant Not Found' };
 
- if (restaurantId === 8) {
-    redirect('/enterprise-test')
-  }
-
-// if (restaurant.custom_domain && restaurant.custom_domain_verified === true) {
-//     redirect(`https://${restaurant.custom_domain}`);
+//  if (restaurantId === 8) {
+//     redirect('/enterprise-test')
 //   }
+
+
   const seo = restaurant.seo;
   const coverPhoto = seo?.open_graph?.['og:image'] ?? resolveUrl(restaurant.photos?.[0]?.photo_url);
   const pageUrl = seo?.canonical_url ?? '';
@@ -91,6 +89,8 @@ interface ApiRestaurant {
   categories: { id: number; name: string; status: boolean }[];
   menus: ApiMenu[];
   status?: boolean;
+  custom_domain?: string | null;      
+  custom_domain_verified?: boolean;
   seo?: {                                      
     title?: string;
     meta_description?: string;
@@ -163,6 +163,12 @@ export default async function RestaurantPage({ params }: PageProps) {
 
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return notFound();
+
+
+if (restaurant.custom_domain && restaurant.custom_domain_verified === true) {
+    redirect(`https://${restaurant.custom_domain}`);
+  }
+
 const coverPhotoUrl = await getRestaurantCoverPhoto(restaurantId);
   const restaurantImage = resolveUrl(coverPhotoUrl) ?? resolveUrl(restaurant.photos?.[0]?.photo_url) ?? '/placeholder-restaurant.jpg';
 

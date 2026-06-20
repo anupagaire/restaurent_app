@@ -102,7 +102,7 @@ export default async function EnterpriseAboutPage() {
           <div className="text-6xl mb-4">🍽️</div>
           <h1 className="text-2xl font-bold text-white mb-2">About Page Not Available</h1>
           <p className="text-white/50 mb-6">This restaurant hasn&apos;t created their about page yet.</p>
-          <Link href="/" className="text-[#c8914a] hover:underline font-medium">← Back to Home</Link>
+          <Link href="/" className="text-accent hover:underline font-medium">← Back to Home</Link>
         </div>
       </div>
     )
@@ -115,7 +115,7 @@ export default async function EnterpriseAboutPage() {
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-white mb-2">Page Not Published</h1>
           <p className="text-white/50 mb-6">This about page is currently unpublished.</p>
-          <Link href="/" className="text-[#c8914a] hover:underline font-medium">← Back to Home</Link>
+          <Link href="/" className="text-accent hover:underline font-medium">← Back to Home</Link>
         </div>
       </div>
     )
@@ -137,7 +137,7 @@ export default async function EnterpriseAboutPage() {
           style={{ background: 'linear-gradient(135deg, #1a0f0a 0%, #2d1810 100%)' }}
         >
           <div className="absolute bottom-[-80px] right-[-80px] w-[280px] h-[280px] rounded-full bg-white/5 pointer-events-none" />
-          <div className="absolute top-[-40px] left-[-40px] w-[180px] h-[180px] rounded-full bg-[#c8914a]/10 pointer-events-none" />
+          <div className="absolute top-[-40px] left-[-40px] w-[180px] h-[180px] rounded-full bg-accent/10 pointer-events-none" />
           <div
             className="absolute inset-0 opacity-[0.04] pointer-events-none"
             style={{
@@ -153,8 +153,8 @@ export default async function EnterpriseAboutPage() {
               Back to Home
             </Link>
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-px w-10 bg-[#c8914a]" />
-              <span className="text-[#c8914a] text-[11px] font-bold uppercase tracking-widest">Our Story</span>
+              <div className="h-px w-10 bg-accent" />
+              <span className="text-accent text-[11px] font-bold uppercase tracking-widest">Our Story</span>
             </div>
             <h1 className="font-bold text-white mb-6 leading-tight" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)' }}>
               {about.title || 'About Us'}
@@ -180,7 +180,7 @@ export default async function EnterpriseAboutPage() {
               <Image src={heroPhoto.photo_url} alt={heroPhoto.alt || about.title || 'Restaurant'} fill priority className="object-cover" unoptimized />
               <div className="absolute inset-0 bg-[#0e0b07]/30" />
               <div className="absolute bottom-10 left-10 bg-white/90 backdrop-blur-sm rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3 z-10">
-                <div className="w-2 h-2 rounded-full bg-[#c8914a]" />
+                <div className="w-2 h-2 rounded-full bg-accent" />
                 <span className="text-gray-900 text-sm font-medium">Crafted with passion</span>
               </div>
             </>
@@ -198,7 +198,7 @@ export default async function EnterpriseAboutPage() {
       <div className="max-w-[1100px] mx-auto px-8 sm:px-12 py-20">
         <div className="flex gap-12 items-start">
           <div className="hidden md:block sticky top-8 flex-shrink-0">
-            <div className="text-[0.7rem] font-bold uppercase tracking-widest text-[#c8914a] pl-2.5" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', borderLeft: '2px solid #c8914a' }}>
+            <div className="text-[0.7rem] font-bold uppercase tracking-widest text-accent pl-2.5" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', borderLeft: '2px solid #c8914a' }}>
               About
             </div>
           </div>
@@ -218,8 +218,8 @@ export default async function EnterpriseAboutPage() {
           <div className="max-w-7xl mx-auto px-8 sm:px-12">
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8 bg-[#c8914a]" />
-                <span className="text-[#c8914a] text-[11px] font-bold uppercase tracking-widest">Gallery</span>
+                <div className="h-px w-8 bg-accent" />
+                <span className="text-accent text-[11px] font-bold uppercase tracking-widest">Gallery</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-light text-white mb-3" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
                 Moments & Memories
@@ -253,7 +253,7 @@ export default async function EnterpriseAboutPage() {
           </p>
           <Link
             href="/booking"
-            className="inline-flex items-center gap-2.5 bg-[#0e0b07] hover:bg-[#1c1208] text-[#c8914a] font-semibold px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg mb-5"
+            className="inline-flex items-center gap-2.5 bg-[#0e0b07] hover:bg-[#1c1208] text-accent font-semibold px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg mb-5"
           >
             Reserve a Table
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
