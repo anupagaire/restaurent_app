@@ -9,9 +9,21 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
 
-  if (pathname.startsWith('/not-found')) {
+  // if (pathname.startsWith('/not-found')) {
+  //   return NextResponse.next();
+  // }
+
+
+
+if (
+    pathname.startsWith('/_enterprise') ||
+    pathname.startsWith('/not-found') ||
+    pathname.startsWith('/_next')
+  ) {
     return NextResponse.next();
   }
+
+
 
   const host = request.headers.get('host') ?? '';
 
@@ -110,9 +122,15 @@ url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
   return NextResponse.next();
 }
 
+
+
+
 export const config = {
-  matcher: ["/super-admin/:path*", "/restaurant-admin/:path*", "/customer/:path*",
-     "/((?!_next|favicon\\.ico|api|not-found).*)",
-  
+  matcher: [
+    "/super-admin/:path*",
+    "/restaurant-admin/:path*",
+    "/customer/:path*",
+    "/((?!_next|_enterprise|favicon\\.ico|api|not-found).*)",
+    
   ],
 };
