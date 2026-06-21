@@ -479,6 +479,13 @@ export default function PublicMenuPage() {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
+  if (!slug || slug === '_enterprise' || slug.startsWith('_')) {
+    return null
+  }
+
+ 
+
+
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -518,7 +525,7 @@ export default function PublicMenuPage() {
           console.error('Error from backend:', errData);
           throw new Error(errData.detail || `Invalid QR Code (${res.status})`);
         }
-
+ 
         const data = await res.json();
         console.log('✅ Menu Loaded Successfully');
 
