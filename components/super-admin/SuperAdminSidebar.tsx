@@ -1,19 +1,4 @@
-// 'use client';
 
-// import Link from 'next/link';
-// import { usePathname } from 'next/navigation';
-// import {
-//   LayoutDashboard,
-//   Users,
-//   LogOut,
-//   Settings,
-//   Contact,
-//   ClipboardList,
-//   CreditCard,Globe ,
-//   FileText,
-//   Tag,
-//   X
-// } from 'lucide-react';
 
 // const menuItems = [
 //   { title: 'Dashboard', href: '/super-admin', icon: LayoutDashboard },
