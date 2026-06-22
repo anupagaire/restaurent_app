@@ -2,8 +2,8 @@ import { headers } from 'next/headers'
 import { fetchRestaurantById } from '@/lib/restaurant'
 import { MapPin, Clock, Phone, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import Navbar from "./_components/EnterpriseNavbar";
-import Footer from "./_components/EnterpriseFooter";
+// import Navbar from "./_components/EnterpriseNavbar";
+// import Footer from "./_components/EnterpriseFooter";
 import EnterpriseGalleryCarousel from "./_components/EnterpriseGalleryCarousel";
 import EnterpriseAbout from "./_components/EnterpriseAbout";
 import EnterpriseHeroSlider from "./_components/EnterpriseHeroSlider";
@@ -61,7 +61,7 @@ const res = await fetch(
   }
    return (
     <>
-    <Navbar restaurant={restaurant} />
+    {/* <Navbar restaurant={restaurant} /> */}
      <div className="min-h-screen bg-white">
  
       <EnterpriseHeroSlider
@@ -129,7 +129,7 @@ const res = await fetch(
       </section>
  
     </div>
-       <Footer restaurant={restaurant} />
+       {/* <Footer restaurant={restaurant} /> */}
      
 
     </>

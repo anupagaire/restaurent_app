@@ -128,12 +128,7 @@ function HeroContent({ restaurant }: { restaurant: Props['restaurant'] }) {
         {restaurant?.amenities ?? 'Experience the finest dining. Reserve your table today.'}
       </p>
       <div className="flex flex-wrap gap-3">
-        <Link
-          href="/booking"
-          className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3.5 rounded-full transition-all hover:scale-105 flex items-center gap-2"
-        >
-          Reserve a Table <ChevronRight size={16} />
-        </Link>
+        
         <Link
           href="/menu"
           className="bg-white/10 backdrop-blur border border-white/20 hover:bg-white/20 text-white font-semibold px-8 py-3.5 rounded-full transition-all flex items-center gap-2"

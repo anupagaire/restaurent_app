@@ -27,7 +27,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
   ]
 
   return (
-    <footer className="bg-[#1a0f0a] text-white">
+    <footer className="bg-primary text-white">
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '56px 24px 32px' }}>
 
         {/* Main grid */}
@@ -54,22 +54,11 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
             {/* Stars */}
             <div className="flex gap-1 mb-5">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} size={14} className="fill-accent text-accent" />
+                <Star key={s} size={14} className="fill-accent text-white" />
               ))}
             </div>
 
-            {/* Social icons */}
-            <div className="flex items-center gap-2">
-              {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-orange-500 flex items-center justify-center transition-colors"
-                >
-                  <Icon size={14} className="text-gray-300" />
-                </a>
-              ))}
-            </div>
+           
           </div>
 
           {/* ── Quick Links ── */}
@@ -80,7 +69,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-secondary hover:text-orange-400 transition-colors flex items-center gap-2"
+                    className="text-sm text-white hover:text-orange-400 transition-colors flex items-center gap-2"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
                     {link.label}
@@ -126,12 +115,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               ) : null}
             </div>
 
-            <Link
-              href="/booking"
-              className="inline-block mt-5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Reserve a Table
-            </Link>
+          
           </div>
         </div>
 
@@ -140,9 +124,9 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
           <p className="text-xs text-secondary">
             © {year} {restaurant.name}. All rights reserved.
           </p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-white">
             Powered by{' '}
-            <a href="https://foodhub.com" className="text-orange-400 hover:underline">
+            <a href="https://foodhub.com" className="text-white hover:underline">
               FoodHub
             </a>
           </p>

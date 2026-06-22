@@ -158,8 +158,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             <div className="w-10 h-10 bg-gradient-to-br from-secondary to-primary rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">R</span>
             </div>
-            <div>
-              <h1 className="font-bold text-2xl tracking-tight text-secondary">ABC</h1>
+            <div>              
               <p className="text-xs text-secondary -mt-1">
                 {currentUser?.role || 'Restaurant Admin'}
               </p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Menu, LogOut, ChevronDown } from 'lucide-react';
+import {Menu, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -14,7 +14,6 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [restaurantName, setRestaurantName] = useState<string>('Loading...');
   const [user, setUser] = useState<any>(null);
-
   useEffect(() => {
     const load = async () => {
       try {
@@ -92,13 +91,6 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
 
         {/* RIGHT */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-
-          {/* Notification bell */}
-          <button className="relative p-2 rounded-full hover:bg-secondary/5 transition-colors">
-            <Bell className="w-5 h-5 text-secondary" />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white" />
-          </button>
-
           {/* Profile */}
           <div className="relative">
             <button

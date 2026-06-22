@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X } from 'lucide-react';
-
+import { useAuth } from '@/context/AuthContext';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
+import { LogOut } from "lucide-react";
 interface NavLink { name: string; url: string; }
 interface NavButton { text: string; url: string; }
 interface SiteLogo { image: string; alt: string; }
@@ -40,6 +40,7 @@ export default function Navbar({ logo, links, loginBtn, registerBtn, darkBg = fa
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { currentUser, isAuthenticated, logout } = useAuth();
 const [scrolled, setScrolled] = useState(false);
 
 useEffect(() => {
@@ -170,15 +171,6 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
     ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
     : 'bg-transparent'
 }`}
-
-
-
-
-  // className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-  //   scrolled
-  //     ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
-  //     : 'bg-transparent'
-  // }`}
 >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10">
 
@@ -225,12 +217,32 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                 )}
               </AnimatePresence>
             </div>
-            <Link href={resolvedLoginBtn.url} className="whitespace-nowrap px-4 py-2 rounded-full border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition">
-              {resolvedLoginBtn.text}
-            </Link>
-            <Link href={resolvedRegisterBtn.url} className="whitespace-nowrap px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white text-sm font-medium">
-              {resolvedRegisterBtn.text}
-            </Link>
+            {isAuthenticated && currentUser ? (
+  <>
+    <span className="text-white text-xl font-bold whitespace-nowrap">
+      Hi, {currentUser.name.split(' ')[0]}
+    </span>
+    <button
+  onClick={() => {
+    logout();
+    router.push("/");
+  }}
+  className="p-2 rounded-full border border-white/30 text-white hover:bg-white/10 transition"
+  title="Logout"
+>
+  <LogOut size={18} />
+</button>
+  </>
+) : (
+  <>
+    <Link href={resolvedLoginBtn.url} className="whitespace-nowrap px-4 py-2 rounded-full border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition">
+      {resolvedLoginBtn.text}
+    </Link>
+    <Link href={resolvedRegisterBtn.url} className="whitespace-nowrap px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white text-sm font-medium">
+      {resolvedRegisterBtn.text}
+    </Link>
+  </>
+)}
           </div>
         </div>
 
@@ -250,13 +262,47 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
 </div>
           </Link>
           <div className="flex items-center gap-2">
-            <button onClick={() => { setIsSearchMobile(!isSearchMobile); if (isOpen) setIsOpen(false); setSearchQuery(''); setSuggestions([]); }} className="flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition">
-              <Search size={18} />
-            </button>
-            <button onClick={() => { setIsOpen(!isOpen); if (isSearchMobile) setIsSearchMobile(false); }} className="flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition">
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
+  <button
+    onClick={() => {
+      setIsSearchMobile(!isSearchMobile);
+      if (isOpen) setIsOpen(false);
+      setSearchQuery('');
+      setSuggestions([]);
+    }}
+    className="flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition"
+  >
+    <Search size={18} />
+  </button>
+
+  {isAuthenticated && currentUser && (
+    <>
+      <span className="text-white text-sm font-medium">
+        Hi {currentUser.name.split(" ")[0]}
+      </span>
+
+      <button
+        onClick={() => {
+          logout();
+          router.push("/");
+        }}
+        className="flex items-center justify-center w-8 h-8 rounded-full text-white hover:bg-white/10 transition"
+        title="Logout"
+      >
+        <LogOut size={16} />
+      </button>
+    </>
+  )}
+
+  <button
+    onClick={() => {
+      setIsOpen(!isOpen);
+      if (isSearchMobile) setIsSearchMobile(false);
+    }}
+    className="flex items-center justify-center w-9 h-9 rounded-full text-white hover:bg-white/10 transition"
+  >
+    {isOpen ? <X size={22} /> : <Menu size={22} />}
+  </button>
+</div>
         </div>
 
         <AnimatePresence>
@@ -277,12 +323,30 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                   </Link>
                 ))}
                 <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                  <Link href={resolvedLoginBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium border border-white/20 hover:bg-white/10 transition">
-                    {resolvedLoginBtn.text}
-                  </Link>
-                  <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-primary to-primary hover:opacity-90 transition">
-                    {resolvedRegisterBtn.text}
-                  </Link>
+                 {isAuthenticated && currentUser ? (
+  <>
+    {/* <span className="text-white/70 text-sm">Hi, {currentUser.name.split(' ')[0]}</span> */}
+    {/* <button
+  onClick={() => {
+    logout();
+    router.push("/");
+  }}
+  className="p-2 rounded-full border border-white/30 text-white hover:bg-white/10 transition"
+  title="Logout"
+>
+  <LogOut size={18} />
+</button> */}
+  </>
+) : (
+  <>
+    <Link href={resolvedLoginBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium border border-white/20 hover:bg-white/10 transition">
+      {resolvedLoginBtn.text}
+    </Link>
+    <Link href={resolvedRegisterBtn.url} onClick={closeMenu} className="block w-full text-center px-5 py-3 rounded-full text-white font-medium bg-gradient-to-r from-secondary via-primary to-primary hover:opacity-90 transition">
+      {resolvedRegisterBtn.text}
+    </Link>
+  </>
+)}
                 </div>
               </div>
             </motion.div>

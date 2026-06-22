@@ -136,7 +136,6 @@ const menuItems: {
       {/* ── MAIN CONTENT ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        {/* ── TOP RATED SECTION ── */}
         {topRated.length > 0 && (
           <div className="pt-8 pb-2">
             {/* Section header */}
@@ -154,7 +153,7 @@ const menuItems: {
                   </p>
                 </div>
               </div>
-              <span className="text-xs bg-accent border border-accent text-accent px-3 py-1 rounded-full font-medium">
+              <span className="text-xs bg-secondary border border-accent text-white px-3 py-1 rounded-full font-medium">
                 Customer picks
               </span>
             </div>
@@ -208,7 +207,7 @@ const menuItems: {
                         </span>
                         <div className="flex items-center gap-1 bg-accent px-2 py-0.5 rounded-full">
                           <span className="text-accent text-xs">★</span>
-                          <span className="text-xs font-bold text-accent">
+                          <span className="text-xs font-bold text-white">
                             {rating.avg.toFixed(1)}
                           </span>
                           <span className="text-xs text-secondary">

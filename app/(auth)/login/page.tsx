@@ -213,6 +213,15 @@ const router = useRouter();
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+        <p className="text-center text-sm text-gray-500 mt-2">
+  Don't have an account?{" "}
+  <a
+    href="/register"
+    className="text-secondary font-semibold hover:underline"
+  >
+    Register
+  </a>
+</p>
       </form>
     </div>
   );

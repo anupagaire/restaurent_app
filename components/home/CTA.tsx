@@ -76,6 +76,7 @@ badge="For Restaurant Owners"
               one simple dashboard."
                 titleClassName="text-white"
   subtitleClassName="text-white"
+  badgeClassName="text-white"
   withAnimation={false}
   withDivider={false}
 />

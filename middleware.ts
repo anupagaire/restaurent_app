@@ -18,22 +18,12 @@ export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') ?? '';
   const hostname = host.split(':')[0];
 
-  console.log('🔍 Middleware Debug:', {
-    host,
-    hostname,
-    MAIN_DOMAIN,
-    API_URL,
-    pathname
-  });
-
   const isMainDomain =
     hostname === MAIN_DOMAIN ||
     hostname === MAIN_DOMAIN.split(':')[0] ||
     hostname.includes('localhost') ||
     hostname.includes('127.0.0.1') ||
     hostname.endsWith('.vercel.app');
-
-  console.log('🌐 isMainDomain:', isMainDomain);
 
   if (!isMainDomain) {
     console.log('🚀 Custom domain detected, calling API...');
@@ -43,11 +33,9 @@ export async function middleware(request: NextRequest) {
       console.log('📡 API URL:', apiUrl);
       
       const res = await fetch(apiUrl, { next: { revalidate: 60 } });
-      console.log('📡 API Response Status:', res.status);
 
       if (res.ok) {
         const restaurant = await res.json();
-        console.log('✅ Restaurant found:', restaurant.name, 'ID:', restaurant.id);
         
         const url = request.nextUrl.clone();
         url.pathname = pathname === '/' ? '/enterprise' : `/enterprise${pathname}`;
@@ -56,19 +44,14 @@ export async function middleware(request: NextRequest) {
         response.headers.set('x-restaurant-id', String(restaurant.id));
         response.headers.set('x-is-enterprise', 'true');
         response.headers.set('x-restaurant-name', restaurant.name ?? '');
-
-        console.log('🔄 Rewriting to:', url.pathname);
         return response;
       } else {
         console.log('❌ API returned non-OK status:', res.status);
         const errorText = await res.text();
-        console.log('❌ Error response:', errorText);
       }
     } catch (e) {
-      console.error('❌ Domain lookup failed:', e);
     }
 
-    console.log('⚠️ Redirecting to /not-found');
     return NextResponse.redirect(new URL('/not-found', request.url));
   }
 
@@ -93,7 +76,6 @@ export async function middleware(request: NextRequest) {
   if (isCustomerRoute && role !== "customer") {
     if (role === "super_admin") return NextResponse.redirect(new URL("/super-admin", request.url));
     if (role === "admin" || role === "staff") return NextResponse.redirect(new URL("/restaurant-admin", request.url));
-    // Unknown role → login
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

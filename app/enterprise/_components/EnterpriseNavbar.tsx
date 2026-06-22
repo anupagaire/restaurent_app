@@ -46,7 +46,7 @@ export default function EnterpriseNavbar({ restaurant }: { restaurant: Restauran
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+                className="text-sm font-medium text-primary hover: transition-colors"
               >
                 {link.label}
               </Link>
