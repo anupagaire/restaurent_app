@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server";
 const MAIN_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost:3000';
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-if (
+  
+  if (
     pathname.startsWith('/_enterprise') ||
     pathname.startsWith('/not-found') ||
     pathname.startsWith('/_next')
@@ -15,47 +15,63 @@ if (
     return NextResponse.next();
   }
 
- 
   const host = request.headers.get('host') ?? '';
-const hostname = host.split(':')[0];
+  const hostname = host.split(':')[0];
 
-const isMainDomain =
-  host === MAIN_DOMAIN ||       
-  host.includes('localhost') ||
-  host.includes('127.0.0.1') ||
-  host.endsWith('.vercel.app')  
+  console.log('🔍 Middleware Debug:', {
+    host,
+    hostname,
+    MAIN_DOMAIN,
+    API_URL,
+    pathname
+  });
+
+  const isMainDomain =
+    hostname === MAIN_DOMAIN ||
+    hostname === MAIN_DOMAIN.split(':')[0] ||
+    hostname.includes('localhost') ||
+    hostname.includes('127.0.0.1') ||
+    hostname.endsWith('.vercel.app');
+
+  console.log('🌐 isMainDomain:', isMainDomain);
 
   if (!isMainDomain) {
+    console.log('🚀 Custom domain detected, calling API...');
+    
     try {
-      const res = await fetch(
-        `${API_URL}/api/v1/restaurant/lookup/?host=${host}`,
-         { next: { revalidate: 60 } } 
-      );
+      const apiUrl = `${API_URL}/api/v1/restaurant/lookup/?host=${encodeURIComponent(hostname)}`;
+      console.log('📡 API URL:', apiUrl);
+      
+      const res = await fetch(apiUrl, { next: { revalidate: 60 } });
+      console.log('📡 API Response Status:', res.status);
 
       if (res.ok) {
-          
         const restaurant = await res.json();
-        // Rewrite to enterprise route, pass restaurant id via header
+        console.log('✅ Restaurant found:', restaurant.name, 'ID:', restaurant.id);
+        
         const url = request.nextUrl.clone();
-
-  // same pathname राख्नु
-  
-        url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
+        url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`;
         const response = NextResponse.rewrite(url);
 
-        response.headers.set('x-restaurant-id', String(restaurant.id))
-        response.headers.set('x-is-enterprise', 'true')
-        response.headers.set('x-restaurant-name', restaurant.name ?? '')
+        response.headers.set('x-restaurant-id', String(restaurant.id));
+        response.headers.set('x-is-enterprise', 'true');
+        response.headers.set('x-restaurant-name', restaurant.name ?? '');
 
+        console.log('🔄 Rewriting to:', url.pathname);
         return response;
-        }
+      } else {
+        console.log('❌ API returned non-OK status:', res.status);
+        const errorText = await res.text();
+        console.log('❌ Error response:', errorText);
+      }
     } catch (e) {
-      console.error('Domain lookup failed:', e);
+      console.error('❌ Domain lookup failed:', e);
     }
 
-    // Custom domain but restaurant not found
+    console.log('⚠️ Redirecting to /not-found');
     return NextResponse.redirect(new URL('/not-found', request.url));
   }
+
   const isAdminRoute    = pathname.startsWith("/super-admin") || pathname.startsWith("/restaurant-admin");
   const isCustomerRoute = pathname.startsWith("/customer");
 

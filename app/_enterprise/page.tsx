@@ -17,6 +17,7 @@ function resolveUrl(url: string, base: string): string {
 export default async function EnterpriseHomePage() {
   const headersList = await headers()
   const restaurantId = headersList.get('x-restaurant-id') 
+  console.log('🔍 Restaurant ID from header:', restaurantId);
     if (!restaurantId) return <div>Restaurant not found</div>
 
   const restaurant = await fetchRestaurantById(restaurantId)
