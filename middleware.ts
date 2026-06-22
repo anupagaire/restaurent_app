@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   if (
-    pathname.startsWith('/_enterprise') ||
+    pathname.startsWith('/enterprise') ||
     pathname.startsWith('/not-found') ||
     pathname.startsWith('/_next')
   ) {
@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
         console.log('✅ Restaurant found:', restaurant.name, 'ID:', restaurant.id);
         
         const url = request.nextUrl.clone();
-        url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`;
+        url.pathname = pathname === '/' ? '/enterprise' : `/enterprise${pathname}`;
         const response = NextResponse.rewrite(url);
 
         response.headers.set('x-restaurant-id', String(restaurant.id));
@@ -121,7 +121,7 @@ export const config = {
     "/super-admin/:path*",
     "/restaurant-admin/:path*",
     "/customer/:path*",
-    "/((?!_next|_enterprise|favicon\\.ico|api|not-found).*)",
+    "/((?!_next|enterprise|favicon\\.ico|api|not-found).*)",
     
   ],
 };
