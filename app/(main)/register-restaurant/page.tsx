@@ -111,7 +111,7 @@ await emailjs.send(
 
   return (
     <div className="min-h-screen w-full bg-[#faf8f5]">
-      <div className="max-w-screen-md mx-auto px-4 py-12">
+      <div className="max-w-screen-sm mx-auto px-4 py-22">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-secondary mb-2">Register Your Venue</h1>
           <p className="text-secondary">

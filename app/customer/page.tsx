@@ -47,8 +47,6 @@ function greeting() {
 
 export default function CustomerDashboard() {
   const router = useRouter();
-
-  // ── user comes from Context — no API call needed ──
   const { user, loading: userLoading } = useUser();
 
   const [allOrders, setAllOrders] = useState<Order[]>([]);
@@ -74,7 +72,6 @@ export default function CustomerDashboard() {
     loadOrders();
   }, []);
 
-  // ── Derived stats ──────────────────────────────────────────────────────────
   const totalOrders  = allOrders.length;
   const totalSpent   = allOrders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
   const recentOrders = allOrders.slice(0, 4);

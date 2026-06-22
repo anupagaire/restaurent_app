@@ -21,9 +21,7 @@ function Alert({ type, msg }: { type: 'success' | 'error'; msg: string }) {
 }
 
 export default function CustomerProfilePage() {
-  // ── Pull user from Context — no API call on mount ──
   const { user, loading, updateUser } = useUser();
-
   const [profile, setProfile] = useState({
     email: '', first_name: '', last_name: '', contact_no: '', address: '',
   });
@@ -51,7 +49,6 @@ export default function CustomerProfilePage() {
     }
   }, [user]);
 
-  // ── Save profile ───────────────────────────────────────────────────────────
   const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileSaving(true);

@@ -291,7 +291,6 @@ const handleEdit = (item: MenuItem) => {
     );
   }
 
-  // ── Normal menu management UI ─────────────────────────────────────────────
   return (
     
         <SubscriptionGuard>

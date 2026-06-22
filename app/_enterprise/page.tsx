@@ -16,11 +16,12 @@ function resolveUrl(url: string, base: string): string {
  
 export default async function EnterpriseHomePage() {
   const headersList = await headers()
-  const restaurantId = headersList.get('x-restaurant-id') ?? '8'
+  const restaurantId = headersList.get('x-restaurant-id') 
+    if (!restaurantId) return <div>Restaurant not found</div>
+
   const restaurant = await fetchRestaurantById(restaurantId)
+
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ''
- 
-  // ── Slider photos (type=restaurant_website_section, purpose=slider)
   let sliderPhotos: { id: number; photo_url: string; alt: string }[] = []
   try {
     
@@ -42,28 +43,6 @@ const res = await fetch(
     }
   } catch {}
  
-  // ── Fallback: cover photo if no slider photos
-  // if (sliderPhotos.length === 0) {
-  //   try {
-  //     const res = await fetch(
-  //       `${BASE_URL}/api/v1/photo/?type=restaurant&object_id=${restaurantId}&purpose=cover`,
-  //       { cache: 'no-store' }
-  //     )
-  //     if (res.ok) {
-  //       const data = await res.json()
-  //       const url = data.results?.[0]?.photo_url
-  //       if (url) {
-  //         sliderPhotos = [{
-  //           id: data.results[0].id,
-  //           photo_url: resolveUrl(url, BASE_URL),
-  //           alt: restaurant?.name ?? '',
-  //         }]
-  //       }
-  //     }
-  //   } catch {}
-  // }
- 
-  // ── Gallery photos for carousel
   let galleryPhotos: { id: number; photo_url: string }[] = []
   try {
     const res = await fetch(
@@ -84,7 +63,6 @@ const res = await fetch(
     <Navbar restaurant={restaurant} />
      <div className="min-h-screen bg-white">
  
-      {/* ── HERO SLIDER ── */}
       <EnterpriseHeroSlider
         photos={sliderPhotos}
         restaurant={{
@@ -94,7 +72,6 @@ const res = await fetch(
         }}
       />
  
-      {/* ── INFO STRIP ── */}
       <section className="bg-gray-900 text-white">
         <div className="max-w-6xl mx-auto px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-4 divide-y md:divide-y-0 md:divide-x divide-gray-700">
           {restaurant?.address && (
@@ -123,13 +100,11 @@ const res = await fetch(
         </div>
       </section>
  
-      {/* ── ABOUT ── */}
       <EnterpriseAbout
         restaurant={restaurant}
         coverPhotoUrl={sliderPhotos[0]?.photo_url ?? null}
       />
  
-      {/* ── GALLERY CAROUSEL ── */}
       {galleryPhotos.length > 0 && (
         <EnterpriseGalleryCarousel
           photos={galleryPhotos}

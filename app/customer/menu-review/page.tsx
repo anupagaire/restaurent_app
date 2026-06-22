@@ -1,20 +1,5 @@
 'use client';
 
-// ─── WHAT CHANGED ───────────────────────────────────────────────────────────
-// BEFORE (N+1 problem):
-//   Each <ReviewCard> fetched /menu/{id}/ and /restaurant/{id}/ independently.
-//   10 reviews = 20 extra API calls on mount, one-by-one per card.
-//
-// AFTER (batch fetch):
-//   1. Fetch all reviews once.
-//   2. Collect unique menu IDs and restaurant IDs from results.
-//   3. Fetch ALL menus and restaurants in parallel with Promise.all().
-//   4. Pass enriched data down to ReviewCard as props — zero extra calls per card.
-//
-//   Result: 10 reviews → 3 total API calls (reviews + menus batch + restaurants batch)
-//           instead of 21.
-// ────────────────────────────────────────────────────────────────────────────
-
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +12,6 @@ import {
   MapPin, UtensilsCrossed,
 } from 'lucide-react';
 
-// ── Types ──────────────────────────────────────────────────────────────────
 interface ReviewUser   { id: number; email: string; first_name: string; last_name: string; }
 interface ReviewPhoto  { id: number; object_id: number; photo_url: string | null; }
 interface MenuReview   {
@@ -38,7 +22,6 @@ interface MenuReview   {
 interface MenuDetail   { id: number; name: string; price: string; description: string; photos: ReviewPhoto[]; restaurant: number; }
 interface RestaurantDetail { id: number; name: string; city: string; address: string; photos: ReviewPhoto[]; }
 
-// ── Helpers ────────────────────────────────────────────────────────────────
 function Alert({ type, msg }: { type: 'success' | 'error'; msg: string }) {
   return (
     <div className={`flex items-center gap-3 p-4 rounded-xl text-sm border ${
@@ -75,7 +58,6 @@ function getFirstPhoto(photos: ReviewPhoto[]): string | null {
   return photos?.find(p => p.photo_url)?.photo_url ?? null;
 }
 
-// ── Edit Modal ─────────────────────────────────────────────────────────────
 function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onClose: () => void; onSaved: (u: MenuReview) => void }) {
   const [rating, setRating] = useState(review.rating);
   const [text,   setText]   = useState(review.review);
@@ -124,7 +106,6 @@ function EditReviewModal({ review, onClose, onSaved }: { review: MenuReview; onC
   );
 }
 
-// ── Delete Modal ───────────────────────────────────────────────────────────
 function DeleteConfirmModal({ reviewId, onClose, onDeleted }: { reviewId: number; onClose: () => void; onDeleted: (id: number) => void }) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
@@ -156,7 +137,6 @@ function DeleteConfirmModal({ reviewId, onClose, onDeleted }: { reviewId: number
   );
 }
 
-// ── ReviewCard — now receives enriched data as props, no API calls inside ──
 function ReviewCard({
   review, menu, restaurant, onEdit, onDelete,
 }: {
@@ -173,7 +153,8 @@ function ReviewCard({
       <div className="flex gap-0">
         <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-gray-100 relative overflow-hidden">
           {menuPhoto ? (
-            <img src={menuPhoto} alt={menu?.name ?? 'Menu item'} className="w-full h-full object-cover" />
+            <img 
+            src={menuPhoto} alt={menu?.name ?? 'Menu item'} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-accent">
               <UtensilsCrossed className="w-8 h-8 text-accent" />

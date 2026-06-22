@@ -78,7 +78,7 @@ async function getAboutPage(restaurantId: number): Promise<AboutData | null> {
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
-  const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8')
+  const restaurantId = Number(headersList.get('x-restaurant-id') )
   const about = await getAboutPage(restaurantId)
   if (!about) return { title: 'About Us' }
   return {

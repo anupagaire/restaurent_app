@@ -68,7 +68,6 @@ const STATUS_FILTERS = [
   { value: 'cancelled', label: '❌ Cancelled' },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(dateStr: string) {
   return new Date(dateStr).toLocaleString('en-US', {
@@ -261,8 +260,6 @@ function OrderCard({ order }: { order: Order }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
 export default function CustomerOrdersPage() {
   const [orders,        setOrders]        = useState<Order[]>([]);
   const [loading,       setLoading]       = useState(true);
@@ -306,7 +303,6 @@ export default function CustomerOrdersPage() {
 
   useEffect(() => { fetchMyOrders(); }, [fetchMyOrders]);
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
   const totalSpent   = orders.reduce((s, o) => s + parseFloat(o.total_price || '0'), 0);
   const activeOrders = orders.filter(o =>
     !['delivered', 'cancelled'].includes(o.status.toLowerCase())

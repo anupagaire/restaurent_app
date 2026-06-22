@@ -3,12 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-// interface Photo {
-//   id: string;
-//   photo_url: string;
-// }
-
-
 interface Photo {
   id: number;
   photo_url: string;

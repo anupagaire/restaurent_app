@@ -274,8 +274,10 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
 
           <button onClick={handleSubmit} disabled={submitting || !canSubmit}
             className="w-full py-4 rounded-2xl font-bold text-base transition-all"
-            style={{ background: submitting || !canSubmit ? '#d1d5db' : '#513012', color: submitting || !canSubmit ? '#9ca3af' : '#fff', cursor: !canSubmit ? 'not-allowed' : 'pointer' }}>
-            {submitting ? stepLabel : !deliveryReady ? 'Add phone & address to continue' : !isLoggedIn && !registrationReady ? 'Complete account details' : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
+            style={{ 
+              background: submitting || !canSubmit ? 'primary' : 'secondary', color: submitting || !canSubmit ? '#9ca3af' : '#fff', cursor: !canSubmit ? 'not-allowed' : 'pointer' }}>
+            {submitting ? stepLabel : !deliveryReady ? 
+            'Add phone & address to continue' : !isLoggedIn && !registrationReady ? 'Complete account details' : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
           </button>
         </div>
       </div>

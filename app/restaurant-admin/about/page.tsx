@@ -133,7 +133,6 @@ formData.append('object_id', String(data.id));
 
 if (res.ok) {
       setMessage('✓ Image uploaded successfully!');
-      // ✅ Fresh data fetch गर्ने
       await fetchAboutData();
     } else {
       const errorData = await res.json().catch(() => ({}));
@@ -146,34 +145,6 @@ if (res.ok) {
     setUploading(null);
   }
 };
-
-
-
-
-
-
-
-  //     if (res.ok) {
-  //       const photoData = await res.json();
-  //       const updatedPhotos = [...data.photos];
-  //       updatedPhotos[index] = {
-  //         ...updatedPhotos[index],
-  //         photo_url: photoData.photo_url,
-  //         id: photoData.id,
-  //       };
-  //       setData(prev => ({ ...prev, photos: updatedPhotos }));
-  //       setMessage('✓ Image uploaded successfully!');
-  //     } else {
-  //       const errorData = await res.json().catch(() => ({}));
-  //       alert(`Upload failed: ${JSON.stringify(errorData.errors || errorData)}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Upload error:', error);
-  //     alert('Network error during upload.');
-  //   } finally {
-  //     setUploading(null);
-  //   }
-  // };
 
   const addPhoto = () => {
     setData(prev => ({

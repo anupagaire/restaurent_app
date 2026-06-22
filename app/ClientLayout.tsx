@@ -16,7 +16,6 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
 
-  // Hide main Navbar & Footer on these pages
   const shouldHideLayout = 
     pathname.startsWith('/restaurant-admin') ||
     pathname.startsWith('/super-admin') ||

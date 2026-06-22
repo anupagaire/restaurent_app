@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import { headers } from 'next/headers';
 import { getWebsiteContent } from "@/lib/websiteContent";
 import ClientLayout from "./ClientLayout";
 
@@ -34,6 +34,18 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+
+const headersList = await headers()
+  const isEnterprise = headersList.get('x-is-enterprise')
+
+  if (isEnterprise) {
+    return (
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    )
+  }
+
   const content = await getWebsiteContent();
 
   const navbarProps = {

@@ -566,7 +566,6 @@ export default function PublicMenuPage() {
     return [];
   };
 
-  // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>
@@ -577,7 +576,6 @@ export default function PublicMenuPage() {
     </>
   );
 
-  // ── Error ──────────────────────────────────────────────────────────────────
   if (error || !restaurant) return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap');`}</style>

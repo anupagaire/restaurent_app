@@ -1,22 +1,28 @@
 'use client'
 import Link from 'next/link'
 import RestaurantPhotoSlider from './RestaurantPhotoSlider'
-import { MapPin, Utensils, ChevronRight, Sparkles } from 'lucide-react'
+import { MapPin, Utensils, ChevronRight, Sparkles, Star, Users, Leaf, Award } from 'lucide-react'
 import { motion, Variants } from 'framer-motion'
 import Image from 'next/image'
+import SectionHeader from "@/components/layout/SectionHeader";
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 25 },
+  hidden: { opacity: 0, y: 30 },
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: 'easeOut', delay: i * 0.05 },
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: i * 0.07 },
   }),
 }
 
+const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 1, ease: 'easeOut' } },
+}
+
 const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: 'easeOut' } },
+  hidden: { opacity: 0, scale: 0.93 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } },
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
@@ -47,353 +53,339 @@ function resolvePhoto(url?: string | null): string | null {
 
 export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
   const locationParts = [restaurant.address, restaurant.city, restaurant.zip].filter(Boolean)
-  const amenitiesList = restaurant.amenities
-    ? restaurant.amenities.split(',').map((a) => a.trim()).filter(Boolean)
-    : []
   const slug = toSlug(restaurant.name)
   const imageUrl = resolvePhoto(restaurant.photos?.[0]?.photo_url)
 
   const pillars = [
-    { icon: '🍽️', label: 'Authentic Flavors' },
-    { icon: '👨‍🍳', label: 'Expert Chefs' },
-    { icon: '🌿', label: 'Fresh Ingredients' },
-    { icon: '⭐', label: 'Premium Experience' },
+    { icon: Star, label: 'Authentic Flavors', desc: 'Recipes passed through generations' },
+    { icon: Users, label: 'Expert Chefs', desc: 'Masters of their craft' },
+    { icon: Leaf, label: 'Fresh Ingredients', desc: 'Sourced daily from local farms' },
+    { icon: Award, label: 'Premium Experience', desc: 'Every detail perfected' },
   ]
 
   const stats = [
-    { icon: '🪑', value: `${restaurant.table_count ?? '20'}+`, label: 'Tables' },
-    { icon: '✨', value: '100%', label: 'Fresh Daily' },
+    { value: `${restaurant.table_count ?? '20'}+`, label: 'Tables' },
+    { value: '100%', label: 'Fresh Daily' },
+    { value: '5★', label: 'Rated' },
   ]
 
   return (
-    <div className=" overflow-hidden">
-      <div className="relative px-6 sm:px-10 lg:px-20 pt-24 pb-10 overflow-hidden">
-        <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 max-w-6xl rounded-full bg-accent/10 blur-[120px]" />
-       
+    <div className="overflow-hidden">
+
+      {/* ── SECTION 1: HERO ABOUT ── */}
+      <section className="relative px-5 sm:px-10 lg:px-20 py-16 lg:py-4">
 
         <div className="relative max-w-7xl mx-auto">
-          <motion.div
-            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
-            className="flex items-center gap-3 mb-8"
-          >
-            <div className="h-px w-12 bg-accent" />
-            <span className="text-accent text-[11px] tracking-[0.45em] uppercase font-light">Our Story</span>
-          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-          <div className="mb-5">
-            <motion.h2
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
-              className="font-light leading-[0.92] tracking-tight text-2xl"
-              style={{  fontFamily: '"Playfair Display", Georgia, serif' }}
-            >
-              Welcome to
-            </motion.h2>
-            <motion.h2 className="font-bold leading-[0.92] tracking-tight text-4xl sm:text-5xl md:text-7xl"
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
-              style={{
-                
-                color: '#c8914a',
-                fontStyle: 'italic',
-                
-              }}
-            >
-              {restaurant.name}
-            </motion.h2>
-          </div>
+            {/* LEFT — Text */}
+            <div className="flex flex-col gap-7">
 
-          <motion.p
-            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-            className=" text-base sm:text-lg font-light max-w-xl leading-relaxed"
-          >
-            Experience authentic flavors and warm hospitality in the heart of{' '}
-            <span className="text-accent">{restaurant.city}</span>
-          </motion.p>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════
-          MAIN — Left text + Right image
-      ══════════════════════════════ */}
-      <div className="px-6 sm:px-10 lg:px-20 pb-20 max-w-8xl mx-auto">
-        <div className="relative w-full flex flex-col lg:flex-row items-stretch justify-between min-h-[460px] gap-6 lg:gap-0">
-
-          {/* ── LEFT CONTENT ── */}
-          <div className="w-full lg:w-[54%] flex flex-col justify-between gap-6 z-10 pr-0 lg:pr-10">
-
-            {/* Description */}
-            <motion.div
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
-              className="relative rounded-3xl p-8 overflow-hidden"
-              style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(200,145,74,0.12)' }}
-            >
-              <div className="absolute top-0 left-0 w-16 h-16 border-t border-l border-accent/25 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-accent/25 rounded-br-3xl pointer-events-none" />
-              <div className="flex items-center gap-3 mb-5">
-                <Sparkles className="w-4 h-4 text-accent" />
-                <span className="text-accent text-[10px] tracking-[0.35em] uppercase font-light">About Us</span>
+              <div>
+                <motion.p
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
+                  className="text-xl font-bold leading-none mb-1 opacity-70"
+                >
+               Welcome To
+                </motion.p>
+                <motion.h2
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
+                  className="font-bold leading-none tracking-tight text-7xl text-primary"
+                 
+                >
+                  {restaurant.name}
+                </motion.h2>
               </div>
-              <p
-                className=" leading-[1.9] text-base font-light mb-6"
+
+              {/* Description */}
+              <motion.p
+                variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
+                className="text-base sm:text-lg font-light  text-secondary leading-[1.85] opacity-75 max-w-lg"
               >
                 {restaurant.description ||
-                  "We're passionate about serving delicious food made with fresh, quality ingredients. Our team is dedicated to providing you with an unforgettable dining experience."}
-              </p>
+                  `Experience authentic flavors and warm hospitality in the heart of ${restaurant.city}. We're passionate about serving delicious food made with fresh, quality ingredients.`}
+              </motion.p>
+
               {locationParts.length > 0 && (
-                <div
-                  className="inline-flex items-center gap-3 px-5 py-3 rounded-full"
-                  style={{ background: 'rgba(200,145,74,0.08)', border: '1px solid rgba(200,145,74,0.18)' }}
+                <motion.div
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={4}
+                  className="inline-flex items-center gap-2.5 self-start px-4 py-2.5 font-bold rounded-full"
+                  style={{  border: '1px solid rgba(200,145,74,0.25)' }}
                 >
-                  <MapPin className="w-4 h-4 text-accent" />
-                  <span className=" text-sm font-light">{locationParts.join(', ')}</span>
-                </div>
+                  <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
+                  <span className="text-sm font-light opacity-80">{locationParts.join(', ')}</span>
+                </motion.div>
               )}
-            </motion.div>
 
-            {/* Stats Row */}
-            <motion.div
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
-              className="flex items-center gap-6 flex-wrap"
-            >
-              {stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div
-                    className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(200,145,74,0.12)' }}
-                  >
-                    <span className="text-lg">{stat.icon}</span>
+              <motion.div
+                variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={5}
+                className="flex items-center gap-0 pt-2"
+              >
+                {stats.map((stat, i) => (
+                  <div key={i} className="flex items-center">
+                    <div className={`${i > 0 ? 'pl-6 lg:pl-8' : ''} ${i < stats.length - 1 ? 'pr-6 lg:pr-8' : ''}`}>
+                      <div className="text-2xl sm:text-3xl font-bold text-primary" >
+                        {stat.value}
+                      </div>
+                      <div className="text-[10px] font-bold tracking-widest uppercase opacity-50 mt-0.5">{stat.label}</div>
+                    </div>
+                    {i < stats.length - 1 && <div className="h-10 w-px opacity-20" style={{ background: '#c8914a' }} />}
                   </div>
-                  <div>
-                    <div className="text-2xl font-secondary text-accent leading-none">{stat.value}</div>
-                    <div className="text-[10.5px] font-bold  mt-0.5">{stat.label}</div>
-                  </div>
-                  {i < stats.length - 1 && <div className="h-10 w-px bg-secondary/10 ml-3" />}
-                </div>
-              ))}
-            </motion.div>
+                ))}
+              </motion.div>
 
-            {/* Pillars */}
-            <motion.div
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
-              className="grid grid-cols-2 gap-2"
-            >
-              {pillars.map((p, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 hover:-translate-y-0.5 transition-transform"
+              {/* CTAs */}
+              <motion.div
+                variants={fadeUp} 
+                className="flex flex-wrap gap-3 pt-1"
+              >
+                <Link
+                  href={`/restaurants/${slug}`}
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(200,145,74,0.12)',
-                    borderLeft: '3px solid #c8914a',
+                    background: 'linear-gradient(135deg, #c8914a 0%, #a8722e 100%)',
+                    color: '#0e0b07',
+                    boxShadow: '0 4px 20px rgba(200,145,74,0.3)',
                   }}
                 >
-                  <span className="text-base shrink-0">{p.icon}</span>
-                  <span className="text-[10.5px] font-bold leading-tight">{p.label}</span>
-                </div>
-              ))}
-            </motion.div>
+                  Reserve a Table
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href={`/restaurants/${slug}/menu`}
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-medium text-accent transition-all duration-300 hover:bg-accent/10"
+                  style={{ border: '1px solid rgba(200,145,74,0.35)' }}
+                >
+                  <Utensils className="w-4 h-4" />
+                  View Menu
+                </Link>
+              </motion.div>
+            </div>
 
-            {/* CTA */}
+            {/* RIGHT — Image */}
             <motion.div
-              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-              className="flex gap-3 flex-wrap"
+              variants={scaleIn} initial="hidden" whileInView="show" viewport={{ once: true }}
+              className="relative w-full"
             >
-              <Link
-                href={`/restaurants/${slug}`}
-                className="inline-flex items-center gap-2  font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, #c8914a, #a8722e)' }}
+              {/* Main image frame */}
+              <div className="relative w-full aspect-[4/5] max-h-[580px] rounded-[2.5rem] overflow-hidden"
+                style={{ border: '1px solid rgba(200,145,74,0.2)' }}>
+
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={restaurant.name}
+                    fill
+                    className="object-cover object-center transition-transform duration-700 hover:scale-105"
+                    priority
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, rgba(200,145,74,0.15), rgba(14,11,7,0.8))' }}>
+                    <span className="text-8xl opacity-20">🍽️</span>
+                  </div>
+                )}
+
+                {/* Gradient overlay bottom */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'linear-gradient(to top, rgba(14,11,7,0.7) 0%, transparent 50%)' }} />
+              </div>
+
+              {/* Floating accent card */}
+              <motion.div
+                variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
+                className="absolute -top-4 -right-4 sm:top-6 sm:-right-6 backdrop-blur-xl rounded-2xl px-4 py-3 shadow-2xl z-20"
+                style={{
+                  background: 'rgba(14,11,7,0.85)',
+                  border: '1px solid rgba(200,145,74,0.3)',
+                }}
               >
-                Reserve a Table →
-              </Link>
-              <Link
-                href={`/restaurants/${slug}/menu`}
-                className="inline-flex items-center gap-2 text-accent font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:bg-accent/10"
-                style={{ border: '1px solid rgba(200,145,74,0.4)' }}
-              >
-                View Menu
-              </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(200,145,74,0.15)' }}>
+                    <Sparkles className="w-4 h-4 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-accent text-xs font-bold">Premium Quality</div>
+                    <div className="text-white/50 text-[10px] mt-0.5">Crafted with passion</div>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
+        </div>
+      </section>
 
-          {/* ── RIGHT IMAGE FRAME ── */}
+      <section className="px-5 sm:px-10 lg:px-20 py-12 lg:py-6">
+        <div className="max-w-7xl mx-auto">
+
           <motion.div
-            variants={scaleIn} initial="hidden" whileInView="show" viewport={{ once: true }}
-            className="w-full lg:w-[44%] relative min-h-[400px] lg:min-h-full flex items-stretch"
+            variants={fadeIn} 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            {/* Curved container */}
-            <div className="relative w-full h-full min-h-[400px] rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] overflow-hidden border-t-[10px] lg:border-t-0 lg:border-l-[10px] border-accent shadow-2xl bg-gray-900">
-
-              {/* Inner accent line */}
-              <div className="absolute inset-0 z-10 border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-accent/40 rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] pointer-events-none" />
-
-              {/* Dot grid */}
-              <div className="absolute inset-0 z-10 opacity-20 mix-blend-screen bg-[radial-gradient(#c8914a_1px,transparent_1px)] [background-size:18px_18px] pointer-events-none" />
-
-              {/* Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-accent/20 blur-[90px] z-10 pointer-events-none" />
-
-              {/* Image */}
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt={restaurant.name}
-                  fill
-                  className="object-cover object-center scale-105 transition-transform duration-1000 hover:scale-110"
-                  priority
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-[#0e0b07] flex items-center justify-center">
-                  <span className="text-8xl opacity-20">🍽️</span>
-                </div>
-              )}
-
-              {/* Gold wave bottom */}
-              <div
-                className="absolute bottom-0 left-0 right-0 h-[72px] bg-accent z-10 pointer-events-none"
-                style={{ clipPath: 'ellipse(110% 100% at 50% 100%)' }}
-              />
-            </div>
-
-            {/* Floating card — Location */}
-            <div className="absolute top-8 right-3 lg:right-8  backdrop-blur-md rounded-2xl shadow-lg border  p-2.5 flex items-center gap-2.5 w-44 z-20">
-              <span className="text-lg p-1.5 rounded-xl shrink-0" style={{ background: 'rgba(200,145,74,0.1)' }}>📍</span>
-              <div>
-                <span className="text-[11.5px] font-secondary text-gray-900 leading-tight block">
-                  {restaurant.city ?? 'Our Location'}
-                </span>
-                <span className="text-[9px] font-bold text-secondary mt-0.5 block">
-                  {restaurant.address ?? 'Visit Us Today'}
-                </span>
-              </div>
-            </div>
-
-            
-
-            {/* Bottom badge */}
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 bg-secondary/95 backdrop-blur-md rounded-2xl shadow-lg border border-secondary/70 px-4 py-2.5 flex items-center gap-3 z-20 secondaryspace-nowrap">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: '#c8914a' }}>
-                <span className="text-secondary text-[10px] font-extrabold">✓</span>
-              </div>
-              <div>
-                <div className="text-[9.5px] font-bold text-secondary leading-none">Fine Dining</div>
-                <div className="text-[14px] font-secondary leading-tight mt-0.5" style={{ color: '#c8914a' }}>
-                  {restaurant.name}
-                </div>
-              </div>
-            </div>
-
-            {/* Three dots */}
-            <div className="absolute bottom-5 right-8 flex items-center gap-1.5 z-20">
-              <span className="w-2 h-2 rounded-full bg-accent" />
-              <span className="w-2 h-2 rounded-full bg-secondary/30" />
-              <span className="w-2 h-2 rounded-full bg-accent/50" />
-            </div>
+            {pillars.map((p, i) => {
+              const Icon = p.icon
+              return (
+                <motion.div
+                  key={i}
+                  variants={fadeUp} 
+                  className="group flex flex-col gap-3 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    border: '1px solid rgba(200,145,74,0.12)',
+                  }}
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300"
+                    style={{ background: 'rgba(200,145,74,0.1)' }}>
+                    <Icon className="w-5 h-5 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-base font-semibold mb-1">{p.label}</div>
+                    <div className="text-sm font-light opacity-50 leading-relaxed">{p.desc}</div>
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
         </div>
-      </div>
+      </section>
 
-     
-
-      {/* ══════════════════════════════
-          GALLERY
-      ══════════════════════════════ */}
       {restaurant.photos && restaurant.photos.length > 0 && (
-        <div className="px-6 sm:px-10 lg:px-20 pb-20 max-w-6xl mx-auto">
-          <motion.div
-            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
-            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
-          >
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-px w-8 bg-accent" />
-                <span className="text-accent text-[10px] tracking-[0.45em] uppercase font-light">Gallery</span>
+        <section className="px-5 sm:px-10 lg:px-20 py-2 lg:py-8">
+          <div className="max-w-7xl mx-auto">
+
+            <motion.div
+              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
+              className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
+            >
+              <div>
+                <h2
+                  className="text-3xl sm:text-4xl font-light leading-tight"
+                  style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+                >
+                  Inside Our World
+                </h2>
               </div>
-              <h2
-                className="text-3xl sm:text-4xl font-light text-secondary leading-tight"
-                style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+              <Link
+                href={`/restaurants/${slug}/gallery`}
+                className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-light text-accent transition-all duration-300 hover:bg-accent/10 group"
+                style={{ border: '1px solid rgba(200,145,74,0.3)' }}
               >
-                Inside Our World
-              </h2>
-            </div>
+                View All ({restaurant.photos.length})
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
+              className="rounded-3xl overflow-hidden"
+              style={{ border: '1px solid rgba(200,145,74,0.12)' }}
+            >
+              <RestaurantPhotoSlider photos={restaurant.photos} restaurantName={restaurant.name} />
+            </motion.div>
+
             <Link
               href={`/restaurants/${slug}/gallery`}
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-light text-accent transition-all duration-300 group hover:bg-accent hover:text-[#0e0b07]"
-              style={{ border: '1px solid rgba(200,145,74,0.4)' }}
+              className="sm:hidden mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full text-sm font-light text-accent transition-all hover:bg-accent/10"
+              style={{ border: '1px solid rgba(200,145,74,0.3)' }}
             >
-              View All ({restaurant.photos.length})
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              View All Photos ({restaurant.photos.length})
+              <ChevronRight className="w-4 h-4" />
             </Link>
-          </motion.div>
-
-          <motion.div
-            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
-            className="rounded-3xl overflow-hidden"
-            style={{ border: '1px solid rgba(200,145,74,0.12)' }}
-          >
-            <RestaurantPhotoSlider photos={restaurant.photos} restaurantName={restaurant.name} />
-          </motion.div>
-
-          <Link
-            href={`/restaurants/${slug}/gallery`}
-            className="sm:hidden mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full text-sm font-light text-accent transition-all hover:bg-accent hover:text-[#0e0b07]"
-            style={{ border: '1px solid rgba(200,145,74,0.4)' }}
-          >
-            View All Photos ({restaurant.photos.length})
-            <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
+          </div>
+        </section>
       )}
 
-     
-      <div className="px-6 sm:px-10 lg:px-20 pb-24 max-w-6xl mx-auto">
-        <motion.div
-          variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
-          className="relative rounded-3xl overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-accent via-[#a8722e] to-secondary" />
-          <div
-            className="absolute inset-0 opacity-[0.07] pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-              backgroundSize: '150px',
-            }}
-          />
-          <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-secondary/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
+      {/* ── SECTION 4: CTA BANNER ── */}
+      <section className="px-5 sm:px-10 lg:px-20 pb-8">
+        <div className="max-w-10xl mx-auto">
+          <motion.div
+            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
+            className="relative rounded-3xl overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #1a0e05 0%, #2d1a08 50%, #1a0e05 100%)' }}
+          >
+            {/* Accent border top */}
+            <div className="absolute top-0 left-0 right-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, #c8914a, transparent)' }} />
 
-          <div className="relative px-8 sm:px-14 py-14 text-center">
-            <p className="text-secondary/45 text-[10px] tracking-[0.45em] uppercase font-light mb-5">
-              Reserve Your Experience
-            </p>
-            <h3
-              className="text-[#0e0b07] font-light leading-tight mb-4"
-              style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', fontFamily: '"Playfair Display", Georgia, serif' }}
-            >
-              Ready to Dine With Us?
-            </h3>
-            <p className="text-secondary/55 mb-10 max-w-lg mx-auto font-light text-base sm:text-lg leading-relaxed">
-              Book your table now and experience the best of{' '}
-              <span className="text-secondary/85 font-medium">{restaurant.city}</span>'s culinary scene.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href={`/restaurants/${slug}/menu`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#0e0b07] text-accent rounded-full font-medium text-sm hover:bg-[#1c1208] transition-all"
-              >
-                <Utensils className="w-4 h-4" /> View Menu
-              </Link>
-              <Link
-                href={`/restaurants/${slug}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-[#0e0b07] rounded-full font-medium text-sm hover:bg-secondary/10 transition-all"
-                style={{ border: '2px solid rgba(14,11,7,0.22)' }}
-              >
-                More Details
-              </Link>
+            {/* Glow orbs */}
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-80 rounded-full blur-[100px] pointer-events-none"
+              style={{ background: 'rgba(200,145,74,0.12)' }} />
+            <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-60 h-60 rounded-full blur-[80px] pointer-events-none"
+              style={{ background: 'rgba(200,145,74,0.08)' }} />
+
+            {/* Noise texture */}
+            <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                backgroundSize: '150px',
+              }} />
+
+            <div className="relative px-8 sm:px-14 lg:px-20 py-14 lg:py-20">
+              <div className="max-w-2xl mx-auto text-center">
+                <motion.div
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
+                  className="inline-flex items-center gap-2 mb-6"
+                >
+                  <div className="w-5 h-px bg-accent/60" />
+                  <span className="text-accent/60 text-[10px] tracking-[0.4em] uppercase">Reserve Your Experience</span>
+                  <div className="w-5 h-px bg-accent/60" />
+                </motion.div>
+
+                <motion.h3
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
+                  className="font-light text-white leading-tight mb-5"
+                  style={{
+                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                    fontFamily: '"Playfair Display", Georgia, serif',
+                  }}
+                >
+                  Ready to Dine{' '}
+                  <span style={{ color: '#c8914a', fontStyle: 'italic' }}>With Us?</span>
+                </motion.h3>
+
+                <motion.p
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
+                  className="text-white/45 mb-10 text-base sm:text-lg font-light leading-relaxed"
+                >
+                  Book your table and experience the finest dining in{' '}
+                  <span className="text-white/70 font-medium">{restaurant.city}</span>.
+                </motion.p>
+
+                <motion.div
+                  variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={4}
+                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                >
+                  <Link
+                    href={`/restaurants/${slug}`}
+                    className="inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105"
+                    style={{
+                      background: 'linear-gradient(135deg, #c8914a, #a8722e)',
+                      color: '#0e0b07',
+                      boxShadow: '0 4px 24px rgba(200,145,74,0.35)',
+                    }}
+                  >
+                    Reserve a Table
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href={`/restaurants/${slug}/menu`}
+                    className="inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full text-sm font-medium text-white/70 transition-all duration-300 hover:text-accent hover:border-accent/50"
+                    style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+                  >
+                    <Utensils className="w-4 h-4" />
+                    View Menu
+                  </Link>
+                </motion.div>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </div>
+
+            {/* Accent border bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, #c8914a, transparent)' }} />
+          </motion.div>
+        </div>
+      </section>
 
     </div>
   )
 }
-

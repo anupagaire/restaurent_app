@@ -119,7 +119,6 @@ async function getRestaurantCoverPhoto(restaurantId: number): Promise<string | n
   }
 }
 
-// ── generateMetadata ──────────────────────────────────────────────────────────
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
@@ -161,7 +160,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// ── RestaurantPage ────────────────────────────────────────────────────────────
 export default async function RestaurantPage({ params }: PageProps) {
   const { slug } = await params;
 

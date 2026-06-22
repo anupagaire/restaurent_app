@@ -61,13 +61,8 @@ export default async function MenuPage({ params }: PageProps) {
   const { slug } = await params;
   // const restaurantId = await getRestaurantIdBySlug(slug);
  
-
-
   const headersList = await headers()
-
-  // Testing ko lagi ?? '8' — production ma hatauney
-
-const restaurantId = Number(headersList.get('x-restaurant-id') ?? '8');
+const restaurantId = Number(headersList.get('x-restaurant-id'));
  if (!restaurantId) return notFound();
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return notFound();

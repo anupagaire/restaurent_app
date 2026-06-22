@@ -6,9 +6,11 @@ import Link from 'next/link'
 
 export default async function EnterpriseGalleryPage() {
     const headersList = await headers()
+    const restaurantId = headersList.get('x-restaurant-id')
 
-  // Testing ko lagi ?? '8' — production ma hatauney
-  const restaurantId = headersList.get('x-restaurant-id') ?? '8'
+    if (!restaurantId) return <div>Restaurant not found</div>
+
+
 
 
   const restaurant = await fetchRestaurantById(restaurantId)

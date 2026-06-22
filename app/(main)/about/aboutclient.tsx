@@ -110,7 +110,6 @@ export default function About() {
     fetchContent();
   }, []);
 
-  // ── Loading ──
   if (loading) return (
     <div className="min-h-screen bg-[#fdf9f4] space-y-12 p-8">
       <Skeleton className="h-[55vh] w-full rounded-none" />
@@ -126,7 +125,6 @@ export default function About() {
     </div>
   );
 
-  // ── Error ──
   if (error || !data) return (
     <div className="min-h-screen flex items-center justify-center bg-[#fdf9f4]">
       <p className="text-red-400 text-center font-light">{error || "Content unavailable."}</p>
@@ -306,7 +304,6 @@ export default function About() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="pr-0 lg:pr-16 pb-2 lg:pb-0 border-b lg:border-b-0 lg:border-r border-accent/25"
               >
-                {/* ✅ SectionHeader for vision left */}
                 <SectionHeader
                   title={visionSection.left.title}
                 />

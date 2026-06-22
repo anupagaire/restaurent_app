@@ -7,14 +7,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-
-  // if (pathname.startsWith('/not-found')) {
-  //   return NextResponse.next();
-  // }
-
-
-
 if (
     pathname.startsWith('/_enterprise') ||
     pathname.startsWith('/not-found') ||
@@ -23,27 +15,13 @@ if (
     return NextResponse.next();
   }
 
-
-
   const host = request.headers.get('host') ?? '';
 
-//  const isMainDomain =
-//     host === MAIN_DOMAIN ||
-//     host.endsWith(`.${MAIN_DOMAIN}`) ||
-//     host.includes('localhost') ||
-//     host.includes('127.0.0.1') ||
-//     host.includes('vercel.app') // staging domain 
-
-
-
 const isMainDomain =
-  host === MAIN_DOMAIN ||           // exact match मात्र
+  host === MAIN_DOMAIN ||       
   host.includes('localhost') ||
   host.includes('127.0.0.1') ||
   host.endsWith('.vercel.app')  
-
-
-
 
   if (!isMainDomain) {
     try {
@@ -60,8 +38,7 @@ const isMainDomain =
 
   // same pathname राख्नु
   
-url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
-        // url.pathname = pathname === '/' ? '/' : pathname
+        url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
         const response = NextResponse.rewrite(url);
 
         response.headers.set('x-restaurant-id', String(restaurant.id))
@@ -77,15 +54,11 @@ url.pathname = pathname === '/' ? '/_enterprise' : `/_enterprise${pathname}`
     // Custom domain but restaurant not found
     return NextResponse.redirect(new URL('/not-found', request.url));
   }
-
-
-
   const isAdminRoute    = pathname.startsWith("/super-admin") || pathname.startsWith("/restaurant-admin");
   const isCustomerRoute = pathname.startsWith("/customer");
 
   if (!isAdminRoute && !isCustomerRoute) return NextResponse.next();
 
-  // ── Check token ────────────────────────────────────────────────────────────
   let token = request.cookies.get("access_token")?.value;
   if (!token) {
     token = request.headers.get("authorization")?.replace("Bearer ", "");

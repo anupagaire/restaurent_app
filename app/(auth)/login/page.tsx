@@ -61,12 +61,10 @@ const router = useRouter();
       const refresh = data?.refresh ?? data?.data?.refresh;
       if (!access) { setError("Token missing from response"); return; }
 
-      // ── Step 2: Store tokens ───────────────────────────────────────────────
       localStorage.setItem("access_token",  access);
       localStorage.setItem("refresh_token", refresh);
       document.cookie = `access_token=${access}; path=/; max-age=86400; SameSite=Lax`;
 
-      // ── Step 3: Fetch user profile ─────────────────────────────────────────
       const meRes = await apiFetch("/api/v1/user/me/");
       const meRaw = await meRes.json();
       if (!meRes.ok) { setError("Failed to fetch user profile"); return; }
@@ -77,7 +75,6 @@ const router = useRouter();
         localStorage.setItem("restaurant_id", String(me.restaurant));
       }
 
-      // ── Step 4: Determine role ─────────────────────────────────────────────
       const hasRestaurant = !!me?.restaurant;
       const roleNames: string[] = (me?.roles ?? []).map((r: any) =>
         (r?.name ?? r?.role ?? '').toLowerCase()

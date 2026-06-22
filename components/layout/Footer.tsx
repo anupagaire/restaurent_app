@@ -13,7 +13,9 @@ interface LinkItem {
   href: string;
   label: string;
 }
-
+interface FooterProps {
+  data?: FooterData | null;
+}
 interface ContactItems {
   email: string;
   phone: string;
@@ -37,10 +39,6 @@ interface FooterData {
   brand: Brand;
   columns: Column[];
   socials: Social[];
-}
-
-interface FooterProps {
-  data: FooterData | null;
 }
 
 function SocialIcon({ icon }: { icon: string }) {

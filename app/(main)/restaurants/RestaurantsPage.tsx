@@ -265,7 +265,6 @@ useEffect(() => {
   if (ordering === '-view_count') setSortBy('most_viewed');
   if (ordering === '-created_on') setSortBy('default'); // newest
   if (amenity) {
-    // amenity filter — set search so API picks it up
     setSearch(amenity);
   }
 }, []); 
@@ -306,8 +305,6 @@ useEffect(() => {
           return { ...r, coverPhotoUrl: photoUrl };
         })
       );
-      // ────────────────────────────────────────────────────────
-
       setRestaurants(resultsWithPhotos); 
       setTotalCount(selectedCity ? resultsWithPhotos.length : (data.count ?? 0));
     } catch (err) {

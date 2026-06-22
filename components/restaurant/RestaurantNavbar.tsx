@@ -49,9 +49,7 @@ export default function RestaurantNavbar({
         </Link>
 
         <div className="hidden md:flex items-center gap-4">
-          
-          {/* Normal nav links */}
-          <Link
+                    <Link
             href={base}
             className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
           >
@@ -130,7 +128,7 @@ export default function RestaurantNavbar({
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block py-2 text-sm font-medium text-secondary/70 hover:text-primary hover:bg-accent/20 px-3 rounded-lg transition-colors"
+              className="block py-2 text-sm font-medium text-primary hover:text-primary hover:bg-accent/20 px-3 rounded-lg transition-colors"
             >
               {l.label}
             </Link>

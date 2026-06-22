@@ -4,7 +4,6 @@ import Testimonials from '../components/home/Testimonials';
 import WhyMultiCusine from '../components/home/WhyMultiCuisine';
 import HowItWorks from '@/components/home/HowItWorks';
 import { getWebsiteContent } from '@/lib/websiteContent';
-// import MenuComparison from '@/components/home/MenuComparision';
 import NewArrivals from '@/components/home/NewArrivals';
 import CTA from '@/components/home/CTA';
 import TopRatedCuisines from "@/components/home/TopRatedCuisines";
@@ -24,10 +23,8 @@ export default async function HomePage() {
        <MoodCollections /> 
        <TopRatedCuisines />
          <CTA />
-       <CuratedCollections />
-         
-   
-           {/* <MenuComparison /> */}<NewArrivals/>
+       <CuratedCollections /> 
+  <NewArrivals/>
   
          <WhyMultiCusine />
             <HowItWorks />  

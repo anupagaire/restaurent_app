@@ -124,7 +124,6 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
       .catch(() => {});
   }, []);
 
-  // Sync query from URL
   useEffect(() => {
     const q = searchParams.get('q') ?? '';
     setQuery(q);
