@@ -15,7 +15,9 @@ if (
     return NextResponse.next();
   }
 
+ 
   const host = request.headers.get('host') ?? '';
+const hostname = host.split(':')[0];
 
 const isMainDomain =
   host === MAIN_DOMAIN ||       
