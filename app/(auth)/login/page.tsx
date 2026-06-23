@@ -18,7 +18,6 @@ export default function LoginPage() {
 const router = useRouter();
   const { isAuthenticated, isLoading, currentUser } = useAuth();
 
-  // ── Already logged in
   useEffect(() => {
     if (isLoading) return; 
     if (!isAuthenticated) return; 
@@ -115,7 +114,6 @@ const router = useRouter();
         );
       }
 
-      // ── Step 7: AuthContext login ──────────────────────────────────────────
       const isAdmin = primaryRole === 'admin';
       const isStaff = primaryRole === 'staff';
 
@@ -135,7 +133,6 @@ const router = useRouter();
         },
       });
 
-      // ── Step 8: Redirect ───────────────────────────────────────────────────
       await new Promise(resolve => setTimeout(resolve, 100));
 
       if (primaryRole === 'super_admin') {
@@ -214,7 +211,7 @@ const router = useRouter();
           {loading ? "Logging in..." : "Login"}
         </button>
         <p className="text-center text-sm text-gray-500 mt-2">
-  Don't have an account?{" "}
+  Don&apos;t have an account?{" "}
   <a
     href="/register"
     className="text-secondary font-semibold hover:underline"

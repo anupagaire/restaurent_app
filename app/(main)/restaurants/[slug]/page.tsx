@@ -166,7 +166,6 @@ export default async function RestaurantPage({ params }: PageProps) {
   const result = await getRestaurantIdBySlug(slug);
   if (!result) return notFound();
 
-  // ✅ Enterprise redirect — custom_domain comes from list API
   if (result.custom_domain && result.custom_domain_verified === true) {
     redirect(`https://${result.custom_domain}`);
   }

@@ -142,8 +142,10 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
   const isLoggedIn = !!auth;
   const totalPrice = cart.reduce((s, c) => s + c.item.price * c.quantity, 0);
   const deliveryReady = phone.trim().length > 0 && address.trim().length > 0;
-  const registrationReady = email.trim().length > 0 && password.length >= 8 && password === confirmPassword;
-  const canSubmit = cart.length > 0 && deliveryReady && (isLoggedIn || registrationReady);
+  const loginReady = email.trim().length > 0 && password.length >= 1;
+const registrationReady = email.trim().length > 0 && password.length >= 8 && password === confirmPassword;
+const authReady = authMode === 'login' ? loginReady : registrationReady;
+const canSubmit = cart.length > 0 && deliveryReady && (isLoggedIn || authReady);
   const handleLogout = () => { clearAuth(); onAuthChange(null); };
 
   const handleSubmit = async () => {
@@ -275,9 +277,10 @@ function OrderDrawer({ cart, restaurantId, auth, onClose, onUpdateQty, onSuccess
           <button onClick={handleSubmit} disabled={submitting || !canSubmit}
             className="w-full py-4 rounded-2xl font-bold text-base transition-all"
             style={{ 
-              background: submitting || !canSubmit ? 'primary' : 'secondary', color: submitting || !canSubmit ? '#9ca3af' : '#fff', cursor: !canSubmit ? 'not-allowed' : 'pointer' }}>
+              background: submitting || !canSubmit ? 'primary' : 'secondary', color: submitting || !canSubmit ? 'secondary' : 'primary', cursor: !canSubmit ? 'not-allowed' : 'pointer' }}>
             {submitting ? stepLabel : !deliveryReady ? 
-            'Add phone & address to continue' : !isLoggedIn && !registrationReady ? 'Complete account details' : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
+            'Add phone & address to continue' : !isLoggedIn && !authReady ? 'Complete account details' : `Place Order · Rs. ${totalPrice.toFixed(0)}`}
+            {/* 'Add phone & address to continue' : !isLoggedIn && !registrationReady ? 'Complete account details' : `Place Order · Rs. ${totalPrice.toFixed(0)}`} */}
           </button>
         </div>
       </div>

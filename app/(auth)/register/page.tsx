@@ -85,7 +85,6 @@ export default function RegisterPage() {
           <p className="text-secondary text-sm mt-1">Register as a customer</p>
         </div>
 
-        {/* Name */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Full Name</label>
           <input
@@ -97,7 +96,6 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Email */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Email *</label>
           <input
@@ -111,7 +109,6 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Phone */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Phone Number</label>
           <input
@@ -124,7 +121,6 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Password */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Password *</label>
           <div className="relative">
@@ -147,7 +143,6 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Confirm Password */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Confirm Password *</label>
           <div className="relative">
@@ -173,7 +168,7 @@ export default function RegisterPage() {
             </button>
           </div>
           {form.confirm_password && form.password !== form.confirm_password && (
-            <p className="text-xs text-red-500 mt-1">Passwords don't match</p>
+            <p className="text-xs text-red-500 mt-1">Passwords don&apos;t match</p>
           )}
         </div>
 

@@ -25,13 +25,9 @@ export async function middleware(request: NextRequest) {
     hostname.includes('127.0.0.1') ||
     hostname.endsWith('.vercel.app');
 
-  if (!isMainDomain) {
-    console.log('🚀 Custom domain detected, calling API...');
-    
+  if (!isMainDomain) {    
     try {
-      const apiUrl = `${API_URL}/api/v1/restaurant/lookup/?host=${encodeURIComponent(hostname)}`;
-      console.log('📡 API URL:', apiUrl);
-      
+      const apiUrl = `${API_URL}/api/v1/restaurant/lookup/?host=${encodeURIComponent(hostname)}`;      
       const res = await fetch(apiUrl, { next: { revalidate: 60 } });
 
       if (res.ok) {
@@ -46,7 +42,6 @@ export async function middleware(request: NextRequest) {
         response.headers.set('x-restaurant-name', restaurant.name ?? '');
         return response;
       } else {
-        console.log('❌ API returned non-OK status:', res.status);
         const errorText = await res.text();
       }
     } catch (e) {

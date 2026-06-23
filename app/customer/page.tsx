@@ -106,15 +106,14 @@ export default function CustomerDashboard() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Hero */}
       <div
         className="rounded-3xl px-6 py-8 relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, secondary 0%, #513012 60%, #7a4a20 100%)' }}
       >
-        <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-10" style={{ background: '#b8936a' }} />
-        <div className="absolute -bottom-6 right-4 w-24 h-24 rounded-full opacity-10" style={{ background: '#fdf6ec' }} />
-        <p className="text-sm font-medium mb-1" style={{ color: 'rgba(184,147,106,0.9)' }}>{greeting()},</p>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-1 capitalize" style={{ color: '#fdf6ec', fontFamily: 'Georgia, serif' }}>
+        <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full opacity-10" style={{ background: 'primary' }} />
+        <div className="absolute -bottom-6 right-4 w-24 h-24 rounded-full opacity-10" style={{ background: 'secondary' }} />
+        <p className="text-sm font-medium mb-1" >{greeting()},</p>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 capitalize" style={{ color: 'accent', fontFamily: 'Georgia, serif' }}>
           {firstName} 👋
         </h1>
         <p className="text-sm" style={{ color: 'rgba(253,246,236,0.6)' }}>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { MapPin, UtensilsCrossed, Star, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react'
+import { MapPin, UtensilsCrossed, Star, Phone, Mail } from 'lucide-react'
 
 interface Restaurant {
   id: number
@@ -47,7 +47,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               </div>
             </div>
 
-            <p className="text-secondary text-sm leading-relaxed mb-4">
+            <p className="text-white text-sm leading-relaxed mb-4">
               {restaurant.amenities ?? 'Bringing the best flavors to your table. Fresh • Delicious • Authentic'}
             </p>
 
@@ -86,8 +86,8 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
 
               {restaurant.address && (
                 <div className="flex items-start gap-3">
-                  <MapPin size={16} className="text-orange-400 mt-0.5 shrink-0" />
-                  <p className="text-sm text-secondary">
+                  <MapPin size={16} className="text-white mt-0.5 shrink-0" />
+                  <p className="text-sm text-white">
                     {restaurant.address}
                     {restaurant.city ? `, ${restaurant.city}` : ''}
                     {restaurant.zip ? ` - ${restaurant.zip}` : ''}
@@ -121,7 +121,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-secondary">
+          <p className="text-xs text-white">
             © {year} {restaurant.name}. All rights reserved.
           </p>
           <p className="text-xs text-white">

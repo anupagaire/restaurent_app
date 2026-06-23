@@ -151,7 +151,6 @@ function OrderDrawer({ cart, restaurant, token, onClose, onUpdateQty, onSuccess 
   const handleSubmit = async () => {
     if (cart.length === 0) return;
 
-    // Validate table selection
     if (!tableNumber) {
       setError('Please select your table number before placing the order.');
       return;

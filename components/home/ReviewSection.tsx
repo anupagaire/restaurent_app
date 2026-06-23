@@ -81,7 +81,6 @@ async function uploadPhoto(reviewId: number, file: File) {
   await fetch(`${BASE_URL}/api/v1/photo/`, { method: 'POST', body: fd });
 }
 
-// ── Avatar ───────────────────────────────────────────────────
 function Avatar({ review, size = 36 }: { review: Review; size?: number }) {
   const initials = getInitials(review);
   const colors = ['#513012','#7c3e1a','#a05225','#c4682f','#6b3a1f'];

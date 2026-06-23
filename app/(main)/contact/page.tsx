@@ -3,7 +3,6 @@
 import { Mail, PhoneCall, MapPin, Clock, Send } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface ContactForm {
@@ -53,24 +52,6 @@ const Contact = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.message || "Something went wrong. Please try again.");
       }
-
-       try {
-    await emailjs.send(
-      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-      process.env.NEXT_PUBLIC_EMAILJS_CONTACT_TEMPLATE_ID!,
-      {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        subject: form.subject,
-        message: form.message,
-      },
-      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-    );
-  } catch (emailError) {
-    console.error("EmailJS failed:", emailError);
-    // don't block success UI
-  }
       setSuccess(true);
       setForm(INITIAL_FORM);
     } catch (err: unknown) {
@@ -151,7 +132,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <section className="w-full max-w-screen-xl mx-auto px-4 py-14">
+      <section className="w-full max-w-screen-7xl mx-auto px-4 py-14">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 
           <div className="bg-white border border-accent rounded-2xl p-8 flex flex-col">

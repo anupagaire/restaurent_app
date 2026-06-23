@@ -223,7 +223,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
       {/* Main Content */}
       <div className="max-w-[1100px] mx-auto px-12 py-20">
         <div className="flex gap-12 items-start">
-          <div className="hidden md:block sticky top-8 flex-shrink-0">
+          <div className="hidden md:block sticky top-8 ">
             <div 
               className="text-[0.7rem] font-bold uppercase tracking-widest text-[#c4622d] border-l-2 border-[#c4622d] pl-2.5"
               style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', height: 'fit-content' }}

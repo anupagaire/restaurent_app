@@ -171,7 +171,7 @@ export default function LegalPage() {
               className={`border rounded-xl overflow-hidden transition-all duration-200 ${
                 isOpen
                   ? "border-primary/60 bg-white/5"
-                  : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  : "border-white/10 bg-white/2 hover:border-white/20"
               }`}
             >
               <button

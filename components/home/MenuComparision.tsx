@@ -3,13 +3,11 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, Minus, MapPin, X } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const HOME_LIMIT = 6;
 const PAGE_SIZE = 12;
-
-// ─── Types ───────────────────────────────────────────────────────────────────
 interface MenuSearchResult {
   id: number;
   restaurant: number;
@@ -49,7 +47,6 @@ export interface CartableItem {
 
 type SortKey = 'rating' | 'price_low' | 'price_high';
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 function toSlug(name: string) {
   return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
@@ -61,7 +58,7 @@ function resolvePhoto(url?: string | null): string | null {
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-// ─── Restaurant cache ─────────────────────────────────────────────────────────
+// ─── Restaurant cache
 const restaurantCache: Record<number, RestaurantInfo> = {};
 
 async function getRestaurantInfo(id: number): Promise<RestaurantInfo | null> {
@@ -83,7 +80,7 @@ async function getRestaurantInfo(id: number): Promise<RestaurantInfo | null> {
   }
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components
 function StarRow({ rating, count }: { rating: number; count: number }) {
   return (
     <div className="flex items-center gap-1">
@@ -126,13 +123,9 @@ function SortButton({
   );
 }
 
-// ─── Menu Card ────────────────────────────────────────────────────────────────
 function MenuCard({
   r,
   rank,
-  qty,
-  onAdd,
-  onUpdateQty,
 }: {
   r: EnrichedResult;
   rank: number;
@@ -143,7 +136,7 @@ function MenuCard({
   return (
     <div className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-secondary/20 transition-all group">
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
           rank === 0
             ? 'bg-accent text-white'
             : rank === 1
@@ -179,7 +172,7 @@ function MenuCard({
         </div>
       </Link>
 
-      <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
+      <div className="text-right shrink-0 flex flex-col items-end gap-2">
         <p className="text-sm font-bold text-gray-800">Rs. {r.priceNum.toLocaleString()}</p>
       </div>
     </div>

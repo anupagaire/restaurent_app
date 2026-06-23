@@ -91,11 +91,7 @@ const menuItems: {
 
   return (
     <div className="min-h-screen bg-white">
-
-      {/* ── HERO HEADER ── */}
       <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
-        
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[secondary]/80 via-transparent to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-6">
@@ -123,12 +119,10 @@ const menuItems: {
         </div>
       </div>
 
-      {/* ── MAIN CONTENT ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {topRated.length > 0 && (
           <div className="pt-8 pb-2">
-            {/* Section header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-base">
@@ -158,7 +152,6 @@ const menuItems: {
                     key={item.id}
                     className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-accent hover:shadow-md transition-all duration-200 flex gap-0"
                   >
-                    {/* Left: image */}
                     <div className="relative w-28 shrink-0 bg-accent">
                       {item.image ? (
                         <Image
