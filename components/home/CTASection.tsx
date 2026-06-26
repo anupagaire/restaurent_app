@@ -3,8 +3,6 @@ import Link from 'next/link';
 export default function CTASection() {
   return (
     <section className="relative bg-primary overflow-hidden py-3">
-
-      {/* Top gold accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
       {/* Bottom gold accent line */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />

@@ -12,7 +12,7 @@ import { Plus, Search, Trash2, RefreshCw, Pencil } from 'lucide-react';
 import AddUserModal from '@/components/super-admin/AddUserModal';
 import EditUserModal from '@/components/super-admin/EditUserModal';
 import { apiFetch } from '@/lib/api';
-
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 export interface RestaurantAdmin {
   id: number;
   email: string;
@@ -21,6 +21,7 @@ export interface RestaurantAdmin {
   role: string;
   restaurantName: string;
   restaurantId?: number;
+  restaurantStatus?: boolean;
   // Extra fields if you want to show more in future
   address?: string;
   city?: string;
@@ -30,7 +31,17 @@ interface Restaurant {
   id: number;
   name: string;
 }
-
+async function toggleRestaurantStatus(id: number, currentStatus: boolean, token: string) {
+  const res = await fetch(`${BASE_URL}/api/v1/restaurant/${id}/`, {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ status: !currentStatus }),
+  });
+  return res.ok;
+}
 export default function UsersPage() {
   const [users, setUsers] = useState<RestaurantAdmin[]>([]);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -38,7 +49,14 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<RestaurantAdmin | null>(null);
+const [token, setToken] = useState('');
+const [currentPage, setCurrentPage] = useState(1);
+const ITEMS_PER_PAGE = 10;
 
+useEffect(() => {
+  const t = localStorage.getItem('access_token') ?? '';
+  setToken(t);
+}, []);
   const fetchUsers = async () => {
   setLoading(true);
   try {
@@ -55,11 +73,10 @@ export default function UsersPage() {
 
     setRestaurants(rawRestaurants.map((r: any) => ({ id: r.id, name: r.name })));
 
-    const admins: RestaurantAdmin[] = rawUsers
+    // Admin users with restaurant
+    const adminUsers: RestaurantAdmin[] = rawUsers
       .filter((u: any) =>
-        u.roles?.some((r: any) =>
-          r.name === 'Admin' || r.name === 'AdminGroup'
-        )
+        u.roles?.some((r: any) => r.name === 'Admin' || r.name === 'AdminGroup')
       )
       .map((u: any) => {
         const restaurant = rawRestaurants.find((r: any) => r.id === u.restaurant);
@@ -71,19 +88,38 @@ export default function UsersPage() {
           role: u.roles?.[0]?.name ?? 'Admin',
           restaurantId: u.restaurant,
           restaurantName: restaurant?.name ?? '-',
+          restaurantStatus: restaurant?.status ?? true,
           address: restaurant?.address ?? '',
           city: restaurant?.city ?? '',
         };
       });
 
-    setUsers(admins);
+    // Admin user भएका restaurant IDs
+    const assignedRestaurantIds = new Set(adminUsers.map((u) => u.restaurantId));
+
+    // Admin नभएका restaurants — no-admin row बनाउने
+    const unassignedRestaurants: RestaurantAdmin[] = rawRestaurants
+      .filter((r: any) => !assignedRestaurantIds.has(r.id))
+      .map((r: any) => ({
+        id: -r.id, 
+        email: '-',
+        fullName: '-',
+        phone: '-',
+        role: 'No Admin',
+        restaurantId: r.id,
+        restaurantName: r.name,
+        restaurantStatus: r.status ?? true,
+        address: r.address ?? '',
+        city: r.city ?? '',
+      }));
+
+    setUsers([...adminUsers, ...unassignedRestaurants]);
   } catch (err) {
     console.error('Error fetching users:', err);
   } finally {
     setLoading(false);
   }
 };
-
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -113,12 +149,20 @@ export default function UsersPage() {
     alert('Network error while deleting');
   }
 };
+
+
+
+
   const filteredUsers = users.filter((u) =>
   (u.fullName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
   (u.email ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
   (u.restaurantName ?? '').toLowerCase().includes(searchTerm.toLowerCase())
 );
-
+const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+const paginatedUsers = filteredUsers.slice(
+  (currentPage - 1) * ITEMS_PER_PAGE,
+  currentPage * ITEMS_PER_PAGE
+);
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -149,7 +193,8 @@ export default function UsersPage() {
               <Input
                 placeholder="Search by name, email or restaurant..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+               
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="pl-10"
               />
             </div>
@@ -175,7 +220,8 @@ export default function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
+         
+                  {paginatedUsers.map((user) => (
                   <TableRow key={user.id}>
                     {/* Admin Details Column */}
                     <TableCell>
@@ -195,11 +241,20 @@ export default function UsersPage() {
                       )}
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-medium">
                         {user.role}
                       </span>
-                    </TableCell>
+                    </TableCell> */}
+                    <TableCell>
+  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+    user.role === 'No Admin' 
+      ? 'bg-gray-100 text-gray-500' 
+      : 'bg-secondary/10 text-secondary'
+  }`}>
+    {user.role}
+  </span>
+</TableCell>
 
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -217,6 +272,21 @@ export default function UsersPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                        <button
+  onClick={async () => {
+    const ok = await toggleRestaurantStatus(user.restaurantId!, user.restaurantStatus!, token);
+    if (ok) {
+      setUsers(prev => prev.map(u => 
+        u.id === user.id ? { ...u, restaurantStatus: !u.restaurantStatus } : u
+      ));
+    }
+  }}
+  className={`px-3 py-1 rounded text-xs font-medium ${
+    user.restaurantStatus ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
+  }`}
+>
+  {user.restaurantStatus ? 'Deactivate' : 'Activate'}
+</button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -225,6 +295,39 @@ export default function UsersPage() {
             </Table>
           )}
         </CardContent>
+        {totalPages > 1 && (
+  <div className="flex justify-center items-center gap-2 mt-6">
+    <button
+      onClick={() => setCurrentPage(p => p - 1)}
+      disabled={currentPage === 1}
+      className="px-3 py-1.5 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
+    >
+      Prev
+    </button>
+
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      <button
+        key={page}
+        onClick={() => setCurrentPage(page)}
+        className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${
+          currentPage === page
+            ? 'bg-secondary text-white border-secondary'
+            : 'hover:bg-gray-50'
+        }`}
+      >
+        {page}
+      </button>
+    ))}
+
+    <button
+      onClick={() => setCurrentPage(p => p + 1)}
+      disabled={currentPage === totalPages}
+      className="px-3 py-1.5 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
+    >
+      Next
+    </button>
+  </div>
+)}
       </Card>
 
       <AddUserModal

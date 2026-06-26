@@ -51,11 +51,11 @@ export default function NavbarHeroAdminPage() {
     const responseData = await res.json();
     
     if (res.ok) {
-      const imageUrl = responseData.photo_url;
+      const imageUrl = `${responseData.photo_url}?v=${Date.now()}`;
       
       if (section === 'logo') {
         updatePath(['site_settings', 'logo', 'image'], imageUrl);
-      } else if (section === 'slide' && index !== null) {
+  } else if (section === 'slide' && index !== null) {
         const slides = [...data.hero_section.slides];
         slides[index] = { ...slides[index], image: imageUrl };
         updatePath(['hero_section', 'slides'], slides);
@@ -153,6 +153,7 @@ export default function NavbarHeroAdminPage() {
                 <Image 
                   src={data.site_settings.logo.image} 
                   alt={data.site_settings.logo.alt || 'Logo'} 
+                   sizes="80px"
                   fill 
                   className="object-contain p-2" 
                 />

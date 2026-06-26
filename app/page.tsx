@@ -7,7 +7,6 @@ import { getWebsiteContent } from '@/lib/websiteContent';
 import NewArrivals from '@/components/home/NewArrivals';
 import CTA from '@/components/home/CTA';
 import TopRatedCuisines from "@/components/home/TopRatedCuisines";
-import CuratedCollections from "@/components/home/CuratedCollections";
 import MoodCollections from "@/components/home/MoodCollections";
 
 
@@ -23,7 +22,7 @@ export default async function HomePage() {
        <MoodCollections /> 
        <TopRatedCuisines />
          <CTA />
-       <CuratedCollections /> 
+       {/* <CuratedCollections />  */}
   <NewArrivals/>
   
          <WhyMultiCusine />

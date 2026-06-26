@@ -6,47 +6,47 @@ const sections = {
     {
       id: "1",
       title: "Acceptance of Terms",
-      content: `By accessing or using FoodHub ("Platform"), you agree to be bound by these Terms and Conditions. If you do not agree, you may not use the Platform. These terms apply to all users including restaurant owners, administrators, and end customers.`,
+      content: `By accessing or using Yummynepal ("Platform"), you agree to be bound by these Terms and Conditions. If you do not agree, you may not use the Platform. These terms apply to all users including restaurant owners, administrators, and end customers.`,
     },
     {
       id: "2",
       title: "Restaurant Registration & Onboarding",
-      content: `Restaurants must provide accurate, complete, and up-to-date information during registration including business name, address, contact details, food license number, and bank/payment details. FoodHub reserves the right to approve or reject any restaurant registration at its sole discretion. False or misleading information will result in immediate account termination. Each restaurant is entitled to one account only.`,
+      content: `Restaurants must provide accurate, complete, and up-to-date information during registration including business name, address, contact details, food license number, and bank/payment details. Yummynepal reserves the right to approve or reject any restaurant registration at its sole discretion. False or misleading information will result in immediate account termination. Each restaurant is entitled to one account only.`,
     },
     {
       id: "3",
       title: "Restaurant Dashboard & Features",
-      content: `Upon approval, restaurants gain access to a dedicated dashboard that includes: menu management, QR code generation for digital menus, order management, analytics and reports, and staff account management. FoodHub grants a non-exclusive, non-transferable license to use these features solely for your registered business. You may not resell, sublicense, or commercially exploit dashboard features.`,
+      content: `Upon approval, restaurants gain access to a dedicated dashboard that includes: menu management, QR code generation for digital menus, order management, analytics and reports, and staff account management. Yummynepal grants a non-exclusive, non-transferable license to use these features solely for your registered business. You may not resell, sublicense, or commercially exploit dashboard features.`,
     },
     {
       id: "4",
       title: "QR Code & Digital Menu",
-      content: `Restaurants are solely responsible for the accuracy, legality, and quality of menu items, prices, descriptions, and images uploaded to the platform. QR codes generated are tied to your active subscription. If your account is suspended or subscription lapses, QR codes may become inactive. FoodHub is not liable for customer complaints arising from incorrect menu information.`,
+      content: `Restaurants are solely responsible for the accuracy, legality, and quality of menu items, prices, descriptions, and images uploaded to the platform. QR codes generated are tied to your active subscription. If your account is suspended or subscription lapses, QR codes may become inactive. Yummynepal is not liable for customer complaints arising from incorrect menu information.`,
     },
     {
       id: "5",
       title: "Fees, Subscription & Payments",
-      content: `Use of the platform may be subject to subscription fees as outlined in your plan. All fees are non-refundable unless stated otherwise. FoodHub reserves the right to change pricing with 30 days' prior notice. Failure to pay may result in suspension of your account and deactivation of QR codes and menus.`,
+      content: `Use of the platform may be subject to subscription fees as outlined in your plan. All fees are non-refundable unless stated otherwise. Yummynepal reserves the right to change pricing with 30 days' prior notice. Failure to pay may result in suspension of your account and deactivation of QR codes and menus.`,
     },
     {
       id: "6",
       title: "Content & Intellectual Property",
-      content: `You retain ownership of content you upload (menus, images, logos). By uploading, you grant FoodHub a worldwide, royalty-free license to display and distribute your content on the platform. You must not upload content that is illegal, offensive, defamatory, or infringes third-party rights. FoodHub's branding, software, and platform design are protected by intellectual property laws and may not be copied or used without permission.`,
+      content: `You retain ownership of content you upload (menus, images, logos). By uploading, you grant Yummynepal a worldwide, royalty-free license to display and distribute your content on the platform. You must not upload content that is illegal, offensive, defamatory, or infringes third-party rights. Yummynepal's branding, software, and platform design are protected by intellectual property laws and may not be copied or used without permission.`,
     },
     {
       id: "7",
       title: "Prohibited Activities",
-      content: `You agree not to: upload false or fraudulent menu information; use the platform for any unlawful purpose; attempt to gain unauthorized access to other accounts; reverse-engineer or copy the platform's software; use automated bots or scrapers; interfere with platform security or stability; harass other users or FoodHub staff.`,
+      content: `You agree not to: upload false or fraudulent menu information; use the platform for any unlawful purpose; attempt to gain unauthorized access to other accounts; reverse-engineer or copy the platform's software; use automated bots or scrapers; interfere with platform security or stability; harass other users or Yummynepal staff.`,
     },
     {
       id: "8",
       title: "Termination",
-      content: `FoodHub may suspend or terminate your account at any time for violation of these terms, non-payment, or conduct deemed harmful to the platform or its users. You may close your account at any time by contacting support. Upon termination, your data may be retained for legal compliance purposes as outlined in our Privacy Policy.`,
+      content: `Yummynepal may suspend or terminate your account at any time for violation of these terms, non-payment, or conduct deemed harmful to the platform or its users. You may close your account at any time by contacting support. Upon termination, your data may be retained for legal compliance purposes as outlined in our Privacy Policy.`,
     },
     {
       id: "9",
       title: "Limitation of Liability",
-      content: `FoodHub is a technology platform connecting restaurants and customers. We are not liable for: food quality or safety issues; disputes between restaurants and customers; loss of business due to platform downtime; inaccurate menu information uploaded by restaurants; third-party service failures. Our total liability in any case shall not exceed the fees paid by you in the preceding 3 months.`,
+      content: `Yummynepal is a technology platform connecting restaurants and customers. We are not liable for: food quality or safety issues; disputes between restaurants and customers; loss of business due to platform downtime; inaccurate menu information uploaded by restaurants; third-party service failures. Our total liability in any case shall not exceed the fees paid by you in the preceding 3 months.`,
     },
     {
       id: "10",
@@ -83,7 +83,7 @@ const sections = {
     {
       id: "6",
       title: "Your Rights",
-      content: `You have the right to: access the personal data we hold about you; request correction of inaccurate data; request deletion of your data (subject to legal retention requirements); withdraw consent for marketing communications; request a copy of your data in a portable format. To exercise these rights, contact us at privacy@foodhub.com.np.`,
+      content: `You have the right to: access the personal data we hold about you; request correction of inaccurate data; request deletion of your data (subject to legal retention requirements); withdraw consent for marketing communications; request a copy of your data in a portable format. To exercise these rights, contact us at privacy@Yummynepal.com.np.`,
     },
     {
       id: "7",
@@ -98,7 +98,7 @@ const sections = {
     {
       id: "9",
       title: "Children's Privacy",
-      content: `FoodHub is not directed at children under 13. We do not knowingly collect data from minors. If you believe a minor has provided us data, please contact us and we will promptly delete it.`,
+      content: `Yummynepal is not directed at children under 13. We do not knowingly collect data from minors. If you believe a minor has provided us data, please contact us and we will promptly delete it.`,
     },
     {
       id: "10",
@@ -158,8 +158,8 @@ export default function LegalPage() {
         <div className="bg-[#8c52ff]/30 border border-secondary/40 rounded-xl p-5 mb-6">
           <p className="text-secondary text-sm leading-relaxed">
             {activeTab === "terms"
-              ? "These Terms & Conditions govern your use of FoodHub as a registered restaurant partner, including access to your dashboard, QR menu generation, and all platform features."
-              : "This Privacy Policy explains how FoodHub collects, uses, and protects information from restaurant partners and their customers across our platform."}
+              ? "These Terms & Conditions govern your use of Yummynepal as a registered restaurant partner, including access to your dashboard, QR menu generation, and all platform features."
+              : "This Privacy Policy explains how Yummynepal collects, uses, and protects information from restaurant partners and their customers across our platform."}
           </p>
         </div>
 
@@ -215,10 +215,10 @@ export default function LegalPage() {
             please contact our legal team.
           </p>
           <a
-            href="mailto:legal@foodhub.com.np"
+            href="mailto:legal@Yummynepal.com.np"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-primary to-primary text-white hover:opacity-90 transition"
           >
-            legal@foodhub.com.np
+            legal@Yummynepal.com.np
           </a>
         </div>
       </div>

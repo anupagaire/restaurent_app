@@ -166,29 +166,28 @@ const resolvedLogo = {
 
   return (
     <nav
-className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
   scrolled || darkBg
     ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
     : 'bg-transparent'
 }`}
 >
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10">
+      <div className="max-w-screen-6xl mx-auto  sm:px-6 lg:px-15">
 
         {/* DESKTOP */}
         <div className="hidden md:flex h-16 items-center justify-between gap-8">
           <Link href="/">
-          <div className="relative h-30 w-28">
+         <div className="relative h-[130px] w-[200px]">
   {resolvedLogo.image && (
     <Image
       src={resolvedLogo.image}
       alt={resolvedLogo.alt}
       fill
-      sizes="112px"
+      sizes="160px"
       className="object-contain"
     />
   )}
-</div>
-          </Link>
+</div>      </Link>
           <div className="flex items-center gap-6 text-lg font-medium text-white">
             {resolvedLinks.map((link) => (
               <Link key={link.url} href={link.url} className="hover:text-[#c45cd1] transition-colors whitespace-nowrap">
@@ -249,7 +248,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         {/* MOBILE */}
         <div className="md:hidden h-16 flex items-center justify-between">
           <Link href="/" >
-            <div className="relative h-10 w-24">
+            <div className="relative h-40 w-24">
   {resolvedLogo.image && (
     <Image
       src={resolvedLogo.image}

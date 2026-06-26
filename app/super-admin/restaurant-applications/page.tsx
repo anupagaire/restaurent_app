@@ -39,7 +39,7 @@ const STATUS_OPTIONS: Status[] = ["pending", "approved", "rejected"];
 
 const STATUS_STYLES: Record<Status, { badge: string; label: string }> = {
   pending: {
-    badge: "bg-accent text-accent border border-accent",
+    badge: "bg-primary text-accent border border-accent",
     label: "Pending",
   },
   approved: {
@@ -285,19 +285,7 @@ const RestaurantApplications = () => {
             </form>
 
             {/* Status filter */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-secondary">Status</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value as Status | ""); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
-              >
-                <option value="">All statuses</option>
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>{STATUS_STYLES[s].label}</option>
-                ))}
-              </select>
-            </div>
+            
 
             {/* Ordering */}
             <div className="flex flex-col gap-1">

@@ -36,10 +36,22 @@ export async function apiFetch(url: string, options: any = {}) {
       isRefreshing = false;
       refreshPromise = null;
 
-      if (!newToken) {
-        console.error('❌ Refresh failed, redirecting to login');
-        throw new Error("Session expired");
-      }
+      // if (!newToken) {
+      //   console.error('❌ Refresh failed, redirecting to login');
+      //   throw new Error("Session expired");
+      // }
+
+
+
+if (!newToken) {
+  console.error('❌ Refresh failed, redirecting to login');
+  localStorage.clear();
+  document.cookie = 'access_token=; path=/; max-age=0';
+  document.cookie = 'role=; path=/; max-age=0';
+  window.location.href = '/login';
+  return new Response(null, { status: 401 });
+}
+
 
       token = newToken;
     }

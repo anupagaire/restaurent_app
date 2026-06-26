@@ -456,13 +456,9 @@ export default function CustomDomainPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════
-          MODAL 1 — Verify Confirm
-          (confirm/ endpoint — token change हुँदैन, safe)
-      ══════════════════════════════════════════ */}
       {showVerifyConfirm && domain && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setShowVerifyConfirm(false)}
         >
           <div

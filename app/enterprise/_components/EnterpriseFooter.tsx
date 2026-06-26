@@ -126,8 +126,8 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
           </p>
           <p className="text-xs text-white">
             Powered by{' '}
-            <a href="https://foodhub.com" className="text-white hover:underline">
-              FoodHub
+            <a href="https://Yummynepal.com" className="text-white hover:underline">
+              Yummynepal
             </a>
           </p>
         </div>

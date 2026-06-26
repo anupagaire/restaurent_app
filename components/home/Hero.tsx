@@ -473,13 +473,14 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
       >
     
         <div className="hero__bg">
-          <Image
-  src="/bg1.jpg"
-  alt="Best Restaurants in Nepal"
-  fill
-  priority
-  style={{ objectFit: "cover" }}
-/>
+         
+
+ <img
+     src="/bg.png"
+    alt="Best Restaurants in Nepal"
+    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+  />
+
         </div>
 
         {/* ── Overlays ── */}
