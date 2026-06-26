@@ -65,13 +65,13 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
               className="text-4xl sm:text-[52px] font-secondary tracking-tight leading-[1.05] text-gray-900"
             >
               Welcome to{' '}
-              <span className="text-orange-500">{restaurant.name}</span>
+              <span className="text-accent-500">{restaurant.name}</span>
             </motion.h1>
 
             {/* Subtitle */}
             <motion.div
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
-              className="flex items-center border-l-4 border-orange-500 pl-3 py-0.5"
+              className="flex items-center border-l-4 border-accent-500 pl-3 py-0.5"
             >
               <p className="text-sm sm:text-base font-bold text-gray-700">
                 {restaurant.city ? `Fine Dining in ${restaurant.city}` : 'A Premium Dining Experience'}
@@ -81,7 +81,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
             {/* Tagline */}
             <motion.p
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
-              className="text-sm sm:text-base font-extrabold italic text-orange-500"
+              className="text-sm sm:text-base font-extrabold italic text-accent-500"
             >
               "Every meal, an unforgettable memory."
             </motion.p>
@@ -103,11 +103,11 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
           >
             {stats.map((stat, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-orange-50 flex items-center justify-center shadow-sm shrink-0">
+                <div className="w-11 h-11 rounded-full bg-accent-50 flex items-center justify-center shadow-sm shrink-0">
                   <span className="text-lg">{stat.icon}</span>
                 </div>
                 <div>
-                  <div className="text-2xl font-secondary text-orange-500 leading-none">{stat.value}</div>
+                  <div className="text-2xl font-secondary text-accent-500 leading-none">{stat.value}</div>
                   <div className="text-[10.5px] font-bold text-secondary mt-0.5">{stat.label}</div>
                 </div>
                 {i < stats.length - 1 && <div className="h-10 w-px bg-gray-200 ml-3" />}
@@ -123,7 +123,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
             {pillars.map((p, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 bg-white border border-gray-100 border-l-[3px] border-l-orange-500 rounded-lg px-2.5 py-2 shadow-sm hover:-translate-y-0.5 transition-transform"
+                className="flex items-center gap-2 bg-white border border-gray-100 border-l-[3px] border-l-accent-500 rounded-lg px-2.5 py-2 shadow-sm hover:-translate-y-0.5 transition-transform"
               >
                 <span className="text-base shrink-0">{p.icon}</span>
                 <span className="text-[10.5px] font-extrabold text-gray-800 leading-tight">{p.label}</span>
@@ -138,13 +138,13 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
           >
             <Link
               href="/booking"
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 bg-accent hover:bg-accent-600 text-white font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:scale-105"
             >
               Reserve a Table →
             </Link>
             <Link
               href="/menu"
-              className="inline-flex items-center gap-2 border border-orange-500 text-orange-500 hover:bg-orange-50 font-semibold px-6 py-2.5 rounded-full text-sm transition-all"
+              className="inline-flex items-center gap-2 border border-accent-500 text-accent-500 hover:bg-accent-50 font-semibold px-6 py-2.5 rounded-full text-sm transition-all"
             >
               View Menu
             </Link>
@@ -157,16 +157,16 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
           className="w-full lg:w-[44%] relative min-h-[400px] lg:min-h-full flex items-stretch"
         >
           {/* Curved container */}
-          <div className="relative w-full h-full min-h-[400px] rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] overflow-hidden border-t-[10px] lg:border-t-0 lg:border-l-[10px] border-orange-500 shadow-2xl bg-gray-200">
+          <div className="relative w-full h-full min-h-[400px] rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] overflow-hidden border-t-[10px] lg:border-t-0 lg:border-l-[10px] border-accent-500 shadow-2xl bg-gray-200">
 
-            {/* Orange accent inner line */}
-            <div className="absolute inset-0 z-10 border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-orange-300 rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] pointer-events-none" />
+            {/* accent accent inner line */}
+            <div className="absolute inset-0 z-10 border-t-[3px] lg:border-t-0 lg:border-l-[3px] border-accent-300 rounded-t-[14rem] lg:rounded-t-none lg:rounded-l-[24rem] pointer-events-none" />
 
             {/* Dot-grid overlay */}
             <div className="absolute inset-0 z-10 opacity-20 mix-blend-screen bg-[radial-gradient(#f97316_1px,transparent_1px)] [background-size:18px_18px] pointer-events-none" />
 
             {/* Ambient glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-orange-400/20 blur-[90px] z-10 pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-accent-400/20 blur-[90px] z-10 pointer-events-none" />
 
             {/* Main image */}
             {imageUrl ? (
@@ -178,21 +178,21 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
                 priority
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-900 to-gray-900 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-900 to-gray-900 flex items-center justify-center">
                 <span className="text-8xl opacity-20">🍽️</span>
               </div>
             )}
 
-            {/* Orange wave bottom */}
+            {/* accent wave bottom */}
             <div
-              className="absolute bottom-0 left-0 right-0 h-[72px] bg-orange-500 z-10 pointer-events-none"
+              className="absolute bottom-0 left-0 right-0 h-[72px] bg-accent-500 z-10 pointer-events-none"
               style={{ clipPath: 'ellipse(110% 100% at 50% 100%)' }}
             />
           </div>
 
           {/* Floating Card — Location */}
           <div className="absolute top-8 right-3 lg:right-8 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-white/70 p-2.5 flex items-center gap-2.5 w-44 z-20">
-            <span className="text-lg bg-orange-50 p-1.5 rounded-xl shrink-0">📍</span>
+            <span className="text-lg bg-accent-50 p-1.5 rounded-xl shrink-0">📍</span>
             <div>
               <span className="text-[11.5px] font-secondary text-gray-900 leading-tight block">
                 {restaurant.city ?? 'Our Location'}
@@ -206,12 +206,12 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
         
           {/* Bottom badge */}
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-white/70 px-4 py-2.5 flex items-center gap-3 z-20 whitespace-nowrap">
-            <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center shrink-0">
+            <div className="w-6 h-6 rounded-full bg-accent-500 flex items-center justify-center shrink-0">
               <span className="text-white text-[10px] font-extrabold">✓</span>
             </div>
             <div>
               <div className="text-[9.5px] font-bold text-secondary leading-none">Est.</div>
-              <div className="text-[15px] font-secondary text-orange-500 leading-tight mt-0.5">
+              <div className="text-[15px] font-secondary text-accent-500 leading-tight mt-0.5">
                 {restaurant.name}
               </div>
             </div>
@@ -219,9 +219,9 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
 
           {/* Three color dots */}
           <div className="absolute bottom-5 right-8 flex items-center gap-1.5 z-20">
-            <span className="w-2 h-2 rounded-full bg-orange-500" />
+            <span className="w-2 h-2 rounded-full bg-accent-500" />
             <span className="w-2 h-2 rounded-full bg-gray-800" />
-            <span className="w-2 h-2 rounded-full bg-orange-300" />
+            <span className="w-2 h-2 rounded-full bg-accent-300" />
           </div>
         </motion.div>
       </div>

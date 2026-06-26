@@ -145,14 +145,13 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
   const galleryPhotos = validPhotos.slice(1);
 
   return (
-    <div className="min-h-screen bg-[#f8f4ee]">
-      {/* Split Hero Section */}
+    <div className="min-h-screen bg-primary/10">
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[92vh]">
         
-        {/* LEFT - Green Side */}
-        <div className="bg-[#2d5016] p-12 md:p-16 flex flex-col justify-center relative overflow-hidden">
+        {/* LEFT - primary Side */}
+        <div className="bg-primary p-12 md:p-16 flex flex-col justify-center relative overflow-hidden">
           <div className="absolute bottom-[-80px] right-[-80px] w-[280px] h-[280px] rounded-full bg-white/5 pointer-events-none" />
-          <div className="absolute top-[-40px] left-[-40px] w-[180px] h-[180px] rounded-full bg-[#c4622d]/10 pointer-events-none" />
+          <div className="absolute top-[-40px] left-[-40px] w-[180px] h-[180px] rounded-full bg-accent/10 pointer-events-none" />
           
           <div className="relative z-10 max-w-lg">
             <Link 
@@ -165,7 +164,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
               Back
             </Link>
 
-            <div className="text-[#e07a45] text-xs font-bold uppercase tracking-widest mb-5">
+            <div className="text-accent text-xs font-bold uppercase tracking-widest mb-5">
               Our Story
             </div>
 
@@ -180,7 +179,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
             )}
 
             <div className="flex flex-wrap gap-3">
-              <span className="px-5 py-2 bg-[#c4622d] text-white rounded-full text-sm font-medium">
+              <span className="px-5 py-2 bg-accent text-white rounded-full text-sm font-medium">
                 Est. Restaurant
               </span>
               <span className="px-5 py-2 bg-transparent border border-white/25 text-white/70 rounded-full text-sm font-medium">
@@ -205,8 +204,8 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
               <div className="absolute inset-0 bg-[#462D14]/30" />
               
               <div className="absolute bottom-10 left-10 bg-white/95 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg flex items-center gap-3 z-10">
-                <div className="w-2 h-2 bg-[#c4622d] rounded-full" />
-                <span className="text-[#2d5016] text-sm font-medium">Crafted with passion</span>
+                <div className="w-2 h-2 bg-accent rounded-full" />
+                <span className="text-primary text-sm font-medium">Crafted with passion</span>
               </div>
             </>
           ) : (
@@ -216,7 +215,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
           )}
           
           <div className="absolute top-[-80px] right-[-80px] w-[300px] h-[300px] rounded-full border border-white/10 pointer-events-none" />
-          <div className="absolute bottom-[60px] right-[30px] w-[180px] h-[180px] rounded-full border border-[#c4622d]/20 pointer-events-none" />
+          <div className="absolute bottom-[60px] right-[30px] w-[180px] h-[180px] rounded-full border border-accent/20 pointer-events-none" />
         </div>
       </div>
 
@@ -225,7 +224,7 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
         <div className="flex gap-12 items-start">
           <div className="hidden md:block sticky top-8 ">
             <div 
-              className="text-[0.7rem] font-bold uppercase tracking-widest text-[#c4622d] border-l-2 border-[#c4622d] pl-2.5"
+              className="text-[0.7rem] font-bold uppercase tracking-widest text-accent border-l-2 border-accent pl-2.5"
               style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', height: 'fit-content' }}
             >
               About
@@ -247,10 +246,10 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
         <div className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-12">
             <div className="mb-12">
-              <div className="text-[0.7rem] font-bold uppercase tracking-widest text-[#c4622d] mb-3">
+              <div className="text-[0.7rem] font-bold uppercase tracking-widest text-accent mb-3">
                 Gallery
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#2d5016] mb-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-3">
                 Moments & Memories
               </h2>
               <p className="text-[#6b6b6b] text-sm flex items-center gap-2">
@@ -292,14 +291,14 @@ export default async function RestaurantAboutPage({ params }: PageProps) {
       )}
 
       {/* CTA Section */}
-      <div className="bg-[#2d5016] py-20">
+      <div className="bg-primary py-20">
         <div className="max-w-[600px] mx-auto px-6 text-center">
           <p className="text-2xl md:text-3xl italic text-white/85 mb-8 font-light">
             Ready to experience it yourself?
           </p>
           <Link 
             href={`/restaurants/${slug}`}
-            className="inline-flex items-center gap-2.5 bg-[#c4622d] hover:bg-[#e07a45] text-white font-semibold px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg mb-5"
+            className="inline-flex items-center gap-2.5 bg-accent hover:bg-[#e07a45] text-white font-semibold px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg mb-5"
           >
             Visit Restaurant Page
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

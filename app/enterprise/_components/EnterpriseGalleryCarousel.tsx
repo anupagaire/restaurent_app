@@ -78,7 +78,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
         {/* Header */}
         <div className="flex items-end justify-between mb-12">
           <div>
-            <span className="text-orange-500 text-xs font-semibold uppercase tracking-widest">
+            <span className="text-accent-500 text-xs font-semibold uppercase tracking-widest">
               📸 Our Gallery
             </span>
             <h2 className="text-4xl font-bold  mt-2">
@@ -90,7 +90,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
           </div>
           <Link
             href="/gallery"
-            className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-orange-400 hover:text-orange-300 transition-colors"
+            className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-accent-400 hover:text-accent-300 transition-colors"
           >
             View All <ChevronRight size={16} />
           </Link>
@@ -130,7 +130,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
 
                 {/* Active ring */}
                 {i === current && (
-                  <div className="absolute inset-0 rounded-3xl ring-2 ring-orange-500 ring-offset-0" />
+                  <div className="absolute inset-0 rounded-3xl ring-2 ring-accent-500 ring-offset-0" />
                 )}
 
                 {/* Label */}
@@ -150,14 +150,14 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
         {/* Arrow buttons */}
         <button
           onClick={() => move(-1)}
-          className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-20  hover:bg-orange-500 text- w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all backdrop-blur-sm"
+          className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-20  hover:bg-accent-500 text- w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all backdrop-blur-sm"
           aria-label="Previous"
         >
           ←
         </button>
         <button
           onClick={() => move(1)}
-          className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-orange-500  w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all backdrop-blur-sm"
+          className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-accent-500  w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all backdrop-blur-sm"
           aria-label="Next"
         >
           →
@@ -172,7 +172,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
             onClick={() => setCurrent(i)}
             className={`rounded-full transition-all duration-300 ${
               i === current
-                ? 'w-6 h-2.5 bg-orange-500'
+                ? 'w-6 h-2.5 bg-accent-500'
                 : 'w-2.5 h-2.5 bg-white/20 hover:bg-white/40'
             }`}
             aria-label={`Photo ${i + 1}`}
@@ -184,7 +184,7 @@ export default function EnterpriseGalleryCarousel({ photos, restaurantName, tota
       <div className="text-center mt-8 md:hidden">
         <Link
           href="/gallery"
-          className="inline-flex items-center gap-2 bg-orange-500 text- font-semibold px-6 py-3 rounded-full text-sm"
+          className="inline-flex items-center gap-2 bg-accent-500 text- font-semibold px-6 py-3 rounded-full text-sm"
         >
           View All Photos <ChevronRight size={16} />
         </Link>

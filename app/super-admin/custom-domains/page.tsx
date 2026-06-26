@@ -192,7 +192,7 @@ export default function CustomDomainsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Globe size={22} className="text-orange-500" /> Custom Domains
+            <Globe size={22} className="text-accent-500" /> Custom Domains
           </h1>
           <p className="text-gray-500 text-sm mt-1">
             Manage enterprise custom domains for all restaurants
@@ -243,7 +243,7 @@ export default function CustomDomainsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && load(search)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-400"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -252,7 +252,7 @@ export default function CustomDomainsPage() {
               key={f}
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors capitalize ${
-                filter === f ? 'bg-orange-500 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                filter === f ? 'bg-accent-500 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             >
               {f === 'none' ? 'No Domain' : f}
@@ -265,7 +265,7 @@ export default function CustomDomainsPage() {
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center">
-            <RefreshCw size={24} className="animate-spin text-orange-400 mx-auto mb-3" />
+            <RefreshCw size={24} className="animate-spin text-accent-400 mx-auto mb-3" />
             <p className="text-gray-400 text-sm">Loading...</p>
           </div>
         ) : filtered.length === 0 ? (
@@ -313,7 +313,7 @@ export default function CustomDomainsPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={e => e.stopPropagation()}
-                              className="text-orange-400 hover:text-orange-600 transition-colors"
+                              className="text-accent-400 hover:text-accent-600 transition-colors"
                             >
                               <ExternalLink size={13} />
                             </a>
@@ -352,7 +352,7 @@ export default function CustomDomainsPage() {
                           <button
                             onClick={() => handleVerify(entry)}
                             disabled={verifying === entry.id}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
                           >
                             {verifying === entry.id
                               ? <RefreshCw size={11} className="animate-spin" />
@@ -389,34 +389,34 @@ export default function CustomDomainsPage() {
 
                   {/* Expanded DNS record row */}
                   {expanded === entry.id && entry.custom_domain && !entry.custom_domain_verified && (
-                    <tr key={`${entry.id}-dns`} className="bg-orange-50/40">
+                    <tr key={`${entry.id}-dns`} className="bg-accent-50/40">
                       <td colSpan={5} className="px-5 py-4">
-                        <div className="flex items-center gap-2 text-xs font-semibold text-orange-700 mb-3">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-accent-700 mb-3">
                           <AlertCircle size={13} />
                           DNS TXT Record — Restaurant must add this to their DNS provider
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div className="bg-white rounded-xl border border-orange-100 p-3">
+                          <div className="bg-white rounded-xl border border-accent-100 p-3">
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Type</div>
-                            <code className="text-sm font-bold text-orange-600">TXT</code>
+                            <code className="text-sm font-bold text-accent-600">TXT</code>
                           </div>
-                          <div className="bg-white rounded-xl border border-orange-100 p-3">
+                          <div className="bg-white rounded-xl border border-accent-100 p-3">
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Name / Host</div>
                             <code className="text-xs text-gray-800 break-all">{entry.custom_domain}</code>
                           </div>
-                          <div className="bg-white rounded-xl border border-orange-100 p-3">
+                          <div className="bg-white rounded-xl border border-accent-100 p-3">
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Value (Token)</div>
                             <code className="text-xs text-gray-800 break-all">{entry.domain_verification_token}</code>
                           </div>
                         </div>
                         <div className="flex items-center gap-3 mt-3">
-                          <p className="text-[11px] text-orange-600">
+                          <p className="text-[11px] text-accent-600">
                             TTL: 300 · After DNS propagates (5min–48hrs), click "Verify DNS" above
                           </p>
                           <button
                             onClick={() => handleVerify(entry)}
                             disabled={verifying === entry.id}
-                            className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-semibold disabled:opacity-40"
+                            className="ml-auto flex items-center gap-1.5 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-xs font-semibold disabled:opacity-40"
                           >
                             {verifying === entry.id
                               ? <RefreshCw size={11} className="animate-spin" />
@@ -464,7 +464,7 @@ export default function CustomDomainsPage() {
                 value={domainInput}
                 onChange={e => setDomainInput(e.target.value)}
                 placeholder="www.restaurantname.com"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-400"
                 autoFocus
               />
               <p className="text-xs text-gray-400 mt-1">Without https:// — e.g. www.pizza-palace.com</p>
@@ -480,7 +480,7 @@ export default function CustomDomainsPage() {
               <button
                 onClick={handleSetDomain}
                 disabled={settingDomain || !domainInput.trim()}
-                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 transition-colors"
+                className="flex-1 bg-accent-500 hover:bg-accent-600 text-white py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 transition-colors"
               >
                 {settingDomain ? 'Setting...' : 'Set Domain'}
               </button>

@@ -53,7 +53,7 @@ const MOODS: MoodCard[] = [
     headline: "Every Great Evening Starts with a Slice",
     sub: "The best pizzas, ranked",
     cta: "See pizza spots",
-    fallbackGradient: "from-red-950 via-orange-950 to-stone-900",
+    fallbackGradient: "from-red-950 via-accent-950 to-stone-900",
     accentLight: "#fed7aa",
     accentDark: "#9a3412",
         staticPhoto: "/pizza.jpg",

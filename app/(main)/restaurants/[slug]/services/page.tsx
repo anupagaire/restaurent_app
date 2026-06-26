@@ -129,7 +129,6 @@ export default async function RestaurantServicesPage({ params }: PageProps) {
 
       <div className="sv">
 
-        {/* ── SPLIT HERO ── */}
         <header className="sv-hero">
           {/* LEFT */}
           <div className="sv-hero__left">
@@ -366,24 +365,22 @@ const styles = `
 
 /* ── Root ── */
 .sv {
-  --green:   #2d5016;
-  --green-l: #3d6b20;
-  --terra:   #c4622d;
-  --terra-l: #e07a45;
+  --primary:   #3B1C32;
+  --primary-l: #d34225;
+  --terra:   #513012;
+  --terra-l: #d34225;
   --cream:   #f8f4ee;
   --white:   #ffffff;
   --ink:     #1a1a1a;
   --muted:   #6b6b6b;
   font-family: 'Outfit', sans-serif;
   color: var(--ink);
-  background: var(--cream);
+  background: primary/10;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ══════════════
-   HERO
-══════════════ */
+
 .sv-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -391,7 +388,7 @@ const styles = `
 }
 
 .sv-hero__left {
-  background: var(--green);
+  background: var(--primary);
   padding: 56px 64px;
   display: flex;
   flex-direction: column;
@@ -480,7 +477,7 @@ const styles = `
   background:rgba(255,255,255,0.95); backdrop-filter:blur(12px);
   border-radius:12px; padding:12px 20px;
   display:flex; align-items:center; gap:10px;
-  font-size:0.82rem; font-weight:500; color:var(--green);
+  font-size:0.82rem; font-weight:500; color:var(--primary);
   box-shadow:0 8px 32px rgba(0,0,0,0.2);
   animation: sv-floatCard 4s ease-in-out infinite; z-index:2;
 }
@@ -503,9 +500,7 @@ const styles = `
   border-color:rgba(196,98,45,0.2);
 }
 
-/* ══════════════
-   MAIN
-══════════════ */
+
 .sv-main { background:var(--cream); }
 
 /* section shared header */
@@ -514,13 +509,12 @@ const styles = `
   text-transform:uppercase; color:var(--terra); margin-bottom:10px;
 }
 .sv-feat__title, .sv-why__title, .sv-gallery__title {
-  font-family:'Fraunces',serif;
   font-size:clamp(1.8rem,4vw,2.6rem);
-  font-weight:700; color:var(--green); margin:0 0 16px; line-height:1.1;
+  font-weight:700; color:var(--primary); margin:0 0 16px; line-height:1.1;
 }
 .sv-feat__rule, .sv-why__rule, .sv-gallery__rule {
   height:3px; width:60px;
-  background:linear-gradient(90deg,var(--green),var(--terra));
+  background:linear-gradient(90deg,var(--primary),var(--terra));
   border-radius:2px;
   animation: sv-ruleGrow 0.8s cubic-bezier(.22,.68,0,1.2) forwards;
 }
@@ -550,14 +544,14 @@ const styles = `
 .sv-feat__card::before {
   content:'';
   position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg,var(--green),var(--terra));
+  background:linear-gradient(90deg,var(--primary),var(--terra));
   transform:scaleX(0); transform-origin:left;
   transition:transform 0.35s ease;
 }
 .sv-feat__card:hover::before { transform:scaleX(1); }
 
 .sv-feat__num {
-  font-family:'Fraunces',serif; font-size:3.5rem; font-weight:700;
+   font-size:3.5rem; font-weight:700;
   color:rgba(45,80,22,0.07); line-height:1;
   position:absolute; top:16px; right:20px; letter-spacing:-0.02em;
 }
@@ -567,11 +561,11 @@ const styles = `
   display:flex; align-items:center; justify-content:center;
   margin-bottom:20px;
 }
-.sv-feat__icon-svg { width:24px; height:24px; color:var(--green); }
+.sv-feat__icon-svg { width:24px; height:24px; color:var(--primary); }
 
 .sv-feat__card-title {
   font-family:'Fraunces',serif; font-size:1.3rem;
-  font-weight:700; color:var(--green); margin:0 0 10px;
+  font-weight:700; color:var(--primary); margin:0 0 10px;
 }
 .sv-feat__card-desc {
   font-size:0.92rem; line-height:1.7; color:var(--muted);
@@ -605,17 +599,17 @@ const styles = `
 }
 .prose-bistro > p:first-of-type::first-letter {
   font-family:'Fraunces',serif; font-size:4.5rem; font-weight:700;
-  color:var(--green); float:left; line-height:0.75;
+  color:var(--primary); float:left; line-height:0.75;
   margin-right:8px; margin-top:8px;
 }
 .prose-bistro h1,.prose-bistro h2,.prose-bistro h3 {
-  font-family:'Fraunces',serif; color:var(--green);
+  font-family:'Fraunces',serif; color:var(--primary);
   margin-top:2em; margin-bottom:0.6em; font-weight:700;
 }
 .prose-bistro h2 { font-size:1.8rem; }
 .prose-bistro h3 { font-size:1.3rem; }
 .prose-bistro p  { margin-bottom:1.4em; }
-.prose-bistro strong { color:var(--green); font-weight:600; }
+.prose-bistro strong { color:var(--primary); font-weight:600; }
 .prose-bistro a {
   color:var(--terra); text-decoration:none; font-weight:500;
   border-bottom:1.5px solid rgba(196,98,45,0.3); padding-bottom:1px;
@@ -628,7 +622,7 @@ const styles = `
   background:rgba(196,98,45,0.05);
   border-radius:0 12px 12px 0;
   font-family:'Fraunces',serif; font-style:italic;
-  font-size:1.2rem; color:var(--green);
+  font-size:1.2rem; color:var(--primary);
 }
 .prose-bistro ul,.prose-bistro ol { padding-left:1.5em; margin-bottom:1.4em; }
 .prose-bistro li { margin-bottom:0.5em; }
@@ -636,7 +630,7 @@ const styles = `
 
 /* ── Why choose us ── */
 .sv-why {
-  background:var(--green); padding:80px 48px;
+  background:var(--primary); padding:80px 48px;
 }
 .sv-why__head { max-width:1100px; margin:0 auto 48px; }
 .sv-why__label { color:var(--terra-l) !important; }

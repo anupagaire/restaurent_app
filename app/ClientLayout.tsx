@@ -30,7 +30,8 @@ const isHomePage = pathname === '/';
         {!shouldHideLayout && <Navbar {...navbarProps} darkBg={!isHomePage} />}
       {/* {!shouldHideLayout && <Navbar {...navbarProps} />} */}
       {children}
-      {  <Footer data={footerData} />}
+      {  <Footer  data={footerData} />}
+   
     </AuthProvider>
   );
 }

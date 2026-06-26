@@ -16,7 +16,7 @@ export default async function HomePage() {
 
   return (
     <>
-    <div>
+    <div className="bg-primary/10">
       <Hero  />
        <FeaturedRestaurants />
        <MoodCollections /> 

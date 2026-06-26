@@ -116,7 +116,7 @@ export default function EnterprisePhotoGallery({
               onClick={() => goToPage(page)}
               className={`w-9 h-9 rounded-xl text-sm font-medium transition ${
                 page === currentPage
-                  ? 'bg-orange-500 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'border border-gray-200 hover:bg-gray-50'
               }`}
             >
@@ -195,7 +195,7 @@ export default function EnterprisePhotoGallery({
                   onClick={(e) => { e.stopPropagation(); setLightboxIndex(realIdx) }}
                   className={`relative w-14 h-14 rounded-lg overflow-hidden shrink-0 cursor-pointer transition-all ${
                     realIdx === lightboxIndex
-                      ? 'ring-2 ring-orange-500 scale-110'
+                      ? 'ring-2 ring-accent-500 scale-110'
                       : 'opacity-50 hover:opacity-80'
                   }`}
                 >

@@ -77,7 +77,7 @@ const res = await fetch(
         <div className="max-w-6xl mx-auto px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-4 divide-y md:divide-y-0 md:divide-x divide-gray-700">
           {restaurant?.address && (
             <div className="flex items-center gap-3 py-2 md:py-0">
-              <MapPin size={18} className="text-orange-400 shrink-0" />
+              <MapPin size={18} className="text-accent-400 shrink-0" />
               <div>
                 <p className="text-xs text-secondary">Location</p>
                 <p className="text-sm font-medium">{restaurant.address}, {restaurant.city}</p>
@@ -85,14 +85,14 @@ const res = await fetch(
             </div>
           )}
           <div className="flex items-center gap-3 py-2 md:py-0 md:px-6">
-            <Clock size={18} className="text-orange-400 shrink-0" />
+            <Clock size={18} className="text-accent-400 shrink-0" />
             <div>
               <p className="text-xs text-secondary">Hours</p>
               <p className="text-sm font-medium">{restaurant?.availability ?? 'Open Daily'}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 py-2 md:py-0 md:px-6">
-            <Phone size={18} className="text-orange-400 shrink-0" />
+            <Phone size={18} className="text-accent-400 shrink-0" />
             <div>
               <p className="text-xs text-secondary">Reservations</p>
               <p className="text-sm font-medium">Book online or call us</p>
@@ -115,13 +115,13 @@ const res = await fetch(
       )}
  
       {/* ── CTA ── */}
-      <section className="bg-orange-500 py-16">
+      <section className="bg-accent-500 py-16">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">Ready for an Amazing Experience?</h2>
-          <p className="text-orange-100 mb-8 text-lg">Book your table now and enjoy a memorable dining experience.</p>
+          <p className="text-accent-100 mb-8 text-lg">Book your table now and enjoy a memorable dining experience.</p>
           <Link
             href="/booking"
-            className="inline-flex items-center gap-2 bg-white text-orange-500 font-bold px-10 py-4 rounded-full hover:bg-orange-50 transition-all hover:scale-105 text-lg"
+            className="inline-flex items-center gap-2 bg-white text-accent-500 font-bold px-10 py-4 rounded-full hover:bg-accent-50 transition-all hover:scale-105 text-lg"
           >
             Reserve Your Table <ChevronRight size={20} />
           </Link>

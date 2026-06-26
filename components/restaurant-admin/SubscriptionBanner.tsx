@@ -106,7 +106,7 @@ export default function SubscriptionBanner() {
             <p className="font-bold text-sm" style={{ color: '#92400e' }}>
               ⚠️ Subscription expiring in {days} day{days !== 1 ? 's' : ''}
             </p>
-            <button onClick={() => setDismissed(true)} className="p-1 rounded hover:bg-orange-100">
+            <button onClick={() => setDismissed(true)} className="p-1 rounded hover:bg-accent-100">
               <X size={14} style={{ color: '#b45309' }} />
             </button>
           </div>
@@ -135,7 +135,7 @@ export default function SubscriptionBanner() {
             <p className="font-bold text-sm" style={{ color: '#92400e' }}>
               ⏳ Payment Under Review
             </p>
-            <button onClick={() => load(true)} className="p-1 rounded hover:bg-orange-100" title="Refresh">
+            <button onClick={() => load(true)} className="p-1 rounded hover:bg-accent-100" title="Refresh">
               <RefreshCw size={13} style={{ color: '#b45309' }}
                 className={refreshing ? 'animate-spin' : ''} />
             </button>

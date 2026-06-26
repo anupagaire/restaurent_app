@@ -166,10 +166,11 @@ const resolvedLogo = {
 
   return (
     <nav
-className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
+className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 
+  ${
   scrolled || darkBg
-    ? 'bg-secondary/70 backdrop-blur-xl border-b border-white/10'
-    : 'bg-transparent'
+    ? 'bg-primary/10 text-black backdrop-blur-xl border-b border-white/10'
+    : ' bg-primary/10 backdrop-blur-sm'
 }`}
 >
       <div className="max-w-screen-6xl mx-auto  sm:px-6 lg:px-15">
@@ -178,6 +179,7 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
         <div className="hidden md:flex h-16 items-center justify-between gap-8">
           <Link href="/">
          <div className="relative h-[130px] w-[200px]">
+          
   {resolvedLogo.image && (
     <Image
       src={resolvedLogo.image}
@@ -185,10 +187,11 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
       fill
       sizes="160px"
       className="object-contain"
+      
     />
   )}
 </div>      </Link>
-          <div className="flex items-center gap-6 text-lg font-medium text-white">
+          <div className="flex items-center gap-6 text-lg font-medium">
             {resolvedLinks.map((link) => (
               <Link key={link.url} href={link.url} className="hover:text-[#c45cd1] transition-colors whitespace-nowrap">
                 {link.name}
@@ -199,7 +202,7 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
             <div className="relative" ref={searchRef}>
               <button
                 onClick={() => { setIsSearchDesktop(!isSearchDesktop); setSearchQuery(''); setSuggestions([]); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition text-sm font-medium ${isSearchDesktop ? 'bg-white/15 border-white/40 text-white' : 'border-white/20 text-white/70 hover:text-white hover:bg-white/10'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition text-sm font-medium ${isSearchDesktop ? 'bg-primary/85 border-primary ' : 'border-primary/80  hover:text-secondary hover:bg-primary/10'}`}
               >
                 <Search size={15} /><span>Search</span>
               </button>
@@ -208,9 +211,9 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
                   <motion.div
                     initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-secondary/90 backdrop-blur-xl border border-white/15 rounded-2xl p-4 shadow-2xl"
+                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-secondary backdrop-blur-xl border border-primary/15 rounded-2xl p-4 shadow-2xl"
                   >
-                    <p className="text-xs text-white/40 mb-2 font-medium tracking-wide uppercase">Search venues</p>
+                    <p className="text-xs  mb-2 font-medium tracking-wide text-white uppercase">Search venues</p>
                     {renderSearchBox(true)}
                   </motion.div>
                 )}
@@ -218,7 +221,7 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
             </div>
             {isAuthenticated && currentUser ? (
   <>
-    <span className="text-white text-xl font-bold whitespace-nowrap">
+    <span className="text-primary text-xl font-bold whitespace-nowrap">
       Hi, {currentUser.name.split(' ')[0]}
     </span>
     <button
@@ -226,7 +229,7 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
     logout();
     router.push("/");
   }}
-  className="p-2 rounded-full border border-white/30 text-white hover:bg-white/10 transition"
+  className="p-2 rounded-full border border-primary text-white hover:bg-white/10 transition"
   title="Logout"
 >
   <LogOut size={18} />
@@ -234,10 +237,10 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 ${
   </>
 ) : (
   <>
-    <Link href={resolvedLoginBtn.url} className="whitespace-nowrap px-4 py-2 rounded-full border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition">
+    <Link href={resolvedLoginBtn.url} className="whitespace-nowrap px-4 py-2 rounded-full border border-primary/90  text-sm font-medium hover:bg-white/10 transition">
       {resolvedLoginBtn.text}
     </Link>
-    <Link href={resolvedRegisterBtn.url} className="whitespace-nowrap px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition text-white text-sm font-medium">
+    <Link href={resolvedRegisterBtn.url} className="whitespace-nowrap px-5 py-2 rounded-full border border-primary hover:bg-white/10 transitionprimary text-sm font-medium">
       {resolvedRegisterBtn.text}
     </Link>
   </>

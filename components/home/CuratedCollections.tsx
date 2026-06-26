@@ -1,345 +1,331 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const POPULAR_SEARCHES = ["Momo", "Chowmein", "Pasta", "Coffee", "Newari Khaja", "Pizza"];
 
-interface Restaurant {
-  id: number;
-  name: string;
-  city: string;
-  amenities: string;
-  cover_photo: { photo_url: string; alt: string } | null;
-  menus_count: number;
-  view_count: number;
-  created_on: string;
-  status: boolean;
-  seo: { slug: string };
-}
-
-interface Collection {
-  id: string;
-  label: string;
-  tagline: string;
-  description: string;
-  emoji: string;
-  gradient: string;
-  accentColor: string;
-  filter: (restaurants: Restaurant[]) => Restaurant[];
-  href: string;
-}
-
-const COLLECTIONS: Collection[] = [
-  {
-    id: "trending",
-    label: "Trending Now",
-    tagline: "Most visited this week",
-    description: "These spots are buzzing — see what everyone's talking about.",
-    emoji: "🔥",
-    gradient: "from-orange-600 via-rose-500 to-pink-600",
-    accentColor: "#f97316",
-    filter: (r) => [...r].sort((a, b) => b.view_count - a.view_count),
-    href: "/restaurants?ordering=-view_count",
-  },
-  {
-    id: "wifi",
-    label: "Free WiFi",
-    tagline: "Work & dine",
-    description: "Your laptop is welcome here.",
-    emoji: "📶",
-    gradient: "from-primary via-indigo-500 to-violet-600",
-    accentColor: "#6366f1",
-    filter: (r) =>
-      r.filter(
-        (x) =>
-          x.amenities?.toLowerCase().includes("wifi") ||
-          x.amenities?.toLowerCase().includes("wofi")
-      ),
-    href: "/restaurants?amenities=wifi",
-  },
-  {
-    id: "big-menu",
-    label: "Biggest Menus",
-    tagline: "Spoilt for choice",
-    description: "Can't decide? More options means something for everyone.",
-    emoji: "🍽️",
-    gradient: "from-emerald-600 via-teal-500 to-cyan-600",
-    accentColor: "#10b981",
-    filter: (r) => [...r].sort((a, b) => b.menus_count - a.menus_count),
-    href: "/restaurants?ordering=-menus_count",
-  },
-  {
-    id: "parking",
-    label: "Has Parking",
-    tagline: "Drive & dine",
-    description: "No parking stress. Just good food.",
-    emoji: "🅿️",
-    gradient: "from-violet-600 via-purple-500 to-fuchsia-600",
-    accentColor: "#8b5cf6",
-    filter: (r) =>
-      r.filter((x) => x.amenities?.toLowerCase().includes("parking")),
-    href: "/restaurants?amenities=parking",
-  },
-  {
-    id: "new",
-    label: "Newly Added",
-    tagline: "Fresh spots",
-    description: "Be the first to explore the newest places in town.",
-    emoji: "🆕",
-    gradient: "from-pink-600 via-rose-500 to-orange-500",
-    accentColor: "#ec4899",
-    filter: (r) =>
-      [...r].sort(
-        (a, b) =>
-          new Date(b.created_on).getTime() - new Date(a.created_on).getTime()
-      ),
-    href: "/restaurants?ordering=-created_on",
-  },
-  {
-    id: "kathmandu",
-    label: "In Kathmandu",
-    tagline: "Capital's finest",
-    description: "The best of Nepal's food capital, all in one place.",
-    emoji: "📍",
-    gradient: "from-accent via-yellow-500 to-orange-400",
-    accentColor: "#f59e0b",
-    filter: (r) =>
-      r.filter((x) => x.city?.toLowerCase() === "kathmandu"),
-    href: "/restaurants?city=Kathmandu",
-  },
+const STATS = [
+  { value: "500+", label: "Restaurants" },
+  { value: "12K+", label: "Happy Diners" },
+  { value: "40+", label: "Cuisines" },
 ];
 
-function resolvePhoto(url?: string | null): string | null {
-  if (!url) return null;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  const base = BASE_URL?.endsWith("/") ? BASE_URL.slice(0, -1) : BASE_URL;
-  return `${base}${url.startsWith("/") ? "" : "/"}${url}`;
-}
-
-// ── Small card (5 of them) ────────────────────────────────────────────────────
-function SmallCard({
-  collection,
-  restaurants,
-  loading,
-}: {
-  collection: Collection;
-  restaurants: Restaurant[];
-  loading: boolean;
-}) {
-  const filtered = collection.filter(restaurants);
-  const count = filtered.length;
-  const top = filtered[0];
-  const photo = resolvePhoto(top?.cover_photo?.photo_url);
-
-  return (
-    <Link
-      href={collection.href}
-      className="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col min-h-[200px]"
-    >
-      {/* Background image */}
-      <div className="absolute inset-0">
-        {!loading && photo ? (
-          <Image
-            src={photo}
-            alt={collection.label}
-            fill
-            className="object-cover opacity-20 group-hover:opacity-30 group-hover:scale-105 transition-all duration-500"
-            sizes="300px"
-          />
-        ) : null}
-        <div className={`absolute inset-0 bg-gradient-to-br ${collection.gradient} opacity-90`} />
-      </div>
-
-      {/* Content */}
-      <div className="relative flex flex-col h-full p-5 justify-between">
-        <div>
-          <span className="text-3xl">{collection.emoji}</span>
-          {!loading && (
-            <span className="ml-2 text-[10px] font-bold text-white/70 bg-white/20 px-2 py-0.5 rounded-full">
-              {count} places
-            </span>
-          )}
-        </div>
-
-        <div>
-          <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-1">
-            {collection.tagline}
-          </p>
-          <p className="text-base font-bold text-white leading-tight">
-            {collection.label}
-          </p>
-          <p className="text-xs text-white/60 mt-1 line-clamp-2">
-            {collection.description}
-          </p>
-
-          <div className="mt-3 flex items-center gap-1 text-white/80 text-xs font-semibold group-hover:text-white transition-colors">
-            Explore
-            <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-          </div>
-        </div>
-      </div>
-
-      {loading && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl" />
-      )}
-    </Link>
-  );
-}
-
-// ── Big featured card ─────────────────────────────────────────────────────────
-function BigCard({
-  collection,
-  restaurants,
-  loading,
-}: {
-  collection: Collection;
-  restaurants: Restaurant[];
-  loading: boolean;
-}) {
-  const filtered = collection.filter(restaurants);
-  const count = filtered.length;
-  const top3 = filtered.slice(0, 3);
-
-  return (
-    <Link
-      href={collection.href}
-      className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col min-h-[420px] lg:min-h-full"
-    >
-      {/* Background images stacked */}
-      <div className="absolute inset-0">
-        {!loading && top3.map((r, i) => {
-          const photo = resolvePhoto(r.cover_photo?.photo_url);
-          if (!photo) return null;
-          return (
-            <Image
-              key={r.id}
-              src={photo}
-              alt={r.name}
-              fill
-              className="object-cover transition-all duration-700"
-              style={{
-                opacity: i === 0 ? 0.5 : i === 1 ? 0.2 : 0.1,
-                transform: `scale(${1 + i * 0.05})`,
-              }}
-              sizes="600px"
-            />
-          );
-        })}
-        <div className={`absolute inset-0 bg-gradient-to-br ${collection.gradient}`}
-          style={{ opacity: top3.length > 0 ? 0.75 : 1 }}
-        />
-        {/* Bottom dark fade for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/10 to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="relative flex flex-col h-full p-7 justify-between">
-        {/* Top */}
-        <div className="flex items-start justify-between">
-          <span className="text-5xl drop-shadow-lg">{collection.emoji}</span>
-          {!loading && (
-            <span className="text-xs font-bold text-white bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-              {count} {count === 1 ? "place" : "places"}
-            </span>
-          )}
-        </div>
-
-        {/* Bottom text */}
-        <div>
-          <p className="text-xs font-bold text-white/60 uppercase tracking-[0.2em] mb-2">
-            {collection.tagline}
-          </p>
-          <h3 className="text-3xl font-bold text-white leading-tight mb-3">
-            {collection.label}
-          </h3>
-          <p className="text-sm text-white/75 leading-relaxed mb-5 max-w-xs">
-            {collection.description}
-          </p>
-
-          {/* Restaurant name previews */}
-          {!loading && top3.length > 0 && (
-            <div className="flex flex-col gap-1 mb-5">
-              {top3.map((r) => (
-                <div key={r.id} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
-                  <span className="text-xs text-white/70 line-clamp-1">{r.name}, {r.city}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="inline-flex items-center gap-2 bg-white text-secondary text-sm font-bold px-5 py-2.5 rounded-xl group-hover:bg-accent transition-colors">
-            Browse collection
-            <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-          </div>
-        </div>
-      </div>
-
-      {loading && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl" />
-      )}
-    </Link>
-  );
-}
-
-// ── Main export ───────────────────────────────────────────────────────────────
-export default function CuratedCollections() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function HeroSection() {
+  const [query, setQuery] = useState("");
+  const [scrollY, setScrollY] = useState(0);
+  const [entered, setEntered] = useState(false);
+  const heroRef = useRef(null);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/v1/restaurant/?status=true&page_size=200`, {
-      cache: "no-store",
-    })
-      .then((r) => r.json())
-      .then((d) => setRestaurants(d.results ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const [featured, ...rest] = COLLECTIONS;
+  useEffect(() => {
+    const t = setTimeout(() => setEntered(true), 80);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query.trim()) {
+      window.location.href = `/menusearch?q=${encodeURIComponent(query.trim())}`;
+    }
+  };
+
+  const animClass = (delay = "") =>
+    `transition-all duration-700 ease-out ${delay} ${
+      entered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+    }`;
 
   return (
-    <section className="px-6 py-14 bg-[#fdf8f3]">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <span className="inline-block bg-secondary/10 text-secondary text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
-              ✨ Curated For You
-            </span>
-            <h2 className="text-2xl md:text-3xl font-serif text-[#1a0a00] leading-tight">
-              Browse by <span className="text-secondary italic">Collection</span>
-            </h2>
-            <p className="mt-1.5 text-sm text-secondary">
-              Handpicked restaurants for every mood and occasion.
-            </p>
-          </div>
-          <Link
-            href="/restaurants"
-            className="shrink-0 text-sm font-semibold text-secondary border border-secondary/30 rounded-xl px-4 py-2 hover:bg-secondary hover:text-white transition-all"
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Outfit:wght@300;400;500&display=swap');
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-outfit { font-family: 'Outfit', sans-serif; }
+        @keyframes scrollPulse {
+          0%,100% { transform: scaleY(1); opacity: 0.5; }
+          50% { transform: scaleY(0.5); opacity: 1; }
+        }
+        .animate-scroll-pulse { animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes grain {
+          0%,100% { transform: translate(0,0); }
+          10% { transform: translate(-2%,-3%); }
+          30% { transform: translate(3%,-1%); }
+          50% { transform: translate(-1%,3%); }
+          70% { transform: translate(2%,1%); }
+          90% { transform: translate(-3%,2%); }
+        }
+      `}</style>
+
+      <section
+        ref={heroRef}
+        className="relative w-full overflow-hidden flex flex-col items-center justify-center font-outfit"
+        style={{ height: "100svh", minHeight: "640px" }}
+      >
+        {/* Background image with parallax */}
+        <div
+          className="absolute inset-0 z-0 md:-inset-y-20 md:inset-x-0 will-change-transform"
+          style={{ transform: `translateY(${scrollY * 0.35}px)` }}
+        >
+          <img
+            src="/bg.png"
+            alt="Best Restaurants in Nepal"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%" }}
+          />
+        </div>
+
+        {/* Base overlay */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, rgba(14,6,2,0.35) 0%, rgba(14,6,2,0.55) 55%, rgba(14,6,2,0.65) 90%, rgba(14,6,2,0.75) 100%)",
+          }}
+        />
+
+        {/* Vignette overlay */}
+        <div
+          className="absolute inset-0 z-20 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at 0% 50%, rgba(155,35,53,0.18) 0%, transparent 55%), radial-gradient(ellipse at 100% 50%, rgba(201,151,58,0.12) 0%, transparent 55%)",
+          }}
+        />
+
+        {/* Grain texture */}
+        <div
+          className="absolute inset-0 z-30 pointer-events-none opacity-[0.035]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundSize: "180px",
+          }}
+        />
+
+        {/* Top fade blur */}
+        <div className="absolute top-0 left-0 right-0 h-10 z-40 pointer-events-none backdrop-blur-sm" />
+
+        {/* Decorative frame */}
+        <div
+          className="absolute inset-5 z-40 pointer-events-none"
+          style={{ border: "1px solid rgba(201,151,58,0.22)" }}
+        >
+          {/* Inner frame */}
+          <div
+            className="absolute inset-[6px]"
+            style={{ border: "1px solid rgba(201,151,58,0.1)" }}
+          />
+          {/* Top-left corner */}
+          <div
+            className="absolute -top-px -left-px w-8 h-8"
+            style={{ borderTop: "2px solid #C9973A", borderLeft: "2px solid #C9973A" }}
+          />
+          {/* Top-right corner */}
+          <div
+            className="absolute -top-px -right-px w-8 h-8"
+            style={{ borderTop: "2px solid #C9973A", borderRight: "2px solid #C9973A" }}
+          />
+          {/* Bottom-left corner */}
+          <div
+            className="absolute -bottom-px -left-px w-8 h-8"
+            style={{ borderBottom: "2px solid #C9973A", borderLeft: "2px solid #C9973A" }}
+          />
+          {/* Bottom-right corner */}
+          <div
+            className="absolute -bottom-px -right-px w-8 h-8"
+            style={{ borderBottom: "2px solid #C9973A", borderRight: "2px solid #C9973A" }}
+          />
+        </div>
+
+        {/* Main content */}
+        <div className="relative z-50 flex flex-col items-center text-center px-5 w-full max-w-[860px]">
+
+          {/* Eyebrow */}
+          <p className={`${animClass("delay-75")} flex items-center gap-3 font-outfit text-[11px] font-normal tracking-[0.32em] uppercase mb-[18px]`}
+            style={{ color: "#C9973A" }}>
+            <span className="inline-block w-7 h-px opacity-60" style={{ background: "#C9973A" }} />
+            Kathmandu · Pokhara · Beyond
+            <span className="inline-block w-7 h-px opacity-60" style={{ background: "#C9973A" }} />
+          </p>
+
+          {/* Headline */}
+          <h1
+            className={`${animClass("delay-150")} font-cormorant font-semibold  leading-[0.95] tracking-[-0.01em] mb-0`}
+            style={{ fontSize: "clamp(48px, 8vw, 96px)", color: "#F2E8D5" }}
           >
-            All restaurants →
-          </Link>
-        </div>
+            Nepal&apos;s{" "}
+            <em className="not-italic font-light text-accent " style={{  fontStyle: "italic" }}>
+              Finest
+            </em>
+            <br />
+            Restaurants
+          </h1>
 
-        {/* Magazine layout: 1 big + 5 small */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Big featured card — takes 1 col on mobile, 1 col on lg */}
-          <div className="lg:col-span-1 lg:row-span-2">
-            <BigCard collection={featured} restaurants={restaurants} loading={loading} />
+          {/* Gold rule */}
+          <div className={`${animClass("delay-200")} flex items-center gap-[14px] my-[22px]`}>
+            <span
+              className="flex-1 h-px"
+              style={{ maxWidth: 120, background: "linear-gradient(90deg, transparent, rgba(201,151,58,0.5))" }}
+            />
+            <span
+              className="w-[6px] h-[6px] rotate-45"
+              style={{ background: "#C9973A" }}
+            />
+            <span
+              className="flex-1 h-px"
+              style={{ maxWidth: 120, background: "linear-gradient(90deg, rgba(201,151,58,0.5), transparent)" }}
+            />
           </div>
 
-          {/* 5 small cards in 2x col grid */}
-          <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
-            {rest.map((c) => (
-              <SmallCard key={c.id} collection={c} restaurants={restaurants} loading={loading} />
-            ))}
+          {/* Subtitle */}
+          <p
+            className={`${animClass("delay-300")} font-outfit font-light tracking-[0.04em] leading-[1.65] max-w-[480px] mb-9`}
+            style={{ fontSize: "clamp(13px, 1.6vw, 16px)", color: "rgba(242,232,213,0.65)" }}
+          >
+            Discover, compare menus &amp; book tables at the best restaurants
+            across Nepal — from soulful dal bhat to world cuisine.
+          </p>
+
+          {/* Search */}
+          <div className={`${animClass("delay-[400ms]")} w-full max-w-[560px] mb-7`}>
+            <form onSubmit={handleSearch}>
+              <div
+                className="flex items-center rounded-sm overflow-hidden backdrop-blur-xl transition-colors"
+                style={{
+                  background: "rgba(242,232,213,0.08)",
+                  border: "1px solid rgba(201,151,58,0.35)",
+                }}
+              >
+                <div className="px-4 flex-shrink-0" style={{ color: "rgba(201,151,58,0.7)" }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M16.5 16.5L21 21" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search a dish — momo, thakali, sekuwa…"
+                  className="flex-1 bg-transparent border-none outline-none font-outfit font-light tracking-[0.04em] text-sm py-4"
+                  style={{ color: "#F2E8D5" }}
+                />
+                <button
+                  type="submit"
+                  className="flex-shrink-0 border-none px-7 h-[54px] cursor-pointer font-outfit text-[11px] font-medium tracking-[0.2em] uppercase transition-colors hover:opacity-90"
+                  style={{ background: "#C9973A", color: "#1A0D06" }}
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+
+            {/* Pills */}
+            <div className="flex flex-wrap gap-2 justify-center mt-3">
+              {POPULAR_SEARCHES.map((tag) => (
+                <button
+                  key={tag}
+                  className="font-outfit text-[11px] font-normal tracking-[0.1em] px-[14px] py-[5px] rounded-sm cursor-pointer transition-all"
+                  style={{
+                    color: "rgba(242,232,213,0.5)",
+                    border: "1px solid rgba(242,232,213,0.12)",
+                    background: "transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLButtonElement).style.color = "#E8B85A";
+                    (e.target as HTMLButtonElement).style.borderColor = "rgba(201,151,58,0.4)";
+                    (e.target as HTMLButtonElement).style.background = "rgba(201,151,58,0.06)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLButtonElement).style.color = "rgba(242,232,213,0.5)";
+                    (e.target as HTMLButtonElement).style.borderColor = "rgba(242,232,213,0.12)";
+                    (e.target as HTMLButtonElement).style.background = "transparent";
+                  }}
+                  onClick={() => {
+                    setQuery(tag);
+                    window.location.href = `/menusearch?q=${encodeURIComponent(tag)}`;
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* CTAs */}
+          <div className={`${animClass("delay-500")} flex gap-4 flex-wrap justify-center mt-2 max-sm:flex-col max-sm:items-center`}>
+            <Link
+              href="/restaurants"
+              className="inline-flex items-center gap-[10px] font-outfit text-[12px] font-medium tracking-[0.22em] uppercase px-[38px] py-[15px] rounded-sm transition-all hover:-translate-y-0.5 hover:opacity-90"
+              style={{ background: "#C9973A", color: "#1A0D06" }}
+            >
+              Browse Restaurants
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[14px] h-[14px]">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            <Link
+              href="/menusearch"
+              className="inline-flex items-center gap-[10px] font-outfit text-[12px] font-normal tracking-[0.22em] uppercase px-[18px] py-[2px] rounded-sm transition-all hover:-translate-y-0.5 max-sm:w-full max-sm:justify-center"
+              style={{
+                border: "1px solid rgba(242,232,213,0.3)",
+                color: "#F2E8D5",
+                background: "transparent",
+              }}
+            >
+              Compare Menus
+            </Link>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* Stats bar */}
+        <div
+          className={`absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center transition-opacity duration-700 delay-700 ${entered ? "opacity-100" : "opacity-0"}`}
+        >
+          {STATS.map((s, i) => (
+            <div
+              key={s.label}
+              className="text-center px-9 max-sm:px-5 relative"
+            >
+              {i > 0 && (
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-7"
+                  style={{ background: "rgba(201,151,58,0.3)" }}
+                />
+              )}
+              <span
+                className="font-cormorant font-semibold text-[28px] leading-none block"
+                style={{ color: "#E8B85A" }}
+              >
+                {s.value}
+              </span>
+              <span
+                className="font-outfit font-light text-[10px] tracking-[0.25em] uppercase block mt-1"
+                style={{ color: "rgba(242,232,213,0.4)" }}
+              >
+                {s.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Scroll indicator */}
+        <div
+          className={`absolute bottom-[38px] right-11 z-50 flex-col items-center gap-2 transition-opacity duration-700 delay-1000 hidden sm:flex ${entered ? "opacity-100" : "opacity-0"}`}
+        >
+          <span
+            className="font-outfit text-[9px] tracking-[0.3em] uppercase"
+            style={{ color: "rgba(201,151,58,0.5)", writingMode: "vertical-rl" }}
+          >
+            Scroll
+          </span>
+          <span
+            className="w-px h-10 animate-scroll-pulse"
+            style={{ background: "linear-gradient(to bottom, rgba(201,151,58,0.5), transparent)" }}
+          />
+        </div>
+      </section>
+    </>
   );
 }

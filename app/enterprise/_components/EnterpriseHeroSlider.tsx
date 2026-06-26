@@ -100,7 +100,7 @@ export default function EnterpriseHeroSlider({ photos, restaurant }: Props) {
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`rounded-full transition-all duration-300 ${
-                  i === current ? 'w-6 h-2 bg-orange-500' : 'w-2 h-2 bg-white/40'
+                  i === current ? 'w-6 h-2 bg-accent-500' : 'w-2 h-2 bg-white/40'
                 }`}
               />
             ))}
@@ -117,7 +117,7 @@ export default function EnterpriseHeroSlider({ photos, restaurant }: Props) {
 function HeroContent({ restaurant }: { restaurant: Props['restaurant'] }) {
   return (
     <div className="relative z-20 w-full max-w-6xl mx-auto px-6 pb-20">
-      <div className="inline-flex items-center gap-2 bg-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+      <div className="inline-flex items-center gap-2 bg-accent-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
         <UtensilsCrossed size={12} />
         {restaurant?.city ?? 'Fine Dining'}
       </div>

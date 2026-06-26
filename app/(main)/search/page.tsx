@@ -64,7 +64,7 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200 bg-gradient-to-br from-accent to-orange-50">
+          <div className="w-full h-full flex items-center justify-center text-5xl text-gray-200 bg-gradient-to-br from-accent to-accent-50">
             🍽️
           </div>
         )}
@@ -247,7 +247,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
             Find Your Next<br />
             <span className="text-accent">Favourite Restaurant</span>
           </h1>
-          <p className="text-white/40 text-sm text-center mb-8">
+          <p className="text-white text-sm text-center mb-8">
             Search across hundreds of venues in Nepal
           </p>
 
@@ -333,7 +333,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
           {/* Active city badge */}
           {selectedCity && (
             <div className="flex justify-center mt-3">
-              <span className="flex items-center gap-2 bg-accent/20 border border-accent/30 text-accent text-xs px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-2 bg-accent/20 border border-accent/30 text-white text-xs px-3 py-1.5 rounded-full">
                 <MapPin size={11} />
                 Showing in <strong>{selectedCity}</strong>
                 <button onClick={() => setSelectedCity('')} className="hover:text-white transition-colors">

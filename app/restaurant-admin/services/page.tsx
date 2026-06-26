@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Loader2, Save, Trash2, Plus, Utensils, Truck, Users, Star, CheckCircle } from 'lucide-react';
+import { Upload, Loader2, Save, Trash2, Plus } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { apiFetch } from '@/lib/api';
@@ -33,7 +33,6 @@ interface ServicesData {
 
 export default function RestaurantServicesAdminPage() {
   const { profile } = useAuth();
-  const router = useRouter();
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -196,11 +195,8 @@ export default function RestaurantServicesAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f4ee]">
-    
-
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-primary/10">
+          <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-secondary">Services Page Editor</h1>
@@ -217,7 +213,7 @@ export default function RestaurantServicesAdminPage() {
         </div>
 
         {message && (
-          <div className={`p-4 rounded-lg ${message.startsWith('✓') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          <div className={`p-4 rounded-lg ${message.startsWith('✓') ? 'bg-accent-50 text-accent-700' : 'bg-red-50 text-red-700'}`}>
             {message}
           </div>
         )}

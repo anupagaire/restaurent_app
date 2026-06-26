@@ -51,42 +51,42 @@ export default function RestaurantNavbar({
         <div className="hidden md:flex items-center gap-4">
                     <Link
             href={base}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             Home
           </Link>
 
           <Link
             href={`${base}/menu`}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             Menu
           </Link>
 
           <Link
             href={`${base}/reviews`}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             Reviews
           </Link>
 
           <Link
             href={`${base}/about-us`}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             About Us
           </Link>
 
           <Link
             href={`${base}/services`}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             Services
           </Link>
 
           <Link
             href={`${base}/gallery`}
-            className="text-sm font-medium text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
           >
             Gallery
           </Link>
@@ -103,7 +103,7 @@ export default function RestaurantNavbar({
 
             <Link
               href="/login"
-              className="px-4 py-2 rounded-full bg-primary text-accent text-sm font-semibold hover:bg-secondary transition-all shadow-sm"
+              className="px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-secondary transition-all shadow-sm"
             >
               Login
             </Link>

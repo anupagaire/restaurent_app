@@ -36,7 +36,7 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
           {/* ── Brand column ── */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-full bg-orange-500 flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-full bg-accent-500 flex items-center justify-center shrink-0">
                 <UtensilsCrossed size={20} className="text-white" />
               </div>
               <div>
@@ -69,9 +69,9 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white hover:text-orange-400 transition-colors flex items-center gap-2"
+                    className="text-sm text-white hover:text-accent-400 transition-colors flex items-center gap-2"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -96,12 +96,12 @@ export default function EnterpriseFooter({ restaurant }: { restaurant: Restauran
               )}
 
               <div className="flex items-center gap-3">
-                <Phone size={16} className="text-orange-400 shrink-0" />
+                <Phone size={16} className="text-accent-400 shrink-0" />
                 <p className="text-sm text-secondary">Contact us for reservations</p>
               </div>
 
               <div className="flex items-center gap-3">
-                <Mail size={16} className="text-orange-400 shrink-0" />
+                <Mail size={16} className="text-accent-400 shrink-0" />
                 <p className="text-sm text-secondary">
                   info@{restaurant.name?.toLowerCase().replace(/\s+/g, '')}.com
                 </p>

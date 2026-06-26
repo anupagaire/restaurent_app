@@ -143,8 +143,8 @@ export default function CustomDomainSettings() {
 
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-          <Globe size={20} className="text-orange-500" />
+        <div className="w-10 h-10 rounded-xl bg-accent-50 flex items-center justify-center">
+          <Globe size={20} className="text-accent-500" />
         </div>
         <div>
           <h3 className="font-bold text-gray-900">Custom Domain</h3>
@@ -186,14 +186,14 @@ export default function CustomDomainSettings() {
             value={domainInput}
             onChange={(e) => setDomainInput(e.target.value)}
             placeholder="www.yourrestaurant.com"
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-400"
             disabled={isVerified}
           />
           {!isVerified && (
             <button
               onClick={handleSave}
               disabled={saving || !domainInput.trim()}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors"
+              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors"
             >
               {saving ? 'Saving...' : hasDomain ? 'Update' : 'Connect'}
             </button>
@@ -216,9 +216,9 @@ export default function CustomDomainSettings() {
 
       {/* DNS TXT Record — show after domain saved */}
       {hasDomain && !isVerified && hasTxtRecord && (
-        <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-5 space-y-4">
+        <div className="rounded-2xl border border-accent-100 bg-accent-50/50 p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <AlertCircle size={16} className="text-orange-500" />
+            <AlertCircle size={16} className="text-accent-500" />
             <h4 className="font-semibold text-gray-800 text-sm">Add this DNS TXT Record</h4>
           </div>
 
@@ -230,11 +230,11 @@ export default function CustomDomainSettings() {
           {/* TXT Name */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-secondary uppercase tracking-wider">Record Name / Host</label>
-            <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
+            <div className="flex items-center gap-2 bg-white border border-accent-100 rounded-xl px-4 py-2.5">
               <code className="text-sm text-gray-800 flex-1 break-all">{data.verification_txt_name}</code>
               <button
                 onClick={() => copy(data.verification_txt_name!, 'name')}
-                className="shrink-0 text-orange-400 hover:text-orange-600 transition-colors"
+                className="shrink-0 text-accent-400 hover:text-accent-600 transition-colors"
               >
                 {copied === 'name' ? <CheckCircle2 size={15} /> : <Copy size={15} />}
               </button>
@@ -244,11 +244,11 @@ export default function CustomDomainSettings() {
           {/* TXT Value */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-secondary uppercase tracking-wider">Record Value</label>
-            <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-4 py-2.5">
+            <div className="flex items-center gap-2 bg-white border border-accent-100 rounded-xl px-4 py-2.5">
               <code className="text-xs text-gray-800 flex-1 break-all">{data.verification_txt_value}</code>
               <button
                 onClick={() => copy(data.verification_txt_value!, 'value')}
-                className="shrink-0 text-orange-400 hover:text-orange-600 transition-colors"
+                className="shrink-0 text-accent-400 hover:text-accent-600 transition-colors"
               >
                 {copied === 'value' ? <CheckCircle2 size={15} /> : <Copy size={15} />}
               </button>
@@ -256,11 +256,11 @@ export default function CustomDomainSettings() {
           </div>
 
           {/* DNS help table */}
-          <div className="bg-white rounded-xl border border-orange-100 overflow-hidden text-xs">
-            <div className="grid grid-cols-3 bg-orange-50 px-4 py-2 font-semibold text-gray-600">
+          <div className="bg-white rounded-xl border border-accent-100 overflow-hidden text-xs">
+            <div className="grid grid-cols-3 bg-accent-50 px-4 py-2 font-semibold text-gray-600">
               <span>Type</span><span>Name</span><span>Value</span>
             </div>
-            <div className="grid grid-cols-3 px-4 py-2.5 text-gray-700 border-t border-orange-50">
+            <div className="grid grid-cols-3 px-4 py-2.5 text-gray-700 border-t border-accent-50">
               <span className="font-mono font-bold">TXT</span>
               <span className="truncate font-mono">{data.verification_txt_name}</span>
               <span className="truncate font-mono">{data.verification_txt_value?.slice(0, 20)}...</span>
@@ -271,7 +271,7 @@ export default function CustomDomainSettings() {
           <button
             onClick={handleVerify}
             disabled={verifying}
-            className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
           >
             {verifying
               ? <><RefreshCw size={14} className="animate-spin" /> Checking DNS...</>
@@ -327,7 +327,7 @@ export default function CustomDomainSettings() {
               'Your enterprise site goes live on your domain!',
             ].map((step, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
-                <span className="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                   {i + 1}
                 </span>
                 {step}

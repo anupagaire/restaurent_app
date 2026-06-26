@@ -192,7 +192,7 @@ function PaymentStatusBanner({ statuses, onRefresh }: {
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <p className="font-bold text-base" style={{ color: '#92400e' }}>⏳ Payment Under Review</p>
-              <button onClick={onRefresh} className="p-1 rounded-lg hover:bg-orange-100">
+              <button onClick={onRefresh} className="p-1 rounded-lg hover:bg-accent-100">
                 <RefreshCw size={13} style={{ color: '#b45309' }} />
               </button>
             </div>
@@ -679,7 +679,7 @@ export default function SubscriptionPage() {
                 You cannot choose another plan while a payment is pending verification.
               </p>
               <button onClick={loadData}
-                className="mt-4 flex items-center gap-2 mx-auto px-4 py-2 rounded-xl text-sm border border-orange-200 hover:bg-orange-50"
+                className="mt-4 flex items-center gap-2 mx-auto px-4 py-2 rounded-xl text-sm border border-accent-200 hover:bg-accent-50"
                 style={{ color: '#b45309' }}>
                 <RefreshCw size={13} /> Check Status
               </button>

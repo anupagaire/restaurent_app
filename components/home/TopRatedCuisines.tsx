@@ -135,7 +135,7 @@ function CuisineCard({
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-accent bg-white shadow-sm hover:shadow-lg hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1"
     >
       {/* Top photo area */}
-      <div className="relative h-36 w-full bg-gradient-to-br from-accent to-orange-50 overflow-hidden">
+      <div className="relative h-36 w-full bg-gradient-to-br from-accent to-accent-50 overflow-hidden">
         {loading ? (
           <div className="h-full w-full animate-pulse bg-accent/60" />
         ) : item?.photo ? (

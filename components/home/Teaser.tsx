@@ -4,11 +4,11 @@ import Link from "next/link";
 export default function Teaser() {
   return (
     <div className="max-w-xl mx-auto mt-8">
-      <div className="relative overflow-hidden rounded-3xl border border-accent bg-gradient-to-br from-accent via-orange-50 to-white p-6 text-center shadow-lg">
+      <div className="relative overflow-hidden rounded-3xl border border-accent bg-gradient-to-br from-accent via-accent-50 to-white p-6 text-center shadow-lg">
 
         {/* Background decoration */}
         <div className="absolute -top-12 -right-12 h-28 w-28 rounded-full bg-accent/30 blur-3xl" />
-        <div className="absolute -bottom-12 -left-12 h-28 w-28 rounded-full bg-orange-200/30 blur-3xl" />
+        <div className="absolute -bottom-12 -left-12 h-28 w-28 rounded-full bg-accent-200/30 blur-3xl" />
 
         <div className="relative">
           <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent">

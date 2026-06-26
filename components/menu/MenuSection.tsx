@@ -106,8 +106,7 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
     <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
       <button
         onClick={onOpen}
-        className="flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-2xl w-full max-w-sm"
-        style={{ background: '#513012', color: '#fff' }}
+        className="flex items-center bg-accent text-white justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-2xl w-full max-w-sm"
       >
         <span className="flex items-center gap-2 text-sm font-semibold">
           <span className="bg-white/20 rounded-lg px-2 py-0.5 text-xs font-bold">{totalItems}</span>
@@ -197,7 +196,7 @@ const canSubmit = cart.length > 0 && deliveryReady && (isLoggedIn || authReady);
                   {c.item.category && <p className="text-xs text-secondary">{c.item.category}</p>}
                 </div>
                 <div className="flex items-center gap-2 mx-3">
-                  <button onClick={() => onUpdateQty(c.item.id, -1)} className="w-7 h-7 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-secondary"><Minus size={11} /></button>
+                  <button onClick={() => onUpdateQty(c.item.id, -1)} className="w-7 h-7 rounded-full bg-accent-50 border border-accent-200 flex items-center justify-center text-secondary"><Minus size={11} /></button>
                   <span className="text-sm font-bold text-gray-900 w-4 text-center">{c.quantity}</span>
                   <button onClick={() => onUpdateQty(c.item.id, 1)} className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white"><Plus size={11} /></button>
                 </div>
@@ -323,7 +322,7 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
       >
        <div className="relative w-full h-40 bg-gray-50">
           {showPlaceholder ? (
-            <div className="w-full h-full min-h-[112px] flex items-center justify-center text-4xl bg-orange-50">
+            <div className="w-full h-full min-h-[112px] flex items-center justify-center text-4xl bg-accent-50">
               {getCategoryEmoji(item.category)}
             </div>
           ) : (
@@ -335,7 +334,7 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
 
         <div className="flex flex-col flex-1 p-3 sm:p-4 min-w-0">
           {item.category && (
-            <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit mb-1.5 uppercase tracking-wide">
+            <span className="text-[10px] font-semibold text-accent-600 bg-accent-50 px-2 py-0.5 rounded-full w-fit mb-1.5 uppercase tracking-wide">
               {item.category}
             </span>
           )}
@@ -352,12 +351,12 @@ function MenuCard({ item, restaurantId, qty, onAdd, onUpdate }: {
     {summary.avgRating.toFixed(1)} ★
     <span className="font-normal text-green-100">({summary.count})</span>
   </span>
-  <span className="text-[10px] text-orange-500 font-semibold flex items-center gap-0.5">
+  <span className="text-[10px] text-accent-500 font-semibold flex items-center gap-0.5">
     ✏️ Write a review & rate
   </span>
 </span>
 ) : (
-  <span className="inline-flex items-center gap-1 bg-orange-50 border border-orange-200 text-orange-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+  <span className="inline-flex items-center gap-1 bg-accent-50 border border-accent-200 text-accent-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
     ✏️ Write a review
   </span>
 )}

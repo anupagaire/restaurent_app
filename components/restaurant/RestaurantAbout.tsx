@@ -141,12 +141,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               >
                 <Link
                   href={`/restaurants/${slug}`}
-                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                  style={{
-                    background: 'linear-gradient(135deg, #c8914a 0%, #a8722e 100%)',
-                    color: '#0e0b07',
-                    boxShadow: '0 4px 20px rgba(200,145,74,0.3)',
-                  }}
+                  className="inline-flex items-center bg-accent text-white gap-2 px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                  
                 >
                   Reserve a Table
                   <ChevronRight className="w-4 h-4" />
@@ -327,7 +323,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                   className="inline-flex items-center gap-2 mb-6"
                 >
                   <div className="w-5 h-px bg-accent/60" />
-                  <span className="text-accent/60 text-[10px] tracking-[0.4em] uppercase">Reserve Your Experience</span>
+                  <span className="text-white text-[10px] tracking-[0.4em] uppercase">Reserve Your Experience</span>
                   <div className="w-5 h-px bg-accent/60" />
                 </motion.div>
 
@@ -340,7 +336,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                   }}
                 >
                   Ready to Dine{' '}
-                  <span style={{ color: '#c8914a', fontStyle: 'italic' }}>With Us?</span>
+                  <span className="text-accent"style={{  fontStyle: 'italic' }}>With Us?</span>
                 </motion.h3>
 
                 <motion.p
@@ -357,12 +353,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                 >
                   <Link
                     href={`/restaurants/${slug}`}
-                    className="inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105"
-                    style={{
-                      background: 'linear-gradient(135deg, #c8914a, #a8722e)',
-                      color: '#0e0b07',
-                      boxShadow: '0 4px 24px rgba(200,145,74,0.35)',
-                    }}
+                    className="inline-flex items-center bg-accent text-white justify-center gap-2 px-9 py-3.5 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105"
                   >
                     Reserve a Table
                     <ChevronRight className="w-4 h-4" />

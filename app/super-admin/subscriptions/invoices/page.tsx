@@ -84,12 +84,12 @@ function InvoicePreview({ payment, restaurant }: {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white tracking-wide">INVOICE</h1>
-            <p className="text-orange-200 mt-1 text-sm">{invoiceNo}</p>
+            <p className="text-accent-200 mt-1 text-sm">{invoiceNo}</p>
           </div>
           <div className="text-right">
             <p className="text-white font-bold text-lg">Restaurant SaaS</p>
-            <p className="text-orange-200 text-xs mt-0.5">Subscription Management</p>
-            <p className="text-orange-200 text-xs">Kathmandu, Nepal</p>
+            <p className="text-accent-200 text-xs mt-0.5">Subscription Management</p>
+            <p className="text-accent-200 text-xs">Kathmandu, Nepal</p>
           </div>
         </div>
       </div>

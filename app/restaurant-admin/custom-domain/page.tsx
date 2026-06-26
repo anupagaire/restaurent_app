@@ -165,7 +165,7 @@ export default function CustomDomainPage() {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-[300px]">
-        <RefreshCw size={24} className="animate-spin text-orange-400" />
+        <RefreshCw size={24} className="animate-spin text-accent-400" />
       </div>
     )
   }
@@ -177,7 +177,7 @@ export default function CustomDomainPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Globe size={22} className="text-orange-500" />
+            <Globe size={22} className="text-accent-500" />
             Custom Domain
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -205,13 +205,13 @@ export default function CustomDomainPage() {
               <div className={`flex items-center gap-2 flex-1 ${i > 0 ? 'pl-3' : ''}`}>
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                   isDone ? 'bg-green-500 text-white' :
-                  isActive ? 'bg-orange-500 text-white' :
+                  isActive ? 'bg-accent-500 text-white' :
                   'bg-gray-100 text-gray-400'
                 }`}>
                   {isDone ? <CheckCircle2 size={14} /> : i + 1}
                 </div>
                 <span className={`text-xs font-medium ${
-                  isActive ? 'text-orange-600' : isDone ? 'text-green-600' : 'text-gray-400'
+                  isActive ? 'text-accent-600' : isDone ? 'text-green-600' : 'text-gray-400'
                 }`}>
                   {s.label}
                 </span>
@@ -247,13 +247,13 @@ export default function CustomDomainPage() {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !saving && input.trim() && handleConnect()}
               placeholder="www.yourrestaurant.com"
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-400"
               autoFocus={changingDomain}
             />
             <button
               onClick={handleConnect}
               disabled={saving || !input.trim()}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors whitespace-nowrap"
+              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors whitespace-nowrap"
             >
               {saving ? 'Connecting...' : 'Connect'}
             </button>
@@ -289,7 +289,7 @@ export default function CustomDomainPage() {
               {/* Change → warn user token will change */}
               <button
                 onClick={() => setShowChangeWarning(true)}
-                className="text-xs text-gray-400 hover:text-orange-500 underline transition-colors"
+                className="text-xs text-gray-400 hover:text-accent-500 underline transition-colors"
               >
                 Change
               </button>
@@ -305,9 +305,9 @@ export default function CustomDomainPage() {
           </div>
 
           {/* TXT record */}
-          <div className="bg-orange-50 rounded-2xl border border-orange-100 p-5 space-y-4">
+          <div className="bg-accent-50 rounded-2xl border border-accent-100 p-5 space-y-4">
             <div className="flex items-center gap-2">
-              <AlertCircle size={16} className="text-orange-500 shrink-0" />
+              <AlertCircle size={16} className="text-accent-500 shrink-0" />
               <h2 className="font-semibold text-gray-800">Add This TXT Record to Your DNS</h2>
             </div>
 
@@ -316,19 +316,19 @@ export default function CustomDomainPage() {
             </p>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-orange-100 overflow-hidden">
-              <div className="grid grid-cols-3 bg-orange-50/80 px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="bg-white rounded-xl border border-accent-100 overflow-hidden">
+              <div className="grid grid-cols-3 bg-accent-50/80 px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 <span>Type</span><span>Name / Host</span><span>Value</span>
               </div>
-              <div className="grid grid-cols-3 px-4 py-3 border-t border-orange-50 gap-2 items-center">
-                <span className="font-mono font-bold text-orange-600 text-sm">TXT</span>
+              <div className="grid grid-cols-3 px-4 py-3 border-t border-accent-50 gap-2 items-center">
+                <span className="font-mono font-bold text-accent-600 text-sm">TXT</span>
                 <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_name}</span>
                 <span className="font-mono text-xs text-gray-700 truncate">{domain.verification_txt_value}</span>
               </div>
             </div>
 
             {/* Vercel hint */}
-            <div className="bg-white rounded-xl border border-orange-100 p-3 text-xs text-gray-600 space-y-1.5">
+            <div className="bg-white rounded-xl border border-accent-100 p-3 text-xs text-gray-600 space-y-1.5">
               <p className="font-semibold text-gray-700">🔷 If using Vercel DNS:</p>
               <div className="font-mono bg-gray-50 rounded p-2 text-[11px] space-y-0.5">
                 <p>Name: <strong>{domain.verification_txt_name?.split('.')[0] ?? '@'}</strong></p>
@@ -342,18 +342,18 @@ export default function CustomDomainPage() {
             <div className="space-y-2.5">
               <div>
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Name / Host</label>
-                <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2.5">
+                <div className="flex items-center gap-2 bg-white border border-accent-100 rounded-xl px-3 py-2.5">
                   <code className="text-sm text-gray-800 flex-1 break-all">{domain.verification_txt_name}</code>
-                  <button onClick={() => copy(domain.verification_txt_name!, 'name')} className="text-orange-400 hover:text-orange-600 shrink-0 p-1">
+                  <button onClick={() => copy(domain.verification_txt_name!, 'name')} className="text-accent-400 hover:text-accent-600 shrink-0 p-1">
                     {copied === 'name' ? <CheckCircle2 size={14} className="text-green-500" /> : <Copy size={14} />}
                   </button>
                 </div>
               </div>
               <div>
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Value</label>
-                <div className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2.5">
+                <div className="flex items-center gap-2 bg-white border border-accent-100 rounded-xl px-3 py-2.5">
                   <code className="text-xs text-gray-800 flex-1 break-all">{domain.verification_txt_value}</code>
-                  <button onClick={() => copy(domain.verification_txt_value!, 'value')} className="text-orange-400 hover:text-orange-600 shrink-0 p-1">
+                  <button onClick={() => copy(domain.verification_txt_value!, 'value')} className="text-accent-400 hover:text-accent-600 shrink-0 p-1">
                     {copied === 'value' ? <CheckCircle2 size={14} className="text-green-500" /> : <Copy size={14} />}
                   </button>
                 </div>
@@ -364,7 +364,7 @@ export default function CustomDomainPage() {
             <button
               onClick={() => setShowVerifyConfirm(true)}
               disabled={verifying}
-              className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold py-3 rounded-xl text-sm disabled:opacity-40 transition-colors"
             >
               {verifying
                 ? <><RefreshCw size={14} className="animate-spin" /> Checking DNS...</>
@@ -418,7 +418,7 @@ export default function CustomDomainPage() {
           <div className="flex items-center gap-3 pt-1">
             <button
               onClick={() => setShowChangeWarning(true)}
-              className="text-sm text-gray-500 hover:text-orange-500 underline transition-colors"
+              className="text-sm text-gray-500 hover:text-accent-500 underline transition-colors"
             >
               Change domain
             </button>
@@ -446,7 +446,7 @@ export default function CustomDomainPage() {
               'Your enterprise website goes live on your domain!',
             ].map((text, i) => (
               <li key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                <span className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold shrink-0">
+                <span className="w-6 h-6 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center text-xs font-bold shrink-0">
                   {i + 1}
                 </span>
                 {text}
@@ -465,8 +465,8 @@ export default function CustomDomainPage() {
             className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4"
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto">
-              <Shield size={22} className="text-orange-500" />
+            <div className="w-12 h-12 rounded-2xl bg-accent-50 flex items-center justify-center mx-auto">
+              <Shield size={22} className="text-accent-500" />
             </div>
 
             <div className="text-center">
@@ -476,10 +476,10 @@ export default function CustomDomainPage() {
               </p>
             </div>
 
-            <div className="bg-orange-50 rounded-xl border border-orange-100 p-3 space-y-2 text-xs">
+            <div className="bg-accent-50 rounded-xl border border-accent-100 p-3 space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-gray-400 font-medium">Type</span>
-                <span className="font-mono font-bold text-orange-600">TXT</span>
+                <span className="font-mono font-bold text-accent-600">TXT</span>
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-gray-400 font-medium shrink-0">Name</span>
@@ -508,7 +508,7 @@ export default function CustomDomainPage() {
               </button>
               <button
                 onClick={handleVerify}
-                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                className="flex-1 bg-accent-500 hover:bg-accent-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors"
               >
                 Yes, Verify!
               </button>

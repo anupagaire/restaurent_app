@@ -399,7 +399,7 @@ const sortedRestaurants = [...restaurants].sort((a, b) => {
         className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
           sortBy === opt.key
             ? 'bg-secondary text-white'
-            : 'text-secondary hover:text-secondary hover:bg-orange-50'
+            : 'text-secondary hover:text-secondary hover:bg-accent-50'
         }`}
       >
         <span>{opt.icon}</span>

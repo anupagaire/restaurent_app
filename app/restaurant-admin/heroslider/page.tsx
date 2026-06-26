@@ -143,7 +143,7 @@ formData.append('purpose', 'slider')
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Images size={22} className="text-orange-500" />
+          <Images size={22} className="text-accent-500" />
           Hero Slider Photos
         </h1>
         <p className="text-secondary text-sm mt-1">
@@ -165,7 +165,7 @@ formData.append('purpose', 'slider')
 
       {/* Upload area */}
       <div
-        className="border-2 border-dashed border-orange-200 rounded-2xl p-10 text-center cursor-pointer hover:border-orange-400 hover:bg-orange-50/30 transition-all"
+        className="border-2 border-dashed border-accent-200 rounded-2xl p-10 text-center cursor-pointer hover:border-accent-400 hover:bg-accent-50/30 transition-all"
         onClick={() => fileRef.current?.click()}
         onDragOver={e => e.preventDefault()}
         onDrop={e => { e.preventDefault(); handleUpload(e.dataTransfer.files) }}
@@ -180,19 +180,19 @@ formData.append('purpose', 'slider')
         />
         {uploading ? (
           <div className="flex flex-col items-center gap-3">
-            <Loader2 size={32} className="animate-spin text-orange-400" />
+            <Loader2 size={32} className="animate-spin text-accent-400" />
             <p className="text-sm text-secondary">Uploading photos...</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center">
-              <Plus size={24} className="text-orange-400" />
+            <div className="w-14 h-14 rounded-2xl bg-accent-50 flex items-center justify-center">
+              <Plus size={24} className="text-accent-400" />
             </div>
             <div>
               <p className="font-semibold text-gray-700">Click to upload or drag & drop</p>
               <p className="text-sm text-secondary mt-1">PNG, JPG, WEBP · Multiple files allowed</p>
             </div>
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-orange-500 text-white rounded-full text-sm font-medium">
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-accent-500 text-white rounded-full text-sm font-medium">
               <Upload size={13} /> Choose Photos
             </span>
           </div>
@@ -213,7 +213,7 @@ formData.append('purpose', 'slider')
       {/* Photos grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 size={24} className="animate-spin text-orange-400" />
+          <Loader2 size={24} className="animate-spin text-accent-400" />
         </div>
       ) : photos.length === 0 ? (
         <div className="bg-gray-50 rounded-2xl p-12 text-center border border-gray-100">

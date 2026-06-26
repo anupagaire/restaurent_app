@@ -59,27 +59,29 @@ function BrandSection({ brand }: { brand: Brand }) {
         className="flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity group"
       >
         {brand.logo ? (
-          <div className="relative w-20 h-20">
-            <Image
-              src={brand.logo}
-              alt={brand.name}
-              fill
-              sizes="(max-width: 768px) 112px, 160px"
-              className="object-contain transition-transform group-hover:scale-105"
-            />
-          </div>
+          <div className="relative w-62 h-42">
+  <Image
+    src={brand.logo}
+    alt={brand.name}
+    fill
+    sizes="158px"
+    className="object-contain transition-transform group-hover:scale-105"
+  />
+</div>
         ) : null}
         
-        <h2 className="text-3xl font-bold text-accent group-hover:text-white transition-colors">
+        <h2 className="text-3xl font-bold text-accent group-hover:text-primary transition-colors">
           {brand.name}
         </h2>
       </Link>
 
-      <p className="text-white/70 text-sm leading-relaxed">
-        {brand.description}
-        <br />
-        {brand.tagline}
-      </p>
+    
+
+<div
+  className="text-primary/70 text-sm leading-relaxed"
+  dangerouslySetInnerHTML={{ __html: brand.description }}
+/>
+<p className="text-primary/70 text-sm mt-1">{brand.tagline}</p>
     </div>
   );
 }
@@ -89,7 +91,7 @@ function LinksColumn({ column }: { column: Column }) {
   return (
     <div>
       <h3 className="font-semibold mb-4 text-lg text-accent">{column.title}</h3>
-      <div className="space-y-3 text-white/70">
+      <div className="space-y-3 text-primary/70">
         {items.map((item) => (
           <Link 
             key={item.href} 
@@ -109,7 +111,7 @@ function ContactColumn({ column }: { column: Column }) {
   return (
     <div>
       <h3 className="font-semibold mb-4 text-lg text-accent">{column.title}</h3>
-      <div className="space-y-4 text-white/70">
+      <div className="space-y-4 text-primary/70">
         <div className="flex items-start gap-3">
           <MapPin className="mt-1 w-5 h-5 shrink-0 text-accent" />
           <div>
@@ -140,7 +142,7 @@ export default function Footer({ data }: FooterProps) {
   if (!data) return null;
 
   return (
-    <footer className="bg-primary text-white">
+    <footer className="bg-primary/10 text-black" >
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <BrandSection brand={data.brand} />
@@ -153,8 +155,8 @@ export default function Footer({ data }: FooterProps) {
           )}
         </div>
 
-        <div className="border-t border-accent/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/70">
-          <span>© {new Date().getFullYear()} Food Nepal. All rights reserved.</span>
+        <div className="border-t border-accent/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm ">
+          <span>© {new Date().getFullYear()} Yummy Nepal. All rights reserved.</span>
           {data.socials.length > 0 && (
             <div className="flex items-center gap-4">
               {data.socials.map((s) => (
@@ -164,7 +166,7 @@ export default function Footer({ data }: FooterProps) {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   aria-label={s.name} 
-                  className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center hover:bg-accent hover:text-primary transition-all"
+                  className="w-9 h-9 rounded-full bg-secondary/30 flex items-center justify-center hover:bg-accent hover:text-primary transition-all"
                 >
                   <SocialIcon icon={s.icon} />
                 </a>
