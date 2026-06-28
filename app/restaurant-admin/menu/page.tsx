@@ -147,8 +147,12 @@ const fetchAll = async () => {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err?.detail || 'Failed to update table count');
-      }
+// Extract field-level errors like errors.table_count[0]
+const fieldError = err?.errors?.table_count?.[0] 
+  || err?.errors?.non_field_errors?.[0]
+  || err?.detail 
+  || 'Failed to update table count';
+throw new Error(fieldError);      }
       await fetchRestaurant(restaurantId);
       setTableCountInput('');
     } catch (err: any) {

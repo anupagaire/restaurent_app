@@ -12,7 +12,6 @@ import { LogOut } from "lucide-react";
 interface NavLink { name: string; url: string; }
 interface NavButton { text: string; url: string; }
 interface SiteLogo { image: string; alt: string; }
-
 interface NavbarProps {
   logo?: SiteLogo;
   links?: NavLink[];
@@ -99,7 +98,17 @@ const resolvedLogo = {
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [searchQuery]);
+const handleProfileClick = () => {
+  const role = currentUser?.role?.toLowerCase();
 
+  if (role === "super_admin") {
+    router.push("/super-admin");
+  } else if (role === "customer") {
+    router.push("/customer");
+  } else {
+    router.push("/restaurant-admin");
+  }
+};
   const handleSearch = (query?: string) => {
     const q = (query ?? searchQuery).trim();
     if (!q) return;
@@ -166,11 +175,13 @@ const resolvedLogo = {
 
   return (
     <nav
-className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300 
+
+
+className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
   ${
   scrolled || darkBg
-    ? 'bg-primary/10 text-black backdrop-blur-xl border-b border-white/10'
-    : ' bg-primary/10 backdrop-blur-sm'
+    ? 'bg-primary/10 backdrop-blur-xl shadow-lg'
+    : 'bg-white   backdrop-blur-sm shadow-md'
 }`}
 >
       <div className="max-w-screen-6xl mx-auto  sm:px-6 lg:px-15">
@@ -221,15 +232,18 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300
             </div>
             {isAuthenticated && currentUser ? (
   <>
-    <span className="text-primary text-xl font-bold whitespace-nowrap">
-      Hi, {currentUser.name.split(' ')[0]}
-    </span>
+    <span
+  onClick={handleProfileClick}
+  className="text-primary text-xl font-bold whitespace-nowrap"
+>
+  Hi {currentUser.name.split(" ")[0]}
+</span>
     <button
   onClick={() => {
     logout();
     router.push("/");
   }}
-  className="p-2 rounded-full border border-primary text-white hover:bg-white/10 transition"
+  className="p-2 rounded-full border border-primary  hover:bg-white/10 transition"
   title="Logout"
 >
   <LogOut size={18} />
@@ -287,7 +301,7 @@ className={`fixed top-0 left-0 right-0 z-50  transition-all duration-300
           logout();
           router.push("/");
         }}
-        className="flex items-center justify-center w-8 h-8 rounded-full text-white hover:bg-white/10 transition"
+        className="flex items-center justify-center w-8 h-8 rounded-full  hover:bg-white/10 transition"
         title="Logout"
       >
         <LogOut size={16} />

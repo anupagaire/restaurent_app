@@ -2,9 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Zap, Crown, Gift, Tag, ArrowRight, X, Loader2 } from 'lucide-react';
+import { Check, Zap, Crown, Gift, Tag, ArrowRight, X,Dot, Loader2 } from 'lucide-react';
 import Footer from '@/components/layout/Footer';
 import { plansApi, promosApi, Plan, PromoValidateResult } from '@/lib/subscription-api';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function parseLines(val: any): string[] {
+  if (!val) return [];
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (typeof parsed === 'object' && parsed !== null)
+        return Object.entries(parsed).map(([k, v]) => `${k}: ${v}`);
+    } catch {}
+    return val.split('\n').filter(Boolean);
+  }
+  if (typeof val === 'object' && val !== null)
+    return Object.entries(val).map(([k, v]) => `${k}: ${v}`);
+  return [];
+}
 
 function planIcon(plan: Plan) {
   if (plan.is_trial) return <Gift size={22} />;
@@ -27,6 +44,8 @@ function durationLabel(days: number) {
   if (days <= 370) return '1 Year';
   return `${days} Days`;
 }
+
+// ─── Promo Input ──────────────────────────────────────────────────────────────
 
 function PromoInput({
   plans,
@@ -82,7 +101,7 @@ function PromoInput({
             className="w-full pl-9 pr-4 py-3 rounded-xl text-sm border outline-none"
             style={{
               borderColor:
-                status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : 'secondary',
+                status === 'valid' ? '#16a34a' : status === 'invalid' ? '#dc2626' : '#e5e7eb',
               background: '#fff',
             }}
           />
@@ -109,6 +128,8 @@ function PromoInput({
   );
 }
 
+// ─── Plan Card ────────────────────────────────────────────────────────────────
+
 function PlanCard({
   plan,
   promoResult,
@@ -123,9 +144,8 @@ function PlanCard({
   const finalPrice = promoResult ? parseFloat(promoResult.final_amount) : price;
   const hasDiscount = promoResult && finalPrice < price;
   const isFree = price === 0 || plan.is_trial;
-  const features = plan.features
-    ? String(plan.features).split('\n').filter(Boolean)
-    : [];
+  const features = parseLines(plan.features);
+  const limits = parseLines(plan.limits);
 
   return (
     <div
@@ -145,7 +165,7 @@ function PlanCard({
         </div>
         <h3
           className="font-bold text-xl mb-1"
-          style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
+          style={{ color: '#513012', fontFamily: 'Georgia, serif' }}
         >
           {plan.name}
         </h3>
@@ -159,11 +179,11 @@ function PlanCard({
             </span>
           ) : (
             <>
-              <span className="text-4xl font-bold" style={{ color: 'secondary' }}>
+              <span className="text-4xl font-bold" style={{ color: '#513012' }}>
                 Rs. {(hasDiscount ? finalPrice : price).toLocaleString()}
               </span>
               {hasDiscount && (
-                <span className="text-lg text-secondary line-through mb-1">
+                <span className="text-lg text-gray-400 line-through mb-1">
                   Rs. {price.toLocaleString()}
                 </span>
               )}
@@ -193,9 +213,10 @@ function PlanCard({
         </button>
       </div>
 
+      {/* Features */}
       {features.length > 0 && (
         <>
-          <div className="mx-6" style={{ borderTop: '1px dashed secondary' }} />
+          <div className="mx-6 border-t border-dashed border-gray-200" />
           <div className="p-6 pt-4 flex-1">
             <p className="text-xs font-bold uppercase tracking-widest mb-3 text-secondary">
               What&apos;s included
@@ -211,9 +232,31 @@ function PlanCard({
           </div>
         </>
       )}
+
+      {/* Limits */}
+      {limits.length > 0 && (
+        <>
+          <div className="mx-6 border-t border-dashed border-gray-200" />
+          <div className="px-6 pb-6 pt-4">
+            <p className="text-xs font-bold uppercase tracking-widest mb-3 text-secondary">
+              Plan limits
+            </p>
+            <ul className="space-y-2">
+              {limits.map((l) => (
+                <li key={l} className="flex items-start gap-2 text-sm text-gray-500">
+                  <Dot size={13} className="mt-0.5 shrink-0 text-gray-400" />
+                  {l}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+
+// ─── Register Modal ───────────────────────────────────────────────────────────
 
 function RegisterModal({
   plan,
@@ -245,7 +288,6 @@ function RegisterModal({
         }}
       >
         <div className="p-8 relative">
-          {/* Close */}
           <button
             onClick={onClose}
             className="absolute top-4 right-4"
@@ -254,7 +296,6 @@ function RegisterModal({
             <X size={18} />
           </button>
 
-          {/* Icon */}
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
             style={{ background: `${accent}15`, color: accent }}
@@ -262,10 +303,9 @@ function RegisterModal({
             {planIcon(plan)}
           </div>
 
-          {/* Text */}
           <h2
             className="font-bold text-xl mb-2"
-            style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}
+            style={{ color: '#513012', fontFamily: 'Georgia, serif' }}
           >
             Register First!
           </h2>
@@ -280,7 +320,6 @@ function RegisterModal({
             from your dashboard after registration.
           </p>
 
-          {/* Buttons */}
           <button
             onClick={() => router.push('/register-restaurant')}
             className="w-full py-3.5 rounded-2xl font-bold text-sm mb-3 flex items-center justify-center gap-2"
@@ -301,6 +340,8 @@ function RegisterModal({
     </>
   );
 }
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PricingPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -333,7 +374,7 @@ export default function PricingPage() {
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold mb-4"
-            style={{ color: 'secondary', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
+            style={{ color: '#513012', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
           >
             Simple, Honest Pricing
           </h1>
@@ -342,7 +383,6 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Promo code input */}
         {!loading && plans.length > 0 && (
           <div className="px-6">
             <PromoInput
@@ -358,7 +398,6 @@ export default function PricingPage() {
           </div>
         )}
 
-        {/* Plans grid */}
         <div className="px-6 pb-20 max-w-7xl mx-auto">
           {loading ? (
             <div className="flex justify-center py-20">
@@ -406,4 +445,3 @@ export default function PricingPage() {
     </>
   );
 }
-

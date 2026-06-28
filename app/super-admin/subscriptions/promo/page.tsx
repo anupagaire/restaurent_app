@@ -15,6 +15,13 @@ function isExpired(d: string) {
   return new Date(d) < new Date();
 }
 
+function getPageNumbers(current: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, '…', total];
+  if (current >= total - 3) return [1, '…', total - 4, total - 3, total - 2, total - 1, total];
+  return [1, '…', current - 1, current, current + 1, '…', total];
+}
+
 // ─── Promo Form Modal ─────────────────────────────────────────────────────────
 
 interface PromoFormData {
@@ -33,7 +40,7 @@ interface PromoFormData {
 }
 
 function nowIso() {
-  return new Date().toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
+  return new Date().toISOString().slice(0, 16);
 }
 
 function futureIso(days = 30) {
@@ -71,17 +78,17 @@ function PromoFormModal({
   const [form, setForm] = useState<PromoFormData>(
     initial
       ? {
-          code:               initial.code,
-          description:        initial.description,
-          discount_type:      initial.discount_type,
-          discount_value:     initial.discount_value,
-          valid_from:         initial.valid_from.slice(0, 16),
-          valid_until:        initial.valid_until.slice(0, 16),
-          max_usage:          initial.max_usage,
-          active:             initial.active,
-          one_time_per_user:  initial.one_time_per_user,
-          stackable:          initial.stackable,
-          applicable_plans:   initial.applicable_plans,
+          code:                   initial.code,
+          description:            initial.description,
+          discount_type:          initial.discount_type,
+          discount_value:         initial.discount_value,
+          valid_from:             initial.valid_from.slice(0, 16),
+          valid_until:            initial.valid_until.slice(0, 16),
+          max_usage:              initial.max_usage,
+          active:                 initial.active,
+          one_time_per_user:      initial.one_time_per_user,
+          stackable:              initial.stackable,
+          applicable_plans:       initial.applicable_plans,
           applicable_restaurants: initial.applicable_restaurants,
         }
       : EMPTY_FORM,
@@ -152,14 +159,13 @@ function PromoFormModal({
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
               {initial ? 'Edit Promo Code' : 'Create Promo Code'}
             </h2>
             <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           <div className="space-y-4">
-            {/* Code */}
             <Field label="Promo Code" required>
               <input
                 type="text"
@@ -170,12 +176,10 @@ function PromoFormModal({
               />
             </Field>
 
-            {/* Description */}
             <Field label="Description">
               <input type="text" value={form.description} onChange={set('description')} placeholder="What does this promo do?" className={inputCls} />
             </Field>
 
-            {/* Discount */}
             <div className="grid grid-cols-2 gap-4">
               <Field label="Discount Type" required>
                 <select value={form.discount_type} onChange={set('discount_type')} className={inputCls}>
@@ -196,7 +200,6 @@ function PromoFormModal({
               </Field>
             </div>
 
-            {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
               <Field label="Valid From" required>
                 <input type="datetime-local" value={form.valid_from} onChange={set('valid_from')} className={inputCls} />
@@ -206,7 +209,6 @@ function PromoFormModal({
               </Field>
             </div>
 
-            {/* Max Usage */}
             <Field label="Max Total Usages">
               <input
                 type="number"
@@ -217,13 +219,12 @@ function PromoFormModal({
               />
             </Field>
 
-            {/* Toggles */}
             <div className="flex flex-wrap gap-4">
-              {[
-                { key: 'active' as const,            label: 'Active'            },
-                { key: 'one_time_per_user' as const,  label: 'One-time per user' },
-                { key: 'stackable' as const,          label: 'Stackable'         },
-              ].map(({ key, label }) => (
+              {([
+                { key: 'active' as const,           label: 'Active'            },
+                { key: 'one_time_per_user' as const, label: 'One-time per user' },
+                { key: 'stackable' as const,         label: 'Stackable'         },
+              ]).map(({ key, label }) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <button
                     type="button"
@@ -241,7 +242,6 @@ function PromoFormModal({
               ))}
             </div>
 
-            {/* Applicable plans */}
             {plans.length > 0 && (
               <Field label="Applicable Plans (leave empty = all plans)">
                 <div className="flex flex-wrap gap-2 mt-1">
@@ -256,7 +256,7 @@ function PromoFormModal({
                         style={
                           selected
                             ? { background: '#513012', color: '#fff', borderColor: '#513012' }
-                            : { background: '#fff', color: '#6b7280', borderColor: 'secondary' }
+                            : { background: '#fff', color: '#6b7280', borderColor: '#e5e7eb' }
                         }
                       >
                         {p.name}
@@ -293,137 +293,19 @@ function PromoFormModal({
   );
 }
 
-// ─── Promo Card ───────────────────────────────────────────────────────────────
-
-function PromoCard({
-  promo,
-  planNames,
-  onEdit,
-  onDelete,
-  onToggleActive,
-}: {
-  promo: PromoCode;
-  planNames: Record<number, string>;
-  onEdit: (p: PromoCode) => void;
-  onDelete: (p: PromoCode) => void;
-  onToggleActive: (p: PromoCode) => void;
-}) {
-  const expired = isExpired(promo.valid_until);
-  const discLabel =
-    promo.discount_type === 'percentage'
-      ? `${parseFloat(promo.discount_value)}% off`
-      : `Rs. ${parseFloat(promo.discount_value).toLocaleString()} off`;
-
-  return (
-    <div
-      className="rounded-2xl border bg-white p-5 flex flex-col gap-3"
-      style={{
-        borderColor: promo.active && !expired ? '#51301244' : 'secondary',
-        opacity: expired ? 0.75 : 1,
-      }}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="font-mono font-bold text-lg tracking-widest" style={{ color: '#513012' }}>
-            {promo.code}
-          </p>
-          {promo.description && (
-            <p className="text-xs text-secondary mt-0.5">{promo.description}</p>
-          )}
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          {promo.active && !expired ? (
-            <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
-              <CheckCircle2 size={11} /> Active
-            </span>
-          ) : expired ? (
-            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
-              <XCircle size={11} /> Expired
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
-              <XCircle size={11} /> Inactive
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Discount pill */}
-      <div
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold self-start"
-        style={{ background: '#fef3e2', color: '#b45309' }}
-      >
-        <Tag size={13} /> {discLabel}
-      </div>
-
-      {/* Meta */}
-      <div className="grid grid-cols-2 gap-2 text-xs text-secondary">
-        <div className="flex items-center gap-1">
-          <Calendar size={11} /> {fmtDate(promo.valid_from)}
-        </div>
-        <div className="flex items-center gap-1">
-          <Calendar size={11} /> Ends {fmtDate(promo.valid_until)}
-        </div>
-        <div className="flex items-center gap-1">
-          <Users size={11} />
-          {promo.used_count} / {promo.max_usage} uses
-        </div>
-        <div className="flex items-center gap-1 flex-wrap">
-          {promo.one_time_per_user && (
-            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary">1x/user</span>
-          )}
-          {promo.stackable && (
-            <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary">stackable</span>
-          )}
-        </div>
-      </div>
-
-      {/* Applicable plans */}
-      {promo.applicable_plans.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {promo.applicable_plans.map(id => (
-            <span
-              key={id}
-              className="px-2 py-0.5 rounded-full text-xs font-semibold"
-              style={{ background: '#f0faf4', color: '#16a34a' }}
-            >
-              {planNames[id] ?? `Plan #${id}`}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
-        {!expired && (
-          <button
-            onClick={() => onToggleActive(promo)}
-            className="flex-1 py-2 rounded-xl text-xs font-semibold border border-gray-200 hover:bg-gray-50 text-gray-600"
-          >
-            {promo.active ? 'Deactivate' : 'Activate'}
-          </button>
-        )}
-        <button onClick={() => onEdit(promo)} className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50">
-          <Pencil size={13} className="text-secondary" />
-        </button>
-        <button onClick={() => onDelete(promo)} className="p-2 rounded-xl border border-red-100 hover:bg-red-50">
-          <Trash2 size={13} className="text-red-400" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 10;
+
 export default function SuperAdminPromosPage() {
-  const [promos,    setPromos]    = useState<PromoCode[]>([]);
-  const [plans,     setPlans]     = useState<Plan[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState('');
-  const [refreshing,setRefreshing]= useState(false);
-  const [editPromo, setEditPromo] = useState<PromoCode | null | undefined>(undefined);
+  const [promos,      setPromos]      = useState<PromoCode[]>([]);
+  const [plans,       setPlans]       = useState<Plan[]>([]);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState('');
+  const [refreshing,  setRefreshing]  = useState(false);
+  const [editPromo,   setEditPromo]   = useState<PromoCode | null | undefined>(undefined);
   const [showExpired, setShowExpired] = useState(false);
+  const [page,        setPage]        = useState(1);
 
   const planNames: Record<number, string> = Object.fromEntries(plans.map(p => [p.id, p.name]));
 
@@ -468,6 +350,8 @@ export default function SuperAdminPromosPage() {
   };
 
   const visible = promos.filter(p => showExpired ? true : !isExpired(p.valid_until));
+  const totalPages = Math.ceil(visible.length / PAGE_SIZE);
+  const paginated = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const stats = {
     total:   promos.length,
@@ -508,10 +392,10 @@ export default function SuperAdminPromosPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total',    value: stats.total,   color: '#513012' },
-          { label: 'Active',   value: stats.active,  color: '#16a34a' },
-          { label: 'Expired',  value: stats.expired, color: '#6b7280' },
-          { label: 'Total Uses', value: stats.used,  color: '#7e22ce' },
+          { label: 'Total',      value: stats.total,   color: '#513012' },
+          { label: 'Active',     value: stats.active,  color: '#16a34a' },
+          { label: 'Expired',    value: stats.expired, color: '#6b7280' },
+          { label: 'Total Uses', value: stats.used,    color: '#7e22ce' },
         ].map(({ label, value, color }) => (
           <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-1">{label}</p>
@@ -524,50 +408,247 @@ export default function SuperAdminPromosPage() {
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
       )}
 
-      {/* Show expired toggle */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-secondary">
-          Showing <strong>{visible.length}</strong> {showExpired ? 'total' : 'active/upcoming'} promo codes
-        </p>
-        <button
-          onClick={() => setShowExpired(x => !x)}
-          className="text-xs font-semibold underline text-secondary hover:text-gray-600"
-        >
-          {showExpired ? 'Hide expired' : `Show expired (${stats.expired})`}
-        </button>
-      </div>
-
-      {/* Grid */}
-      {loading ? (
-        <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : visible.length === 0 ? (
-        <div className="text-center py-16 text-secondary">
-          <Tag size={40} className="mx-auto mb-3 opacity-20" />
-          <p className="font-medium mb-4">No promo codes yet</p>
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {/* Table header row */}
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
+          <h2 className="font-semibold text-gray-800">
+            Promo Codes
+            <span className="text-sm font-normal text-secondary ml-2">({visible.length})</span>
+          </h2>
           <button
-            onClick={() => setEditPromo(null)}
-            className="px-6 py-3 rounded-xl text-sm font-bold"
-            style={{ background: '#513012', color: '#fff' }}
+            onClick={() => { setShowExpired(x => !x); setPage(1); }}
+            className="text-xs font-semibold underline text-secondary hover:text-gray-600"
           >
-            Create your first promo
+            {showExpired ? 'Hide expired' : `Show expired (${stats.expired})`}
           </button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {visible.map(promo => (
-            <PromoCard
-              key={promo.id}
-              promo={promo}
-              planNames={planNames}
-              onEdit={p => setEditPromo(p)}
-              onDelete={handleDelete}
-              onToggleActive={handleToggleActive}
-            />
-          ))}
-        </div>
-      )}
+
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : visible.length === 0 ? (
+          <div className="text-center py-16 text-secondary">
+            <Tag size={40} className="mx-auto mb-3 opacity-20" />
+            <p className="font-medium mb-4">No promo codes yet</p>
+            <button
+              onClick={() => setEditPromo(null)}
+              className="px-6 py-3 rounded-xl text-sm font-bold"
+              style={{ background: '#513012', color: '#fff' }}
+            >
+              Create your first promo
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    {['S.N.', 'Code', 'Discount', 'Validity', 'Usage', 'Plans', 'Flags', 'Status', 'Actions'].map(h => (
+                      <th key={h} className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-secondary whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {paginated.map((promo, index) => {
+                    const expired = isExpired(promo.valid_until);
+                    const discLabel = promo.discount_type === 'percentage'
+                      ? `${parseFloat(promo.discount_value)}% off`
+                      : `Rs. ${parseFloat(promo.discount_value).toLocaleString()} off`;
+
+                    return (
+                      <tr
+                        key={promo.id}
+                        className="hover:bg-gray-50 transition-colors"
+                        style={{ opacity: expired ? 0.65 : 1 }}
+                      >
+                        {/* S.N. */}
+                        <td className="py-3 px-4 text-xs text-gray-400 font-mono">
+                          {(page - 1) * PAGE_SIZE + index + 1}
+                        </td>
+
+                        {/* Code + description */}
+                        <td className="py-3 px-4">
+                          <p className="font-mono font-bold tracking-widest" style={{ color: '#513012' }}>
+                            {promo.code}
+                          </p>
+                          {promo.description && (
+                            <p className="text-xs text-secondary mt-0.5">{promo.description}</p>
+                          )}
+                        </td>
+
+                        {/* Discount */}
+                        <td className="py-3 px-4">
+                          <span
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap"
+                            style={{ background: '#fef3e2', color: '#b45309' }}
+                          >
+                            <Tag size={11} /> {discLabel}
+                          </span>
+                        </td>
+
+                        {/* Validity */}
+                        <td className="py-3 px-4 text-xs text-secondary">
+                          <div className="flex items-center gap-1 whitespace-nowrap">
+                            <Calendar size={11} /> {fmtDate(promo.valid_from)}
+                          </div>
+                          <div className="flex items-center gap-1 whitespace-nowrap mt-0.5">
+                            <Calendar size={11} /> {fmtDate(promo.valid_until)}
+                          </div>
+                        </td>
+
+                        {/* Usage */}
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-1 text-xs text-secondary whitespace-nowrap">
+                            <Users size={11} />
+                            <span>
+                              <span className="font-semibold text-gray-700">{promo.used_count}</span>
+                              {' / '}{promo.max_usage}
+                            </span>
+                          </div>
+                          {/* Usage bar */}
+                          <div className="mt-1 h-1 w-16 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${Math.min(100, (promo.used_count / promo.max_usage) * 100)}%`,
+                                background: '#513012',
+                              }}
+                            />
+                          </div>
+                        </td>
+
+                        {/* Plans */}
+                        <td className="py-3 px-4">
+                          {promo.applicable_plans.length === 0 ? (
+                            <span className="text-xs text-gray-400">All plans</span>
+                          ) : (
+                            <div className="flex flex-wrap gap-1">
+                              {promo.applicable_plans.map(id => (
+                                <span
+                                  key={id}
+                                  className="px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap"
+                                  style={{ background: '#f0faf4', color: '#16a34a' }}
+                                >
+                                  {planNames[id] ?? `#${id}`}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Flags */}
+                        <td className="py-3 px-4">
+                          <div className="flex flex-col gap-1">
+                            {promo.one_time_per_user && (
+                              <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary whitespace-nowrap">
+                                1x/user
+                              </span>
+                            )}
+                            {promo.stackable && (
+                              <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-secondary whitespace-nowrap">
+                                stackable
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Status */}
+                        <td className="py-3 px-4">
+                          {promo.active && !expired ? (
+                            <span className="flex items-center gap-1 text-xs font-semibold text-green-600 whitespace-nowrap">
+                              <CheckCircle2 size={11} /> Active
+                            </span>
+                          ) : expired ? (
+                            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400 whitespace-nowrap">
+                              <XCircle size={11} /> Expired
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400 whitespace-nowrap">
+                              <XCircle size={11} /> Inactive
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            {!expired && (
+                              <button
+                                onClick={() => handleToggleActive(promo)}
+                                className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 hover:bg-gray-50 text-gray-600 whitespace-nowrap"
+                              >
+                                {promo.active ? 'Deactivate' : 'Activate'}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => setEditPromo(promo)}
+                              className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50"
+                            >
+                              <Pencil size={13} className="text-secondary" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(promo)}
+                              className="p-1.5 rounded-lg border border-red-100 hover:bg-red-50"
+                            >
+                              <Trash2 size={13} className="text-red-400" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 flex-wrap gap-2">
+                <p className="text-xs text-secondary">
+                  Page {page} of {totalPages} · {visible.length} results
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40"
+                  >
+                    ←
+                  </button>
+                  {getPageNumbers(page, totalPages).map((p, i) =>
+                    p === '…' ? (
+                      <span key={`e-${i}`} className="px-2 text-xs text-gray-400 select-none">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => setPage(Number(p))}
+                        className="min-w-[32px] px-2 py-1.5 rounded-lg text-xs border transition"
+                        style={p === page
+                          ? { background: '#513012', color: '#fff', borderColor: '#513012', fontWeight: 600 }
+                          : { borderColor: '#e5e7eb', color: '#6b7280' }}
+                      >
+                        {p}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages}
+                    className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Form modal */}
       {editPromo !== undefined && (

@@ -39,7 +39,7 @@ const STATUS_OPTIONS: Status[] = ["pending", "approved", "rejected"];
 
 const STATUS_STYLES: Record<Status, { badge: string; label: string }> = {
   pending: {
-    badge: "bg-primary text-accent border border-accent",
+    badge: "bg-primary text-white border border-accent",
     label: "Pending",
   },
   approved: {
@@ -179,7 +179,7 @@ const RestaurantApplications = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | "">("");
@@ -228,7 +228,12 @@ const RestaurantApplications = () => {
     setApplications((prev) => prev.map((a) => (a.id === id ? updated : a)));
     if (selectedApp?.id === id) setSelectedApp(updated);
   };
-
+function getPageNumbers(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, "…", total];
+  if (current >= total - 3) return [1, "…", total - 4, total - 3, total - 2, total - 1, total];
+  return [1, "…", current - 1, current, current + 1, "…", total];
+}
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this application? This cannot be undone.")) return;
     await apiFetch(`/api/v1/admin/register-restaurant/${id}/`, { method: "DELETE" });
@@ -284,8 +289,6 @@ const RestaurantApplications = () => {
               )}
             </form>
 
-            {/* Status filter */}
-            
 
             {/* Ordering */}
             <div className="flex flex-col gap-1">
@@ -325,8 +328,8 @@ const RestaurantApplications = () => {
                 <thead>
                   <tr className="border-b border-accent bg-[#fdf5ec]">
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
-                      #
-                    </th>
+  S.N.
+</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
                       Restaurant
                     </th>
@@ -346,13 +349,16 @@ const RestaurantApplications = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-accent">
-                  {applications.map((app) => (
+                 {applications.map((app, index) => (
                     <tr
                       key={app.id}
                       className="hover:bg-[#fdf5ec] transition cursor-pointer"
                       onClick={() => setSelectedApp(app)}
                     >
-                      <td className="px-4 py-3 text-secondary font-mono text-xs">{app.id}</td>
+                      {/* <td className="px-4 py-3 text-secondary font-mono text-xs">{app.id}</td> */}
+                      <td className="px-4 py-3 text-secondary font-mono text-xs">
+      {(page - 1) * pageSize + index + 1}
+    </td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-secondary">{app.restaurant_name}</p>
                         <p className="text-xs text-secondary">{app.cuisine_type}</p>
@@ -403,29 +409,54 @@ const RestaurantApplications = () => {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4 text-sm">
-            <p className="text-secondary text-xs">
-              Page {page} of {totalPages} · {count} results
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
-              >
-                ← Previous
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-        )}
+       {/* Pagination */}
+{totalPages > 1 && (
+  <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
+    <p className="text-xs text-secondary">
+      Page {page} of {totalPages} · {count} result{count !== 1 ? "s" : ""}
+    </p>
+    <div className="flex items-center gap-1">
+      {/* Prev */}
+      <button
+        onClick={() => setPage((p) => Math.max(1, p - 1))}
+        disabled={page === 1}
+        className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+      >
+        ←
+      </button>
+
+      {/* Page numbers with ellipsis */}
+      {getPageNumbers(page, totalPages).map((p, i) =>
+        p === "…" ? (
+          <span key={`ellipsis-${i}`} className="px-2 text-xs text-primary select-none">
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => setPage(Number(p))}
+            className={`min-w-[32px] px-2 py-1.5 text-xs rounded-lg border transition ${
+              p === page
+                ? "bg-secondary text-white border-secondary font-medium"
+                : "text-secondary border-accent hover:bg-[#fdf5ec]"
+            }`}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      {/* Next */}
+      <button
+        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+        disabled={page === totalPages}
+        className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+      >
+        →
+      </button>
+    </div>
+  </div>
+)}
       </div>
 
       {/* Detail modal */}

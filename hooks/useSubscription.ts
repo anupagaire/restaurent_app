@@ -1,10 +1,7 @@
-// hooks/useSubscription.ts
-// Use this hook anywhere to check subscription status
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-
+import { apiFetch } from '@/lib/api';
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface SubStatus {
@@ -41,14 +38,12 @@ export function useSubscription() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('access_token') ?? '';
-      const res = await fetch(`${BASE}/api/v1/subscription/subscriptions/current/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const json = await res.json();
-      cache = json;
-      cacheTime = Date.now();
-      setData(json);
+      // const token = localStorage.getItem('access_token') ?? '';
+      const res = await apiFetch('/api/v1/subscription/subscriptions/current/');
+const json = await res.json();
+cache = json;
+cacheTime = Date.now();
+setData(json);
     } catch {
       // silent fail — treat as inactive
     } finally {

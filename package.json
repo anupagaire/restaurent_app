@@ -23,6 +23,7 @@
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.71.2",
     "react-multi-carousel": "^2.8.6",
     "react-qr-code": "^2.0.21",

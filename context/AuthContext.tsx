@@ -96,21 +96,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ✅ FIXED: fetchProfile - handle errors gracefully
   const fetchProfile = async () => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      setProfileLoading(false);
-      return;
-    }
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    setProfileLoading(false);
+    return;
+  }
 
-    setProfileLoading(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+  setProfileLoading(true);
+  try {
+    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      // ✅ Don't throw error on 401 - just clear auth silently
-      if (res.status === 401) {
-        console.log('Token expired, clearing auth');
+    // ✅ 401 आयो भने पहिले refresh try गर्छ
+    if (res.status === 401) {
+      console.log('🔄 Access token expired, trying refresh...');
+      const refresh = localStorage.getItem('refresh_token');
+      
+      if (!refresh) {
+        console.log('❌ No refresh token, logging out');
         clearAuthStorage();
         setCurrentUser(null);
         setIsAuthenticated(false);
@@ -118,41 +122,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (!res.ok) {
-        console.log('Profile fetch failed:', res.status);
+      // Refresh token call
+      const refreshRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/token/refresh/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh }),
+      });
+
+      if (!refreshRes.ok) {
+        console.log('❌ Refresh failed, logging out');
+        clearAuthStorage();
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+        setProfile(null);
         return;
       }
 
-      const raw = await res.json();
-      const data = raw.data ?? raw;
+      const refreshData = await refreshRes.json();
+      const newAccess = refreshData.access;
+      
+      // ✅ New token save
+      localStorage.setItem('access_token', newAccess);
+      document.cookie = `access_token=${newAccess}; path=/; max-age=86400; SameSite=Lax`;
 
-      setProfile({
-        id:         data.id,
-        email:      data.email      ?? '',
-        first_name: data.first_name ?? '',
-        last_name:  data.last_name  ?? '',
-        contact_no: data.contact_no ?? '',
-        address:    data.address    ?? '',
-        restaurant: data.restaurant,
+      // ✅ Retry /me/ with new token
+      res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`, {
+        headers: { Authorization: `Bearer ${newAccess}` },
       });
-
-      const stored = localStorage.getItem('user');
-      if (stored) {
-        try { 
-          localStorage.setItem('user', JSON.stringify({ ...JSON.parse(stored), ...data })); 
-        } catch {}
-      }
-
-      if (data.restaurant) {
-        localStorage.setItem('restaurant_id', String(data.restaurant));
-      }
-    } catch (e) {
-      console.error('Profile fetch error:', e);
-      // ✅ Don't throw - just log and continue
-    } finally {
-      setProfileLoading(false);
     }
-  };
+
+    if (!res.ok) {
+      console.log('Profile fetch failed:', res.status);
+      return;
+    }
+
+    const raw = await res.json();
+    const data = raw.data ?? raw;
+
+    setProfile({
+      id:         data.id,
+      email:      data.email      ?? '',
+      first_name: data.first_name ?? '',
+      last_name:  data.last_name  ?? '',
+      contact_no: data.contact_no ?? '',
+      address:    data.address    ?? '',
+      restaurant: data.restaurant,
+    });
+
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        localStorage.setItem('user', JSON.stringify({ ...JSON.parse(stored), ...data }));
+      } catch {}
+    }
+
+    if (data.restaurant) {
+      localStorage.setItem('restaurant_id', String(data.restaurant));
+    }
+  } catch (e) {
+    console.error('Profile fetch error:', e);
+  } finally {
+    setProfileLoading(false);
+  }
+};
 
   const clearAuthStorage = () => {
     localStorage.removeItem('user');
@@ -162,30 +194,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('restaurant_id');
   };
 
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem('access_token');
-      const savedUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
+ useEffect(() => {
+  const initAuth = async () => {
+    const token = localStorage.getItem('access_token');
+    const savedUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
 
-      if (token && savedUser) {
-        try {
-          const me = JSON.parse(savedUser);
-          const user = buildUserFromProfile(me);
-          setCurrentUser(user);
-          setIsAuthenticated(true);
-          
-          // ✅ Fetch profile but don't await - let it run in background
-          fetchProfile();
-        } catch (e) {
-          console.error('Auth parse error:', e);
-          clearAuthStorage();
-        }
+    if (token && savedUser) {
+      try {
+        const me = JSON.parse(savedUser);
+        const user = buildUserFromProfile(me);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        fetchProfile(); 
+      } catch (e) {
+        console.error('Auth parse error:', e);
+        clearAuthStorage();
       }
-      setIsLoading(false);
-    };
+    }
+    setIsLoading(false);
+  };
 
-    initAuth();
-  }, []);
+  initAuth();
+
+  const interval = setInterval(async () => {
+    const t = localStorage.getItem('access_token');
+    if (!t) return;
+
+    try {
+      const payload = JSON.parse(atob(t.split('.')[1]));
+      const minutesLeft = (payload.exp * 1000 - Date.now()) / 60000;
+      console.log(`⏱️ Token expires in ${Math.round(minutesLeft)} min`);
+
+      if (minutesLeft < 2) {
+        console.log('🔄 Proactive token refresh...');
+        const refresh = localStorage.getItem('refresh_token');
+        if (!refresh) return;
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/token/refresh/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh }),
+        });
+
+        if (!res.ok) {
+          console.log('❌ Proactive refresh failed');
+          return;
+        }
+
+        const data = await res.json();
+        localStorage.setItem('access_token', data.access);
+        document.cookie = `access_token=${data.access}; path=/; max-age=86400; SameSite=Lax`;
+        console.log('✅ Token proactively refreshed!');
+      }
+    } catch (e) {
+      console.error('Token check error:', e);
+    }
+  }, 60 * 1000); 
+
+  return () => clearInterval(interval);
+}, []);
 
   const login = (user: CurrentUser) => {
     setCurrentUser(user);

@@ -30,7 +30,7 @@ interface PaginatedResponse {
 const STATUS_OPTIONS: Status[] = ["pending", "resolved", "rejected"];
 
 const STATUS_STYLES: Record<Status, string> = {
-  pending: "bg-accent text-accent border border-accent",
+  pending: "bg-accent text-white border border-accent",
   resolved: "bg-green-50 text-green-800 border border-green-200",
   rejected: "bg-red-50 text-red-800 border border-red-200",
 };
@@ -257,7 +257,7 @@ export default function ContactMessagesPage() {
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
           <div>
             <h1 className="text-3xl font-bold text-secondary">Contact Messages</h1>
-            <p className="text-secondary mt-1">
+            <p className="text-white mt-1">
               {count} total · {pendingCount} pending
             </p>
           </div>

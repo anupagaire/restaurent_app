@@ -22,7 +22,14 @@ interface RestaurantDomain {
   custom_domain_verified_at: string | null
   domain_verification_token: string | null
 }
+function getPageNumbers(current: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, '…', total];
+  if (current >= total - 3) return [1, '…', total - 4, total - 3, total - 2, total - 1, total];
+  return [1, '…', current - 1, current, current + 1, '…', total];
+}
 
+const PAGE_SIZE = 10;
 async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(`${API}${path}`, {
     ...options,
@@ -54,11 +61,12 @@ export default function CustomDomainsPage() {
   const [restaurants, setRestaurants] = useState<RestaurantDomain[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState<'all' | 'verified' | 'pending' | 'none'>('all')
+  const [filter, setFilter] = useState<'all' | 'verified' | 'pending' | 'none'>('verified')
   const [verifying, setVerifying] = useState<number | null>(null)
   const [clearing, setClearing] = useState<number | null>(null)
   const [expanded, setExpanded] = useState<number | null>(null)
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+const [page, setPage] = useState(1);
 
   // Set domain modal
   const [setDomainModal, setSetDomainModal] = useState<RestaurantDomain | null>(null)
@@ -184,7 +192,8 @@ export default function CustomDomainsPage() {
     verified: restaurants.filter(r => r.custom_domain_verified).length,
     pending: restaurants.filter(r => r.custom_domain && !r.custom_domain_verified).length,
   }
-
+const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
 
@@ -241,7 +250,8 @@ export default function CustomDomainsPage() {
             type="text"
             placeholder="Search restaurant, city or domain..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+           
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
             onKeyDown={e => e.key === 'Enter' && load(search)}
             className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent-400"
           />
@@ -250,9 +260,9 @@ export default function CustomDomainsPage() {
           {(['all', 'verified', 'pending', 'none'] as const).map(f => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => { setFilter(f); setPage(1); }}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors capitalize ${
-                filter === f ? 'bg-accent-500 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                filter === f ? 'bg-accent-500 text-red' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             >
               {f === 'none' ? 'No Domain' : f}
@@ -274,6 +284,7 @@ export default function CustomDomainsPage() {
             <p className="text-gray-400 text-sm">No results found</p>
           </div>
         ) : (
+            <>
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/60">
@@ -285,7 +296,7 @@ export default function CustomDomainsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.map(entry => (
+             {paginated.map(entry => (
                 // <>
                 <React.Fragment key={entry.id}>
                   <tr
@@ -433,7 +444,48 @@ export default function CustomDomainsPage() {
               ))}
             </tbody>
           </table>
+          {totalPages > 1 && (
+  <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 flex-wrap gap-2">
+    <p className="text-xs text-gray-400">
+      Page {page} of {totalPages} · {filtered.length} results
+    </p>
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => setPage(p => Math.max(1, p - 1))}
+        disabled={page === 1}
+        className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
+      >
+        ←
+      </button>
+      {getPageNumbers(page, totalPages).map((p, i) =>
+        p === '…' ? (
+          <span key={`e-${i}`} className="px-2 text-xs text-gray-400 select-none">…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => setPage(Number(p))}
+            className="min-w-[32px] px-2 py-1.5 rounded-lg text-xs border transition"
+            style={p === page
+              ? { background: '#513012', color: '#fff', borderColor: '#513012', fontWeight: 600 }
+              : { borderColor: '#e5e7eb', color: '#6b7280' }}
+          >
+            {p}
+          </button>
+        )
+      )}
+      <button
+        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+        disabled={page >= totalPages}
+        className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
+      >
+        →
+      </button>
+    </div>
+  </div>
+)}
+</>
         )}
+      
       </div>
 
       <p className="text-xs text-gray-400 text-center">

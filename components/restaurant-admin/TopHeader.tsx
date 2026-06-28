@@ -3,7 +3,7 @@
 import {Menu, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-
+import { apiFetch } from '@/lib/api';
 interface TopHeaderProps {
   title: string;
   onMenuClick?: () => void;
@@ -17,35 +17,29 @@ export default function TopHeader({ title, onMenuClick }: TopHeaderProps) {
   useEffect(() => {
     const load = async () => {
       try {
-        const token = localStorage.getItem('access_token');
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/me/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!res.ok) throw new Error('Failed');
-        const raw  = await res.json();
-        const data = raw.data ?? raw;
-        setUser(data);
+        // const token = localStorage.getItem('access_token');
+        const res = await apiFetch('/api/v1/user/me/');
+if (!res.ok) throw new Error('Failed');
+const raw = await res.json();
+const data = raw.data ?? raw;
+setUser(data);
 
-        if (data?.restaurant) {
-          try {
-            const rRes = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant/${data.restaurant}/`,
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-            if (rRes.ok) {
-              const r    = await rRes.json();
-              const rData = r.data ?? r;
-              setRestaurantName(rData.name || `Restaurant #${data.restaurant}`);
-            } else {
-              setRestaurantName(`Restaurant #${data.restaurant}`);
-            }
-          } catch {
-            setRestaurantName(`Restaurant #${data.restaurant}`);
-          }
-        } else {
-          setRestaurantName('No Restaurant');
-        }
+if (data?.restaurant) {
+  try {
+    const rRes = await apiFetch(`/api/v1/restaurant/${data.restaurant}/`);
+    if (rRes.ok) {
+      const r = await rRes.json();
+      const rData = r.data ?? r;
+      setRestaurantName(rData.name || `Restaurant #${data.restaurant}`);
+    } else {
+      setRestaurantName(`Restaurant #${data.restaurant}`);
+    }
+  } catch {
+    setRestaurantName(`Restaurant #${data.restaurant}`);
+  }
+} else {
+  setRestaurantName('No Restaurant');
+}
       } catch {
         setRestaurantName('Restaurant');
       }

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   CheckCircle2, Clock, XCircle, RefreshCw, Search,
-  Crown, DollarSign, Loader2, X, Eye,
+DollarSign, Loader2, X, Eye,
   ThumbsUp, ThumbsDown, Plus, ChevronDown, ChevronUp, AlertCircle,
 } from 'lucide-react';
 
@@ -12,7 +12,12 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? '';
 function token() {
   return typeof window !== 'undefined' ? localStorage.getItem('access_token') ?? '' : '';
 }
-
+function getPageNumbers(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, "…", total];
+  if (current >= total - 3) return [1, "…", total - 4, total - 3, total - 2, total - 1, total];
+  return [1, "…", current - 1, current, current + 1, "…", total];
+}
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${API}${path}`, { headers: { Authorization: `Bearer ${token()}` } });
   const data = await res.json().catch(() => ({}));
@@ -650,17 +655,50 @@ export default function SuperAdminPaymentsPage() {
               </table>
             </div>
 
-            {total > PAGE_SIZE && (
-              <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100">
-                <p className="text-xs text-secondary">Page {page} of {Math.ceil(total / PAGE_SIZE)}</p>
-                <div className="flex gap-2">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40">Previous</button>
-                  <button onClick={() => setPage(p => p + 1)} disabled={page >= Math.ceil(total / PAGE_SIZE)}
-                    className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40">Next</button>
-                </div>
-              </div>
-            )}
+           {total > PAGE_SIZE && (() => {
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  return (
+    <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 flex-wrap gap-2">
+      <p className="text-xs text-secondary">
+        Page {page} of {totalPages} · {total} results
+      </p>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1}
+          className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40"
+        >
+          ←
+        </button>
+
+        {getPageNumbers(page, totalPages).map((p, i) =>
+          p === "…" ? (
+            <span key={`e-${i}`} className="px-2 text-xs text-gray-400 select-none">…</span>
+          ) : (
+            <button
+              key={p}
+              onClick={() => setPage(Number(p))}
+              className="min-w-[32px] px-2 py-1.5 rounded-lg text-xs border transition"
+              style={p === page
+                ? { background: '#513012', color: '#fff', borderColor: '#513012', fontWeight: 600 }
+                : { borderColor: '#e5e7eb', color: '#6b7280' }}
+            >
+              {p}
+            </button>
+          )
+        )}
+
+        <button
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page >= totalPages}
+          className="px-3 py-1.5 rounded-lg text-xs border border-gray-200 disabled:opacity-40"
+        >
+          →
+        </button>
+      </div>
+    </div>
+  );
+})()}
           </>
         )}
       </div>

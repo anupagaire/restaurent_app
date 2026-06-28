@@ -99,9 +99,17 @@ export default function CustomDomainPage() {
         setChangingDomain(false)
         showMsg('success', 'Domain connected! Add the TXT record below to your DNS.')
       } else {
-        showMsg('error', res.data?.custom_domain?.[0] ?? res.data?.detail ?? 'Failed to connect domain')
-      }
-    } catch {
+        const domainError = res.data?.errors?.custom_domain
+         if (typeof domainError === 'string' && domainError.toLowerCase().includes('subscription')) {
+    setError('__upgrade__') // special flag
+  } else {
+    showMsg('error', domainError ?? res.data?.detail ?? 'Failed to connect domain')
+  }
+}}
+    //     showMsg('error', res.data?.custom_domain?.[0] ?? res.data?.detail ?? 'Failed to connect domain')
+    //   }
+    // }
+     catch {
       showMsg('error', 'Network error')
     } finally {
       setSaving(false)
@@ -135,26 +143,7 @@ export default function CustomDomainPage() {
   }
 
   // ── Remove domain
-  const handleRemove = async () => {
-    if (!confirm('Remove your custom domain? Your enterprise site will go offline.')) return
-    setRemoving(true)
-    try {
-      const res = await apiFetch('/api/v1/restaurant/custom-domain/', { method: 'DELETE' })
-      if (res.ok) {
-        setDomain(null)
-        setInput('')
-        setStep('idle')
-        setChangingDomain(false)
-        showMsg('success', 'Domain removed.')
-      } else {
-        showMsg('error', 'Failed to remove domain')
-      }
-    } catch {
-      showMsg('error', 'Network error')
-    } finally {
-      setRemoving(false)
-    }
-  }
+  
 
   const copy = async (text: string, type: 'name' | 'value') => {
     await navigator.clipboard.writeText(text)
@@ -223,16 +212,41 @@ export default function CustomDomainPage() {
       </div>
 
       {/* Messages */}
-      {error && (
-        <div className="flex items-start gap-2 bg-red-50 border border-red-100 rounded-xl p-3.5 text-sm text-red-700">
-          <XCircle size={16} className="shrink-0 mt-0.5" /> {error}
-        </div>
-      )}
-      {success && (
-        <div className="flex items-start gap-2 bg-green-50 border border-green-100 rounded-xl p-3.5 text-sm text-green-700">
-          <CheckCircle2 size={16} className="shrink-0 mt-0.5" /> {success}
-        </div>
-      )}
+     {/* Messages */}
+{error === '__upgrade__' ? (
+  <div className="bg-gradient-to-br from-accent-50 to-yellow-50 border border-accent-200 rounded-2xl p-5 space-y-3">
+    <div className="flex items-center gap-2">
+      <span className="text-xl">🔒</span>
+      <h3 className="font-bold text-gray-800">Custom Domain is a Premium Feature</h3>
+    </div>
+    <p className="text-sm text-gray-600">
+      Your current plan doesn't include custom domain support. Upgrade to connect your own domain and launch your enterprise site.
+    </p>
+    <div className="flex items-center gap-3 pt-1">
+      <a
+        href="/restaurant-admin/subscription"
+        className="bg-accent hover:bg-accent-600 text-sm text-white font-semibold px-4 py-2 rounded-xl transition-colors"
+      >
+        View Plans & Upgrade →
+      </a>
+      <button
+        onClick={() => setError('')}
+        className="text-sm text-gray-400 hover:text-gray-600"
+      >
+        Dismiss
+      </button>
+    </div>
+  </div>
+) : error ? (
+  <div className="flex items-start gap-2 bg-red-50 border border-red-100 rounded-xl p-3.5 text-sm text-red-700">
+    <XCircle size={16} className="shrink-0 mt-0.5" /> {error}
+  </div>
+) : null}
+{success && (
+  <div className="flex items-start gap-2 bg-green-50 border border-green-100 rounded-xl p-3.5 text-sm text-green-700">
+    <CheckCircle2 size={16} className="shrink-0 mt-0.5" /> {success}
+  </div>
+)}
 
       {/* ── STEP 1 — idle or changing ── */}
       {(step === 'idle' || changingDomain) && (
@@ -253,7 +267,7 @@ export default function CustomDomainPage() {
             <button
               onClick={handleConnect}
               disabled={saving || !input.trim()}
-              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors whitespace-nowrap"
+              className="bg-accent-900 hover:bg-accent-600 text-black font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-40 transition-colors whitespace-nowrap"
             >
               {saving ? 'Connecting...' : 'Connect'}
             </button>
@@ -293,14 +307,7 @@ export default function CustomDomainPage() {
               >
                 Change
               </button>
-              <button
-                onClick={handleRemove}
-                disabled={removing}
-                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                title="Remove domain"
-              >
-                {removing ? <RefreshCw size={13} className="animate-spin" /> : <Trash2 size={13} />}
-              </button>
+             
             </div>
           </div>
 
@@ -423,13 +430,7 @@ export default function CustomDomainPage() {
               Change domain
             </button>
             <span className="text-gray-200">·</span>
-            <button
-              onClick={handleRemove}
-              disabled={removing}
-              className="text-sm text-red-400 hover:text-red-600 underline transition-colors"
-            >
-              {removing ? 'Removing...' : 'Remove domain'}
-            </button>
+           
           </div>
         </div>
       )}

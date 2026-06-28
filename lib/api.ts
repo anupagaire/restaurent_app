@@ -1,10 +1,30 @@
-import { refreshAccessToken } from "./auth";
+// import { refreshAccessToken } from "./auth";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
+async function doRefresh(): Promise<string | null> {
+  const refresh = localStorage.getItem('refresh_token');
+  if (!refresh) return null;
 
+  try {
+    const res = await fetch(`${API}/api/v1/token/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.access) return null;
+
+    localStorage.setItem('access_token', data.access);
+    document.cookie = `access_token=${data.access}; path=/; max-age=86400; SameSite=Lax`;
+    return data.access;
+  } catch {
+    return null;
+  }
+}
 export async function apiFetch(url: string, options: any = {}) {
   let token = localStorage.getItem("access_token");
 
@@ -31,7 +51,8 @@ export async function apiFetch(url: string, options: any = {}) {
       await refreshPromise;
     } else {
       isRefreshing = true;
-      refreshPromise = refreshAccessToken();
+     
+      refreshPromise = doRefresh();
       const newToken = await refreshPromise;
       isRefreshing = false;
       refreshPromise = null;

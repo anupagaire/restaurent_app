@@ -9,12 +9,35 @@ import { plansApi, Plan } from '@/lib/subscription-api';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const PLAN_CODES = [
-  { value: 'free_trial', label: 'Free Trial' },
-  { value: 'basic',      label: 'Basic'      },
-  { value: 'pro',        label: 'Pro'        },
-  { value: 'custom',     label: 'Custom'     },
-];
+function parseLines(val: any): string[] {
+  if (!val) return [];
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (typeof parsed === 'object' && parsed !== null)
+        return Object.entries(parsed).map(([k, v]) => `${k}: ${v}`);
+    } catch {}
+    return val.split('\n').filter(Boolean);
+  }
+  if (typeof val === 'object' && val !== null)
+    return Object.entries(val).map(([k, v]) => `${k}: ${v}`);
+  return [];
+}
+
+function toFormText(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (typeof parsed === 'object' && parsed !== null)
+        return Object.entries(parsed).map(([k, v]) => `${k}: ${v}`).join('\n');
+    } catch {}
+    return val;
+  }
+  if (typeof val === 'object' && val !== null)
+    return Object.entries(val).map(([k, v]) => `${k}: ${v}`).join('\n');
+  return '';
+}
 
 function planAccent(plan: Plan) {
   if (plan.is_trial) return '#16a34a';
@@ -63,32 +86,32 @@ function PlanFormModal({
   onClose,
   onSaved,
 }: {
-  initial: Plan | null;       
+  initial: Plan | null;
   onClose: () => void;
   onSaved: () => void;
 }) {
   const [form, setForm] = useState<PlanFormData>(
     initial
       ? {
-          code:         initial.code,
-          name:         initial.name,
-          description:  initial.description,
-          price:        initial.price,
-          duration_days:initial.duration_days,
-          features:      typeof initial.features === 'string' ? initial.features : JSON.stringify(initial.features ?? ''),
-          limits:        typeof initial.limits === 'string' ? initial.limits : JSON.stringify(initial.limits ?? ''),
-          is_trial:     initial.is_trial,
-          is_active:    initial.is_active,
-          ordering:     initial.ordering,
+          code:          initial.code,
+          name:          initial.name,
+          description:   initial.description,
+          price:         initial.price,
+          duration_days: initial.duration_days,
+          features:      toFormText(initial.features),
+          limits:        toFormText(initial.limits),
+          is_trial:      initial.is_trial,
+          is_active:     initial.is_active,
+          ordering:      initial.ordering,
         }
       : EMPTY_FORM,
   );
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState('');
 
-  const set = (k: keyof PlanFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm(f => ({ ...f, [k]: e.target.value }));
-  };
+  const set = (k: keyof PlanFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm(f => ({ ...f, [k]: e.target.value }));
 
   const handleSave = async () => {
     if (!form.name.trim() || !form.price) return;
@@ -109,9 +132,9 @@ function PlanFormModal({
     }
   };
 
-  const Field = ({
-    label, children, required,
-  }: { label: string; children: React.ReactNode; required?: boolean }) => (
+  const Field = ({ label, children, required }: {
+    label: string; children: React.ReactNode; required?: boolean;
+  }) => (
     <div>
       <label className="text-xs font-semibold mb-1 block" style={{ color: '#9a7458' }}>
         {label} {required && <span style={{ color: '#dc2626' }}>*</span>}
@@ -135,30 +158,18 @@ function PlanFormModal({
         }}
       >
         <div className="p-6">
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold text-xl" style={{ color: 'secondary', fontFamily: 'Georgia, serif' }}>
+            <h2 className="font-bold text-xl" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
               {initial ? 'Edit Plan' : 'Create New Plan'}
             </h2>
             <button onClick={onClose}><X size={20} className="text-secondary" /></button>
           </div>
 
           <div className="space-y-4">
-            {/* Code */}
-            <Field label="Plan Code" required>
-              <select value={form.code} onChange={set('code')} className={inputCls}>
-                {PLAN_CODES.map(c => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-            </Field>
-
-            {/* Name */}
             <Field label="Plan Name" required>
               <input type="text" value={form.name} onChange={set('name')} placeholder="e.g. Pro Plan" className={inputCls} />
             </Field>
 
-            {/* Description */}
             <Field label="Description">
               <textarea
                 value={form.description}
@@ -170,7 +181,6 @@ function PlanFormModal({
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              {/* Price */}
               <Field label="Price (Rs.)" required>
                 <input
                   type="number"
@@ -182,8 +192,6 @@ function PlanFormModal({
                   className={inputCls}
                 />
               </Field>
-
-              {/* Duration */}
               <Field label="Duration (days)" required>
                 <input
                   type="number"
@@ -195,30 +203,27 @@ function PlanFormModal({
               </Field>
             </div>
 
-            {/* Features */}
             <Field label="Features (one per line)">
               <textarea
                 value={form.features}
                 onChange={set('features')}
                 placeholder={"QR menu for 1 restaurant\nUnlimited orders\nPriority support"}
-                rows={5}
-                className={`${inputCls} resize-none font-mono text-xs`}
-              />
-            </Field>
-
-            {/* Limits */}
-            <Field label="Limits (one per line)">
-              <textarea
-                value={form.limits}
-                onChange={set('limits')}
-                placeholder={"Max 50 orders/month\n1 restaurant only"}
                 rows={3}
                 className={`${inputCls} resize-none font-mono text-xs`}
               />
             </Field>
 
+            <Field label="Limits (one per line)">
+              <textarea
+                value={form.limits}
+                onChange={set('limits')}
+                placeholder={"max_tables: 20\nmax_qr_codes: 1\nanalytics_enabled: false"}
+                rows={9}
+                className={`${inputCls} resize-none font-mono text-xs`}
+              />
+            </Field>
+
             <div className="grid grid-cols-2 gap-4">
-              {/* Ordering */}
               <Field label="Display Order">
                 <input
                   type="number"
@@ -227,21 +232,17 @@ function PlanFormModal({
                   className={inputCls}
                 />
               </Field>
-
-              {/* Toggles */}
               <div className="flex flex-col gap-3 pt-5">
-                {[
+                {([
                   { key: 'is_trial' as const, label: 'Is Trial Plan' },
                   { key: 'is_active' as const, label: 'Is Active' },
-                ].map(({ key, label }) => (
+                ]).map(({ key, label }) => (
                   <label key={key} className="flex items-center gap-2 cursor-pointer">
                     <button
                       type="button"
                       onClick={() => setForm(f => ({ ...f, [key]: !f[key] }))}
                       className="w-10 h-5 rounded-full transition-all relative"
-                      style={{
-                        background: form[key] ? '#513012' : '#d1d5db',
-                      }}
+                      style={{ background: form[key] ? '#513012' : '#d1d5db' }}
                     >
                       <span
                         className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all"
@@ -255,9 +256,7 @@ function PlanFormModal({
             </div>
           </div>
 
-          {error && (
-            <p className="mt-4 text-sm text-center text-red-600">{error}</p>
-          )}
+          {error && <p className="mt-4 text-sm text-center text-red-600">{error}</p>}
 
           <div className="flex gap-3 mt-6">
             <button
@@ -296,11 +295,13 @@ function PlanCard({
   onToggleActive: (plan: Plan) => void;
 }) {
   const accent = planAccent(plan);
-const features = plan.features ? String(plan.features).split('\n').filter(Boolean) : [];
+  const features = parseLines(plan.features);
+  const limits   = parseLines(plan.limits);
+
   return (
     <div
       className="rounded-2xl border bg-white p-5 flex flex-col gap-4"
-      style={{ borderColor: plan.is_active ? `${accent}44` : 'secondary' }}
+      style={{ borderColor: plan.is_active ? `${accent}44` : '#e5e7eb' }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
@@ -316,7 +317,7 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
               <CheckCircle2 size={12} /> Active
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-xs font-semibold text-secondary">
+            <span className="flex items-center gap-1 text-xs font-semibold text-gray-400">
               <XCircle size={12} /> Inactive
             </span>
           )}
@@ -324,7 +325,7 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
       </div>
 
       <div>
-        <p className="text-2xl font-bold" style={{ color: 'secondary' }}>
+        <p className="text-2xl font-bold" style={{ color: '#513012' }}>
           {parseFloat(plan.price) === 0 ? 'Free' : `Rs. ${parseFloat(plan.price).toLocaleString()}`}
         </p>
         <p className="text-xs text-secondary">{plan.duration_days} days · Order {plan.ordering}</p>
@@ -344,7 +345,16 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
         </ul>
       )}
 
-      {/* Actions */}
+      {limits.length > 0 && (
+        <ul className="space-y-1 pt-2 border-t border-gray-100">
+          {limits.map(l => (
+            <li key={l} className="text-xs text-secondary flex items-center gap-1.5">
+              <XCircle size={10} color="#9ca3af" className="shrink-0" /> {l}
+            </li>
+          ))}
+        </ul>
+      )}
+
       <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
         <button
           onClick={() => onToggleActive(plan)}
@@ -372,11 +382,11 @@ const features = plan.features ? String(plan.features).split('\n').filter(Boolea
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function SuperAdminPlansPage() {
-  const [plans,     setPlans]     = useState<Plan[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState('');
-  const [refreshing,setRefreshing]= useState(false);
-  const [editPlan,  setEditPlan]  = useState<Plan | null | undefined>(undefined); // undefined=closed, null=create, Plan=edit
+  const [plans,      setPlans]      = useState<Plan[]>([]);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [editPlan,   setEditPlan]   = useState<Plan | null | undefined>(undefined);
 
   const load = useCallback(async (manual = false) => {
     if (manual) setRefreshing(true);
@@ -417,7 +427,6 @@ export default function SuperAdminPlansPage() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl mx-auto">
 
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
@@ -447,7 +456,6 @@ export default function SuperAdminPlansPage() {
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
       )}
 
-      {/* Grid */}
       {loading ? (
         <div className="flex justify-center py-16">
           <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
@@ -478,7 +486,6 @@ export default function SuperAdminPlansPage() {
         </div>
       )}
 
-      {/* Form modal */}
       {editPlan !== undefined && (
         <PlanFormModal
           initial={editPlan}
