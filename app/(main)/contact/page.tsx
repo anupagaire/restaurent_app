@@ -102,12 +102,9 @@ const Contact = () => {
         }
       }
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (captchaToken) headers["X-Captcha-Token"] = captchaToken;
-
       const res = await fetch(`${BASE_URL}/api/v1/contact/`, {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
           email: form.email,

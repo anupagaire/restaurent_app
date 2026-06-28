@@ -37,11 +37,11 @@ const RegisterRestaurant = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-const [siteKey, setSiteKey] = useState<string | null>(null);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
   const recaptchaLoaded = useRef(false);
 
-useEffect(() => {
-  const fetchSiteKey = async () => {
+  useEffect(() => {
+    const fetchSiteKey = async () => {
       try {
         const res = await fetch(`${BASE_URL}/api/v1/captcha/site-key/`);
         if (res.ok) {
@@ -57,50 +57,29 @@ useEffect(() => {
 
   useEffect(() => {
     if (!siteKey || recaptchaLoaded.current) return;
-
     const script = document.createElement("script");
     script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
     script.async = true;
     script.defer = true;
-    script.onload = () => {
-      recaptchaLoaded.current = true;
-    };
+    script.onload = () => { recaptchaLoaded.current = true; };
     document.body.appendChild(script);
-
     return () => {
-      const existingScript = document.querySelector(
-        `script[src*="recaptcha/api.js"]`
-      );
-      if (existingScript && existingScript.parentNode) {
-        existingScript.parentNode.removeChild(existingScript);
-      }
+      const s = document.querySelector(`script[src*="recaptcha/api.js"]`);
+      if (s && s.parentNode) s.parentNode.removeChild(s);
     };
   }, [siteKey]);
 
-
-  const executeRecaptcha = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!siteKey) {
-        reject(new Error("reCAPTCHA not initialized"));
-        return;
-      }
-
-      const checkRecaptcha = () => {
-        if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(() => {
-            window.grecaptcha
-              .execute(siteKey, { action: "register_restaurant" })
-              .then(resolve)
-              .catch(reject);
-          });
-        } else {
-          setTimeout(checkRecaptcha, 100);
-        }
+  const executeRecaptcha = (): Promise<string> =>
+    new Promise((resolve, reject) => {
+      if (!siteKey) return reject(new Error("reCAPTCHA not initialized"));
+      const attempt = () => {
+        if (typeof window.grecaptcha === "undefined") return setTimeout(attempt, 200);
+        window.grecaptcha.ready(() => {
+          window.grecaptcha.execute(siteKey, { action: "register_restaurant" }).then(resolve).catch(reject);
+        });
       };
-
-      checkRecaptcha();
+      attempt();
     });
-  };
 
   const verifyCaptcha = async (recaptchaToken: string): Promise<string> => {
     const res = await fetch(`${BASE_URL}/api/v1/captcha/verify/`, {
@@ -108,14 +87,11 @@ useEffect(() => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ recaptcha_token: recaptchaToken }),
     });
-
-    if (!res.ok) {
-      throw new Error("Captcha verification failed. Please try again.");
-    }
-
+    if (!res.ok) throw new Error("Captcha verification failed.");
     const data = await res.json();
     return data.captcha_token;
   };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -128,27 +104,31 @@ useEffect(() => {
     setError(null);
 
     try {
-      // Step 1: Execute reCAPTCHA to get token
-      const recaptchaToken = await executeRecaptcha();
+      // Try captcha but don't block submission if it fails
+      let captchaToken: string | undefined;
+      if (siteKey) {
+        try {
+          const recaptchaToken = await executeRecaptcha();
+          captchaToken = await verifyCaptcha(recaptchaToken);
+        } catch {
+          // Captcha failed silently — backend will decide
+        }
+      }
 
-      // Step 2: Verify token with backend to get signed captcha_token
-      const captchaToken = await verifyCaptcha(recaptchaToken);
-
-      // Step 3: Submit registration form with captcha_token
       const res = await fetch(`${BASE_URL}/api/v1/register-restaurant/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          captcha_token: captchaToken,
+          ...(captchaToken ? { captcha_token: captchaToken } : {}),
         }),
       });
-      
 
-       if (!res.ok) {
+      if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || "Something went wrong. Please try again.");
+        throw new Error(data?.message || data?.detail || data?.error || "Something went wrong. Please try again.");
       }
+
       setSuccess(true);
       setForm(INITIAL_FORM);
     } catch (err: unknown) {
@@ -213,9 +193,7 @@ useEffect(() => {
                   className={inputClass}
                 >
                   {CUISINE_OPTIONS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </Field>
@@ -312,23 +290,15 @@ useEffect(() => {
               </Field>
             </div>
           </Section>
-<p className="text-xs text-gray-500">
-            This site is protected by reCAPTCHA and the Google{" "}
-            <a
-              href="https://policies.google.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
+
+          <p className="text-xs text-gray-500">
+            Protected by reCAPTCHA —{" "}
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline">
               Privacy Policy
             </a>{" "}
-            and{" "}
-            <a
-              href="https://policies.google.com/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >Terms of Service
+            &amp;{" "}
+            <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline">
+              Terms
             </a>{" "}
             apply.
           </p>
