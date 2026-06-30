@@ -76,23 +76,23 @@ const DetailModal = ({
   };
 
   const inputClass =
-    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition";
+    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary placeholder:text-primary focus:outline-none focus:border-primary transition";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 px-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-[#faf8f5] rounded-2xl border border-accent w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-accent sticky top-0 bg-[#faf8f5] z-10">
           <div>
-            <h2 className="text-lg font-semibold text-secondary">{app.restaurant_name}</h2>
-            <p className="text-xs text-secondary">Application #{app.id}</p>
+            <h2 className="text-lg font-semibold text-primary">{app.restaurant_name}</h2>
+            <p className="text-xs text-primary">Application #{app.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-secondary hover:text-secondary transition text-xl leading-none"
+            className="text-primary hover:text-primary transition text-xl leading-none"
           >
             ✕
           </button>
@@ -108,7 +108,7 @@ const DetailModal = ({
               <InfoItem label="Full address" value={app.full_address || "—"} />
             </InfoGrid>
             {app.description && (
-              <p className="text-sm text-secondary mt-2 pt-2 border-t border-accent">
+              <p className="text-sm text-primary mt-2 pt-2 border-t border-accent">
                 {app.description}
               </p>
             )}
@@ -128,7 +128,7 @@ const DetailModal = ({
           <Section title="Admin action">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-secondary">Status</label>
+                <label className="text-xs font-medium text-primary">Status</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as Status)}
@@ -142,7 +142,7 @@ const DetailModal = ({
                 </select>
               </div>
               <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label className="text-xs font-medium text-secondary">Admin note</label>
+                <label className="text-xs font-medium text-primary">Admin note</label>
                 <textarea
                   value={adminNote}
                   onChange={(e) => setAdminNote(e.target.value)}
@@ -156,7 +156,7 @@ const DetailModal = ({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-5 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+                className="px-5 py-2 text-sm bg-primary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
               >
                 {saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}
               </button>
@@ -255,8 +255,8 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
       <div className="max-w-screen-xl mx-auto px-4 py-10">
        
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-secondary">Restaurant Applications</h1>
-          <p className="text-secondary mt-1">
+          <h1 className="text-3xl font-bold text-primary">Restaurant Applications</h1>
+          <p className="text-primary mt-1">
             {count} total application{count !== 1 ? "s" : ""}
           </p>
         </div>
@@ -270,11 +270,11 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by name, city, owner…"
-                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition"
+                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary placeholder:text-primary focus:outline-none focus:border-primary transition"
               />
               <button
                 type="submit"
-                className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition"
+                className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-[#7a4b2a] transition"
               >
                 Search
               </button>
@@ -282,7 +282,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
                 <button
                   type="button"
                   onClick={() => { setSearch(""); setSearchInput(""); setPage(1); }}
-                  className="px-3 py-2 text-sm text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
+                  className="px-3 py-2 text-sm text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                 >
                   Clear
                 </button>
@@ -292,11 +292,11 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
 
             {/* Ordering */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-secondary">Sort by</label>
+              <label className="text-xs font-medium text-primary">Sort by</label>
               <select
                 value={ordering}
                 onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary focus:outline-none focus:border-primary transition"
               >
                 <option value="-created_on">Newest first</option>
                 <option value="created_on">Oldest first</option>
@@ -311,7 +311,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
         {/* Table */}
         <div className="bg-white border border-accent rounded-xl overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-20 text-secondary text-sm">
+            <div className="flex items-center justify-center py-20 text-primary text-sm">
               Loading applications…
             </div>
           ) : error ? (
@@ -319,7 +319,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
               {error}
             </div>
           ) : applications.length === 0 ? (
-            <div className="flex items-center justify-center py-20 text-secondary text-sm">
+            <div className="flex items-center justify-center py-20 text-primary text-sm">
               No applications found.
             </div>
           ) : (
@@ -327,22 +327,22 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-accent bg-[#fdf5ec]">
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">
   S.N.
 </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">
                       Restaurant
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary hidden md:table-cell">
                       Owner
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden lg:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary hidden lg:table-cell">
                       Location
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">
                       Status
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary hidden md:table-cell">
                       Submitted
                     </th>
                     <th className="px-4 py-3" />
@@ -355,19 +355,19 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
                       className="hover:bg-[#fdf5ec] transition cursor-pointer"
                       onClick={() => setSelectedApp(app)}
                     >
-                      {/* <td className="px-4 py-3 text-secondary font-mono text-xs">{app.id}</td> */}
-                      <td className="px-4 py-3 text-secondary font-mono text-xs">
+                      {/* <td className="px-4 py-3 text-primary font-mono text-xs">{app.id}</td> */}
+                      <td className="px-4 py-3 text-primary font-mono text-xs">
       {(page - 1) * pageSize + index + 1}
     </td>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-secondary">{app.restaurant_name}</p>
-                        <p className="text-xs text-secondary">{app.cuisine_type}</p>
+                        <p className="font-medium text-primary">{app.restaurant_name}</p>
+                        <p className="text-xs text-primary">{app.cuisine_type}</p>
                       </td>
-                      <td className="px-4 py-3 text-secondary hidden md:table-cell">
+                      <td className="px-4 py-3 text-primary hidden md:table-cell">
                         <p>{app.owner_name}</p>
-                        <p className="text-xs text-secondary">{app.phone}</p>
+                        <p className="text-xs text-primary">{app.phone}</p>
                       </td>
-                      <td className="px-4 py-3 text-secondary hidden lg:table-cell">
+                      <td className="px-4 py-3 text-primary hidden lg:table-cell">
                         {app.city}{app.area ? `, ${app.area}` : ""}
                       </td>
                       <td className="px-4 py-3">
@@ -378,7 +378,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
                           {STATUS_STYLES[app.status]?.label ?? app.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-secondary hidden md:table-cell">
+                      <td className="px-4 py-3 text-xs text-primary hidden md:table-cell">
                         {new Date(app.created_on).toLocaleDateString()}
                       </td>
                       <td
@@ -388,7 +388,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelectedApp(app)}
-                            className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
+                            className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                           >
                             View
                           </button>
@@ -412,7 +412,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
        {/* Pagination */}
 {totalPages > 1 && (
   <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
-    <p className="text-xs text-secondary">
+    <p className="text-xs text-primary">
       Page {page} of {totalPages} · {count} result{count !== 1 ? "s" : ""}
     </p>
     <div className="flex items-center gap-1">
@@ -420,7 +420,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
       <button
         onClick={() => setPage((p) => Math.max(1, p - 1))}
         disabled={page === 1}
-        className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+        className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
       >
         ←
       </button>
@@ -437,8 +437,8 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
             onClick={() => setPage(Number(p))}
             className={`min-w-[32px] px-2 py-1.5 text-xs rounded-lg border transition ${
               p === page
-                ? "bg-secondary text-white border-secondary font-medium"
-                : "text-secondary border-accent hover:bg-[#fdf5ec]"
+                ? "bg-primary text-white border-primary font-medium"
+                : "text-primary border-accent hover:bg-[#fdf5ec]"
             }`}
           >
             {p}
@@ -450,7 +450,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
       <button
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
         disabled={page === totalPages}
-        className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+        className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
       >
         →
       </button>
@@ -473,7 +473,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white border border-accent rounded-xl p-5">
-    <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
+    <h3 className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 pb-3 border-b border-accent">
       {title}
     </h3>
     <div className="space-y-3">{children}</div>
@@ -486,8 +486,8 @@ const InfoGrid = ({ children }: { children: React.ReactNode }) => (
 
 const InfoItem = ({ label, value }: { label: string; value: string }) => (
   <div>
-    <p className="text-xs text-secondary">{label}</p>
-    <p className="text-sm text-secondary font-medium">{value}</p>
+    <p className="text-xs text-primary">{label}</p>
+    <p className="text-sm text-primary font-medium">{value}</p>
   </div>
 );
 

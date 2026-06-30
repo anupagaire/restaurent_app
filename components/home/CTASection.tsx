@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function CTASection() {
   return (
-    <section className="relative bg-primary overflow-hidden py-3">
+    <section className="relative bg-[#faf7f0] overflow-hidden py-3">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
       {/* Bottom gold accent line */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
@@ -29,15 +29,15 @@ export default function CTASection() {
       <div className="relative z-10 max-w-3xl mx-auto px-6 sm:px-10 text-center">
 
         {/* Title */}
-        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.05] tracking-tight mb-6">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-[1.05] tracking-tight mb-6">
           Ready to Enjoy{' '}
-          <span className="italic text-accent">
+          <span className="italic text-secondary">
             Great Food?
           </span>
         </h2>
 
         {/* Subtitle */}
-        <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed mb-12 max-w-xl mx-auto">
+        <p className="text-lg md:text-xl  font-light leading-relaxed mb-12 max-w-xl mx-auto">
           Scan the QR code on your table and start ordering now
         </p>
 

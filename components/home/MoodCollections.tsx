@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { motion } from "framer-motion";
+import { ArrowRight, Coffee, Pizza, MapPin, Star } from "lucide-react";
 import SectionHeader from '@/components/layout/SectionHeader';
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface MenuItem {
@@ -30,9 +32,7 @@ interface MoodCard {
   headline: string;
   sub: string;
   cta: string;
-  fallbackGradient: string;
-  accentLight: string;
-  accentDark: string;
+  icon: React.ReactNode;
   staticPhoto?: string;
 }
 
@@ -42,22 +42,16 @@ const MOODS: MoodCard[] = [
     headline: "Some Conversations Need the Right Cup",
     sub: "Cafés worth lingering in",
     cta: "Find a café",
-    fallbackGradient: "from-stone-900 via-amber-950 to-stone-800",
-    accentLight: "#fde68a",
-    accentDark: "#92400e",
+    icon: <Coffee className="w-6 h-6" />,
     staticPhoto: "/coffee.jpg",
-
   },
   {
     query: "pizza",
     headline: "Every Great Evening Starts with a Slice",
     sub: "The best pizzas, ranked",
     cta: "See pizza spots",
-    fallbackGradient: "from-red-950 via-accent-950 to-stone-900",
-    accentLight: "#fed7aa",
-    accentDark: "#9a3412",
-        staticPhoto: "/pizza.jpg",
-
+    icon: <Pizza className="w-6 h-6" />,
+    staticPhoto: "/pizza.jpg",
   },
 ];
 
@@ -78,13 +72,14 @@ async function fetchMoodData(query: string): Promise<{
   city: string;
   count: number;
   slug: string;
+  avgRating: number;
 }> {
   try {
     const res = await fetch(
       `${BASE_URL}/api/v1/menu/search/?search=${encodeURIComponent(query)}&page_size=50`,
       { cache: "no-store" }
     );
-    if (!res.ok) return { photo: null, topRestaurant: "", city: "", count: 0, slug: "" };
+    if (!res.ok) return { photo: null, topRestaurant: "", city: "", count: 0, slug: "", avgRating: 0 };
     const data = await res.json();
 
     const items: MenuItem[] = (data.results ?? []).filter(
@@ -92,15 +87,16 @@ async function fetchMoodData(query: string): Promise<{
         m.status && m.name.toLowerCase().includes(query.toLowerCase())
     );
 
-    if (!items.length) return { photo: null, topRestaurant: "", city: "", count: 0, slug: "" };
+    if (!items.length) return { photo: null, topRestaurant: "", city: "", count: 0, slug: "", avgRating: 0 };
 
     const top = [...items].sort(
       (a, b) => parseFloat(b.rating_average) - parseFloat(a.rating_average)
     )[0];
 
-    // get restaurant info
     let name = "", city = "", slug = "";
     let rPhoto: string | null = null;
+    let avgRating = parseFloat(top.rating_average) || 0;
+    
     try {
       const rRes = await fetch(`${BASE_URL}/api/v1/restaurant/${top.restaurant}/`, {
         cache: "no-store",
@@ -123,14 +119,40 @@ async function fetchMoodData(query: string): Promise<{
       city,
       count: uniqueRestaurants,
       slug,
+      avgRating,
     };
   } catch {
-    return { photo: null, topRestaurant: "", city: "", count: 0, slug: "" };
+    return { photo: null, topRestaurant: "", city: "", count: 0, slug: "", avgRating: 0 };
   }
 }
 
-// ── Single cinematic card ────────────────────────────────────────────────────
-function CinematicCard({
+// ── Star Rating Display ──────────────────────────────────────
+function RatingStars({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className="w-4 h-4"
+            style={{
+              fill: star <= Math.round(rating) ? '#FFB703' : 'rgba(255,255,255,0.2)',
+              color: star <= Math.round(rating) ? '#FFB703' : 'rgba(255,255,255,0.2)',
+            }}
+          />
+        ))}
+      </div>
+      {rating > 0 && (
+        <span className="text-sm text-white/80 font-medium">
+          {rating.toFixed(1)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ── Mood Card ─────────────────────────────────────────────
+function MoodCard({
   mood,
   index,
 }: {
@@ -138,194 +160,164 @@ function CinematicCard({
   index: number;
 }) {
   const [photo, setPhoto] = useState<string | null>(mood.staticPhoto ?? null);
-
-  const [meta, setMeta] = useState({ topRestaurant: "", city: "", count: 0, slug: "" });
-  const [loaded, setLoaded] = useState(false);
-  const [imgReady, setImgReady] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [scrollY, setScrollY] = useState(0);
-
-  // Parallax
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-      setScrollY(center * 0.15);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-useEffect(() => {
-  fetchMoodData(mood.query).then((d) => {
-    setPhoto(d.photo || mood.staticPhoto || null);
-
-    setMeta({
-      topRestaurant: d.topRestaurant,
-      city: d.city,
-      count: d.count,
-      slug: d.slug,
-    });
-
-    setLoaded(true);
+  const [meta, setMeta] = useState({ 
+    topRestaurant: "", 
+    city: "", 
+    count: 0, 
+    slug: "",
+    avgRating: 0 
   });
-}, [mood.query, mood.staticPhoto]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchMoodData(mood.query).then((d) => {
+      setPhoto(d.photo || mood.staticPhoto || null);
+      setMeta({
+        topRestaurant: d.topRestaurant,
+        city: d.city,
+        count: d.count,
+        slug: d.slug,
+        avgRating: d.avgRating,
+      });
+      setLoaded(true);
+    });
+  }, [mood.query, mood.staticPhoto]);
 
   return (
-    <div
-      ref={cardRef}
-      className="relative flex-shrink-0 w-[85vw] sm:w-[60vw] lg:w-[45vw] h-[70vh] min-h-[480px] max-h-[640px] rounded-3xl overflow-hidden shadow-2xl"
-      style={{ animationDelay: `${index * 120}ms` }}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
+      className="relative flex-1 min-h-[500px] h-[65vh] max-h-[600px] rounded-3xl overflow-hidden shadow-2xl group"
     >
-      {/* Background layer with parallax */}
-      <div
-        className="absolute inset-[-10%] w-[120%] h-[120%]"
-        style={{ transform: `translateY(${scrollY}px)` }}
-      >
+      {/* Background Image */}
+      <div className="absolute inset-0 overflow-hidden bg-primary-dark">
         {photo && (
-         
-          <img
-  src={photo}
-  alt={mood.query}
-  className="absolute inset-0 w-full h-full object-cover"
-/>
+          <div className="absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-105">
+            <img
+              src={photo}
+              alt={mood.query}
+              className="w-full h-full object-cover"
+            />
+          </div>
         )}
-
-<div
-  className={`absolute inset-0 bg-gradient-to-br ${mood.fallbackGradient} opacity-60`}
-/>
-        {/* Bottom text gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-secondary/30 to-transparent" />
+        
+        {/* Dark Gradient Overlays */}
+        <div className="absolute inset-0 bg-black/70 " />
+        
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay" />
       </div>
 
-      {/* Skeleton shimmer */}
-      {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-stone-800 to-stone-700" />
-      )}
+      {/* Glowing accent line */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Content */}
       <div className="relative h-full flex flex-col justify-between p-8 sm:p-10">
-        {/* Top badge */}
-        <div className="self-start">
+        {/* Top section */}
+        <div className="flex items-start justify-between">
+          {/* Mood icon */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-accent/20 blur-2xl rounded-2xl" />
+            <div className="relative w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-accent shadow-lg">
+              {mood.icon}
+            </div>
+          </div>
+          
+          {/* Badge */}
           {loaded && meta.count > 0 && (
-            <span
-              className="text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full"
-              style={{ background: `${mood.accentLight}22`, color: mood.accentLight, border: `1px solid ${mood.accentLight}44` }}
+            <motion.span
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+              className="text-[10px] font-bold tracking-[0.2em] uppercase px-4 py-2 rounded-full border bg-white/5 backdrop-blur-sm border-white/10 text-white/80"
             >
-              {meta.count} {meta.count === 1 ? "restaurant" : "restaurants"}
-            </span>
+              {meta.count} {meta.count === 1 ? "place" : "places"}
+            </motion.span>
           )}
         </div>
 
         {/* Bottom content */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Sub label */}
-          <p
-            className="text-xs font-bold tracking-[0.25em] uppercase"
-            style={{ color: mood.accentLight, opacity: 0.8 }}
-          >
-            {mood.sub}
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 bg-accent/50" />
+            <p className="text-xs font-bold tracking-[0.25em] uppercase text-white/50">
+              {mood.sub}
+            </p>
+          </div>
 
-          {/* Big headline */}
-          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white leading-tight max-w-xs">
+          {/* Headline */}
+          <h3 className="text-3xl sm:text-4xl lg:text-4xl font-serif font-bold text-white leading-tight max-w-md">
             {mood.headline}
           </h3>
 
-          {/* Top restaurant hint */}
+          {/* Restaurant info */}
           {loaded && meta.topRestaurant && (
-            <p className="text-sm text-white/50">
-              Top pick: <span className="text-white/80 font-medium">{meta.topRestaurant}</span>
-              {meta.city ? `, ${meta.city}` : ""}
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="space-y-2.5"
+            >
+              <div className="flex items-center gap-2.5 text-sm text-white/60">
+                <span className="font-medium text-white/90">{meta.topRestaurant}</span>
+                
+              </div>
+              {meta.avgRating > 0 && (
+                <RatingStars rating={meta.avgRating} />
+              )}
+            </motion.div>
           )}
 
-          {/* CTA */}
-          <Link
-            href={`/menusearch?q=${encodeURIComponent(mood.query)}`}
-            className="inline-flex items-center gap-2.5 mt-2 px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-200 hover:gap-4 hover:shadow-lg active:scale-95"
-            style={{
-              background: mood.accentLight,
-              color: mood.accentDark,
-            }}
+          {/* CTA Button */}
+          <motion.div 
+            whileHover={{ scale: 1.03 }} 
+            whileTap={{ scale: 0.97 }}
+            className="pt-2"
           >
-            {mood.cta}
-            <span className="text-base">→</span>
-          </Link>
+            <Link
+              href={`/menusearch?q=${encodeURIComponent(mood.query)}`}
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-accent to-accent/80 text-primary-dark shadow-lg shadow-accent/20 hover:shadow-accent/40 group/btn"
+            >
+              <span>{mood.cta}</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
+            </Link>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-// ── Main export ──────────────────────────────────────────────────────────────
+// ── Main Component ──────────────────────────────────────────
 export default function MoodCollections() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.clientWidth * 0.7;
-    scrollRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
-  };
-
   return (
-    <section className="py-16 bg-[#0f0a06] overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 mb-8 flex items-end justify-between">
-          <SectionHeader
-  title="Find the Right Place,"
-  highlight="Right Now"
-    titleClassName="bg-white bg-clip-text text-transparent font-bold"
-subtitleClassName="text-white"
-  subtitle="Discover what we offer to make your dining experience unforgettable."
-  withAnimation={false}
-  withDivider={false}
-/>
+    <section className="py-20 bg-[#faf7f0] overflow-hidden relative">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
       
-        {/* Arrow controls */}
-        <div className="hidden sm:flex gap-2">
-          <button
-            onClick={() => scroll("left")}
-            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-accent/60 hover:text-accent transition-all flex items-center justify-center text-sm"
-          >
-            ←
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="w-10 h-10 rounded-full border border-white/20 text-white/60 hover:border-accent/60 hover:text-accent transition-all flex items-center justify-center text-sm"
-          >
-            →
-          </button>
-        </div>
-      </div>
-
-      {/* Horizontal scroll container */}
-      <div
-        ref={scrollRef}
-        className="flex gap-5 px-6 overflow-x-auto scroll-smooth pb-4"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-          WebkitOverflowScrolling: "touch",
-          paddingLeft: "max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem))",
-        }}
-      >
-        {MOODS.map((mood, i) => (
-          <CinematicCard key={mood.query} mood={mood} index={i} />
-        ))}
-
-        {/* End spacer */}
-        <div className="flex-shrink-0 w-6" />
-      </div>
-
-      {/* Scroll hint */}
-      <div className="flex justify-center mt-6 gap-1.5">
-        {MOODS.map((m, i) => (
-          <div
-            key={m.query}
-            className="w-1.5 h-1.5 rounded-full bg-white/20"
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+        {/* Header */}
+        <div className="mb-12">
+          <SectionHeader
+            title="Find the Right Place,"
+            highlight="Right Now"
+            subtitle="Discover curated collections of the best dining experiences"
+            withAnimation={false}
+            withDivider={false}
           />
-        ))}
+        </div>
+
+        {/* Cards Grid - 2 columns, no scroll */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {MOODS.map((mood, i) => (
+            <MoodCard key={mood.query} mood={mood} index={i} />
+          ))}
+        </div>
+
+      
       </div>
     </section>
   );

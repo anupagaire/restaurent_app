@@ -70,7 +70,7 @@ function BrandSection({ brand }: { brand: Brand }) {
 </div>
         ) : null}
         
-        <h2 className="text-3xl font-bold text-accent group-hover:text-primary transition-colors">
+        <h2 className="text-3xl font-bold text-secondary group-hover:text-primary transition-colors">
           {brand.name}
         </h2>
       </Link>
@@ -90,13 +90,13 @@ function LinksColumn({ column }: { column: Column }) {
   const items = column.items as LinkItem[];
   return (
     <div>
-      <h3 className="font-semibold mb-4 text-lg text-accent">{column.title}</h3>
+      <h3 className="font-semibold mb-4 text-lg text-secondary">{column.title}</h3>
       <div className="space-y-3 text-primary/70">
         {items.map((item) => (
           <Link 
             key={item.href} 
             href={item.href} 
-            className="block hover:text-accent transition-colors"
+            className="block hover:text-secondary transition-colors"
           >
             {item.label}
           </Link>
@@ -110,10 +110,10 @@ function ContactColumn({ column }: { column: Column }) {
   const contact = column.items as ContactItems;
   return (
     <div>
-      <h3 className="font-semibold mb-4 text-lg text-accent">{column.title}</h3>
+      <h3 className="font-semibold mb-4 text-lg text-secondary">{column.title}</h3>
       <div className="space-y-4 text-primary/70">
         <div className="flex items-start gap-3">
-          <MapPin className="mt-1 w-5 h-5 shrink-0 text-accent" />
+          <MapPin className="mt-1 w-5 h-5 shrink-0 text-secondary" />
           <div>
             {contact.addressLine1}
             <br />
@@ -122,14 +122,14 @@ function ContactColumn({ column }: { column: Column }) {
         </div>
        
         <div className="flex items-center gap-3">
-          <Phone className="w-5 h-5 shrink-0 text-accent" />
-          <a href={`tel:${contact.phone}`} className="hover:text-accent transition-colors">
+          <Phone className="w-5 h-5 shrink-0 text-secondary" />
+          <a href={`tel:${contact.phone}`} className="hover:text-secondary transition-colors">
             {contact.phone}
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5 shrink-0 text-accent" />
-          <a href={`mailto:${contact.email}`} className="hover:text-accent transition-colors">
+          <Mail className="w-5 h-5 shrink-0 text-secondary" />
+          <a href={`mailto:${contact.email}`} className="hover:text-secondary transition-colors">
             {contact.email}
           </a>
         </div>
@@ -142,7 +142,7 @@ export default function Footer({ data }: FooterProps) {
   if (!data) return null;
 
   return (
-    <footer className="bg-primary/10 text-black" >
+    <footer className="bg-background text-black" >
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <BrandSection brand={data.brand} />
@@ -155,7 +155,7 @@ export default function Footer({ data }: FooterProps) {
           )}
         </div>
 
-        <div className="border-t border-accent/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm ">
+        <div className="border-t border-secondary/20 mt-12 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm ">
           <span>© {new Date().getFullYear()} Yummy Nepal. All rights reserved.</span>
           {data.socials.length > 0 && (
             <div className="flex items-center gap-4">
@@ -166,7 +166,7 @@ export default function Footer({ data }: FooterProps) {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   aria-label={s.name} 
-                  className="w-9 h-9 rounded-full bg-secondary/30 flex items-center justify-center hover:bg-accent hover:text-primary transition-all"
+                  className="w-9 h-9 rounded-full bg-secondary/30 flex items-center justify-center hover:bg-secondary hover:text-primary transition-all"
                 >
                   <SocialIcon icon={s.icon} />
                 </a>

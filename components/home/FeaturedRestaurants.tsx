@@ -104,7 +104,7 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
   const displayRating = hover || myRating;
 
   return (
-    <div onClick={(e) => e.preventDefault()} className="mt-auto pt-3 border-t border-secondary/10">
+    <div onClick={(e) => e.preventDefault()} className="mt-auto pt-3 border-t border-primary/10">
       {/* Avg stars row */}
       {count > 0 && (
         <div className="flex items-center gap-1.5 mb-2">
@@ -114,13 +114,13 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
               <span key={s} className="text-xs" style={{ color: s <= Math.round(avg) ? '#cf8319' : 'rgba(255,255,255,0.19)' }}>★</span>
             ))}
           </div>
-          <span className="text-[10px] text-secondary/30">({count})</span>
+          <span className="text-[10px] text-primary/30">({count})</span>
         </div>
       )}
 
       {/* Interactive rating */}
       <div>
-  <p className="text-xs text-secondary/65 tracking-[0.2em] uppercase mb-1">
+  <p className="text-xs text-primary/65 tracking-[0.2em] uppercase mb-1">
     {submitted ? 'Rated' : 'Rate this place'}
   </p>
 
@@ -149,7 +149,7 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
     ))}
   </div>
 
-  <p className="text-sm mt-0.5 text-secondary/60">
+  <p className="text-sm mt-0.5 text-primary/60">
     {submitting
       ? 'Saving…'
       : submitted
@@ -164,12 +164,12 @@ function StarRating({ restaurantId }: { restaurantId: number }) {
 // ── Skeleton card ────────────────────────────────────────────
 function SkeletonCard() {
   return (
-    <div className="rounded-[1.5rem] overflow-hidden bg-secondary/[0.04] border border-secondary/8 animate-pulse">
-      <div className="h-48 bg-secondary/10" />
+    <div className="rounded-[1.5rem] overflow-hidden bg-primary/[0.04] border border-primary/8 animate-pulse">
+      <div className="h-48 bg-primary/10" />
       <div className="p-5 space-y-3">
-        <div className="h-4 bg-secondary/10 rounded-full w-3/4" />
-        <div className="h-3 bg-secondary/8 rounded-full w-1/2" />
-        <div className="h-3 bg-secondary/8 rounded-full w-2/3" />
+        <div className="h-4 bg-primary/10 rounded-full w-3/4" />
+        <div className="h-3 bg-primary/8 rounded-full w-1/2" />
+        <div className="h-3 bg-primary/8 rounded-full w-2/3" />
       </div>
     </div>
   );
@@ -220,7 +220,7 @@ export default function FeaturedRestaurants() {
             {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : restaurants.length === 0 ? (
-          <p className="text-center text-secondary/30 py-10 font-light">No restaurants available at the moment</p>
+          <p className="text-center text-primary/30 py-10 font-light">No restaurants available at the moment</p>
         ) : (
           <motion.div
             initial="hidden"
@@ -238,10 +238,10 @@ export default function FeaturedRestaurants() {
                 >
                   <Link
                     href={`/restaurants/${toSlug(restaurant.name)}`}
-                    className="group flex flex-col rounded-[1.5rem] overflow-hidden border border-secondary/8 hover:border-accent/35 bg-secondary/[0.04] hover:bg-secondary/[0.08] transition-all duration-400 h-full"
+                    className="group flex flex-col rounded-[1.5rem] overflow-hidden border border-primary/8 hover:border-accent/35 bg-primary/[0.04] hover:bg-primary/[0.08] transition-all duration-400 h-full"
                   >
                     {/* Image */}
-                    <div className="relative h-44 sm:h-48 overflow-hidden bg-secondary/5 shrink-0">
+                    <div className="relative h-44 sm:h-48 overflow-hidden bg-primary/5 shrink-0">
                       {photo ? (
                         <Image
                           src={photo}
@@ -266,7 +266,7 @@ export default function FeaturedRestaurants() {
 
                       {/* View count */}
                       {restaurant.view_count > 0 && (
-                        <span className="absolute top-3 right-3 bg-secondary/50 text-white text-base px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
+                        <span className="absolute top-3 right-3 bg-primary/50 text-white text-base px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
                           <Eye className="w-3 h-3" />
                           {restaurant.view_count >= 1000
                             ? `${(restaurant.view_count / 1000).toFixed(1)}k`
@@ -277,7 +277,7 @@ export default function FeaturedRestaurants() {
 
                     {/* Card body */}
                     <div className="flex flex-col flex-1 p-4 sm:p-5 gap-2">
-                      <h3 className="font-medium text-secondary text-base sm:text-lg leading-snug line-clamp-1  ">
+                      <h3 className="font-medium text-primary text-base sm:text-lg leading-snug line-clamp-1  ">
                         {restaurant.name}
                       </h3>
                       <div className="flex items-center gap-1.5 ">

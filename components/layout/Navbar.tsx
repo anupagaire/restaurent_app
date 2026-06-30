@@ -174,15 +174,11 @@ const handleProfileClick = () => {
   );
 
   return (
-    <nav
+    
 
-
-className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-  ${
-  scrolled || darkBg
-    ? 'bg-primary/10 backdrop-blur-xl shadow-lg'
-    : 'bg-white   backdrop-blur-sm shadow-md'
-}`}
+<nav
+  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+  ${scrolled ? 'bg-white/95 shadow-lg' : 'bg-white shadow-md'}`}
 >
       <div className="max-w-screen-6xl mx-auto  sm:px-6 lg:px-15">
 
@@ -222,7 +218,7 @@ className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
                   <motion.div
                     initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-secondary backdrop-blur-xl border border-primary/15 rounded-2xl p-4 shadow-2xl"
+                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-primary/40 backdrop-blur-xl border border-primary/15 rounded-2xl p-4 shadow-2xl"
                   >
                     <p className="text-xs  mb-2 font-medium tracking-wide text-white uppercase">Search venues</p>
                     {renderSearchBox(true)}

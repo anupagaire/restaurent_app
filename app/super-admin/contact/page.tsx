@@ -52,7 +52,7 @@ const DetailModal = ({
   const [error, setError] = useState<string | null>(null);
 
   const inputClass =
-    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition";
+    "w-full px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary placeholder:text-primary focus:outline-none focus:border-primary transition";
 
   const handleSave = async () => {
     setSaving(true);
@@ -77,17 +77,17 @@ const DetailModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 px-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-[#faf8f5] rounded-2xl border border-accent w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-4 border-b border-accent sticky top-0 bg-[#faf8f5] z-10">
           <div className="flex-1 pr-4">
-            <h2 className="text-base font-semibold text-secondary leading-snug">{msg.subject}</h2>
-            <p className="text-xs text-secondary mt-0.5">Message #{msg.id}</p>
+            <h2 className="text-base font-semibold text-primary leading-snug">{msg.subject}</h2>
+            <p className="text-xs text-primary mt-0.5">Message #{msg.id}</p>
           </div>
-          <button onClick={onClose} className="text-secondary hover:text-secondary transition text-xl leading-none mt-0.5">
+          <button onClick={onClose} className="text-primary hover:text-primary transition text-xl leading-none mt-0.5">
             ✕
           </button>
         </div>
@@ -95,29 +95,29 @@ const DetailModal = ({
         <div className="p-6 space-y-5">
           {/* Sender Info */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 pb-3 border-b border-accent">
               Sender details
             </h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               <div>
-                <p className="text-xs text-secondary">Name</p>
-                <p className="text-sm font-medium text-secondary">{msg.name}</p>
+                <p className="text-xs text-primary">Name</p>
+                <p className="text-sm font-medium text-primary">{msg.name}</p>
               </div>
               <div>
-                <p className="text-xs text-secondary">Email</p>
-                <a href={`mailto:${msg.email}`} className="text-sm font-medium text-secondary hover:underline">
+                <p className="text-xs text-primary">Email</p>
+                <a href={`mailto:${msg.email}`} className="text-sm font-medium text-primary hover:underline">
                   {msg.email}
                 </a>
               </div>
               <div>
-                <p className="text-xs text-secondary">Phone</p>
-                <a href={`tel:${msg.phone}`} className="text-sm font-medium text-secondary hover:underline">
+                <p className="text-xs text-primary">Phone</p>
+                <a href={`tel:${msg.phone}`} className="text-sm font-medium text-primary hover:underline">
                   {msg.phone || "—"}
                 </a>
               </div>
               <div>
-                <p className="text-xs text-secondary">Received</p>
-                <p className="text-sm font-medium text-secondary">
+                <p className="text-xs text-primary">Received</p>
+                <p className="text-sm font-medium text-primary">
                   {new Date(msg.created_on).toLocaleDateString("en-US", {
                     day: "numeric", month: "short", year: "numeric",
                   })}
@@ -128,20 +128,20 @@ const DetailModal = ({
 
           {/* Message */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 pb-3 border-b border-accent">
               Message
             </h3>
-            <p className="text-sm text-secondary leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+            <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">{msg.message}</p>
           </div>
 
           {/* Admin Controls */}
           <div className="bg-white border border-accent rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary mb-3 pb-3 border-b border-accent">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 pb-3 border-b border-accent">
               Admin action
             </h3>
             <div className="space-y-3">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-secondary">Status</label>
+                <label className="text-xs font-medium text-primary">Status</label>
                 <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className={inputClass}>
                   {STATUS_OPTIONS.map((s) => (
                     <option key={s} value={s}>
@@ -151,7 +151,7 @@ const DetailModal = ({
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-secondary">Admin note</label>
+                <label className="text-xs font-medium text-primary">Admin note</label>
                 <textarea
                   value={adminNote}
                   onChange={(e) => setAdminNote(e.target.value)}
@@ -167,7 +167,7 @@ const DetailModal = ({
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-5 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
+                  className="px-5 py-2 text-sm bg-primary text-white rounded-lg hover:bg-[#7a4b2a] disabled:opacity-60 transition"
                 >
                   {saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}
                 </button>
@@ -256,7 +256,7 @@ export default function ContactMessagesPage() {
         {/* Heading */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">Contact Messages</h1>
+            <h1 className="text-3xl font-bold text-primary">Contact Messages</h1>
             <p className="text-white mt-1">
               {count} total · {pendingCount} pending
             </p>
@@ -271,16 +271,16 @@ export default function ContactMessagesPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by name, email, subject…"
-                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary placeholder:text-primary focus:outline-none focus:border-secondary transition"
+                className="flex-1 px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary placeholder:text-primary focus:outline-none focus:border-primary transition"
               />
-              <button type="submit" className="px-4 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-[#7a4b2a] transition">
+              <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-[#7a4b2a] transition">
                 Search
               </button>
               {search && (
                 <button
                   type="button"
                   onClick={() => { setSearch(""); setSearchInput(""); setPage(1); }}
-                  className="px-3 py-2 text-sm text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
+                  className="px-3 py-2 text-sm text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                 >
                   Clear
                 </button>
@@ -288,11 +288,11 @@ export default function ContactMessagesPage() {
             </form>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-secondary">Status</label>
+              <label className="text-xs font-medium text-primary">Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value as Status | ""); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary focus:outline-none focus:border-primary transition"
               >
                 <option value="">All statuses</option>
                 {STATUS_OPTIONS.map((s) => (
@@ -302,11 +302,11 @@ export default function ContactMessagesPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-secondary">Sort by</label>
+              <label className="text-xs font-medium text-primary">Sort by</label>
               <select
                 value={ordering}
                 onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-secondary focus:outline-none focus:border-secondary transition"
+                className="px-3 py-2 text-sm border border-accent rounded-lg bg-white text-primary focus:outline-none focus:border-primary transition"
               >
                 <option value="-created_on">Newest first</option>
                 <option value="created_on">Oldest first</option>
@@ -320,13 +320,13 @@ export default function ContactMessagesPage() {
         {/* Table */}
         <div className="bg-white border border-accent rounded-xl overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-20 text-secondary text-sm">
+            <div className="flex items-center justify-center py-20 text-primary text-sm">
               Loading messages…
             </div>
           ) : error ? (
             <div className="flex items-center justify-center py-20 text-red-600 text-sm">{error}</div>
           ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center py-20 text-secondary text-sm">
+            <div className="flex items-center justify-center py-20 text-primary text-sm">
               No messages found.
             </div>
           ) : (
@@ -334,11 +334,11 @@ export default function ContactMessagesPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-accent bg-[#fdf5ec]">
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">#</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">From</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden md:table-cell">Subject</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary">Status</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-secondary hidden lg:table-cell">Received</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">#</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">From</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary hidden md:table-cell">Subject</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary">Status</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-primary hidden lg:table-cell">Received</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
@@ -349,35 +349,35 @@ export default function ContactMessagesPage() {
                       className={`hover:bg-[#fdf5ec] transition cursor-pointer ${!msg.is_checked ? "bg-[#fffbf5]" : ""}`}
                       onClick={() => setSelected(msg)}
                     >
-                      <td className="px-4 py-3 text-secondary font-mono text-xs">{msg.id}</td>
+                      <td className="px-4 py-3 text-primary font-mono text-xs">{msg.id}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {!msg.is_checked && (
                             <span className="w-1.5 h-1.5 rounded-full bg-accent0 shrink-0" />
                           )}
                           <div>
-                            <p className="font-medium text-secondary">{msg.name}</p>
-                            <p className="text-xs text-secondary">{msg.email}</p>
+                            <p className="font-medium text-primary">{msg.name}</p>
+                            <p className="text-xs text-primary">{msg.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-secondary hidden md:table-cell max-w-[200px]">
+                      <td className="px-4 py-3 text-primary hidden md:table-cell max-w-[200px]">
                         <p className="truncate">{msg.subject}</p>
-                        <p className="text-xs text-secondary truncate">{msg.message}</p>
+                        <p className="text-xs text-primary truncate">{msg.message}</p>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[msg.status] ?? ""}`}>
                           {msg.status.charAt(0).toUpperCase() + msg.status.slice(1)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-secondary hidden lg:table-cell">
+                      <td className="px-4 py-3 text-xs text-primary hidden lg:table-cell">
                         {new Date(msg.created_on).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelected(msg)}
-                            className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
+                            className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] transition"
                           >
                             View
                           </button>
@@ -400,21 +400,21 @@ export default function ContactMessagesPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4 text-sm">
-            <p className="text-secondary text-xs">
+            <p className="text-primary text-xs">
               Page {page} of {totalPages} · {count} results
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+                className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
               >
                 ← Previous
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 text-xs text-secondary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
+                className="px-3 py-1.5 text-xs text-primary border border-accent rounded-lg hover:bg-[#fdf5ec] disabled:opacity-40 transition"
               >
                 Next →
               </button>

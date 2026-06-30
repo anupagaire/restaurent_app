@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FileText, Layout, Info, Mail,Star,HelpCircle } from 'lucide-react';
+import {  Layout, Info, Star,HelpCircle } from 'lucide-react';
 
 const contentSections = [
 { title: 'Navbar & Hero', href: '/super-admin/website-content/navbar-hero', icon: Layout, description: 'Edit navbar links, buttons, hero slides' },
@@ -13,22 +13,22 @@ const contentSections = [
 export default function WebsiteContentPage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2 text-secondary">Website Content</h1>
-      <p className="text-secondary mb-8">Manage your public website content from here.</p>
+      <h1 className="text-2xl font-bold mb-2 text-primary">Website Content</h1>
+      <p className="text-primary mb-8">Manage your public website content from here.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {contentSections.map((section) => (
           <Link
             key={section.href}
             href={section.href}
-            className="flex items-start gap-4 p-5 border border-secondary/15 rounded-xl hover:border-secondary/40 hover:bg-secondary/5 transition-all group"
+            className="flex items-start gap-4 p-5 border border-primary/15 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all group"
           >
-            <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition">
-              <section.icon className="w-5 h-5 text-secondary" />
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition">
+              <section.icon className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h2 className="font-semibold text-gray-800">{section.title}</h2>
-              <p className="text-sm text-secondary mt-0.5">{section.description}</p>
+              <p className="text-sm text-primary mt-0.5">{section.description}</p>
             </div>
           </Link>
         ))}

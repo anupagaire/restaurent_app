@@ -63,7 +63,7 @@ const slug = toSlug(r.name);
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.45, delay: index * 0.07, ease: 'easeOut' }}
-      className="flex-shrink-0 w-52"
+      className="shrink-0 w-52"
     >
       <Link
         href={`/restaurants/${slug}`}
@@ -87,44 +87,26 @@ const slug = toSlug(r.name);
 
           {/* NEW badge */}
           <span
-            className="absolute top-2.5 left-2.5 flex items-center gap-1 text-[9px] font-bold tracking-[0.15em] uppercase px-2 py-1 rounded-full z-10"
-            style={{ background: '#d4b78f', color: '#1a0800' }}
+            className="absolute top-2.5 bg-accent text-white left-2.5 flex items-center gap-1 text-[9px] font-bold tracking-[0.15em] uppercase px-2 py-1 rounded-full z-10"
           >
             <Sparkles size={8} />
             New
           </span>
 
-          {/* Days ago pill */}
-          <span
-            className="absolute top-2.5 right-2.5 text-[9px] font-medium px-2 py-0.5 rounded-full z-10"
-            style={{ background: 'rgba(0,0,0,0.55)', color: 'rgba(255,255,255,0.85)' }}
-          >
-            {daysAgo(r.created_on)}
-          </span>
+         
         </div>
 
         {/* Body */}
         <div className="flex flex-col flex-1 p-4 gap-1.5">
-          <h3 className="font-medium text-secondary text-sm leading-snug line-clamp-1 group-hover:text-accent transition-colors">
+          <h3 className=" text-black font-bold text-base leading-snug line-clamp-1 group-hover:text-accent transition-colors">
             {r.name}
           </h3>
-          <div className="flex items-center gap-1 text-secondary/40">
+          <div className="flex items-center gap-1 text-secondary">
             <MapPin size={10} className="shrink-0" />
             <p className="text-xs truncate">{r.city}</p>
           </div>
 
-          {/* Menu/category count */}
-          <div className="mt-auto pt-2 flex items-center gap-2 border-t border-secondary/6">
-            {r.menus_count > 0 ? (
-              <span className="text-[10px] text-secondary/40">
-                {r.menus_count} menu item{r.menus_count !== 1 ? 's' : ''}
-              </span>
-            ) : (
-              <span className="text-[10px] italic" style={{ color: '#d4b78f' }}>
-                Menu coming soon
-              </span>
-            )}
-          </div>
+          
         </div>
       </Link>
     </motion.div>

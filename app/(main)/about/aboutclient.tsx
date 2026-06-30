@@ -113,7 +113,7 @@ export default function About() {
   if (loading) return (
     <div className="min-h-screen bg-[#fdf9f4] space-y-12 p-8">
       <Skeleton className="h-[55vh] w-full rounded-none" />
-      <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 gap-12">
+      <div className="max-w-screen-7xl mx-auto grid lg:grid-cols-2 gap-12">
         <Skeleton className="h-[420px] w-full rounded-[2rem]" />
         <div className="space-y-5 pt-8">
           <Skeleton className="h-8 w-2/3 rounded-full" />
@@ -145,11 +145,7 @@ export default function About() {
         <meta name="robots" content="index, follow" />
       </Head>
 
-      <main className="min-h-screen w-full bg-[#fdf9f4] text-secondary font-light overflow-x-hidden">
-
-        {/* ═══════════════════════════════════════
-            HERO — full-bleed cinematic
-        ═══════════════════════════════════════ */}
+      <main className="min-h-screen w-full bg-background  font-light overflow-x-hidden">
         <section
           aria-label={`${hero.title} hero banner`}
           className="relative h-[60vh] md:h-[72vh] w-full overflow-hidden"
@@ -165,10 +161,9 @@ export default function About() {
               alt={hero.title}
             />
           </div>
-
           {/* Layered overlay: rich warm gradient */}
           {hero.overlay !== false && (
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/75 via-secondary/35 to-[#fdf9f4]" />
+            <div className="absolute inset-0 bg-black/60" />
           )}
 
           {/* Gold corner accent lines */}
@@ -177,19 +172,6 @@ export default function About() {
 
           {/* Content */}
           <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 pt-20 pb-16">
-
-            {/* Label pill */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-accent/40 bg-accent/10 backdrop-blur-sm"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              <span className="text-accent text-xs tracking-[0.4em] uppercase font-light">
-                Our Story
-              </span>
-            </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -204,7 +186,7 @@ export default function About() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="w-16 h-px bg-accent my-6 origin-left"
+              className="w-16 h-px  my-6 origin-left"
             />
 
             <motion.p
@@ -221,7 +203,7 @@ export default function About() {
    
         <section
           aria-labelledby="intro-heading"
-          className="relative py-2  bg-white overflow-hidden"
+          className="relative py-2  bg-[#faf7f0] overflow-hidden"
         >
          
           <div className="relative z-10 max-w-8xl mx-auto px-6 ">
@@ -276,7 +258,7 @@ export default function About() {
 
                 <motion.div variants={fadeUp} className="space-y-5">
                   {introSection.paragraphs.map((p, i) => (
-                    <p key={i} className="text-lg text-secondary/65 font-light leading-relaxed">
+                    <p key={i} className="text-lg font-light leading-relaxed">
                       {p}
                     </p>
                   ))}
@@ -286,12 +268,10 @@ export default function About() {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════
-            VISION — two-column with gold divider
-        ═══════════════════════════════════════ */}
+      
         <section
           aria-labelledby="vision-heading"
-          className="relative py-2 md:py-8 bg-[#fdf9f4] overflow-hidden"
+          className="relative py-2 md:py-8 bg-[#faf7f0] overflow-hidden"
         >
           <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
@@ -309,7 +289,7 @@ export default function About() {
                 />
                 <div className="space-y-4">
                   {visionSection.left.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-secondary/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg  font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -324,15 +304,13 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
                 className="pt-12 lg:pt-0 lg:pl-16"
               >
-                {/* ✅ SectionHeader for vision right */}
                 <SectionHeader
                   title={visionSection.right.title}
-                  // withAnimation={false}
-                  // withDivider={false}
+               
                 />
                 <div className="space-y-4">
                   {visionSection.right.content.map((line, i) => (
-                    <p key={i} className="text-base md:text-lg text-secondary/60 font-light leading-relaxed">
+                    <p key={i} className="text-base md:text-lg text-primarry font-light leading-relaxed">
                       {line}
                     </p>
                   ))}
@@ -342,24 +320,18 @@ export default function About() {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════
-            VIBES CAROUSEL — warm immersive strip
-        ═══════════════════════════════════════ */}
+        
         {vibes.images && vibes.images.length > 0 && (
           <section
             aria-labelledby="vibes-heading"
-            className="py-2 bg-white overflow-hidden"
+            className="py-2 bg-background overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 mb-14">
-              {/* ✅ SectionHeader for vibes */}
               <SectionHeader
                 title={vibes.title.includes("Restaurant") ? vibes.title.split("Restaurant")[0] : vibes.title}
                 highlight={vibes.title.includes("Restaurant") ? "Restaurant" : undefined}
-                withAnimation={false}
                 withDivider={false}
-                titleColor="text-secondary"
-                highlightColor="text-accent"
-                titleClassName="text-4xl md:text-5xl lg:text-6xl font-light leading-tight tracking-tight"
+                
               />
             </div>
 
@@ -388,8 +360,7 @@ export default function About() {
                       alt={`${vibes.title} ${index + 1}`}
                       loading="lazy"
                     />
-                    {/* Warm vignette on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                   
                     {/* Bottom gold line reveal */}
                     <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                   </div>
@@ -399,29 +370,20 @@ export default function About() {
           </section>
         )}
 
-        {/* ═══════════════════════════════════════
-            FEATURES — editorial bento grid
-        ═══════════════════════════════════════ */}
+    
         {features && features.length > 0 && (
           <section
             aria-labelledby="features-heading"
-            className="relative py-2 md:py-8 bg-[#fdf9f4] overflow-hidden"
+            className="relative py-2 md:py-8 bg-[#faf7f0] overflow-hidden"
           >
-
             <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
 
-              {/* ✅ SectionHeader for features */}
               <SectionHeader
                 title="Everything you need,"
                 highlight="in one place"
-                withAnimation={false}
                 withDivider={false}
-                titleColor="text-secondary"
-                highlightColor="text-accent"
-                titleClassName="text-4xl md:text-5xl font-light leading-tight mb-14 max-w-xl"
               />
 
-              {/* Feature cards grid */}
               <motion.div
                 variants={stagger}
                 initial="hidden"
@@ -435,19 +397,7 @@ export default function About() {
                     variants={fadeUp}
                     className="group relative flex flex-col rounded-[1.75rem] bg-white border border-accent/15 hover:border-accent/40 p-8 md:p-10 transition-all duration-500 overflow-hidden"
                   >
-                    {/* Corner accent */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute top-0 right-0 w-20 h-20 rounded-bl-[4rem] bg-accent/5 group-hover:bg-accent/12 transition-colors duration-500"
-                    />
-
-                    {/* Index number */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute top-7 right-8 text-5xl font-secondary text-secondary/5 group-hover:text-accent/12 transition-colors duration-500 select-none leading-none"
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
+                      
 
                     {/* Feature image / icon */}
                     <div className="mb-6 w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center overflow-hidden group-hover:bg-accent/18 transition-colors duration-400">
@@ -464,13 +414,11 @@ export default function About() {
                       )}
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-xl font-medium text-secondary mb-3 leading-snug">
+                    <h3 className="text-xl font-bold text-primary mb-3 leading-snug">
                       {feature.title}
                     </h3>
 
-                    {/* Description */}
-                    <p className="text-secondary/55 text-base font-light leading-relaxed flex-1">
+                    <p className="text-primary text-base font-light leading-relaxed flex-1">
                       {feature.description}
                     </p>
 

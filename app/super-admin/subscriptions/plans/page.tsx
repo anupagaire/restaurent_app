@@ -143,11 +143,11 @@ function PlanFormModal({
     </div>
   );
 
-  const inputCls = "w-full px-3 py-2.5 rounded-xl text-sm outline-none border border-gray-200 bg-white focus:border-secondary";
+  const inputCls = "w-full px-3 py-2.5 rounded-xl text-sm outline-none border border-gray-200 bg-white focus:border-primary";
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-secondary/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className="fixed z-50 rounded-3xl overflow-y-auto w-full max-w-lg bg-white"
         style={{
@@ -162,7 +162,7 @@ function PlanFormModal({
             <h2 className="font-bold text-xl" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
               {initial ? 'Edit Plan' : 'Create New Plan'}
             </h2>
-            <button onClick={onClose}><X size={20} className="text-secondary" /></button>
+            <button onClick={onClose}><X size={20} className="text-primary" /></button>
           </div>
 
           <div className="space-y-4">
@@ -308,7 +308,7 @@ function PlanCard({
           <PlanIcon plan={plan} />
           <div>
             <p className="font-bold text-gray-800">{plan.name}</p>
-            <p className="text-xs text-secondary font-mono">{plan.code}</p>
+            <p className="text-xs text-primary font-mono">{plan.code}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -328,19 +328,19 @@ function PlanCard({
         <p className="text-2xl font-bold" style={{ color: '#513012' }}>
           {parseFloat(plan.price) === 0 ? 'Free' : `Rs. ${parseFloat(plan.price).toLocaleString()}`}
         </p>
-        <p className="text-xs text-secondary">{plan.duration_days} days · Order {plan.ordering}</p>
-        {plan.description && <p className="text-xs text-secondary mt-1">{plan.description}</p>}
+        <p className="text-xs text-primary">{plan.duration_days} days · Order {plan.ordering}</p>
+        {plan.description && <p className="text-xs text-primary mt-1">{plan.description}</p>}
       </div>
 
       {features.length > 0 && (
         <ul className="space-y-1">
           {features.slice(0, 4).map(f => (
-            <li key={f} className="text-xs text-secondary flex items-center gap-1.5">
+            <li key={f} className="text-xs text-primary flex items-center gap-1.5">
               <CheckCircle2 size={10} color={accent} className="shrink-0" /> {f}
             </li>
           ))}
           {features.length > 4 && (
-            <li className="text-xs text-secondary">+{features.length - 4} more…</li>
+            <li className="text-xs text-primary">+{features.length - 4} more…</li>
           )}
         </ul>
       )}
@@ -348,7 +348,7 @@ function PlanCard({
       {limits.length > 0 && (
         <ul className="space-y-1 pt-2 border-t border-gray-100">
           {limits.map(l => (
-            <li key={l} className="text-xs text-secondary flex items-center gap-1.5">
+            <li key={l} className="text-xs text-primary flex items-center gap-1.5">
               <XCircle size={10} color="#9ca3af" className="shrink-0" /> {l}
             </li>
           ))}
@@ -366,7 +366,7 @@ function PlanCard({
           onClick={() => onEdit(plan)}
           className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50"
         >
-          <Pencil size={13} className="text-secondary" />
+          <Pencil size={13} className="text-primary" />
         </button>
         <button
           onClick={() => onDelete(plan)}
@@ -432,7 +432,7 @@ export default function SuperAdminPlansPage() {
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#513012', fontFamily: 'Georgia, serif' }}>
             Subscription Plans
           </h1>
-          <p className="text-secondary text-sm mt-1">Create and manage pricing plans</p>
+          <p className="text-primary text-sm mt-1">Create and manage pricing plans</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -458,10 +458,10 @@ export default function SuperAdminPlansPage() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : plans.length === 0 ? (
-        <div className="text-center py-16 text-secondary">
+        <div className="text-center py-16 text-primary">
           <Crown size={40} className="mx-auto mb-3 opacity-20" />
           <p className="font-medium mb-4">No plans yet</p>
           <button

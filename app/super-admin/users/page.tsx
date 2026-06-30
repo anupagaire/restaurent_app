@@ -167,7 +167,7 @@ const paginatedUsers = filteredUsers.slice(
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-secondary">Restaurant Admins</h1>
+          <h1 className="text-3xl font-bold text-primary">Restaurant Admins</h1>
           <p className="text-gray-600 mt-1">Manage all restaurant administrators</p>
         </div>
         <div className="flex gap-3">
@@ -177,7 +177,7 @@ const paginatedUsers = filteredUsers.slice(
           </Button>
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-secondary hover:bg-secondary"
+            className="bg-primary hover:bg-primary"
           >
             <Plus className="mr-2 h-5 w-5" />
             Add New Admin
@@ -189,7 +189,7 @@ const paginatedUsers = filteredUsers.slice(
         <CardHeader>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary h-5 w-5" />
               <Input
                 placeholder="Search by name, email or restaurant..."
                 value={searchTerm}
@@ -199,16 +199,16 @@ const paginatedUsers = filteredUsers.slice(
               />
             </div>
             <div className="text-lg">
-              Total: <span className="font-semibold text-secondary">{users.length}</span>
+              Total: <span className="font-semibold text-primary">{users.length}</span>
             </div>
           </div>
         </CardHeader>
 
         <CardContent>
           {loading ? (
-            <p className="text-center py-12 text-secondary">Loading admins...</p>
+            <p className="text-center py-12 text-primary">Loading admins...</p>
           ) : filteredUsers.length === 0 ? (
-            <p className="text-center text-secondary py-12">No admins found.</p>
+            <p className="text-center text-primary py-12">No admins found.</p>
           ) : (
             <Table>
               <TableHeader>
@@ -226,23 +226,23 @@ const paginatedUsers = filteredUsers.slice(
                     {/* Admin Details Column */}
                     <TableCell>
                       <div className="font-medium">{user.fullName}</div>
-                      <div className="text-sm text-secondary">{user.email}</div>
-                      <div className="text-sm text-secondary">{user.phone}</div>
+                      <div className="text-sm text-primary">{user.email}</div>
+                      <div className="text-sm text-primary">{user.phone}</div>
                     </TableCell>
 
                     {/* Restaurant Details Column - More Informative */}
                     <TableCell>
-                      <div className="font-medium text-secondary">{user.restaurantName}</div>
+                      <div className="font-medium text-primary">{user.restaurantName}</div>
                       {user.address && (
                         <div className="text-sm text-gray-600 mt-1">{user.address}</div>
                       )}
                       {user.city && (
-                        <div className="text-xs text-secondary">{user.city}</div>
+                        <div className="text-xs text-primary">{user.city}</div>
                       )}
                     </TableCell>
 
                     {/* <TableCell>
-                      <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-medium">
+                      <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
                         {user.role}
                       </span>
                     </TableCell> */}
@@ -250,7 +250,7 @@ const paginatedUsers = filteredUsers.slice(
   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
     user.role === 'No Admin' 
       ? 'bg-gray-100 text-gray-500' 
-      : 'bg-secondary/10 text-secondary'
+      : 'bg-primary/10 text-primary'
   }`}>
     {user.role}
   </span>
@@ -311,7 +311,7 @@ const paginatedUsers = filteredUsers.slice(
         onClick={() => setCurrentPage(page)}
         className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${
           currentPage === page
-            ? 'bg-secondary text-white border-secondary'
+            ? 'bg-primary text-white border-primary'
             : 'hover:bg-gray-50'
         }`}
       >

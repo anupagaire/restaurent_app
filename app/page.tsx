@@ -9,6 +9,7 @@ import CTA from '@/components/home/CTA';
 import TopRatedCuisines from "@/components/home/TopRatedCuisines";
 import MoodCollections from "@/components/home/MoodCollections";
 
+import AdBanner from "@/components/home/AdBanner";
 
 import FeaturedRestaurants from '@/components/home/FeaturedRestaurants';
 export default async function HomePage() {
@@ -16,10 +17,11 @@ export default async function HomePage() {
 
   return (
     <>
-    <div className="bg-primary/10 pt-16">
+    <div className="bg-background pt-16">
       <Hero  />
        <FeaturedRestaurants />
        <MoodCollections /> 
+       <AdBanner />
        <TopRatedCuisines />
          <CTA />
        {/* <CuratedCollections />  */}

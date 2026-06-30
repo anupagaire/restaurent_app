@@ -67,7 +67,7 @@ function CityPickerModal({
         <button
           onClick={onDetect}
           disabled={detecting}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-secondary text-secondary text-sm font-medium hover:bg-secondary hover:text-white transition-all disabled:opacity-60"
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary text-primary text-sm font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60"
         >
           <LocateFixed size={14} className={detecting ? 'animate-spin' : ''} />
           {detecting ? 'Detecting...' : 'Near Me'}
@@ -75,7 +75,7 @@ function CityPickerModal({
 
         <button
           onClick={onOpen}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-secondary text-sm font-medium hover:border-secondary hover:text-secondary transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all"
         >
           <MapPin size={14} />
           {selectedCity ? selectedCity : 'Select City'}
@@ -85,7 +85,7 @@ function CityPickerModal({
                 e.stopPropagation();
                 onClear();
               }}
-              className="ml-1 text-secondary hover:text-red-500"
+              className="ml-1 text-primary hover:text-red-500"
             >
               <X size={12} />
             </span>
@@ -95,7 +95,7 @@ function CityPickerModal({
 
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-secondary/40 flex items-end sm:items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-primary/40 flex items-end sm:items-center justify-center p-4"
           onClick={onClose}
         >
           <div
@@ -104,22 +104,22 @@ function CityPickerModal({
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-secondary">Select a City</h3>
-              <button onClick={onClose} className="text-secondary hover:text-gray-600">
+              <h3 className="text-lg font-semibold text-primary">Select a City</h3>
+              <button onClick={onClose} className="text-primary hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
 
             {/* Search input */}
             <div className="relative mb-4">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
               <input
                 type="text"
                 placeholder="Search city..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 autoFocus
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -132,14 +132,14 @@ function CityPickerModal({
                 }}
                 className={`w-full text-left px-4 py-2.5 rounded-xl text-sm mb-2 transition-all
                   ${!selectedCity
-                    ? 'bg-secondary text-white font-medium'
+                    ? 'bg-primary text-white font-medium'
                     : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 🌐 All Cities
               </button>
 
               {filtered.length === 0 ? (
-                <p className="text-center text-secondary text-sm py-6">No city found</p>
+                <p className="text-center text-primary text-sm py-6">No city found</p>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {filtered.map((city) => (
@@ -152,8 +152,8 @@ function CityPickerModal({
                       }}
                       className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm border transition-all
                         ${selectedCity === city
-                          ? 'bg-secondary text-white border-secondary font-medium'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-secondary hover:text-secondary'}`}
+                          ? 'bg-primary text-white border-primary font-medium'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'}`}
                     >
                       <MapPin size={12} />
                       {city}
@@ -234,7 +234,7 @@ export default function SearchAndFilterBar({
           placeholder="Search venues..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full max-w-md px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
+          className="w-full max-w-md px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
@@ -279,7 +279,7 @@ export default function SearchAndFilterBar({
       {/* Active filter tag */}
       {selectedCity && !locationBanner && (
         <div className="flex justify-center mb-6">
-          <span className="bg-secondary/10 text-secondary text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
+          <span className="bg-primary/10 text-primary text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
             <MapPin size={13} />
             Showing restaurants in <strong>{selectedCity}</strong>
             <button

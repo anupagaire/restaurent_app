@@ -59,9 +59,9 @@ export default function SectionHeader({
   dividerClassName = '',
   
   // Custom Colors (defaults to theme colors)
-  titleColor = 'text-secondary',
-  highlightColor = 'text-accent',
-  subtitleColor = 'text-secondary/60',
+  titleColor = 'text-primary',
+  highlightColor = 'text-secondary',
+  subtitleColor = 'text-primary',
   badgeBgColor = 'bg-accent/30',
   badgeTextColor = 'text-primary',
   linkBgColor = 'bg-transparent',
@@ -74,9 +74,7 @@ export default function SectionHeader({
   const content = (
     <div className={`mb-14 md:mb-18 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        
-        {/* Left Side: Badge + Title + Subtitle */}
-        <div>
+                <div>
           {badge && (
             <span className={`inline-block ${badgeBgColor} ${badgeTextColor} text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3 ${badgeClassName}`}>
               {badge}

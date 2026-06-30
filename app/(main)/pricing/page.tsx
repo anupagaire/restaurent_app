@@ -360,7 +360,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: '#faf8f5' }}>
+      <div className="min-h-screen py-10" >
         <div className="text-center px-6 pt-16 pb-10">
           <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-6"
@@ -374,7 +374,6 @@ export default function PricingPage() {
           </div>
           <h1
             className="text-4xl sm:text-5xl font-bold mb-4"
-            style={{ color: '#513012', fontFamily: 'Georgia, serif', lineHeight: 1.15 }}
           >
             Simple, Honest Pricing
           </h1>
@@ -406,7 +405,6 @@ export default function PricingPage() {
           ) : error ? (
             <div
               className="p-4 rounded-xl text-center text-sm"
-              style={{ background: '#fef2f2', color: '#dc2626' }}
             >
               {error}
             </div>

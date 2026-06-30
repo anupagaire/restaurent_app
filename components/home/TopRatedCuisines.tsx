@@ -135,9 +135,9 @@ function CuisineCard({
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-accent bg-white shadow-sm hover:shadow-lg hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1"
     >
       {/* Top photo area */}
-      <div className="relative h-36 w-full bg-gradient-to-br from-accent to-accent-50 overflow-hidden">
+      <div className="relative h-36 w-full  overflow-hidden">
         {loading ? (
-          <div className="h-full w-full animate-pulse bg-accent/60" />
+          <div className="h-full w-full animate-pulse " />
         ) : item?.photo ? (
           <Image
             src={item.photo}
@@ -153,12 +153,9 @@ function CuisineCard({
         )}
 
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-secondary/10 " />
 
-        {/* Rank badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-accent shadow">
-          🏆 #{1} {cuisine.label}
-        </div>
+       
       </div>
 
       {/* Content */}
@@ -170,20 +167,20 @@ function CuisineCard({
           </div>
         ) : item ? (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-secondary/60">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-primary/60">
               {cuisine.tagline}
             </p>
             <p className="font-semibold text-[#1a0a00] text-sm leading-tight line-clamp-1 group-hover:text-secondary transition-colors">
               {item.name}
             </p>
-            <p className="text-xs text-secondary line-clamp-1">
+            <p className="text-xs text-primary line-clamp-1">
               📍 {item.restaurantName}
               {item.restaurantCity ? `, ${item.restaurantCity}` : ""}
             </p>
             <div className="mt-auto flex items-center justify-between pt-2">
               <div className="flex items-center gap-1">
                 <Stars rating={item.rating} />
-                <span className="text-[10px] text-secondary">
+                <span className="text-[10px] text-primary">
                   {item.rating.toFixed(1)} ({item.ratingCount})
                 </span>
               </div>
@@ -194,10 +191,10 @@ function CuisineCard({
           </>
         ) : (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-secondary/60">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-primary/60">
               {cuisine.tagline}
             </p>
-            <p className="text-xs text-secondary">Tap to explore {cuisine.label} options</p>
+            <p className="text-xs text-primary">Tap to explore {cuisine.label} options</p>
           </>
         )}
       </div>
@@ -215,8 +212,8 @@ function CuisineCard({
 
 export default function TopRatedCuisines() {
   return (
-    <section className="px-6 py-14 bg-[#fdf8f3]">
-      <div className="max-w-5xl mx-auto">
+    <section className="px-6 py-14 bg-background">
+      <div className="max-w-6xl mx-auto">
 
 
 

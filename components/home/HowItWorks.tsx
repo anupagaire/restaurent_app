@@ -45,113 +45,88 @@ export default function HowItWorks() {
   return (
     <section
       aria-label="How to find and order from restaurants in Nepal"
-      className="relative bg-[#fdf9f4] py-8 overflow-hidden"
+      className="relative py-4 bg-[#faf7f0] lg:py-2 overflow-hidden"
     >
-      <div className="relative z-10 max-w-4xl mx-auto px-5">
+      <div className="relative z-10  max-w-6xl mx-auto px-5">
 
-        {/* ── HEADER ── */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="mb-12 md:mb-16 lg:mb-2"
+          className="mb-10 lg:mb-14 text-center max-w-2xl mx-auto"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-light text-primaryleading-tight tracking-tight">
-              {title || 'How It Works'}
-            </h2>
-            <div
-              className="text-base sm:text-lg text-primary/55 font-light leading-relaxed self-end ql-content"
-              dangerouslySetInnerHTML={{ __html: description }}
-            />
-          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-primary leading-tight tracking-tight mb-4">
+            {title || 'How It Works'}
+          </h2>
+          <div
+            className="text-sm sm:text-base text-primary/60 font-light leading-relaxed ql-content"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         </motion.div>
 
-        {/* ── STEPS ── */}
         <div className="relative">
-
-          {/* Vertical connector line (desktop) */}
+          
+          {/* Horizontal connector line (desktop only) */}
           <div
             aria-hidden="true"
-            className="hidden lg:block absolute left-[2.35rem] top-10 bottom-10 w-px bg-accent/20"
+            className="hidden md:block absolute top-[3.75rem] left-[16.66%] right-[16.66%] h-px bg-accent/15 z-0"
           />
-
-          {/* Animated fill line */}
           <motion.div
             aria-hidden="true"
-            className="hidden lg:block absolute left-[2.35rem] top-10 w-px bg-accent/50 origin-top"
-            initial={{ scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
+            className="hidden md:block absolute top-[3.75rem] left-[16.66%] h-px bg-accent/40 origin-left z-0"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-            style={{ height: 'calc(100% - 5rem)' }}
+            style={{ width: '66.66%' }}
           />
 
-          <div className="space-y-8 sm:space-y-10 md:space-y-12">
+          {/* Grid: 3 columns on md+, single column on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-10 relative z-10">
             {steps.map((step, index) => {
               const Icon = iconMap[step.icon] ?? QrCode;
-              const isLast = index === steps.length - 1;
 
               return (
                 <motion.div
                   key={step.id}
-                  initial={{ opacity: 0, x: -24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.65, delay: index * 0.18, ease: 'easeOut' }}
-                  className="group relative flex flex-col lg:flex-row gap-6 lg:gap-10"
+                  transition={{ duration: 0.6, delay: index * 0.15, ease: 'easeOut' }}
+                  className="group relative flex flex-col items-center text-center"
                 >
-                  {/* ── LEFT: Step number + icon bubble ── */}
-                  <div className="flex lg:flex-col items-center lg:items-center gap-4 lg:gap-0 shrink-0">
-
-                    {/* Step number badge */}
-                    <div className="relative z-10 w-16 h-16  rounded-2xl bg-primaryflex flex-col items-center justify-center shrink-0 group-hover:bg-accent transition-colors duration-500">
-                      <span className="text-[10px] tracking-[0.25em] text-white/40 uppercase font-light group-hover:text-primary/60 transition-colors duration-500">
-                        Step
-                      </span>
-                      <span className="text-2xl sm:text-[28px] font-secondary text-white group-hover:text-primarytransition-colors duration-500 leading-none">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
+                  {/* Step number circle */}
+                  <div className="relative mb-5">
+                    <div className="w-20 h-20 rounded-full bg-white border border-accent/20 flex items-center justify-center group-hover:border-accent/40 group-hover:shadow-lg transition-all duration-500">
+                      <div className="w-14 h-14 rounded-full bg-primary flex flex-col items-center justify-center group-hover:bg-accent transition-colors duration-500">
+                        <span className="text-[7px] tracking-[0.2em] text-white uppercase font-light group-hover: transition-colors duration-500 leading-none">
+                          Step
+                        </span>
+                        <span className="text-lg font-secondary text-white group-hover: transition-colors duration-500 leading-none mt-0.5">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                      </div>
                     </div>
-
-                    {/* Mobile connector (vertical line between steps) */}
-                    {!isLast && (
-                      <div
-                        aria-hidden="true"
-                        className="lg:hidden w-px h-8 sm:h-10 bg-accent/30 ml-[2.1rem]"
-                      />
-                    )}
+                    
+                    {/* Small icon badge */}
+                    <div className="absolute -bottom-1.5 -right-1.5 w-9 h-9 rounded-full bg-[#fdf9f4] border border-accent/20 flex items-center justify-center group-hover:bg-accent/70 group-hover:border-accent transition-all duration-400 shadow-sm">
+                      <Icon className="w-4 h-4 text-accent group-hover:text-white transition-colors duration-400" />
+                    </div>
                   </div>
 
-                  {/* ── RIGHT: Card ── */}
-                  <div className="flex-1 bg-white rounded-2xl border border-accent/15 p-6 sm:p-7 md:p-9 hover:border-accent/40 transition-all duration-400 group-hover:shadow-[0_0_0_1px_rgba(212,183,143,0.25)] relative overflow-hidden">
-
-                    {/* Subtle corner accent */}
+                  {/* Compact Card */}
+                  <div className="flex-1 bg-white rounded-xl border border-accent/10 p-5 hover:border-accent/30 hover:shadow-md transition-all duration-400 w-full">
+                    <h3 className="text-base sm:text-lg font-bold  mb-2 leading-snug">
+                      {step.title}
+                    </h3>
                     <div
-                      aria-hidden="true"
-                      className="absolute top-0 right-0 w-24 h-24 rounded-bl-[4rem]  group-hover:bg-accent/10 transition-colors duration-500"
+                      className="text-xs sm:text-sm text-primary font-medium leading-relaxed ql-content"
+                      dangerouslySetInnerHTML={{ __html: step.description }}
                     />
-
-                    <div className="flex items-start gap-5 relative z-10">
-                      {/* Icon circle */}
-                      <div className="shrink-0 w-11 h-11 rounded-xl bg-accent/12 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-400">
-                        <Icon className="w-5 h-5 text-accent" />
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-xl sm:text-2xl font-medium text-primarymb-3 leading-snug">
-                          {step.title}
-                        </h3>
-                        <div
-                          className="text-base text-primary/55 font-light leading-relaxed ql-content"
-                          dangerouslySetInnerHTML={{ __html: step.description }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Bottom animated underline */}
-                    <div className="mt-6 h-px w-0 group-hover:w-full bg-accent/40 transition-all duration-500 ease-out" />
+                    
+                    {/* Bottom animated line */}
+                    <div className="mt-4 h-px w-8 group-hover:w-full bg-accent/40 transition-all duration-500 ease-out mx-auto" />
                   </div>
                 </motion.div>
               );

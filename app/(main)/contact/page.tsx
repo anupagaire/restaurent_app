@@ -132,7 +132,7 @@ const Contact = () => {
   const infoCards = [
     { icon: Clock, label: "Hours", value: "Sun – Fri", sub: "10:00 AM – 6:00 PM" },
     { icon: PhoneCall, label: "Phone", value: "+977 9800000000", sub: "Call anytime" },
-    { icon: Mail, label: "Email", value: "support@yourplatform.com", sub: "Reply within 24h" },
+    { icon: Mail, label: "Email", value: "support@yummynepal.com", sub: "Reply within 24h" },
     { icon: MapPin, label: "Location", value: "Kathmandu, Nepal", sub: "Nationwide service" },
   ];
 
@@ -140,10 +140,7 @@ const Contact = () => {
     <>
       <style>{`
         :root {
-          --primary: #8B3A0F;
-          --secondary: #5C2D0A;
-          --accent: #D4956A;
-          --accent-light: #F0D5C0;
+        
           --cream: #FAF6F1;
           --cream-dark: #F2EAE0;
           --text: #2C1810;
@@ -175,16 +172,7 @@ const Contact = () => {
           object-position: center 40%;
           filter: brightness(0.55) saturate(0.85);
         }
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            to bottom,
-            rgba(44, 24, 16, 0.2) 0%,
-            rgba(92, 45, 10, 0.6) 60%,
-            rgba(92, 45, 10, 0.88) 100%
-          );
-        }
+        
         .hero-content {
           position: relative;
           height: 100%;
@@ -197,14 +185,7 @@ const Contact = () => {
           padding-left: 1rem;
           padding-right: 1rem;
         }
-        .hero-eyebrow {
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: var(--accent-light);
-          margin-bottom: 12px;
-        }
+        
         .hero-title {
           font-size: clamp(2.4rem, 5vw, 3.6rem);
           font-weight: 800;
@@ -218,7 +199,6 @@ const Contact = () => {
         }
         .hero-sub {
           font-size: 1rem;
-          color: rgba(255,255,255,0.72);
           max-width: 480px;
           line-height: 1.6;
         }
@@ -257,7 +237,7 @@ const Contact = () => {
         .info-card-icon {
           width: 36px;
           height: 36px;
-          background: var(--accent-light);
+          background: var(--accent);
           border-radius: 10px;
           display: flex;
           align-items: center;
@@ -415,7 +395,6 @@ const Contact = () => {
           width: 100%;
           padding: 15px 24px;
           background: var(--primary);
-          color: #fff;
           border: none;
           border-radius: 12px;
           font-size: 14px;
@@ -428,10 +407,8 @@ const Contact = () => {
           gap: 8px;
           transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
           box-shadow: 0 4px 16px rgba(139,58,15,0.3);
-          font-family: inherit;
         }
         .submit-btn:hover:not(:disabled) {
-          background: var(--secondary);
           transform: translateY(-1px);
           box-shadow: 0 8px 24px rgba(139,58,15,0.35);
         }
@@ -521,11 +498,7 @@ const Contact = () => {
         .img-card-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(
-            to top,
-            rgba(92,45,10,0.88) 0%,
-            rgba(92,45,10,0.2) 55%,
-            transparent 100%
+          background: black;
           );
         }
         .img-card-content {
@@ -544,13 +517,7 @@ const Contact = () => {
           color: var(--accent);
           margin-bottom: 8px;
         }
-        .img-card-title {
-          font-size: 1.5rem;
-          font-weight: 800;
-          line-height: 1.2;
-          margin-bottom: 8px;
-          letter-spacing: -0.01em;
-        }
+        
         .img-card-sub {
           font-size: 13px;
           color: rgba(255,255,255,0.72);
@@ -568,35 +535,21 @@ const Contact = () => {
           gap: 16px;
           box-shadow: 0 8px 32px rgba(92,45,10,0.2);
         }
-        .cta-card-text h4 {
-          font-size: 1rem;
-          font-weight: 800;
-          color: #fff;
-          margin-bottom: 4px;
-          letter-spacing: -0.01em;
-        }
-        .cta-card-text p {
-          font-size: 13px;
-          color: rgba(255,255,255,0.65);
-          line-height: 1.5;
-        }
+        
+       
         .cta-btn {
           flex-shrink: 0;
           display: flex;
           align-items: center;
-          gap: 6px;
           padding: 12px 20px;
-          background: var(--accent-light);
-          color: var(--secondary);
+        
           border-radius: 12px;
-          font-size: 13px;
           font-weight: 700;
           text-decoration: none;
           white-space: nowrap;
           transition: background 0.2s, transform 0.15s;
         }
         .cta-btn:hover {
-          background: #fff;
           transform: translateY(-1px);
         }
 
@@ -630,13 +583,12 @@ const Contact = () => {
       <div className="contact-page">
         {/* ── HERO ── */}
         <section className="hero">
-          <img src="/food.jpg" className="hero-img" alt="Contact" />
-          <div className="hero-overlay" />
+          <img src="/food11.jpg" className="hero-img" alt="Contact" />
           <div className="hero-content">
-            <p className="hero-eyebrow">We'd love to hear from you</p>
+            <p className=" text-accent ">We&apos;d love to hear from you</p>
             <h1 className="hero-title">Get in <span>Touch</span></h1>
-            <p className="hero-sub">
-              Whether you're a venue owner ready to go digital or a customer who needs help — we're here.
+            <p className="hero-sub text-white">
+              Whether you&apos;re a venue owner ready to go digital or a customer who needs help — we&apos;re here.
             </p>
           </div>
         </section>
@@ -669,7 +621,7 @@ const Contact = () => {
                 </div>
                 <div className="success-title">Message sent!</div>
                 <p className="success-sub">
-                  Thanks for reaching out. We'll get back to you within 24 hours.
+                  Thanks for reaching out. We&apos;ll get back to you within 24 hours.
                 </p>
                 <button className="success-btn" onClick={() => setSuccess(false)}>
                   Send another message
@@ -702,8 +654,20 @@ const Contact = () => {
                   <div className="form-row">
                     <div className="field">
                       <label>Phone</label>
-                      <input name="phone" value={form.phone} onChange={handleChange}
-                        placeholder="+977 98XXXXXXXX" />
+                      <input name="phone" value={form.phone} 
+                     onChange={(e) => {
+    const val = e.target.value;
+    if (!val.startsWith("+977 ")) {
+      setForm((prev) => ({ ...prev, phone: "+977 " }));
+    } else {
+      setForm((prev) => ({ ...prev, phone: val }));
+    }
+  }}
+  onFocus={() => {
+    if (!form.phone) setForm((prev) => ({ ...prev, phone: "+977 " }));
+  }}
+  placeholder="+977 98XXXXXXXX"
+/>
                     </div>
                     <div className="field">
                       <label>Subject <span>*</span></label>
@@ -730,7 +694,7 @@ const Contact = () => {
 
                   <button type="submit" className="submit-btn" disabled={loading}>
                     {loading ? (
-                      <span className="dots">Sending</span>
+                      <span className="dots text-white bg-secondary">Sending</span>
                     ) : (
                       <>
                         <Send size={15} />
@@ -750,7 +714,7 @@ const Contact = () => {
               <div className="img-card-overlay" />
               <div className="img-card-content">
                 <p className="img-card-eyebrow">For restaurant owners</p>
-                <h3 className="img-card-title">Ready to go digital?</h3>
+                <h3 className="text-2xl font-bold">Ready to go digital?</h3>
                 <p className="img-card-sub">
                   Join restaurants already using our QR menu and ordering platform across Nepal.
                 </p>
@@ -771,11 +735,11 @@ const Contact = () => {
             </div>
 
             <div className="cta-card">
-              <div className="cta-card-text">
-                <h4>Register your restaurant</h4>
+              <div >
+                <h4 className="text-primary font-bold">Register your restaurant</h4>
                 <p>Set up your digital menu in minutes. No technical skills needed.</p>
               </div>
-              <a href="/register-restaurant" className="cta-btn">
+              <a href="/register-restaurant" className=" bg-secondary text-white cta-btn">
                 Get started <ArrowRight size={14} />
               </a>
             </div>
