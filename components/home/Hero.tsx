@@ -7,11 +7,6 @@ import Image from "next/image";
 
 const POPULAR_SEARCHES = ["Momo", "Chowmein", "Pasta", "Coffee", "Newari Khaja", "Pizza"];
 
-const STATS = [
-  { value: "500+", label: "Restaurants" },
-  { value: "12K+", label: "Happy Diners" },
-  { value: "40+", label: "Cuisines" },
-];
 
 export default function HeroSection() {
   const [query, setQuery] = useState("");
@@ -156,7 +151,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding: 0 20px;
+          padding: 0 1px;
           width: 100%;
           max-width: 860px;
         }
@@ -171,7 +166,6 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
 
         /* ── Eyebrow ── */
         .hero__eyebrow {
-          font-family: 'Outfit', sans-serif;
           font-size: 11px;
           font-weight: 400;
           letter-spacing: 0.32em;
@@ -278,17 +272,14 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         }
         .hero__search input::placeholder { color: rgba(242,232,213,0.35); }
         .hero__search-btn {
-          background: var(--gold);
-          border: none;
+          background: #E63946;
           padding: 0 28px;
           height: 54px;
           cursor: pointer;
-          font-family: 'Outfit', sans-serif;
           font-size: 11px;
-          font-weight: 500;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: var(--ink);
+          color: white;
           transition: background 0.25s;
           white-space: nowrap;
           flex-shrink: 0;
@@ -304,7 +295,6 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           margin-top: 12px;
         }
         .hero__pill {
-          font-family: 'Outfit', sans-serif;
           font-size: 11px;
           font-weight: 400;
           letter-spacing: 0.1em;
@@ -332,13 +322,12 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           transition-delay: 0.5s;
         }
         .hero__btn-primary {
-          font-family: 'Outfit', sans-serif;
           font-size: 12px;
           font-weight: 500;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: var(--ink);
-          background: var(--gold);
+          color: white;
+          background: #E63946;
           border: none;
           padding: 15px 38px;
           border-radius: 2px;
@@ -349,7 +338,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           gap: 10px;
           transition: background 0.25s, transform 0.2s;
         }
-        .hero__btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+        .hero__btn-primary:hover { background: primary; transform: translateY(-2px); }
         .hero__btn-primary svg { width: 14px; height: 14px; }
 
         .hero__btn-secondary {
@@ -365,63 +354,8 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           background: rgba(242,232,213,0.06);
           transform: translateY(-2px);
         }
-.hero__top-fade {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
 
-  height: 40px;
-  z-index: 5;
-
-
-
-  backdrop-filter: blur(12px);
-}
-        .hero__stats {
-          position: absolute;
-          bottom: 40px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          gap: 0;
-          opacity: 0;
-          transition: opacity 0.9s ease 0.7s;
-        }
-        .hero__stats.in { opacity: 1; }
-        .hero__stat {
-          text-align: center;
-          padding: 0 36px;
-          position: relative;
-        }
-        .hero__stat + .hero__stat::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 50%;
-          transform: translateY(-50%);
-          width: 1px; height: 28px;
-          background: rgba(201,151,58,0.3);
-        }
-        .hero__stat-val {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 28px;
-          font-weight: 600;
-          color: var(--gold-lt);
-          line-height: 1;
-          display: block;
-        }
-        .hero__stat-label {
-          font-family: 'Outfit', sans-serif;
-          font-size: 10px;
-          font-weight: 300;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: rgba(242,232,213,0.4);
-          display: block;
-          margin-top: 4px;
-        }
+      
 
         /* Scroll indicator */
         .hero__scroll {
@@ -493,7 +427,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         <div className="hero__overlay-base" />
         <div className="hero__overlay-vignette" />
         <div className="hero__grain" />
-<div className="hero__top-fade" />
+{/* <div className="hero__top-fade" /> */}
         {/* ── Decorative frame ── */}
         <div className="hero__frame" aria-hidden="true">
           <div className="corner-br" />
@@ -540,7 +474,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search a dish — momo, thakali, sekuwa…"
                 />
-                <button type="submit" className="hero__search-btn">Search</button>
+                <button type="submit" className="hero__search-btn font-bold">Search</button>
               </div>
             </form>
 
@@ -574,15 +508,7 @@ const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
 
-        {/* ── Stats bar ── */}
-        <div className={`hero__stats${entered ? " in" : ""}`}>
-          {STATS.map((s) => (
-            <div key={s.label} className="hero__stat">
-              <span className="hero__stat-val">{s.value}</span>
-              <span className="hero__stat-label">{s.label}</span>
-            </div>
-          ))}
-        </div>
+       
       </section>
     </>
   );

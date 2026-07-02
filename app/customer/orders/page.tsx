@@ -80,8 +80,6 @@ function getItemName(item: OrderItem): string {
   return item.menu?.name ?? item.menu_name ?? `Item #${item.id}`;
 }
 
-// ─── Order Card ───────────────────────────────────────────────────────────────
-
 function OrderCard({ order }: { order: Order }) {
   const [expanded, setExpanded] = useState(false);
   const s = STATUS_CONFIG[order.status?.toLowerCase()] ?? { bg: '#f3f4f6', color: '#6b7280', icon: '📋', label: order.status };
@@ -275,7 +273,6 @@ export default function CustomerOrdersPage() {
   const fetchMyOrders = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
-      // Use /api/v1/my-orders/ — returns only current user's orders
       const params = new URLSearchParams({ page_size: '100' });
       if (statusFilter) params.set('status', statusFilter);
 

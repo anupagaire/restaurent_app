@@ -31,7 +31,12 @@ export default function NavbarHeroAdminPage() {
  const handleImageUpload = async (section: string, index: number | null, e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
   if (!file || !token) return;
-
+const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+  
+  if (!validTypes.includes(file.type)) {
+    alert('Please upload a valid image file (PNG, JPG, WebP, or SVG)');
+    return;
+  }
   setUploading(index !== null ? `${section}-${index}` : section);
   
   const formData = new FormData();
@@ -62,7 +67,7 @@ export default function NavbarHeroAdminPage() {
       }
     } else {
       console.error('Upload failed:', responseData);
-      alert(`Upload failed: ${JSON.stringify(responseData.errors || responseData.message)}`);
+      alert(`Upload failed: ${JSON.stringify(responseData.errors || responseData.message || 'Backend does not support SVG')}`);
     }
   } catch (error) {
     console.error('Upload error:', error);
@@ -164,7 +169,8 @@ export default function NavbarHeroAdminPage() {
               {uploading === 'logo' ? 'Uploading...' : 'Choose File'}
               <input
                 type="file"
-                accept="image/*"
+               
+                accept="image/*,.svg" 
                 className="hidden"
                 onChange={(e) => handleImageUpload('logo', null, e)}
                 disabled={uploading !== null}

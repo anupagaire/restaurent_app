@@ -601,7 +601,6 @@ export default function PublicMenuPage() {
   const categories = restaurant.categories?.filter((c) => c.status !== false) || [];
   const coverPhoto = restaurant.photos?.[0]?.photo_url;
 
-  // ── Main render ────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`

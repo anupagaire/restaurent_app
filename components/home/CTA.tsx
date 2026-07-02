@@ -171,14 +171,14 @@ export default function ListYourRestaurant() {
             >
               <Link
                 href="/register-restaurant"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-accent to-accent/80 text-white shadow-md shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 bg-secondary text-white shadow-md shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5"
               >
                 List Your Restaurant
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 border border-primary/10 text-primary/60 hover:text-primary hover:border-primary/30 hover:bg-primary/5"
+                className="inline-flex items-center gap-2 px-6 py-3  bg-primary  text-white rounded-full text-sm font-medium transition-all duration-300 border border-primary/10 text-primary/60 hover:text-primary hover:border-primary/30 hover:bg-primary/5"
               >
                 Talk to us first
               </Link>

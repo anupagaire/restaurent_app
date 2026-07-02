@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Trash2, Eye, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, Eye, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 
 interface Review {
@@ -99,7 +99,7 @@ const getReviewText = (reviewText: string): string => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-secondary">Customer Reviews</h1>
+          <h1 className="text-4xl font-bold text-primary">Customer Reviews</h1>
         </div>
         <Badge variant="outline" className="text-sm px-4 py-2">
           {reviews.length} Reviews
@@ -114,11 +114,11 @@ const getReviewText = (reviewText: string): string => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-10 h-10 animate-spin text-secondary" />
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
         </div>
       ) : reviews.length === 0 ? (
         <Card className="py-20 text-center">
-          <p className="text-secondary text-xl">No reviews yet.</p>
+          <p className="text-primary text-xl">No reviews yet.</p>
         </Card>
       ) : (
         <>
@@ -154,7 +154,7 @@ const getReviewText = (reviewText: string): string => {
    Review: {getReviewText(review.review)}
   </p>
 </div>
-                  <div className="text-xs text-secondary">
+                  <div className="text-xs text-primary">
                     {formatDate(review.created_on)}
                   </div>
 
@@ -169,7 +169,7 @@ const getReviewText = (reviewText: string): string => {
                         />
                       ))}
                       {review.photos.length > 3 && (
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-secondary">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-primary">
                           +{review.photos.length - 3}
                         </div>
                       )}
@@ -225,7 +225,7 @@ const getReviewText = (reviewText: string): string => {
 
       {/* Full Review Modal */}
       {selectedReview && (
-        <div className="fixed inset-0 bg-secondary/70 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-primary/70 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-auto">
             <div className="p-8">
               <div className="flex justify-between items-start mb-6">
@@ -238,7 +238,7 @@ const getReviewText = (reviewText: string): string => {
                     </div>
                     <span className="text-3xl font-bold">{selectedReview.rating}/5</span>
                   </div>
-                  <p className="text-secondary mt-1">
+                  <p className="text-primary mt-1">
                     {formatDate(selectedReview.created_on)}
                   </p>
                 </div>

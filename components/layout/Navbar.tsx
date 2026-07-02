@@ -53,7 +53,7 @@ useEffect(() => {
 }, []);
   // Use props or fallback
 const resolvedLogo = {
-  image: logo?.image?.trim() || '/logo.png',
+  image: logo?.image?.trim() || '/horizontal.svg',
   alt: logo?.alt || 'Logo',
 };
   const resolvedLinks = links ?? DEFAULT_LINKS;
@@ -218,7 +218,7 @@ const handleProfileClick = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-primary/40 backdrop-blur-xl border border-primary/15 rounded-2xl p-4 shadow-2xl"
+                    className="absolute right-0 top-[calc(100%+10px)] w-[420px] bg-primary/40 border border-primary/15 rounded-2xl p-4 shadow-2xl"
                   >
                     <p className="text-xs  mb-2 font-medium tracking-wide text-white uppercase">Search venues</p>
                     {renderSearchBox(true)}
@@ -327,7 +327,7 @@ const handleProfileClick = () => {
 
         <AnimatePresence>
           {isOpen && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} className="md:hidden bg-secondary/90 backdrop-blur-xl border-t border-white/10 px-4 py-6">
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} className="md:hidden bg-secondary/90 border-t border-white/10 px-4 py-6">
               <div className="flex flex-col gap-5 text-white text-base">
                 {resolvedLinks.map((link) => (
                   <Link key={link.url} href={link.url} onClick={closeMenu} className="hover:text-[#c45cd1] transition font-medium">

@@ -189,7 +189,7 @@ function MoodCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-      className="relative flex-1 min-h-[500px] h-[65vh] max-h-[600px] rounded-3xl overflow-hidden shadow-2xl group"
+      className="relative flex-1 min-h-125 h-[65vh] max-h-[600px] rounded-3xl overflow-hidden shadow-2xl group"
     >
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden bg-primary-dark">

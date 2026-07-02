@@ -213,8 +213,6 @@ function ReviewCard({
     </div>
   );
 }
-
-// ── Main Page ──────────────────────────────────────────────────────────────
 export default function CustomerReviewsPage() {
   const [loading,       setLoading]       = useState(true);
   const [reviews,       setReviews]       = useState<MenuReview[]>([]);

@@ -81,7 +81,6 @@ export default function CustomerProfilePage() {
     }
   };
 
-  // ── Change password ────────────────────────────────────────────────────────
   const handlePasswordSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setPwSuccess('');

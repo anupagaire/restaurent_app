@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Metadata } from 'next';
 
 import {
@@ -22,7 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const restaurant = await getRestaurantDetail(restaurantId);
   if (!restaurant) return { title: 'Gallery - Restaurant Not Found' };
 
-  const photoUrl = restaurant.photos?.[0]?.photo_url;
+  const galleryPhotos = restaurant.photos?.filter((p: any) => p.purpose === 'gallery') ?? [];
+  const photoUrl = galleryPhotos[0]?.photo_url;
   const resolvedUrl = photoUrl ? resolveUrl(photoUrl) : null;
 
   return {
@@ -40,16 +40,21 @@ export default async function RestaurantGalleryPage({ params }: PageProps) {
   const restaurantId = await getRestaurantIdBySlug(slug);
   
   if (!restaurantId) return notFound();
-
+  
   const restaurant = await getRestaurantDetail(restaurantId);
-  if (!restaurant || !restaurant.photos || restaurant.photos.length === 0) {
+  if (!restaurant) return notFound();
+
+  // Gallery purpose matra filter garne
+  const galleryPhotos = restaurant.photos?.filter((p: any) => p.purpose === 'gallery') ?? [];
+
+  if (galleryPhotos.length === 0) {
     return notFound();
   }
 
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Header - Menu Page जस्तै */}
-      <div className="relative w-full h-52 bg-secondary overflow-hidden">
+      <div className="relative w-full h-52 bg-primary overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/30 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-8">
@@ -65,16 +70,14 @@ export default async function RestaurantGalleryPage({ params }: PageProps) {
               {restaurant.name} Gallery
             </h1>
             <p className="text-white/80 mt-2 text-lg">
-              {restaurant.photos.length} Beautiful Photos
+              {galleryPhotos.length} Beautiful Photos
             </p>
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+<div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         <RestaurantPhotoGrid 
-          photos={restaurant.photos} 
+          photos={galleryPhotos} 
           restaurantName={restaurant.name} 
           perPage={15}
         />

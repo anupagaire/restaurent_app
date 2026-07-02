@@ -76,8 +76,6 @@ export default async function ReviewPage({
   params,
 }: PageProps) {
    const headersList = await headers()
-
-  // Testing ko lagi ?? '8' — production ma hatauney
 const restaurantId = Number(headersList.get('x-restaurant-id') );
   if (!restaurantId) return notFound();
 

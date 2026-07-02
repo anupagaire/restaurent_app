@@ -189,7 +189,7 @@ export default function RestaurantServicesAdminPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-secondary" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -199,13 +199,13 @@ export default function RestaurantServicesAdminPage() {
           <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">Services Page Editor</h1>
+            <h1 className="text-3xl font-bold text-primary">Services Page Editor</h1>
             <p className="text-gray-600 mt-1">Manage your restaurant&apos;s services page content</p>
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-secondary text-white px-6 py-2.5 rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition"
+            className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary/90 disabled:opacity-50 transition"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? 'Saving...' : 'Save Changes'}
@@ -220,7 +220,7 @@ export default function RestaurantServicesAdminPage() {
 
         {/* Basic Info */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-secondary">Basic Information</h2>
+          <h2 className="text-xl font-semibold text-primary">Basic Information</h2>
           
           <div>
             <label className="block text-sm font-medium mb-2">Title</label>
@@ -228,7 +228,7 @@ export default function RestaurantServicesAdminPage() {
               type="text"
               value={data.title}
               onChange={e => setData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/30"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="Our Services"
             />
           </div>
@@ -239,7 +239,7 @@ export default function RestaurantServicesAdminPage() {
               type="text"
               value={data.subtitle}
               onChange={e => setData(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/30"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="What we offer"
             />
           </div>
@@ -271,7 +271,7 @@ export default function RestaurantServicesAdminPage() {
 
         {/* SEO */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-secondary">SEO Settings</h2>
+          <h2 className="text-xl font-semibold text-primary">SEO Settings</h2>
           
           <div>
             <label className="block text-sm font-medium mb-2">Meta Title</label>
@@ -279,7 +279,7 @@ export default function RestaurantServicesAdminPage() {
               type="text"
               value={data.meta_title}
               onChange={e => setData(prev => ({ ...prev, meta_title: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/30"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="SEO title for search engines"
             />
           </div>
@@ -290,7 +290,7 @@ export default function RestaurantServicesAdminPage() {
               value={data.meta_description}
               onChange={e => setData(prev => ({ ...prev, meta_description: e.target.value }))}
               rows={3}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/30 resize-none"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
               placeholder="Brief description for search engines"
             />
           </div>
@@ -299,11 +299,11 @@ export default function RestaurantServicesAdminPage() {
         {/* Photos */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-secondary">Service Photos</h2>
+            <h2 className="text-xl font-semibold text-primary">Service Photos</h2>
             <button
               onClick={addPhoto}
               disabled={!data.id}
-              className="flex items-center gap-2 text-sm text-secondary hover:bg-secondary/5 px-3 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 text-sm text-primary hover:bg-primary/5 px-3 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" /> Add Photo
             </button>
@@ -316,7 +316,7 @@ export default function RestaurantServicesAdminPage() {
           )}
 
           {data.photos.length === 0 ? (
-            <p className="text-secondary text-center py-8">No photos yet. Click "Add Photo" to get started.</p>
+            <p className="text-primary text-center py-8">No photos yet. Click &quot;Add Photo&quot; to get started.</p>
           ) : (
             <div className="space-y-4">
               {data.photos.map((photo, index) => (
@@ -365,13 +365,13 @@ export default function RestaurantServicesAdminPage() {
                       type="text"
                       value={photo.alt}
                       onChange={e => updatePhoto(index, 'alt', e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                       placeholder="Describe this image"
                     />
                   </div>
 
                   {photo.photo_url && (
-                    <p className="text-xs text-secondary truncate">{photo.photo_url}</p>
+                    <p className="text-xs text-primary truncate">{photo.photo_url}</p>
                   )}
                 </div>
               ))}
@@ -384,7 +384,7 @@ export default function RestaurantServicesAdminPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-secondary text-white px-8 py-3 rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition font-medium"
+            className="flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 transition font-medium"
           >
             {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             {saving ? 'Saving...' : 'Save All Changes'}

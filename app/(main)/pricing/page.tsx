@@ -6,8 +6,6 @@ import { Check, Zap, Crown, Gift, Tag, ArrowRight, X,Dot, Loader2 } from 'lucide
 import Footer from '@/components/layout/Footer';
 import { plansApi, promosApi, Plan, PromoValidateResult } from '@/lib/subscription-api';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function parseLines(val: any): string[] {
   if (!val) return [];
   if (typeof val === 'string') {
@@ -44,8 +42,6 @@ function durationLabel(days: number) {
   if (days <= 370) return '1 Year';
   return `${days} Days`;
 }
-
-// ─── Promo Input ──────────────────────────────────────────────────────────────
 
 function PromoInput({
   plans,
@@ -127,8 +123,6 @@ function PromoInput({
     </div>
   );
 }
-
-// ─── Plan Card ────────────────────────────────────────────────────────────────
 
 function PlanCard({
   plan,
@@ -256,8 +250,6 @@ function PlanCard({
   );
 }
 
-// ─── Register Modal ───────────────────────────────────────────────────────────
-
 function RegisterModal({
   plan,
   onClose,
@@ -340,8 +332,6 @@ function RegisterModal({
     </>
   );
 }
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PricingPage() {
   const [plans, setPlans] = useState<Plan[]>([]);

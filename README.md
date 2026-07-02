@@ -23,7 +23,6 @@ Custom Colors (Specific page)
   subtitle="Based on real reviews"
   linkText="Explore all"
   linkHref="/menusearch"
-  // Custom colors
   titleColor="text-white"
   highlightColor="text-accent"
   subtitleColor="text-white/70"

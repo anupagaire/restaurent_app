@@ -83,13 +83,13 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
               className="text-sm sm:text-base font-extrabold italic text-accent-500"
             >
-              "Every meal, an unforgettable memory."
+              &quot;Every meal, an unforgettable memory.&quot;
             </motion.p>
 
             {/* Description */}
             <motion.p
               variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-              className="text-secondary font-medium text-[13.5px] leading-relaxed max-w-lg"
+              className="text-primary font-medium text-[13.5px] leading-relaxed max-w-lg"
             >
               {restaurant.amenities ??
                 `${restaurant.name} offers an exceptional dining experience crafted with the finest ingredients, expert chefs, and warm hospitality. Come discover flavors that tell a story.`}
@@ -108,7 +108,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
                 </div>
                 <div>
                   <div className="text-2xl font-secondary text-accent-500 leading-none">{stat.value}</div>
-                  <div className="text-[10.5px] font-bold text-secondary mt-0.5">{stat.label}</div>
+                  <div className="text-[10.5px] font-bold text-primary mt-0.5">{stat.label}</div>
                 </div>
                 {i < stats.length - 1 && <div className="h-10 w-px bg-gray-200 ml-3" />}
               </div>
@@ -137,14 +137,14 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
             className="flex gap-3 flex-wrap"
           >
             <Link
-              href="/booking"
-              className="inline-flex items-center gap-2 bg-accent hover:bg-accent-600 text-white font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:scale-105"
+              href="/menu"
+              className="inline-flex items-center gap-2 bg-secondary hover:bg-accent-600 text-white font-semibold px-6 py-2.5 rounded-full text-sm transition-all hover:scale-105"
             >
               Reserve a Table →
             </Link>
             <Link
               href="/menu"
-              className="inline-flex items-center gap-2 border border-accent-500 text-accent-500 hover:bg-accent-50 font-semibold px-6 py-2.5 rounded-full text-sm transition-all"
+              className="inline-flex items-center gap-2 border border-accent-500 text-white bg-primary hover:bg-secondary font-semibold px-6 py-2.5 rounded-full text-sm transition-all"
             >
               View Menu
             </Link>
@@ -197,7 +197,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
               <span className="text-[11.5px] font-secondary text-gray-900 leading-tight block">
                 {restaurant.city ?? 'Our Location'}
               </span>
-              <span className="text-[9px] font-bold text-secondary mt-0.5 block">
+              <span className="text-[9px] font-bold text-primary mt-0.5 block">
                 {restaurant.address ?? 'Visit Us Today'}
               </span>
             </div>
@@ -210,7 +210,7 @@ export default function EnterpriseAbout({ restaurant, coverPhotoUrl }: Props) {
               <span className="text-white text-[10px] font-extrabold">✓</span>
             </div>
             <div>
-              <div className="text-[9.5px] font-bold text-secondary leading-none">Est.</div>
+              <div className="text-[9.5px] font-bold text-primary leading-none">Est.</div>
               <div className="text-[15px] font-secondary text-accent-500 leading-tight mt-0.5">
                 {restaurant.name}
               </div>

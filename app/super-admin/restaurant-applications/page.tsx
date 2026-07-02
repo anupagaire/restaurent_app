@@ -4,8 +4,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
 type Status = "pending" | "approved" | "rejected";
 
 interface Application {
@@ -252,7 +250,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
     <div className="min-h-screen w-full bg-[#faf8f5]">
     
 
-      <div className="max-w-screen-xl mx-auto px-4 py-10">
+      <div className="max-w-screen-7xl mx-auto px-4 py-10">
        
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-primary">Restaurant Applications</h1>
@@ -265,7 +263,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
         <div className="bg-white border border-accent rounded-xl p-4 mb-6">
           <div className="flex flex-wrap gap-3 items-end">
             {/* Search */}
-            <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[220px]">
+            <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-55">
               <input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -435,7 +433,7 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
           <button
             key={p}
             onClick={() => setPage(Number(p))}
-            className={`min-w-[32px] px-2 py-1.5 text-xs rounded-lg border transition ${
+            className={`min-w-8 px-2 py-1.5 text-xs rounded-lg border transition ${
               p === page
                 ? "bg-primary text-white border-primary font-medium"
                 : "text-primary border-accent hover:bg-[#fdf5ec]"

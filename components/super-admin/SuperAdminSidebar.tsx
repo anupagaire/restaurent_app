@@ -50,6 +50,8 @@ items: [
 {
 title: 'System',
 items: [
+  { title: 'Advertisement', href: '/super-admin/advertisements', icon: Settings },
+
 { title: 'Settings', href: '/super-admin/settings', icon: Settings },
 ],
 },

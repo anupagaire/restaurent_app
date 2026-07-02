@@ -2,8 +2,6 @@ import { headers } from 'next/headers'
 import { fetchRestaurantById } from '@/lib/restaurant'
 import { MapPin, Clock, Phone, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-// import Navbar from "./_components/EnterpriseNavbar";
-// import Footer from "./_components/EnterpriseFooter";
 import EnterpriseGalleryCarousel from "./_components/EnterpriseGalleryCarousel";
 import EnterpriseAbout from "./_components/EnterpriseAbout";
 import EnterpriseHeroSlider from "./_components/EnterpriseHeroSlider";
@@ -115,13 +113,13 @@ const res = await fetch(
       )}
  
       {/* ── CTA ── */}
-      <section className="bg-accent-500 py-16">
+      <section className="bg-primary-10 py-16">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">Ready for an Amazing Experience?</h2>
           <p className="text-accent-100 mb-8 text-lg">Book your table now and enjoy a memorable dining experience.</p>
           <Link
-            href="/booking"
-            className="inline-flex items-center gap-2 bg-white text-accent-500 font-bold px-10 py-4 rounded-full hover:bg-accent-50 transition-all hover:scale-105 text-lg"
+            href="/menu"
+            className="inline-flex items-center gap-2 bg-primary text-accent-500 font-bold px-10 py-4 rounded-full hover:bg-accent-50 transition-all hover:scale-105 text-lg"
           >
             Reserve Your Table <ChevronRight size={20} />
           </Link>

@@ -116,18 +116,18 @@ export default function LegalPage() {
 
   return (
     <>
-    <div className="min-h-screen   text-secondary font-sans">
+    <div className="min-h-screen   text-primary font-sans">
       {/* Header */}
       <div className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-primary/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent" />
         <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
         
          
-          <h1 className="text-gray-900 text-base max-w-xl mx-auto">
+          <h1 className="text-gray-900 text-base max-w-xl mx-auto py-10">
             Please read these documents carefully before using our restaurant
             management platform.
           </h1>
-          <p className="text-secondary text-sm mt-3">
+          <p className="text-primary text-sm mt-3">
             Last updated: {new Date().toLocaleDateString("en-NP", { year: "numeric", month: "long", day: "numeric" })}
           </p>
         </div>
@@ -142,8 +142,8 @@ export default function LegalPage() {
               onClick={() => { setActiveTab(tab); setOpenSection("1"); }}
               className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 activeTab === tab
-                  ? "bg-gradient-to-r from-secondary to-primary text-white shadow-lg"
-                  : "text-secondary hover:text-secondary"
+                  ? "bg-gradient-to-r from-primary to-primary text-white shadow-lg"
+                  : "text-primary hover:text-primary"
               }`}
             >
               {tab === "terms" ? "Terms & Conditions" : "Privacy Policy"}
@@ -155,8 +155,8 @@ export default function LegalPage() {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-3 pb-20">
         {/* Intro box */}
-        <div className="bg-[#8c52ff]/30 border border-secondary/40 rounded-xl p-5 mb-6">
-          <p className="text-secondary text-sm leading-relaxed">
+        <div className="bg-[#8c52ff]/30 border border-primary/40 rounded-xl p-5 mb-6">
+          <p className="text-primary text-sm leading-relaxed">
             {activeTab === "terms"
               ? "These Terms & Conditions govern your use of Yummynepal as a registered restaurant partner, including access to your dashboard, QR menu generation, and all platform features."
               : "This Privacy Policy explains how Yummynepal collects, uses, and protects information from restaurant partners and their customers across our platform."}
@@ -179,15 +179,15 @@ export default function LegalPage() {
                 className="w-full flex items-center justify-between px-6 py-4 text-left"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-xs font-bold text-[#c97b3a] bg-secondary/30 px-2 py-1 rounded-md min-w-[2rem] text-center">
+                  <span className="text-xs font-bold text-[#c97b3a] bg-primary/30 px-2 py-1 rounded-md min-w-[2rem] text-center">
                     {section.id.padStart(2, "0")}
                   </span>
-                  <span className="font-semibold text-secondary text-base">
+                  <span className="font-semibold text-primary text-base">
                     {section.title}
                   </span>
                 </div>
                 <span
-                  className={`text-secondary text-xl transition-transform duration-200 ${
+                  className={`text-primary text-xl transition-transform duration-200 ${
                     isOpen ? "rotate-45" : ""
                   }`}
                 >
@@ -207,16 +207,16 @@ export default function LegalPage() {
           );
         })}
 
-        <div className="mt-10 bg-white/[0.03] border border-white/10 rounded-xl p-6 text-center">
+        <div className="mt-10 bg-primary border text-white border-white/10 rounded-xl p-6 text-center">
           <h3 className="font-semibold text-white mb-2">Have Questions?</h3>
-          <p className="text-gray-000 text-sm mb-4">
+          <p className=" text-sm mb-4">
             If you have any questions about our{" "}
             {activeTab === "terms" ? "Terms & Conditions" : "Privacy Policy"},
             please contact our legal team.
           </p>
           <a
             href="mailto:legal@Yummynepal.com.np"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-secondary via-primary to-primary text-white hover:opacity-90 transition"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-primary via-primary to-primary text-white hover:opacity-90 transition"
           >
             legal@Yummynepal.com.np
           </a>

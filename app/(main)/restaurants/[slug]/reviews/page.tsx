@@ -88,10 +88,10 @@ export default async function ReviewPage({
     <div className="min-h-screen bg-white">
       
       {/* ── HERO HEADER ── */}
-      <div className="relative w-full h-36 sm:h-32 bg-secondary overflow-hidden">
+      <div className="relative w-full h-36 sm:h-32 bg-primary overflow-hidden">
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[secondary]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-secondary/30 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-6">
           <div className="max-w-7xl mx-auto">

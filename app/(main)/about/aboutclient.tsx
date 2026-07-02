@@ -7,6 +7,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { motion, Variants } from "framer-motion";
 import SectionHeader from "@/components/layout/SectionHeader";
+import AdBanner from "@/components/home/AdBanner";
 
 const fadeUp: Variants = {
   hidden: {
@@ -114,7 +115,7 @@ export default function About() {
     <div className="min-h-screen bg-[#fdf9f4] space-y-12 p-8">
       <Skeleton className="h-[55vh] w-full rounded-none" />
       <div className="max-w-screen-7xl mx-auto grid lg:grid-cols-2 gap-12">
-        <Skeleton className="h-[420px] w-full rounded-[2rem]" />
+        <Skeleton className="h-105 w-full rounded-[2rem]" />
         <div className="space-y-5 pt-8">
           <Skeleton className="h-8 w-2/3 rounded-full" />
           <Skeleton className="h-4 w-full rounded-full" />
@@ -223,7 +224,7 @@ export default function About() {
                     aria-hidden="true"
                     className="absolute -bottom-4 -right-4 w-full h-full rounded-[2rem] border border-accent/30 pointer-events-none"
                   />
-                  <div className="relative h-[420px] md:h-[560px] rounded-[3rem] overflow-hidden shadow-[0_30px_80px_rgba(59,28,50,0.12)]">
+                  <div className="relative h-105 md:h-[560px] rounded-[3rem] overflow-hidden shadow-[0_30px_80px_rgba(59,28,50,0.12)]">
                     <Image
                       src={introSection.image}
                       fill
@@ -319,7 +320,7 @@ export default function About() {
             </div>
           </div>
         </section>
-
+<AdBanner/>
         
         {vibes.images && vibes.images.length > 0 && (
           <section
@@ -352,7 +353,7 @@ export default function About() {
                 {vibes.images.map((src, index) => (
                   <div
                     key={index}
-                    className="relative overflow-hidden rounded-[1.5rem] group cursor-pointer h-[380px] md:h-[440px]"
+                    className="relative overflow-hidden rounded-[1.5rem] group cursor-pointer h-[380px] md:h-110"
                   >
                     <img
                       src={src}
@@ -362,7 +363,7 @@ export default function About() {
                     />
                    
                     {/* Bottom gold line reveal */}
-                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-accent scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.75 bg-accent scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                   </div>
                 ))}
               </Carousel>

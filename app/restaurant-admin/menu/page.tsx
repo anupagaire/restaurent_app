@@ -236,7 +236,7 @@ const handleEdit = (item: MenuItem) => {
     return (
       <div className="px-4 sm:px-6 lg:px-8 py-6">
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-secondary">Menu Management</h2>
+          <h2 className="text-3xl font-bold ">Menu Management</h2>
           <p className="text-gray-600 mt-1">Manage your restaurant menu items and categories</p>
         </div>
 
@@ -302,7 +302,7 @@ const handleEdit = (item: MenuItem) => {
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-secondary">Menu Management</h2>
+          <h2 className="text-3xl font-bold ">Menu Management</h2>
           <p className="text-gray-600 mt-1">
             Manage your restaurant menu items and categories
             {restaurant?.table_count ? (

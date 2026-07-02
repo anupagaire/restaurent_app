@@ -276,7 +276,7 @@ function OrderRow({
             <div className="text-sm" style={{ color: "#16a34a" }}>
               <p className="font-medium">🚚 Delivery</p>
               {deliveryAddress && (
-                <p className="text-xs text-secondary truncate max-w-[160px]">{deliveryAddress}</p>
+                <p className="text-xs text-secondary truncate max-w-40">{deliveryAddress}</p>
               )}
             </div>
           ) : (
@@ -307,7 +307,7 @@ function OrderRow({
             {order.items.length} item{order.items.length !== 1 ? "s" : ""}
           </p>
           {order.items.length > 0 && (
-            <p className="text-xs text-secondary truncate max-w-[180px]">
+            <p className="text-xs text-secondary truncate max-w-45">
               {order.items[0].menu_name}
               {order.items.length > 1 && ` +${order.items.length - 1} more`}
             </p>
@@ -537,7 +537,7 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
   const tableRevenue  = todayOrders.filter((o) => !isOnlineOrder(o)).reduce((s, o) => s + parseFloat(o.total_price || "0"), 0);
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+    <div className="flex flex-col items-center justify-center min-h-100 gap-4">
       <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
       <p className="text-secondary text-sm">Loading orders...</p>
     </div>
@@ -596,9 +596,9 @@ const monthlyRevenue = monthlyOrders.reduce((s, o) => s + parseFloat(o.total_pri
         )}
 
         {!token && (
-          <div className="flex items-center gap-3 p-4 bg-accent border border-accent rounded-xl text-accent text-sm">
+          <div className="flex items-center gap-3 p-4  border border-accent rounded-xl text-primary text-sm">
             <AlertCircle className="w-5 h-5 shrink-0" />
-            <span>QR token not found — table orders won't appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
+            <span>QR token not found — table orders won&apos;t appear. <a href="/dashboard/qr" className="underline font-semibold">Generate a QR code →</a></span>
           </div>
         )}
 

@@ -214,11 +214,11 @@ export default async function EnterpriseAboutPage() {
 
       {/* GALLERY */}
       {galleryPhotos.length > 0 && (
-        <div className="py-20" style={{ background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(200,145,74,0.1)' }}>
+        <div className="py-20 bg-background" style={{ borderTop: '1px solid rgba(200,145,74,0.1)' }}>
           <div className="max-w-7xl mx-auto px-8 sm:px-12">
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8 bg-accent" />
+                {/* <div className="h-px w-8 bg-accent" /> */}
                 <span className="text-accent text-[11px] font-bold uppercase tracking-widest">Gallery</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-light text-white mb-3" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
@@ -244,15 +244,15 @@ export default async function EnterpriseAboutPage() {
       )}
 
       {/* CTA */}
-      <div className="relative py-20 overflow-hidden" style={{ background: 'linear-gradient(135deg, #c8914a 0%, #a8722e 50%, #6b3d12 100%)' }}>
+      <div className="relative py-20 overflow-hidden bg-accent" >
         <div className="absolute -top-12 -right-12 w-52 h-52 rounded-full bg-white/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
         <div className="max-w-[600px] mx-auto px-6 text-center relative z-10">
-          <p className="text-2xl md:text-3xl italic text-secondary/70 mb-8 font-light" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+          <p className="text-2xl md:text-3xl italic text-secondary mb-8 font-light" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
             Ready to experience it yourself?
           </p>
           <Link
-            href="/booking"
+            href="/menu"
             className="inline-flex items-center gap-2.5 bg-[#0e0b07] hover:bg-[#1c1208] text-accent font-semibold px-8 py-4 rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg mb-5"
           >
             Reserve a Table

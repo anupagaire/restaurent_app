@@ -117,7 +117,7 @@ export default function GalleryAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <h1 className="text-2xl font-bold text-secondary">Restaurant Gallery</h1>
+      <h1 className="text-2xl font-bold text-primary">Restaurant Gallery</h1>
 
       {/* ── UPLOAD ── */}
       <section className="border border-gray-200 rounded-xl p-5 space-y-4">
@@ -126,14 +126,14 @@ export default function GalleryAdminPage() {
         {/* File picker */}
         <div
           onClick={() => fileRef.current?.click()}
-          className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-secondary/40 hover:bg-secondary/5 transition"
+          className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition"
         >
           {preview ? (
             <img src={preview} alt="Preview" className="w-full max-h-48 object-cover rounded-lg" />
           ) : (
             <>
               <Upload className="w-8 h-8 text-gray-300" />
-              <p className="text-sm text-secondary">Click to select a photo</p>
+              <p className="text-sm text-primary">Click to select a photo</p>
             </>
           )}
         </div>
@@ -149,7 +149,7 @@ export default function GalleryAdminPage() {
         <div>
           <label className="block text-sm font-medium mb-1">Alt Text (optional)</label>
           <input
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             placeholder="e.g. Restaurant interior"
             value={altText}
             onChange={e => setAltText(e.target.value)}
@@ -160,7 +160,7 @@ export default function GalleryAdminPage() {
           <button
             onClick={handleUpload}
             disabled={!selectedFile || uploading}
-            className="flex items-center gap-2 bg-secondary text-white px-6 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium text-sm"
+            className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition font-medium text-sm"
           >
             <Plus className="w-4 h-4" />
             {uploading ? 'Uploading...' : 'Upload Photo'}
@@ -179,9 +179,9 @@ export default function GalleryAdminPage() {
         <h2 className="font-semibold text-lg">Gallery Photos ({photos.length})</h2>
 
         {loading ? (
-          <p className="text-secondary text-sm">Loading...</p>
+          <p className="text-primary text-sm">Loading...</p>
         ) : photos.length === 0 ? (
-          <div className="border border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center gap-3 text-secondary">
+          <div className="border border-dashed border-gray-200 rounded-xl p-12 flex flex-col items-center gap-3 text-primary">
             <ImageIcon className="w-10 h-10" />
             <p className="text-sm">No gallery photos yet. Upload one above.</p>
           </div>
@@ -203,7 +203,7 @@ export default function GalleryAdminPage() {
                 </button>
                 {/* Alt label */}
                 {photo.alt && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-secondary/40 px-2 py-1">
+                  <div className="absolute bottom-0 left-0 right-0 bg-primary/40 px-2 py-1">
                     <p className="text-white text-xs truncate">{photo.alt}</p>
                   </div>
                 )}

@@ -422,7 +422,7 @@ const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
                         </div>
                         <div className="flex items-center gap-3 mt-3">
                           <p className="text-[11px] text-accent-600">
-                            TTL: 300 · After DNS propagates (5min–48hrs), click "Verify DNS" above
+                            TTL: 300 · After DNS propagates (5min–48hrs), click &ldquo;Verify DNS&quot; above
                           </p>
                           <button
                             onClick={() => handleVerify(entry)}
@@ -464,7 +464,7 @@ const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
           <button
             key={p}
             onClick={() => setPage(Number(p))}
-            className="min-w-[32px] px-2 py-1.5 rounded-lg text-xs border transition"
+            className="min-w-8 px-2 py-1.5 rounded-lg text-xs border transition"
             style={p === page
               ? { background: '#513012', color: '#fff', borderColor: '#513012', fontWeight: 600 }
               : { borderColor: '#e5e7eb', color: '#6b7280' }}
@@ -489,7 +489,7 @@ const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
       </div>
 
       <p className="text-xs text-gray-400 text-center">
-        Click a pending domain row to see DNS TXT record details · Use "Set Domain" to assign domain on behalf of restaurant
+        Click a pending domain row to see DNS TXT record details · Use &quot;Set Domain&quot; to assign domain on behalf of restaurant
       </p>
 
       {/* Set Domain Modal */}

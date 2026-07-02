@@ -193,12 +193,12 @@ setRoles(list.filter(r =>
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-secondary">Staff Management</h2>
+          <h2 className="text-3xl font-bold text-primary">Staff Management</h2>
           <p className="text-gray-600 mt-1">Manage your restaurant team</p>
         </div>
         <Button
           onClick={() => { setEditingStaff(null); setIsModalOpen(true); }}
-          className="bg-secondary hover:bg-secondary/90 text-white flex items-center gap-2"
+          className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
         >
           <Plus className="w-4 h-4" /> Add New Staff
         </Button>
@@ -219,7 +219,7 @@ setRoles(list.filter(r =>
         <CardContent>
           {loading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-secondary" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
             <Table>
@@ -235,7 +235,7 @@ setRoles(list.filter(r =>
               <TableBody>
                 {staffList.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-secondary">
+                    <TableCell colSpan={5} className="text-center py-12 text-primary">
                       No staff members yet. Add your first staff member!
                     </TableCell>
                   </TableRow>
@@ -251,11 +251,11 @@ setRoles(list.filter(r =>
                         <div className="flex flex-wrap gap-1">
                           {staff.roles?.length > 0 ? staff.roles.map(r => (
                             <Badge key={r.id} variant="secondary"
-                              className="bg-primary text-blue-700">
+                              className="bg-accent text-white">
                               {r.name}
                             </Badge>
                           )) : (
-                            <Badge variant="secondary" className="bg-gray-100 text-secondary">
+                            <Badge variant="secondary" className="bg-gray-100 text-primary">
                               No role
                             </Badge>
                           )}

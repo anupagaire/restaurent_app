@@ -1,11 +1,26 @@
-
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CheckCircle, Utensils, Truck, Users, Clock, Star } from 'lucide-react';
+import { 
+  CheckCircle, 
+  Utensils, 
+  Truck, 
+  Users, 
+  Clock, 
+  Star, 
+  ArrowRight,
+  Sparkles,
+  Coffee,
+  Gift,
+  Shield,
+  Award,
+  ChevronRight
+} from 'lucide-react';
 
 import { getRestaurantIdBySlug } from '@/lib/restaurant';
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,11 +49,36 @@ interface ServicesData {
 async function getServicesPage(restaurantId: number): Promise<ServicesData | null> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/restaurant-site/restaurant/${restaurantId}/services/`,
+      `${BASE_URL}/api/v1/restaurant-site/restaurant/${restaurantId}/services/`,
       { cache: 'no-store', next: { revalidate: 60 } }
     );
     if (!res.ok) return null;
-    return await res.json();
+    const data = await res.json();
+    
+    // Fetch photos if service exists
+    let photos: Photo[] = [];
+    if (data.id) {
+      try {
+        const photosRes = await fetch(
+          `${BASE_URL}/api/v1/photo/?type=restaurant_website_section&purpose=services&object_id=${data.id}`,
+          { cache: 'no-store' }
+        );
+        if (photosRes.ok) {
+          const photosData = await photosRes.json();
+          const photosList = photosData.results || photosData || [];
+          photos = photosList.map((p: any) => ({
+            id: p.id,
+            photo_url: p.photo_url,
+            alt: p.alt || '',
+            purpose: p.purpose || 'services',
+          }));
+        }
+      } catch (error) {
+        console.error('Photo fetch error:', error);
+      }
+    }
+    
+    return { ...data, photos };
   } catch {
     return null;
   }
@@ -65,759 +105,441 @@ export default async function RestaurantServicesPage({ params }: PageProps) {
 
   if (!services) {
     return (
-      <>
-        <style>{styles}</style>
-        <div className="sv-empty">
-          <div className="sv-empty__card">
-            <span className="sv-empty__icon">🍽️</span>
-            <h1>Services Page Not Available</h1>
-            <p>This restaurant hasn&apos;t created their services page yet.</p>
-            <Link href={`/restaurants/${slug}`} className="sv-empty__link">← Back to Restaurant</Link>
-          </div>
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="text-center max-w-md bg-white rounded-3xl p-12 shadow-lg">
+          <div className="text-6xl mb-4">🍽️</div>
+          <h1 className="text-2xl font-bold text-primary mb-2">Services Not Available</h1>
+          <p className="text-muted-foreground mb-6">This restaurant hasn't created their services page yet.</p>
+          <Link href={`/restaurants/${slug}`} className="text-secondary hover:underline font-medium inline-flex items-center gap-2">
+            ← Back to Restaurant
+          </Link>
         </div>
-      </>
+      </div>
     );
   }
 
   if (!services.is_published) {
     return (
-      <>
-        <style>{styles}</style>
-        <div className="sv-empty">
-          <div className="sv-empty__card">
-            <span className="sv-empty__icon">🔒</span>
-            <h1>Page Not Published</h1>
-            <p>This services page is currently unpublished.</p>
-            <Link href={`/restaurants/${slug}`} className="sv-empty__link">← Back to Restaurant</Link>
-          </div>
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="text-center max-w-md bg-white rounded-3xl p-12 shadow-lg">
+          <div className="text-6xl mb-4">🔒</div>
+          <h1 className="text-2xl font-bold text-primary mb-2">Page Not Published</h1>
+          <p className="text-muted-foreground mb-6">This services page is currently unpublished.</p>
+          <Link href={`/restaurants/${slug}`} className="text-secondary hover:underline font-medium inline-flex items-center gap-2">
+            ← Back to Restaurant
+          </Link>
         </div>
-      </>
+      </div>
     );
   }
 
+  const validPhotos = (services.photos || []).filter(p => p.photo_url);
+  const heroPhoto = validPhotos[0];
+  const galleryPhotos = validPhotos.slice(1);
+
   const featureCards = [
     {
-      icon: <Utensils className="sv-feat__icon-svg" />,
+      icon: <Utensils className="w-6 h-6 text-secondary" />,
       title: 'Fine Dining',
       desc: 'Experience exquisite cuisine in an elegant atmosphere with personalized service.',
-      num: '01',
+      color: 'from-secondary/10 to-secondary/5',
+      number: '01'
     },
     {
-      icon: <Truck className="sv-feat__icon-svg" />,
+      icon: <Truck className="w-6 h-6 text-secondary" />,
       title: 'Delivery & Takeout',
       desc: 'Enjoy our delicious meals at home with fast delivery and convenient takeout options.',
-      num: '02',
+      color: 'from-accent/10 to-accent/5',
+      number: '02'
     },
     {
-      icon: <Users className="sv-feat__icon-svg" />,
+      icon: <Users className="w-6 h-6 text-secondary" />,
       title: 'Private Events',
       desc: 'Host your special occasions in our private dining rooms with custom catering.',
-      num: '03',
+      color: 'from-primary/10 to-primary/5',
+      number: '03'
     },
   ];
 
   const whyItems = [
-    { icon: <CheckCircle className="sv-why__icon-svg" />, title: 'Quality Ingredients', desc: 'We source only the freshest, highest quality ingredients for every dish.' },
-    { icon: <Clock className="sv-why__icon-svg" />,        title: 'Timely Service',      desc: 'Punctual delivery and efficient service for your convenience.' },
-    { icon: <Star className="sv-why__icon-svg" />,         title: 'Expert Chefs',        desc: 'Our experienced chefs bring passion and skill to every meal.' },
-    { icon: <Users className="sv-why__icon-svg" />,        title: 'Customer Focus',      desc: 'Your satisfaction is our priority with personalized attention.' },
+    { 
+      icon: <CheckCircle className="w-5 h-5 text-secondary" />, 
+      title: 'Quality Ingredients', 
+      desc: 'We source only the freshest, highest quality ingredients for every dish.',
+      delay: '0.1s'
+    },
+    { 
+      icon: <Clock className="w-5 h-5 text-secondary" />, 
+      title: 'Timely Service', 
+      desc: 'Punctual delivery and efficient service for your convenience.',
+      delay: '0.2s'
+    },
+    { 
+      icon: <Star className="w-5 h-5 text-secondary" />, 
+      title: 'Expert Chefs', 
+      desc: 'Our experienced chefs bring passion and skill to every meal.',
+      delay: '0.3s'
+    },
+    { 
+      icon: <Users className="w-5 h-5 text-secondary" />, 
+      title: 'Customer Focus', 
+      desc: 'Your satisfaction is our priority with personalized attention.',
+      delay: '0.4s'
+    },
   ];
 
   return (
-    <>
-      <style>{styles}</style>
+    <div className="min-h-screen bg-background overflow-x-hidden">
+      
+      {/* HERO SECTION - Full Width Modern Design */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          {heroPhoto ? (
+            <>
+              <Image
+                src={heroPhoto.photo_url}
+                alt={heroPhoto.alt || services.title || 'Services'}
+                fill
+                priority
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent" />
+            </>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary to-secondary" />
+          )}
+        </div>
 
-      <div className="sv">
+        {/* Decorative Elements */}
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full bg-secondary/10 blur-3xl animate-pulse pointer-events-none" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 rounded-full bg-accent/5 blur-3xl animate-pulse pointer-events-none" />
+        <div className="absolute top-1/2 right-10 w-40 h-40 rounded-full bg-white/5 blur-2xl pointer-events-none" />
 
-        <header className="sv-hero">
-          {/* LEFT */}
-          <div className="sv-hero__left">
-            <Link href={`/restaurants/${slug}`} className="sv-hero__back">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Back
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-20">
+          <div className="max-w-3xl">
+            {/* Back Button */}
+            <Link 
+              href={`/restaurants/${slug}`}
+              className="inline-flex items-center gap-3 text-white/50 hover:text-white mb-8 text-sm font-medium transition-all duration-300 group"
+            >
+              <span className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 transition-all group-hover:scale-110">
+                <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
+              </span>
+              Back to Restaurant
             </Link>
 
-            <div className="sv-hero__eyebrow">What We Offer</div>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 mb-6">
+              <Sparkles className="w-3 h-3 text-accent" />
+              <span className="text-white/80 text-xs font-medium uppercase tracking-widest">Our Services</span>
+            </div>
 
-            <h1 className="sv-hero__title">
-              {(services.title || 'Our Services').split(' ').map((word, i) => (
-                <span key={i} className="sv-hero__word" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
-                  {word}{' '}
-                </span>
-              ))}
+            {/* Title */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] tracking-tight mb-6">
+              {services.title || 'Our Services'}
             </h1>
 
+            {/* Subtitle */}
             {services.subtitle && (
-              <p className="sv-hero__sub">{services.subtitle}</p>
+              <p className="text-white/70 text-lg md:text-xl leading-relaxed font-light max-w-2xl">
+                {services.subtitle}
+              </p>
             )}
 
-            <div className="sv-hero__badges">
-              <span className="sv-badge">Fine Dining</span>
-              <span className="sv-badge sv-badge--outline">Events</span>
-              <span className="sv-badge sv-badge--outline">Delivery</span>
+            {/* Service Tags */}
+            <div className="flex flex-wrap gap-3 mt-8">
+              <span className="px-4 py-2 bg-secondary/20 backdrop-blur-sm border border-secondary/20 rounded-full text-white text-sm font-medium">
+                Fine Dining
+              </span>
+              <span className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/70 text-sm font-medium">
+                Private Events
+              </span>
+              <span className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/70 text-sm font-medium">
+                Delivery
+              </span>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="flex items-center gap-4 mt-12 text-white/30">
+              <div className="w-12 h-px bg-white/30" />
+              <span className="text-xs uppercase tracking-[0.3em] animate-bounce">Explore Our Services</span>
             </div>
           </div>
+        </div>
 
-          {/* RIGHT — decorative */}
-          <div className="sv-hero__right">
-            <div className="sv-hero__photo-wrap">
-              {services.photos && services.photos.length > 0 ? (
-                <Image
-                  src={services.photos[0].photo_url}
-                  alt={services.photos[0].alt || 'Service'}
-                  fill
-                  className="sv-hero__photo"
-                  priority
-                />
-              ) : (
-                <div className="sv-hero__placeholder"><span>🍴</span></div>
-              )}
-              <div className="sv-hero__overlay" />
-              <div className="sv-hero__float-card">
-                <div className="sv-hero__float-dot" />
-                <span>Excellence in every detail</span>
-              </div>
-            </div>
-            <div className="sv-hero__circle sv-hero__circle--1" />
-            <div className="sv-hero__circle sv-hero__circle--2" />
-          </div>
-        </header>
+        {/* Bottom Decoration */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
+      </section>
 
-        <main className="sv-main">
+      {/* MAIN CONTENT */}
+      <main className="relative z-10 -mt-16">
+        
+        {/* FEATURE CARDS - Floating Cards Section */}
+        <section className="max-w-7xl mx-auto px-6 md:px-12 pb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featureCards.map((card, index) => (
+              <div
+                key={index}
+                className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 relative overflow-hidden"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Gradient Background */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                
+                {/* Number */}
+                <div className="absolute top-4 right-6 text-6xl font-bold text-primary/5 group-hover:text-primary/10 transition-colors duration-500">
+                  {card.number}
+                </div>
 
-          {/* ── FEATURE CARDS ── */}
-          <section className="sv-feat">
-            <div className="sv-feat__head">
-              <div className="sv-feat__label">Our Services</div>
-              <h2 className="sv-feat__title">Everything You Need</h2>
-              <div className="sv-feat__rule" />
-            </div>
-
-            <div className="sv-feat__grid">
-              {featureCards.map((card, i) => (
-                <div
-                  key={i}
-                  className="sv-feat__card"
-                  style={{ animationDelay: `${0.1 + i * 0.12}s` }}
-                >
-                  <div className="sv-feat__num">{card.num}</div>
-                  <div className="sv-feat__icon-wrap">
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
                     {card.icon}
                   </div>
-                  <h3 className="sv-feat__card-title">{card.title}</h3>
-                  <p className="sv-feat__card-desc">{card.desc}</p>
-                  <div className="sv-feat__card-bar" />
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors">
+                    {card.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-muted-foreground font-light leading-relaxed">
+                    {card.desc}
+                  </p>
+
+                  {/* Learn More Link */}
+                  <div className="mt-4 flex items-center gap-2 text-secondary font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0">
+                    Learn More
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
                 </div>
-              ))}
+
+                {/* Bottom Border */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-secondary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CONTENT SECTION */}
+        {services.content && (
+          <section className="max-w-7xl mx-auto px-6 md:px-12 pb-20">
+            <div className="bg-white rounded-3xl shadow-lg p-8 md:p-12">
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Left Label */}
+                <div className="md:w-32 flex-shrink-0">
+                  <div className="flex md:flex-col items-center md:items-start gap-4">
+                    <div className="hidden md:block">
+                      <div 
+                        className="text-sm font-bold uppercase tracking-[0.3em] text-secondary/40"
+                        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                      >
+                        Details
+                      </div>
+                    </div>
+                    <div className="md:hidden w-full">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-px bg-secondary/30" />
+                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-secondary">Details</span>
+                        <div className="flex-1 h-px bg-secondary/30" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 prose prose-lg prose-primary max-w-none 
+                              prose-headings:text-primary 
+                              prose-p:text-primary/80 prose-p:leading-[1.9] prose-p:font-light 
+                              prose-strong:text-primary 
+                              prose-a:text-secondary prose-a:no-underline hover:prose-a:underline
+                              prose-blockquote:border-l-secondary prose-blockquote:bg-secondary/5 prose-blockquote:p-6 prose-blockquote:rounded-r-xl">
+                  <div dangerouslySetInnerHTML={{ __html: services.content }} />
+                </div>
+              </div>
             </div>
           </section>
+        )}
 
-          {/* ── RICH TEXT CONTENT ── */}
-          {services.content && (
-            <section className="sv-content">
-              <div className="sv-content__inner">
-                <div className="sv-content__label">
-                  <span>Details</span>
-                </div>
-                <div
-                  className="sv-content__body prose-bistro"
-                  dangerouslySetInnerHTML={{ __html: services.content }}
-                />
+        {/* WHY CHOOSE US - With Background */}
+        <section className="bg-primary py-20">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 bg-secondary/20 px-4 py-2 rounded-full border border-secondary/20 mb-4">
+                <Award className="w-4 h-4 text-secondary" />
+                <span className="text-secondary text-xs font-bold uppercase tracking-widest">Why Choose Us</span>
               </div>
-            </section>
-          )}
-
-          {/* ── WHY CHOOSE US ── */}
-          <section className="sv-why">
-            <div className="sv-why__head">
-              <div className="sv-why__label">Why Us</div>
-              <h2 className="sv-why__title">Why Choose Our Services</h2>
-              <div className="sv-why__rule" />
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+                Why Choose Our Services
+              </h2>
+              <p className="text-white/60 font-light text-lg">
+                We're committed to providing exceptional service and unforgettable experiences
+              </p>
             </div>
 
-            <div className="sv-why__grid">
-              {whyItems.map((item, i) => (
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {whyItems.map((item, index) => (
                 <div
-                  key={i}
-                  className="sv-why__card"
-                  style={{ animationDelay: `${0.05 + i * 0.1}s` }}
+                  key={index}
+                  className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <div className="sv-why__icon-wrap">
-                    {item.icon}
-                  </div>
-                  <div className="sv-why__text">
-                    <h4 className="sv-why__card-title">{item.title}</h4>
-                    <p className="sv-why__card-desc">{item.desc}</p>
+                  <div className="flex items-start gap-5">
+                    <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-white text-lg font-bold mb-1">{item.title}</h4>
+                      <p className="text-white/60 font-light">{item.desc}</p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ── HORIZONTAL SCROLL GALLERY ── */}
-          {services.photos && services.photos.length > 0 && (
-            <section className="sv-gallery">
-              <div className="sv-gallery__head">
-                <div className="sv-gallery__label">Gallery</div>
-                <h2 className="sv-gallery__title">Our Services in Action</h2>
-                <p className="sv-gallery__hint">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{display:'inline',marginRight:'6px'}}>
-                    <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Scroll to explore
-                </p>
+        {/* GALLERY SECTION */}
+        {galleryPhotos.length > 0 && (
+          <section className="py-20 bg-background">
+            <div className="max-w-7xl mx-auto px-6 md:px-12">
+              {/* Gallery Header */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-px bg-secondary/40" />
+                    <span className="text-xs font-bold uppercase tracking-[0.3em] text-secondary">
+                      Gallery
+                    </span>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-primary">
+                    Our Services in Action
+                  </h2>
+                  <p className="text-muted-foreground font-light mt-2">
+                    A visual journey through our offerings
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-muted-foreground text-sm">
+                  <span className="w-8 h-px bg-muted" />
+                  {galleryPhotos.length} {galleryPhotos.length === 1 ? 'photo' : 'photos'}
+                </div>
               </div>
 
-              <div className="sv-gallery__track-wrap">
-                <div className="sv-gallery__track">
-                  {services.photos.map((photo, i) => (
-                    <div
-                      key={photo.id}
-                      className="sv-gallery__card"
-                      style={{ animationDelay: `${i * 0.07}s` }}
-                    >
-                      <div className="sv-gallery__img-wrap">
-                        <Image
-                          src={photo.photo_url}
-                          alt={photo.alt || 'Service photo'}
-                          fill
-                          className="sv-gallery__img"
-                        />
-                        <div className="sv-gallery__caption">
-                          <span>{photo.alt || `Photo ${i + 1}`}</span>
+              {/* Gallery Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {galleryPhotos.map((photo, index) => (
+                  <div
+                    key={photo.id}
+                    className={`group relative rounded-2xl overflow-hidden bg-gray-100 transition-all duration-500 hover:shadow-2xl hover:shadow-secondary/10 ${
+                      index === 0 ? 'lg:col-span-2 lg:row-span-2 h-[400px] lg:h-[500px]' : 'h-[280px]'
+                    }`}
+                  >
+                    <Image
+                      src={photo.photo_url}
+                      alt={photo.alt || `Service photo ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      unoptimized
+                    />
+                    
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <p className="text-white text-sm font-light line-clamp-2">
+                          {photo.alt || `Photo ${index + 1}`}
+                        </p>
+                        <div className="flex items-center gap-3 mt-3">
+                          <div className="w-8 h-px bg-white/40" />
+                          <span className="text-white/40 text-xs uppercase tracking-[0.2em] font-light">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
                         </div>
                       </div>
-                      <div className="sv-gallery__num">0{i + 1}</div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
 
-          {/* ── CTA ── */}
-          <div className="sv-cta">
-            <div className="sv-cta__inner">
-              <div className="sv-cta__tag">Get in Touch</div>
-              <p className="sv-cta__text">Interested in Our Services?</p>
-              <p className="sv-cta__sub">
-                Contact us today to learn more about our catering, private dining, and special event services.
-              </p>
-              <div className="sv-cta__btns">
-                <Link href={`/restaurants/${slug}/menu`} className="sv-cta__btn sv-cta__btn--primary">
-                  <Utensils style={{width:'16px',height:'16px'}} />
-                  View Menu
-                </Link>
-                <Link href={`/restaurants/${slug}`} className="sv-cta__btn sv-cta__btn--outline">
-                  Contact Us
-                </Link>
+                    {/* Index */}
+                    <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/50 text-xs font-light">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+
+                    {/* Zoom Icon */}
+                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <Link href={`/restaurants/${slug}`} className="sv-cta__back">
-                ← Back to Restaurant
+            </div>
+          </section>
+        )}
+
+        {/* CTA SECTION */}
+        <section className="bg-gradient-to-r from-primary to-secondary py-16">
+          <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 mb-6">
+              <Gift className="w-4 h-4 text-accent" />
+              <span className="text-white/80 text-xs font-medium uppercase tracking-widest">Ready to Experience</span>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+              Ready to Book Our Services?
+            </h2>
+            
+            <p className="text-white/70 text-lg font-light mb-8 max-w-2xl mx-auto">
+              Experience exceptional service and create unforgettable memories with us
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link 
+                href={`/restaurants/${slug}/contact`}
+                className="inline-flex items-center gap-2 bg-white text-primary px-8 py-4 rounded-full font-semibold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+              >
+                Get in Touch
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link 
+                href={`/restaurants/${slug}`}
+                className="inline-flex items-center gap-2 text-white/70 hover:text-white px-6 py-4 rounded-full font-medium transition-all duration-300 border border-white/20 hover:border-white/40"
+              >
+                <Shield className="w-4 h-4" />
+                Back to Restaurant
               </Link>
             </div>
           </div>
+        </section>
+      </main>
 
-        </main>
+      {/* FOOTER */}
+      <div className="bg-primary/5 backdrop-blur-sm border-t border-primary/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Link 
+              href={`/restaurants/${slug}`}
+              className="inline-flex items-center gap-3 text-primary/40 hover:text-primary text-sm transition-colors group"
+            >
+              <span className="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center group-hover:border-primary/30 transition-all group-hover:scale-110">
+                <ChevronRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
+              </span>
+              <span>Back to Restaurant</span>
+            </Link>
+            
+            <div className="flex items-center gap-6 text-primary/20 text-xs uppercase tracking-widest font-light">
+              <span>{services.title || 'Services'}</span>
+              <span className="w-4 h-px bg-primary/20" />
+              <span>{new Date().getFullYear()}</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
-
-const styles = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600&display=swap');
-
-/* ── Keyframes ── */
-@keyframes sv-fadeUp {
-  from { opacity:0; transform:translateY(24px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-@keyframes sv-wordIn {
-  from { opacity:0; transform:translateY(40px) skewY(4deg); }
-  to   { opacity:1; transform:translateY(0) skewY(0deg); }
-}
-@keyframes sv-slideRight {
-  from { opacity:0; transform:translateX(-20px); }
-  to   { opacity:1; transform:translateX(0); }
-}
-@keyframes sv-scaleIn {
-  from { opacity:0; transform:scale(0.94); }
-  to   { opacity:1; transform:scale(1); }
-}
-@keyframes sv-floatCard {
-  0%,100% { transform:translateY(0); }
-  50%      { transform:translateY(-8px); }
-}
-@keyframes sv-spin-slow {
-  from { transform:rotate(0deg); }
-  to   { transform:rotate(360deg); }
-}
-@keyframes sv-ruleGrow {
-  from { width:0; }
-  to   { width:60px; }
-}
-@keyframes sv-barGrow {
-  from { width:0; }
-  to   { width:40px; }
-}
-
-/* ── Root ── */
-.sv {
-  --primary:   #3B1C32;
-  --primary-l: #d34225;
-  --terra:   #513012;
-  --terra-l: #d34225;
-  --cream:   #f8f4ee;
-  --white:   #ffffff;
-  --ink:     #1a1a1a;
-  --muted:   #6b6b6b;
-  font-family: 'Outfit', sans-serif;
-  color: var(--ink);
-  background: primary/10;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-
-.sv-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 92vh;
-}
-
-.sv-hero__left {
-  background: var(--primary);
-  padding: 56px 64px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.sv-hero__left::before {
-  content:''; position:absolute; bottom:-80px; right:-80px;
-  width:280px; height:280px; border-radius:50%;
-  background:rgba(255,255,255,0.03); pointer-events:none;
-}
-.sv-hero__left::after {
-  content:''; position:absolute; top:-40px; left:-40px;
-  width:180px; height:180px; border-radius:50%;
-  background:rgba(196,98,45,0.08); pointer-events:none;
-}
-
-.sv-hero__back {
-  display:inline-flex; align-items:center; gap:8px;
-  color:rgba(255,255,255,0.5); font-size:0.8rem; font-weight:500;
-  text-decoration:none; letter-spacing:0.06em; text-transform:uppercase;
-  margin-bottom:52px; transition:color 0.2s; width:fit-content;
-  animation: sv-slideRight 0.5s ease forwards;
-}
-.sv-hero__back:hover { color:rgba(255,255,255,0.9); }
-
-.sv-hero__eyebrow {
-  font-size:0.72rem; font-weight:600; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--terra-l); margin-bottom:20px;
-  animation: sv-fadeUp 0.6s ease forwards; animation-delay:0.05s; opacity:0;
-}
-
-.sv-hero__title {
-  font-family:'Fraunces',serif;
-  font-size:clamp(2.8rem,5vw,4.4rem);
-  font-weight:700; line-height:1.08;
-  color:var(--white); margin:0 0 28px; overflow:hidden;
-}
-.sv-hero__word {
-  display:inline-block; opacity:0;
-  animation: sv-wordIn 0.6s cubic-bezier(.22,.68,0,1.1) forwards;
-}
-
-.sv-hero__sub {
-  font-size:1.05rem; font-weight:300; line-height:1.7;
-  color:rgba(255,255,255,0.65); max-width:420px; margin:0 0 40px;
-  animation: sv-fadeUp 0.6s ease forwards; animation-delay:0.45s; opacity:0;
-}
-
-.sv-hero__badges {
-  display:flex; gap:10px; flex-wrap:wrap;
-  animation: sv-fadeUp 0.6s ease forwards; animation-delay:0.55s; opacity:0;
-}
-.sv-badge {
-  font-size:0.75rem; font-weight:500; letter-spacing:0.06em;
-  padding:7px 16px; border-radius:100px;
-  background:var(--terra); color:#fff;
-}
-.sv-badge--outline {
-  background:transparent;
-  border:1.5px solid rgba(255,255,255,0.25);
-  color:rgba(255,255,255,0.7);
-}
-
-.sv-hero__right {
-  position:relative; overflow:hidden; background:#1a2e0a;
-}
-.sv-hero__photo-wrap { position:absolute; inset:0; }
-.sv-hero__photo {
-  object-fit:cover; transition:transform 8s ease;
-}
-.sv-hero__right:hover .sv-hero__photo { transform:scale(1.04); }
-.sv-hero__overlay {
-  position:absolute; inset:0;
-  background:linear-gradient(135deg,rgba(26,46,10,0.55) 0%,rgba(0,0,0,0.2) 100%);
-}
-.sv-hero__placeholder {
-  position:absolute; inset:0; display:flex;
-  align-items:center; justify-content:center; font-size:5rem;
-  background:linear-gradient(135deg,#1a2e0a,#2d4a14);
-}
-
-.sv-hero__float-card {
-  position:absolute; bottom:40px; left:40px;
-  background:rgba(255,255,255,0.95); backdrop-filter:blur(12px);
-  border-radius:12px; padding:12px 20px;
-  display:flex; align-items:center; gap:10px;
-  font-size:0.82rem; font-weight:500; color:var(--primary);
-  box-shadow:0 8px 32px rgba(0,0,0,0.2);
-  animation: sv-floatCard 4s ease-in-out infinite; z-index:2;
-}
-.sv-hero__float-dot {
-  width:8px; height:8px; border-radius:50%;
-  background:var(--terra); flex-shrink:0;
-}
-
-.sv-hero__circle {
-  position:absolute; border-radius:50%;
-  border:1px solid rgba(255,255,255,0.1);
-  pointer-events:none; z-index:1;
-}
-.sv-hero__circle--1 {
-  width:300px; height:300px; top:-80px; right:-80px;
-  animation: sv-spin-slow 30s linear infinite;
-}
-.sv-hero__circle--2 {
-  width:180px; height:180px; bottom:60px; right:30px;
-  border-color:rgba(196,98,45,0.2);
-}
-
-
-.sv-main { background:var(--cream); }
-
-/* section shared header */
-.sv-feat__label, .sv-why__label, .sv-gallery__label {
-  font-size:0.7rem; font-weight:600; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--terra); margin-bottom:10px;
-}
-.sv-feat__title, .sv-why__title, .sv-gallery__title {
-  font-size:clamp(1.8rem,4vw,2.6rem);
-  font-weight:700; color:var(--primary); margin:0 0 16px; line-height:1.1;
-}
-.sv-feat__rule, .sv-why__rule, .sv-gallery__rule {
-  height:3px; width:60px;
-  background:linear-gradient(90deg,var(--primary),var(--terra));
-  border-radius:2px;
-  animation: sv-ruleGrow 0.8s cubic-bezier(.22,.68,0,1.2) forwards;
-}
-
-/* ── Feature cards ── */
-.sv-feat {
-  max-width:1100px; margin:0 auto; padding:80px 48px 60px;
-}
-.sv-feat__head { margin-bottom:48px; }
-
-.sv-feat__grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
-}
-
-.sv-feat__card {
-  background:var(--white);
-  border:1px solid rgba(45,80,22,0.08);
-  border-radius:20px; padding:36px 28px 32px;
-  position:relative; overflow:hidden;
-  opacity:0; animation: sv-fadeUp 0.6s ease forwards;
-  transition: transform 0.25s, box-shadow 0.25s;
-}
-.sv-feat__card:hover {
-  transform:translateY(-6px);
-  box-shadow:0 20px 48px rgba(45,80,22,0.12);
-}
-.sv-feat__card::before {
-  content:'';
-  position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg,var(--primary),var(--terra));
-  transform:scaleX(0); transform-origin:left;
-  transition:transform 0.35s ease;
-}
-.sv-feat__card:hover::before { transform:scaleX(1); }
-
-.sv-feat__num {
-   font-size:3.5rem; font-weight:700;
-  color:rgba(45,80,22,0.07); line-height:1;
-  position:absolute; top:16px; right:20px; letter-spacing:-0.02em;
-}
-.sv-feat__icon-wrap {
-  width:52px; height:52px; border-radius:14px;
-  background:rgba(45,80,22,0.08);
-  display:flex; align-items:center; justify-content:center;
-  margin-bottom:20px;
-}
-.sv-feat__icon-svg { width:24px; height:24px; color:var(--primary); }
-
-.sv-feat__card-title {
-  font-family:'Fraunces',serif; font-size:1.3rem;
-  font-weight:700; color:var(--primary); margin:0 0 10px;
-}
-.sv-feat__card-desc {
-  font-size:0.92rem; line-height:1.7; color:var(--muted);
-  font-weight:300; margin:0 0 20px;
-}
-.sv-feat__card-bar {
-  height:2px; width:0;
-  background:var(--terra); border-radius:1px;
-  animation: sv-barGrow 0.6s 0.8s ease forwards;
-}
-
-/* ── Rich text content ── */
-.sv-content {
-  max-width:1100px; margin:0 auto; padding:20px 48px 60px;
-}
-.sv-content__inner {
-  display:grid; grid-template-columns:140px 1fr;
-  gap:48px; align-items:start;
-}
-.sv-content__label { padding-top:8px; position:sticky; top:32px; }
-.sv-content__label span {
-  display:block; font-size:0.7rem; font-weight:600;
-  letter-spacing:0.2em; text-transform:uppercase; color:var(--terra);
-  writing-mode:vertical-rl; transform:rotate(180deg);
-  border-left:2px solid var(--terra); padding-left:10px;
-}
-
-.prose-bistro {
-  font-size:1.05rem; line-height:1.9; color:#2a2a2a; font-weight:300;
-  animation: sv-fadeUp 0.7s ease forwards; animation-delay:0.1s; opacity:0;
-}
-.prose-bistro > p:first-of-type::first-letter {
-  font-family:'Fraunces',serif; font-size:4.5rem; font-weight:700;
-  color:var(--primary); float:left; line-height:0.75;
-  margin-right:8px; margin-top:8px;
-}
-.prose-bistro h1,.prose-bistro h2,.prose-bistro h3 {
-  font-family:'Fraunces',serif; color:var(--primary);
-  margin-top:2em; margin-bottom:0.6em; font-weight:700;
-}
-.prose-bistro h2 { font-size:1.8rem; }
-.prose-bistro h3 { font-size:1.3rem; }
-.prose-bistro p  { margin-bottom:1.4em; }
-.prose-bistro strong { color:var(--primary); font-weight:600; }
-.prose-bistro a {
-  color:var(--terra); text-decoration:none; font-weight:500;
-  border-bottom:1.5px solid rgba(196,98,45,0.3); padding-bottom:1px;
-  transition:border-color 0.2s;
-}
-.prose-bistro a:hover { border-color:var(--terra); }
-.prose-bistro blockquote {
-  margin:2em 0; padding:24px 32px;
-  border-left:4px solid var(--terra);
-  background:rgba(196,98,45,0.05);
-  border-radius:0 12px 12px 0;
-  font-family:'Fraunces',serif; font-style:italic;
-  font-size:1.2rem; color:var(--primary);
-}
-.prose-bistro ul,.prose-bistro ol { padding-left:1.5em; margin-bottom:1.4em; }
-.prose-bistro li { margin-bottom:0.5em; }
-.prose-bistro li::marker { color:var(--terra); }
-
-/* ── Why choose us ── */
-.sv-why {
-  background:var(--primary); padding:80px 48px;
-}
-.sv-why__head { max-width:1100px; margin:0 auto 48px; }
-.sv-why__label { color:var(--terra-l) !important; }
-.sv-why__title { color:var(--white) !important; }
-.sv-why__rule {
-  background:linear-gradient(90deg,var(--terra-l),rgba(255,255,255,0.3)) !important;
-}
-
-.sv-why__grid {
-  max-width:1100px; margin:0 auto;
-  display:grid; grid-template-columns:repeat(2,1fr); gap:20px;
-}
-
-.sv-why__card {
-  display:flex; gap:20px; align-items:flex-start;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:16px; padding:24px 28px;
-  opacity:0; animation: sv-fadeUp 0.6s ease forwards;
-  transition: background 0.25s, transform 0.25s;
-}
-.sv-why__card:hover {
-  background:rgba(255,255,255,0.1);
-  transform:translateY(-3px);
-}
-
-.sv-why__icon-wrap {
-  width:44px; height:44px; flex-shrink:0;
-  background:rgba(196,98,45,0.25);
-  border-radius:12px;
-  display:flex; align-items:center; justify-content:center;
-}
-.sv-why__icon-svg { width:20px; height:20px; color:var(--terra-l); }
-
-.sv-why__card-title {
-  font-family:'Fraunces',serif; font-size:1.05rem;
-  font-weight:700; color:var(--white); margin:0 0 6px;
-}
-.sv-why__card-desc {
-  font-size:0.88rem; line-height:1.65;
-  color:rgba(255,255,255,0.6); font-weight:300; margin:0;
-}
-
-/* ── Gallery ── */
-.sv-gallery { padding:80px 0; overflow:hidden; }
-.sv-gallery__head { max-width:1100px; margin:0 auto; padding:0 48px 36px; }
-.sv-gallery__hint {
-  font-size:0.82rem; color:var(--muted);
-  display:flex; align-items:center; margin:0;
-}
-
-.sv-gallery__track-wrap {
-  padding:8px 48px 24px; overflow-x:auto;
-  scrollbar-width:thin; scrollbar-color:var(--terra) transparent;
-  cursor:grab;
-}
-.sv-gallery__track-wrap:active { cursor:grabbing; }
-.sv-gallery__track-wrap::-webkit-scrollbar { height:4px; }
-.sv-gallery__track-wrap::-webkit-scrollbar-thumb { background:var(--terra); border-radius:2px; }
-
-.sv-gallery__track {
-  display:flex; gap:20px; width:max-content; padding-bottom:8px;
-}
-
-.sv-gallery__card {
-  flex-shrink:0; width:320px; opacity:0;
-  animation: sv-scaleIn 0.5s ease forwards;
-}
-.sv-gallery__img-wrap {
-  position:relative; width:320px; height:240px;
-  border-radius:16px; overflow:hidden; background:#d0d0d0;
-}
-.sv-gallery__img {
-  object-fit:cover;
-  transition:transform 0.5s cubic-bezier(.22,.68,0,1.1);
-}
-.sv-gallery__card:hover .sv-gallery__img { transform:scale(1.06); }
-.sv-gallery__caption {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:32px 16px 16px;
-  background:linear-gradient(to top,rgba(26,46,10,0.85) 0%,transparent 100%);
-  color:#fff; font-size:0.82rem; font-weight:400;
-  transform:translateY(100%); transition:transform 0.35s ease;
-  border-radius:0 0 16px 16px;
-}
-.sv-gallery__card:hover .sv-gallery__caption { transform:translateY(0); }
-.sv-gallery__num {
-  font-family:'Fraunces',serif; font-size:0.72rem; font-weight:300;
-  color:var(--muted); margin-top:10px; letter-spacing:0.08em;
-}
-
-/* ── CTA ── */
-.sv-cta { background:var(--terra); padding:80px 48px; }
-.sv-cta__inner { max-width:600px; margin:0 auto; text-align:center; }
-.sv-cta__tag {
-  display:inline-block;
-  font-size:0.72rem; font-weight:600; letter-spacing:0.18em;
-  text-transform:uppercase; color:rgba(255,255,255,0.7);
-  border:1px solid rgba(255,255,255,0.25);
-  padding:5px 14px; border-radius:100px; margin-bottom:20px;
-}
-.sv-cta__text {
-  font-family:'Fraunces',serif;
-  font-size:clamp(1.8rem,4vw,2.8rem);
-  font-weight:700; color:#fff; margin:0 0 12px; line-height:1.15;
-}
-.sv-cta__sub {
-  font-size:1rem; font-weight:300;
-  color:rgba(255,255,255,0.75); margin:0 0 36px; line-height:1.7;
-}
-.sv-cta__btns {
-  display:flex; gap:12px; justify-content:center;
-  flex-wrap:wrap; margin-bottom:20px;
-}
-.sv-cta__btn {
-  display:inline-flex; align-items:center; gap:8px;
-  font-size:0.9rem; font-weight:600; letter-spacing:0.04em;
-  text-decoration:none; padding:13px 28px; border-radius:100px;
-  transition:all 0.25s;
-}
-.sv-cta__btn--primary {
-  background:#fff; color:var(--terra);
-}
-.sv-cta__btn--primary:hover {
-  background:var(--cream); transform:translateY(-2px);
-  box-shadow:0 10px 28px rgba(0,0,0,0.15);
-}
-.sv-cta__btn--outline {
-  background:transparent; color:#fff;
-  border:1.5px solid rgba(255,255,255,0.4);
-}
-.sv-cta__btn--outline:hover {
-  background:rgba(255,255,255,0.12); transform:translateY(-2px);
-}
-.sv-cta__back {
-  display:block; font-size:0.82rem;
-  color:rgba(255,255,255,0.45); text-decoration:none; transition:color 0.2s;
-}
-.sv-cta__back:hover { color:rgba(255,255,255,0.8); }
-
-/* ── Responsive ── */
-@media (max-width:900px) {
-  .sv-hero { grid-template-columns:1fr; min-height:auto; }
-  .sv-hero__right { height:50vw; min-height:280px; position:relative; }
-  .sv-hero__left { padding:40px 32px; }
-  .sv-hero__back { margin-bottom:32px; }
-  .sv-feat { padding:56px 24px 40px; }
-  .sv-feat__grid { grid-template-columns:1fr; }
-  .sv-content { padding:20px 24px 48px; }
-  .sv-content__inner { grid-template-columns:1fr; }
-  .sv-content__label { display:none; }
-  .sv-why { padding:56px 24px; }
-  .sv-why__grid { grid-template-columns:1fr; }
-  .sv-gallery__head { padding:0 24px 28px; }
-  .sv-gallery__track-wrap { padding:8px 24px 24px; }
-  .sv-cta { padding:56px 24px; }
-}
-@media (max-width:540px) {
-  .sv-hero__left { padding:32px 24px; }
-  .sv-hero__title { font-size:2.4rem; }
-  .sv-feat__grid { grid-template-columns:1fr; }
-  .sv-gallery__card { width:260px; }
-  .sv-gallery__img-wrap { width:260px; height:200px; }
-}
-
-/* ── Empty states ── */
-.sv-empty {
-  min-height:100vh; background:#f8f4ee;
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Outfit',sans-serif; padding:24px;
-}
-.sv-empty__card {
-  text-align:center; background:#fff; border-radius:24px;
-  padding:64px 48px; box-shadow:0 4px 40px rgba(0,0,0,0.08);
-  max-width:400px; width:100%;
-  animation: sv-fadeUp 0.6s ease forwards;
-}
-.sv-empty__icon { font-size:3rem; display:block; margin-bottom:20px; }
-.sv-empty__card h1 {
-  font-family:'Fraunces',serif; font-size:1.6rem;
-  color:#2d5016; margin:0 0 10px;
-}
-.sv-empty__card p { color:#888; margin:0 0 28px; font-size:0.95rem; }
-.sv-empty__link {
-  color:#2d5016; font-weight:500; text-decoration:none;
-  border-bottom:1.5px solid rgba(45,80,22,0.3); padding-bottom:2px;
-  transition:border-color 0.2s;
-}
-.sv-empty__link:hover { border-color:#2d5016; }
-`;

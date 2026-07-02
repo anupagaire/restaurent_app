@@ -131,7 +131,7 @@ function HeroContent({ restaurant }: { restaurant: Props['restaurant'] }) {
         
         <Link
           href="/menu"
-          className="bg-white/10 backdrop-blur border border-white/20 hover:bg-white/20 text-white font-semibold px-8 py-3.5 rounded-full transition-all flex items-center gap-2"
+          className="bg-secondary backdrop-blur border border-white/20 hover:bg-white/20 text-white font-semibold px-8 py-3.5 rounded-full transition-all flex items-center gap-2"
         >
           View Menu <ChevronRight size={16} />
         </Link>

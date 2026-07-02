@@ -251,7 +251,7 @@ export default function ContactMessagesPage() {
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
-      <div className="max-w-screen-xl mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-4 py-10">
 
         {/* Heading */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
@@ -266,7 +266,7 @@ export default function ContactMessagesPage() {
         {/* Filters */}
         <div className="bg-white border border-accent rounded-xl p-4 mb-6">
           <div className="flex flex-wrap gap-3 items-end">
-            <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[220px]">
+            <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-55">
               <input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -361,7 +361,7 @@ export default function ContactMessagesPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-primary hidden md:table-cell max-w-[200px]">
+                      <td className="px-4 py-3 text-primary hidden md:table-cell max-w-50">
                         <p className="truncate">{msg.subject}</p>
                         <p className="text-xs text-primary truncate">{msg.message}</p>
                       </td>

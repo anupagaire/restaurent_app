@@ -1,8 +1,13 @@
 'use client'
 
+
+
+
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Upload, Trash2, Loader2, Plus, CheckCircle2, AlertCircle, Images } from 'lucide-react'
+import { Upload, Trash2, Loader2, Plus, CheckCircle2, AlertCircle, Images, Lock } from 'lucide-react'
+
+
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? ''
 
@@ -36,6 +41,8 @@ export default function HeroSliderPage() {
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+   const [isEnterprisePlan, setIsEnterprisePlan] = useState(false)
+  const [checkingPlan, setCheckingPlan] = useState(true)
 
   function showSuccess(msg: string) {
     setSuccessMsg(msg)
@@ -60,7 +67,9 @@ export default function HeroSliderPage() {
      
       if (res.ok) {
         const data = await res.json()
-        const list: SliderPhoto[] = (data.results ?? data ?? []).map((p: any) => ({
+        const list: SliderPhoto[] = (data.results ?? data ?? [])
+         .filter((p: any) => p.purpose === 'slider') 
+         .map((p: any) => ({
           id: p.id,
           photo_url: p.photo_url ?? '',
           alt: p.alt ?? '',
@@ -71,8 +80,24 @@ export default function HeroSliderPage() {
     finally { setLoading(false) }
   }
 
-  useEffect(() => { loadPhotos() }, [])
-
+  // useEffect(() => { loadPhotos() }, [])
+useEffect(() => {
+  async function checkPlan() {
+    try {
+      const res = await fetch(`${API}/api/v1/subscription/subscriptions/current/`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      })
+      const data = await res.json()
+      const planName = data?.current_subscription?.plan?.name?.toLowerCase() ?? ''
+      setIsEnterprisePlan(planName.includes('enterprise'))
+    } catch {}
+    finally { setCheckingPlan(false) }
+  }
+  checkPlan()
+}, [])
+useEffect(() => {
+  if (isEnterprisePlan) loadPhotos()
+}, [isEnterprisePlan])
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return
     const rid = getRestaurantId()
@@ -136,7 +161,28 @@ formData.append('purpose', 'slider')
       setDeleting(null)
     }
   }
+if (checkingPlan) {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <Loader2 size={24} className="animate-spin text-accent-400" />
+    </div>
+  )
+}
 
+if (!isEnterprisePlan) {
+  return (
+    <div className="p-6 max-w-2xl mx-auto">
+      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-10 text-center">
+        <Lock size={36} className="text-gray-300 mx-auto mb-4" />
+        <h2 className="text-lg font-bold text-gray-800 mb-2">Enterprise Feature</h2>
+        <p className="text-secondary text-sm">
+          Hero Slider is only available on the <strong>Enterprise plan</strong>.
+          Upgrade your subscription to unlock this feature.
+        </p>
+      </div>
+    </div>
+  )
+}
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
 

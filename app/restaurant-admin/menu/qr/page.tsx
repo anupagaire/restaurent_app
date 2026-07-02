@@ -427,7 +427,7 @@ formData.append('alt', `QR Token #${token.id}`);
           </p>
         </div>
 
-        <Card className="border-accent bg-accent">
+        <Card className="border-accent ">
           <CardHeader>
             <CardTitle className="text-lg" style={{ color: '#513012' }}>Generate New QR Code</CardTitle>
           </CardHeader>

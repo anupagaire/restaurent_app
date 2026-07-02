@@ -80,7 +80,7 @@ function RestaurantCard({ restaurant, rating }: { restaurant: Restaurant; rating
           {restaurant.name}
         </h3>
         <div className="flex items-center gap-1 text-secondary">
-          <MapPin size={11} className="flex-shrink-0 text-secondary" />
+          <MapPin size={11} className="shrink-0 text-secondary" />
           <p className="text-xs line-clamp-1">{restaurant.city}</p>
         </div>
         {rating && <StarDisplay avg={rating.avg} count={rating.count} />}
@@ -253,7 +253,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
 
           {/* Search bar */}
           <div className="flex items-center bg-white rounded-2xl shadow-2xl p-2 gap-2">
-            <Search size={18} className="ml-2 text-secondary flex-shrink-0" />
+            <Search size={18} className="ml-2 text-secondary shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -272,7 +272,7 @@ const cityScrollRef = useRef<HTMLDivElement>(null);
             <button
               onClick={handleSearch}
               disabled={!inputValue.trim()}
-              className="px-5 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors flex-shrink-0"
+              className="px-5 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:bg-[#3d2209] disabled:opacity-40 transition-colors shrink-0"
             >
               Search
             </button>

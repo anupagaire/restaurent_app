@@ -37,7 +37,7 @@ interface RestaurantAboutProps {
     description?: string | null
     amenities?: string | null
     table_count?: number
-    photos?: { id: number; photo_url: string }[]
+    photos?: { id: number; photo_url: string; purpose?: string }[]
   }
 }
 
@@ -54,7 +54,11 @@ function resolvePhoto(url?: string | null): string | null {
 export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
   const locationParts = [restaurant.address, restaurant.city, restaurant.zip].filter(Boolean)
   const slug = toSlug(restaurant.name)
-  const imageUrl = resolvePhoto(restaurant.photos?.[0]?.photo_url)
+
+
+  const galleryPhotos = restaurant.photos?.filter(p => p.purpose === 'gallery') ?? []
+  const imageUrl = resolvePhoto(galleryPhotos[0]?.photo_url)
+
 
   const pillars = [
     { icon: Star, label: 'Authentic Flavors', desc: 'Recipes passed through generations' },
@@ -90,7 +94,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                 </motion.p>
                 <motion.h2
                   variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
-                  className="font-bold leading-none tracking-tight text-7xl text-primary"
+                  className="font-bold leading-none tracking-tight text-7xl text-secondary"
                  
                 >
                   {restaurant.name}
@@ -100,7 +104,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               {/* Description */}
               <motion.p
                 variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-                className="text-base sm:text-lg font-light  text-secondary leading-[1.85] opacity-75 max-w-lg"
+                className="text-base sm:text-lg font-light  text-primary leading-[1.85] opacity-75 max-w-lg"
               >
                 {restaurant.description ||
                   `Experience authentic flavors and warm hospitality in the heart of ${restaurant.city}. We're passionate about serving delicious food made with fresh, quality ingredients.`}
@@ -141,7 +145,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               >
                 <Link
                   href={`/restaurants/${slug}`}
-                  className="inline-flex items-center bg-accent text-white gap-2 px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                  className="inline-flex items-center bg-secondary text-white gap-2 px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   
                 >
                   Reserve a Table
@@ -149,7 +153,7 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                 </Link>
                 <Link
                   href={`/restaurants/${slug}/menu`}
-                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-medium text-accent transition-all duration-300 hover:bg-accent/10"
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-medium text-secondary transition-all duration-300 hover:bg-accent/10"
                   style={{ border: '1px solid rgba(200,145,74,0.35)' }}
                 >
                   <Utensils className="w-4 h-4" />
@@ -245,7 +249,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
         </div>
       </section>
 
-      {restaurant.photos && restaurant.photos.length > 0 && (
+      {/* {restaurant.photos && restaurant.photos.length > 0 && ( */}
+        {galleryPhotos.length > 0 && (
         <section className="px-5 sm:px-10 lg:px-20 py-2 lg:py-8">
           <div className="max-w-7xl mx-auto">
 
@@ -266,7 +271,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
                 className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-light text-accent transition-all duration-300 hover:bg-accent/10 group"
                 style={{ border: '1px solid rgba(200,145,74,0.3)' }}
               >
-                View All ({restaurant.photos.length})
+               
+                 View All ({galleryPhotos.length})
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </motion.div>
@@ -276,7 +282,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               className="rounded-3xl overflow-hidden"
               style={{ border: '1px solid rgba(200,145,74,0.12)' }}
             >
-              <RestaurantPhotoSlider photos={restaurant.photos} restaurantName={restaurant.name} />
+                    <RestaurantPhotoSlider photos={galleryPhotos} restaurantName={restaurant.name} />
+
             </motion.div>
 
             <Link
@@ -284,7 +291,8 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
               className="sm:hidden mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full text-sm font-light text-accent transition-all hover:bg-accent/10"
               style={{ border: '1px solid rgba(200,145,74,0.3)' }}
             >
-              View All Photos ({restaurant.photos.length})
+              
+              View All Photos ({galleryPhotos.length})
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -312,12 +320,11 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
             {/* Noise texture */}
             <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
                 backgroundSize: '150px',
               }} />
 
             <div className="relative px-8 sm:px-14 lg:px-20 py-14 lg:py-20">
-              <div className="max-w-2xl mx-auto text-center">
+              <div className="max-w-4xl mx-auto text-center">
                 <motion.div
                   variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
                   className="inline-flex items-center gap-2 mb-6"
@@ -329,19 +336,16 @@ export default function RestaurantAbout({ restaurant }: RestaurantAboutProps) {
 
                 <motion.h3
                   variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
-                  className="font-light text-white leading-tight mb-5"
-                  style={{
-                    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                    fontFamily: '"Playfair Display", Georgia, serif',
-                  }}
+                  className="font-light text-white text-5xl leading-tight mb-5"
+                 
                 >
                   Ready to Dine{' '}
-                  <span className="text-accent"style={{  fontStyle: 'italic' }}>With Us?</span>
+                  <span className="text-secondary">With Us?</span>
                 </motion.h3>
 
                 <motion.p
                   variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={3}
-                  className="text-white/45 mb-10 text-base sm:text-lg font-light leading-relaxed"
+                  className="text-white mb-10 text-base sm:text-lg font-light leading-relaxed"
                 >
                   Book your table and experience the finest dining in{' '}
                   <span className="text-white/70 font-medium">{restaurant.city}</span>.

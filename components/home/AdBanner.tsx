@@ -7,16 +7,23 @@ import Link from "next/link";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function AdBanner() {
-  const [ads, setAds] = useState([]);
+  const [ads, setAds] = useState<any[]>([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/v1/active-ads/`);
+        const res = await fetch(`${API_URL}/api/v1/illustration/?page_size=1000`);
+        if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        setAds(data);
+
+        // Paginated response handle garne
+        const allAds = data.results || data;
+
+        // No "enabled" field exists on the API yet — existence of the
+        // banner IS the on/off switch. Delete it in admin to hide it.
+        setAds(allAds);
       } catch (err) {
         console.error("Failed to fetch ads:", err);
       } finally {
@@ -34,7 +41,7 @@ export default function AdBanner() {
     setCurrent((prev) => (prev - 1 + ads.length) % ads.length);
   };
 
-  // Auto-slide every 4 seconds if more than 1 ad
+  // Auto-slide every 4 seconds
   useEffect(() => {
     if (ads.length <= 1) return;
     const timer = setInterval(next, 4000);
@@ -42,14 +49,13 @@ export default function AdBanner() {
   }, [ads.length, next]);
 
   if (loading) {
-    return (
-      <div className="w-full h-[200px] bg-gray-100 animate-pulse rounded-lg" />
-    );
+    return <div className="w-full h-50 bg-gray-100 animate-pulse rounded-lg" />;
   }
 
+  // Active ad chaina bhaye kei nadekhauune
   if (!ads.length) return null;
 
-  // Single ad — no carousel
+  // Single active ad bhaye direct image dekhauune
   if (ads.length === 1) {
     const ad = ads[0];
     const Wrapper = ad.external_link ? Link : "div";
@@ -61,23 +67,22 @@ export default function AdBanner() {
         className="block w-full relative overflow-hidden rounded-lg"
       >
         <Image
-          src={ad.image}
-          alt={ad.alt || ad.advertiser?.title_en || "Advertisement"}
-          width={1200}
-          height={300}
-          className="w-full h-auto object-cover"
+          src={`${ad.image}${ad.image.includes("?") ? "&" : "?"}v=${encodeURIComponent(ad.updated_on || ad.id)}`}
+          alt={ad.alt || "Advertisement"}
+          width={800}
+          height={100}
+        
+            className="w-full h-32 md:h-44 lg:h-160 object-cover"
+
           priority
         />
       </Wrapper>
     );
   }
 
-  // Multiple ads — carousel
-  const ad = ads[current];
-
+  // Multiple active ads bhaye slider dekhauune
   return (
     <div className="relative w-full overflow-hidden rounded-lg group">
-      {/* Slides */}
       <div className="relative w-full">
         {ads.map((a, i) => {
           const Wrapper = a.external_link ? Link : "div";
@@ -95,11 +100,12 @@ export default function AdBanner() {
                 className="block w-full"
               >
                 <Image
-                  src={a.image}
-                  alt={a.alt || a.advertiser?.title_en || "Advertisement"}
-                  width={1200}
-                  height={300}
-                  className="w-full h-auto object-cover"
+                  src={`${a.image}${a.image.includes("?") ? "&" : "?"}v=${encodeURIComponent(a.updated_on || a.id)}`}
+                  alt={a.alt || "Advertisement"}
+                  width={800}
+                  height={100}
+                    className="w-full h-32 md:h-44 lg:h-160 object-cover"
+
                   priority={i === 0}
                 />
               </Wrapper>
@@ -112,14 +118,14 @@ export default function AdBanner() {
       <button
         onClick={prev}
         className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        aria-label="Previous ad"
+        aria-label="Previous"
       >
         ‹
       </button>
       <button
         onClick={next}
         className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        aria-label="Next ad"
+        aria-label="Next"
       >
         ›
       </button>
@@ -133,7 +139,7 @@ export default function AdBanner() {
             className={`w-2 h-2 rounded-full transition-all ${
               i === current ? "bg-white scale-125" : "bg-white/50"
             }`}
-            aria-label={`Go to ad ${i + 1}`}
+            aria-label={`Go to slide ${i + 1}`}
           />
         ))}
       </div>

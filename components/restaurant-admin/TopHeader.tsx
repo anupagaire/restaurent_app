@@ -60,7 +60,7 @@ if (data?.restaurant) {
     .slice(0, 2);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-secondary/10 px-3 sm:px-4 md:px-6 py-3">
+    <header className="sticky top-0 z-50 bg-white border-b border-primary/10 px-3 sm:px-4 md:px-6 py-3">
       <div className="flex items-center justify-between gap-3">
 
         {/* LEFT */}
@@ -68,51 +68,51 @@ if (data?.restaurant) {
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="md:hidden p-2 rounded-lg hover:bg-secondary/5 flex-shrink-0"
+              className="md:hidden p-2 rounded-lg hover:bg-primary/5 shrink-0"
             >
-              <Menu className="w-6 h-6 text-secondary" />
+              <Menu className="w-6 h-6 text-primary" />
             </button>
           )}
           <div className="min-w-0">
-            <p className="text-sm sm:text-lg md:text-2xl font-bold text-secondary truncate">
+            <p className="text-sm sm:text-lg md:text-2xl font-bold text-primary truncate">
               {restaurantName}
             </p>
-            <h1 className="text-xs sm:text-sm md:text-base text-secondary truncate">
+            <h1 className="text-xs sm:text-sm md:text-base text-primary truncate">
               {title}
             </h1>
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Profile */}
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(p => !p)}
-              className="flex items-center gap-2 rounded-xl p-1.5 sm:pr-3 hover:bg-secondary/5 transition-colors"
+              className="flex items-center gap-2 rounded-xl p-1.5 sm:pr-3 hover:bg-primary/5 transition-colors"
             >
-              <div className="hidden md:block text-right max-w-[140px]">
-                <p className="text-sm font-semibold text-secondary truncate">{displayName}</p>
-                <p className="text-xs text-secondary truncate">{restaurantName}</p>
+              <div className="hidden md:block text-right max-w-35">
+                <p className="text-sm font-semibold text-primary truncate">{displayName}</p>
+                <p className="text-xs text-primary truncate">{restaurantName}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-sm">
                 {initials}
               </div>
-              <ChevronDown className="hidden md:block w-4 h-4 text-secondary" />
+              <ChevronDown className="hidden md:block w-4 h-4 text-primary" />
             </button>
 
             {showProfileMenu && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-secondary/10 py-2 z-50">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-primary/10 py-2 z-50">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white text-sm font-bold">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white text-sm font-bold">
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-secondary truncate">{displayName}</p>
-                        <p className="text-xs text-secondary truncate">{user?.email}</p>
+                        <p className="font-semibold text-primary truncate">{displayName}</p>
+                        <p className="text-xs text-primary truncate">{user?.email}</p>
                         <p className="text-xs text-accent truncate mt-0.5">{restaurantName}</p>
                       </div>
                     </div>

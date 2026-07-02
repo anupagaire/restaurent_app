@@ -13,6 +13,7 @@ import MenuModal from '@/components/restaurant-admin/MenuModal';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import SubscriptionBanner from '@/components/restaurant-admin/SubscriptionBanner';
+import RestaurantAnalytics from '@/components/restaurant-admin/RestaurantAnalytics';
 
 import type { MenuItem, Category } from '@/types/menu';
 
@@ -240,7 +241,10 @@ return (
           <p className="text-secondary text-sm py-4">No quick actions available for your role.</p>
         )}
       </div>
-
+<div className="mb-10">
+  <h2 className="text-xl font-semibold mb-4">Analytics</h2>
+  <RestaurantAnalytics orders={orders} />
+</div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader className="flex flex-row justify-between items-center">

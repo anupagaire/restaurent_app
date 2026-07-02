@@ -44,11 +44,17 @@ export default function GlobalSettingsPage() {
   const [form, setForm]                   = useState({ name: '', address: '', city: '', zip: '' });
   const [loadingPage, setLoadingPage]     = useState(true);
   const [isSaving, setIsSaving]           = useState(false);
-  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
-  const [isDeletingPhoto, setIsDeletingPhoto]   = useState<number | null>(null);
+
+
+const [isUploadingPhoto, setIsUploadingPhoto] = useState(false); 
+const [isUploadingCover, setIsUploadingCover] = useState(false); 
+const [isDeletingPhoto, setIsDeletingPhoto] = useState<number | null>(null); 
+
+
   const [error, setError]                 = useState('');
   const [successMsg, setSuccessMsg]       = useState('');
 const coverPhoto = restaurant?.photos?.find(p => p.purpose === 'cover');
+const logoPhoto = restaurant?.photos?.find(p => p.purpose === 'logo');
 const [isEnterprisePlan, setIsEnterprisePlan] = useState(false);
   // Password
   const [pw, setPw]             = useState({ password1: '', confirm: '' });
@@ -129,35 +135,62 @@ useEffect(() => {
     }
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !restaurantId) return;
-    setIsUploadingPhoto(true);
-    setError('');
-    try {
-      const formData = new FormData();
-      formData.append('type', 'restaurant');
-      formData.append('object_id', restaurantId);
-      formData.append('photo', file);
-      formData.append('purpose', 'cover');
+ const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file || !restaurantId) return;
+  setIsUploadingPhoto(true);
+  setError('');
+  try {
+    const formData = new FormData();
+    formData.append('type', 'restaurant');
+    formData.append('object_id', restaurantId);
+    formData.append('photo', file);
+    formData.append('purpose', 'logo');
 
-      const existingCover = restaurant?.photos?.find(p => p.purpose === 'cover');
+    const existingLogo = restaurant?.photos?.find(p => p.purpose === 'logo'); // 'cover' hoina, 'logo'
 
-      const res = existingCover
-        ? await apiFetch(`/api/v1/photo/${existingCover.id}/`, { method: 'PATCH', body: formData })
-        : await apiFetch('/api/v1/photo/', { method: 'POST', body: formData });
+    const res = existingLogo
+      ? await apiFetch(`/api/v1/photo/${existingLogo.id}/`, { method: 'PATCH', body: formData })
+      : await apiFetch('/api/v1/photo/', { method: 'POST', body: formData });
 
-      if (!res.ok) { setError(`Photo upload failed (${res.status}).`); return; }
-      await fetchRestaurant();
-      setSuccessMsg('✅ Cover photo updated successfully!');
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } catch {
-      setError('Network error uploading photo.');
-    } finally {
-      setIsUploadingPhoto(false);
-    }
-  };
+    if (!res.ok) { setError(`Photo upload failed (${res.status}).`); return; }
+    await fetchRestaurant();
+    setSuccessMsg('✅ Logo updated successfully!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  } catch {
+    setError('Network error uploading photo.');
+  } finally {
+    setIsUploadingPhoto(false);
+  }
+};
+const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file || !restaurantId) return;
+  setIsUploadingCover(true);
+  setError('');
+  try {
+    const formData = new FormData();
+    formData.append('type', 'restaurant');
+    formData.append('object_id', restaurantId);
+    formData.append('photo', file);
+    formData.append('purpose', 'cover');
 
+    const existingCover = restaurant?.photos?.find(p => p.purpose === 'cover');
+
+    const res = existingCover
+      ? await apiFetch(`/api/v1/photo/${existingCover.id}/`, { method: 'PATCH', body: formData })
+      : await apiFetch('/api/v1/photo/', { method: 'POST', body: formData });
+
+    if (!res.ok) { setError(`Cover photo upload failed (${res.status}).`); return; }
+    await fetchRestaurant();
+    setSuccessMsg('✅ Cover photo updated successfully!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  } catch {
+    setError('Network error uploading cover photo.');
+  } finally {
+    setIsUploadingCover(false);
+  }
+};
   const handleDeletePhoto = async (photoId: number) => {
     if (!confirm('Delete this photo?')) return;
     setIsDeletingPhoto(photoId);
@@ -223,43 +256,89 @@ useEffect(() => {
             <CardTitle className="text-secondary font-bold">Restaurant Photos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-  {coverPhoto ? (
-    <div className="relative group w-full h-48">
-      <Image
-        src={coverPhoto.photo_url}
-        alt="Cover photo"
-        fill
-        className="object-cover rounded-lg border border-gray-200"
-      />
-      <button
-        onClick={() => handleDeletePhoto(coverPhoto.id)}
-        disabled={isDeletingPhoto === coverPhoto.id}
-        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        {isDeletingPhoto === coverPhoto.id
-          ? <Loader2 className="w-3 h-3 animate-spin" />
-          : <Trash2 className="w-3 h-3" />}
-      </button>
-    </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center border-2 border-dashed border-secondary/20 rounded-2xl p-8 text-center">
-      <Upload className="w-8 h-8 text-secondary mb-2" />
-      <p className="text-secondary text-sm">No cover photo uploaded yet</p>
-    </div>
-  )}
+  {logoPhoto ? (
+  <div className="relative group w-full h-48">
+    <Image
+      src={logoPhoto.photo_url}
+      alt="Logo"
+      fill
+      className="object-cover rounded-lg border border-gray-200"
+    />
+    <button
+      onClick={() => handleDeletePhoto(logoPhoto.id)}
+      disabled={isDeletingPhoto === logoPhoto.id}
+      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+      {isDeletingPhoto === logoPhoto.id
+        ? <Loader2 className="w-3 h-3 animate-spin" />
+        : <Trash2 className="w-3 h-3" />}
+    </button>
+  </div>
+) : (
+  <div className="flex flex-col items-center justify-center border-2 border-dashed border-secondary/20 rounded-2xl p-8 text-center">
+    <Upload className="w-8 h-8 text-secondary mb-2" />
+    <p className="text-secondary text-sm">No logo uploaded yet</p>
+  </div>
+)}
+
 
   <div className="flex justify-center">
     <label htmlFor="photo-upload"
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-secondary text-secondary text-sm font-medium cursor-pointer hover:bg-secondary/5 transition-colors ${isUploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
       {isUploadingPhoto
-        ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
-        : <><Upload className="h-4 w-4" /> {coverPhoto ? 'Change Cover Photo' : 'Upload Cover Photo'}</>}
+       ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
+      : <><Upload className="h-4 w-4" /> {logoPhoto ? 'Change Logo' : 'Upload Logo'}</>}
     </label>
     <input id="photo-upload" type="file" accept="image/*" className="hidden"
       onChange={handlePhotoUpload} disabled={isUploadingPhoto} />
   </div>
 </CardContent>
         </Card>
+
+
+<Card>
+  <CardHeader>
+    <CardTitle className="text-secondary font-bold">Cover Photo</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    {coverPhoto ? (
+      <div className="relative group w-full h-48">
+        <Image
+          src={coverPhoto.photo_url}
+          alt="Cover photo"
+          fill
+          className="object-cover rounded-lg border border-gray-200"
+        />
+        <button
+          onClick={() => handleDeletePhoto(coverPhoto.id)}
+          disabled={isDeletingPhoto === coverPhoto.id}
+          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          {isDeletingPhoto === coverPhoto.id
+            ? <Loader2 className="w-3 h-3 animate-spin" />
+            : <Trash2 className="w-3 h-3" />}
+        </button>
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center border-2 border-dashed border-secondary/20 rounded-2xl p-8 text-center">
+        <Upload className="w-8 h-8 text-secondary mb-2" />
+        <p className="text-secondary text-sm">No cover photo uploaded yet</p>
+      </div>
+    )}
+
+    <div className="flex justify-center">
+      <label htmlFor="cover-photo-upload"
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-secondary text-secondary text-sm font-medium cursor-pointer hover:bg-secondary/5 transition-colors ${isUploadingCover ? 'opacity-50 pointer-events-none' : ''}`}>
+        {isUploadingCover
+          ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
+          : <><Upload className="h-4 w-4" /> {coverPhoto ? 'Change Cover Photo' : 'Upload Cover Photo'}</>}
+      </label>
+      <input id="cover-photo-upload" type="file" accept="image/*" className="hidden"
+        onChange={handleCoverUpload} disabled={isUploadingCover} />
+    </div>
+  </CardContent>
+</Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="text-secondary font-bold">Restaurant Information</CardTitle>

@@ -44,7 +44,7 @@ export default function CTASection() {
         {/* CTA Button */}
         <Link href="/contact">
           <span className="group inline-flex items-center gap-3 cursor-pointer">
-            <span className="relative inline-flex items-center gap-3 bg-accent text-primary px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:shadow-lg hover:shadow-accent/20">
+            <span className="relative inline-flex items-center gap-3 bg-secondary text-white px-10 py-4 rounded-full text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:shadow-lg hover:shadow-accent/20">
               Contact Us
               {/* Arrow icon */}
               <svg

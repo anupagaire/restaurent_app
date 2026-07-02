@@ -219,12 +219,8 @@ export default async function RestaurantPage({ params }: PageProps) {
         <div className="absolute inset-0" style={{
           background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
         }} />
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+        <div className="absolute bottom-0  text-7xl font-bold text-white left-0 right-0 p-8 md:p-12">
           <h1 style={{
-            fontFamily: 'Georgia,"Times New Roman",serif',
-            fontSize: 'clamp(2rem,4vw,3.5rem)',
-            fontWeight: 700,
-            color: '#fff',
             lineHeight: 1.1,
             marginBottom: 16,
             textShadow: '0 2px 12px rgba(0,0,0,0.4)',

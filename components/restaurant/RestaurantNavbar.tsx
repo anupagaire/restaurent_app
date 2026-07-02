@@ -15,7 +15,8 @@ export default function RestaurantNavbar({
   const [open, setOpen] = useState(false);
   const base = `/restaurants/${slug}`;
 
-  const logo = restaurant.photos?.[0]?.photo_url;
+  const logo = restaurant.photos?.find((p: any) => p.purpose === 'logo')?.photo_url;
+
 
   const links = [
     { href: base,             label: 'Home' },
@@ -43,7 +44,7 @@ export default function RestaurantNavbar({
               {restaurant.name?.[0]}
             </div>
           )}
-          <span className="font-bold text-secondary text-lg hidden sm:block">
+          <span className="font-bold text-primary text-lg hidden sm:block">
             {restaurant.name}
           </span>
         </Link>
@@ -51,42 +52,42 @@ export default function RestaurantNavbar({
         <div className="hidden md:flex items-center gap-4">
                     <Link
             href={base}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             Home
           </Link>
 
           <Link
             href={`${base}/menu`}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             Menu
           </Link>
 
           <Link
             href={`${base}/reviews`}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             Reviews
           </Link>
 
           <Link
             href={`${base}/about-us`}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             About Us
           </Link>
 
           <Link
             href={`${base}/services`}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             Services
           </Link>
 
           <Link
             href={`${base}/gallery`}
-            className="text-base font-bold text-secondary/70 hover:text-primary transition-colors"
+            className="text-base font-bold text-primary/70 hover:text-primary transition-colors"
           >
             Gallery
           </Link>

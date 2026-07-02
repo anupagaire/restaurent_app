@@ -34,7 +34,7 @@ const router = useRouter();
    if (isLoading || isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -103,10 +103,8 @@ const router = useRouter();
         }
       }
 
-      // ── Step 5: Set role cookie ────────────────────────────────────────────
       document.cookie = `role=${primaryRole}; path=/; max-age=86400; SameSite=Lax`;
 
-      // ── Step 6: Customer qr_menu_auth ──────────────────────────────────────
       if (primaryRole === 'customer') {
         localStorage.setItem(
           "qr_menu_auth",
@@ -158,15 +156,15 @@ const router = useRouter();
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
         <div className="text-center mb-2">
-          <h2 className="text-2xl font-bold text-secondary">Welcome Back</h2>
-          <p className="text-secondary text-sm mt-1">Sign in to your account</p>
+          <h2 className="text-2xl font-bold text-primary">Welcome Back</h2>
+          <p className="text-primary text-sm mt-1">Sign in to your account</p>
         </div>
 
         {/* Email */}
         <div className="space-y-1">
           <label className="text-sm font-medium text-gray-700">Email</label>
           <input
-            className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary transition-all"
+            className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
             type="email"
             placeholder="you@example.com"
             value={email}
@@ -180,7 +178,7 @@ const router = useRouter();
           <label className="text-sm font-medium text-gray-700">Password</label>
           <div className="relative">
             <input
-              className="w-full border border-gray-200 p-3 pr-11 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary transition-all"
+              className="w-full border border-gray-200 p-3 pr-11 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
               type={showPw ? "text" : "password"}
               placeholder="••••••••"
               value={password}
@@ -190,7 +188,7 @@ const router = useRouter();
             <button
               type="button"
               onClick={() => setShowPw(p => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:text-gray-600 transition-colors"
             >
               {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -198,7 +196,7 @@ const router = useRouter();
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl text-center">
+          <div className="bg-red-50 border border-red-200 text-secondary text-sm px-4 py-3 rounded-xl text-center">
             {error}
           </div>
         )}
@@ -206,7 +204,7 @@ const router = useRouter();
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-secondary transition-colors disabled:opacity-60 mt-2"
+          className="w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-primary transition-colors disabled:opacity-60 mt-2"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

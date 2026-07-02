@@ -106,7 +106,7 @@ function CartBar({ cart, onOpen }: { cart: CartItem[]; onOpen: () => void }) {
     <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
       <button
         onClick={onOpen}
-        className="flex items-center bg-accent text-white justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-2xl w-full max-w-sm"
+        className="flex items-center bg-secondary text-white justify-between gap-4 px-5 py-3.5 rounded-2xl shadow-2xl w-full max-w-sm"
       >
         <span className="flex items-center gap-2 text-sm font-semibold">
           <span className="bg-white/20 rounded-lg px-2 py-0.5 text-xs font-bold">{totalItems}</span>
